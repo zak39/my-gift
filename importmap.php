@@ -25,4 +25,11 @@ return [
     '@hotwired/turbo' => [
         'version' => '8.0.23',
     ],
+    'daisyui' => [
+        'version' => '5.5.19',
+    ],
+    'daisyui/daisyui.min.css' => [
+        'version' => '5.5.19',
+        'type' => 'css',
+    ],
 ];
