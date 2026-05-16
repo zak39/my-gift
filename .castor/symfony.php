@@ -49,3 +49,16 @@ function status(): void
 {
     run('symfony server:status');
 }
+
+#[AsTask(description: 'Build TailwindCSS and compile via asset-map', aliases: ['sf:b:f'])]
+function buildFront(): void
+{
+    run('symfony console tailwind:build');
+    run('symfony console asset-map:compile');
+}
+
+#[AsTask(description: 'Consume async messengers', aliases: ['sf:ca'])]
+function consumeMessenger(): void
+{
+    run('symfony console messenger:consume async -vv');
+}
