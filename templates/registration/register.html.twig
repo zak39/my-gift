@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer un compte{% endblock %}
+
+{% block body %}
+    {% for flash_error in app.flashes('verify_email_error') %}
+        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+    {% endfor %}
+
+    <div class="hero bg-base-200 min-h-screen">
+        <div class="flex flex-col justify-center items-center">
+            <div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+                <div class="card-body">
+                    <fieldset class="fieldset">
+                        {{ form_start(registrationForm) }}
+                            {{ form_label(registrationForm.email) }}
+                            {{ form_widget(registrationForm.email) }}
+                            {{ form_label(registrationForm.plainPassword.first) }}
+                            {{ form_widget(registrationForm.plainPassword.first) }}
+                            {{ form_label(registrationForm.plainPassword.second) }}
+                            {{ form_widget(registrationForm.plainPassword.second) }}
+                            {{ form_row(registrationForm.firstname) }}
+                            {{ form_row(registrationForm.lastname) }}
+                            {{ form_row(registrationForm.agreeTerms) }}
+                            {{ form_rest(registrationForm) }}
+                            <button type="submit" class="btn btn-primary w-full">Créer un compte</button>
+                        {{ form_end(registrationForm) }}
+                    </fieldset>
+                </div>
+            </div>
+
+            {% if form_errors(registrationForm.plainPassword.first) %}
+                <div role="alert" class="form-errors alert alert-error my-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>{{ form_errors(registrationForm.plainPassword.first) }}</span>
+                </div>
+            {% endif %}
+            {% if form_errors(registrationForm.email) %}
+                <div role="alert" class="form-errors alert alert-error my-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>{{ form_errors(registrationForm.email) }}</span>
+                </div>
+            {% endif %}
+            {% if form_errors(registrationForm) %}
+                <div role="alert" class="form-errors alert alert-error my-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>{{ form_errors(registrationForm) }}</span>
+                </div>
+            {% endif %}
+
+            {% for message in app.flashes('success') %}
+                <div role="alert" class="alert alert-success my-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>{{ message }}</span>
+                </div>                
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
