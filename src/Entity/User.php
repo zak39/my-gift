@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -45,6 +47,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private bool $isVerified = false;
+
+    #[ORM\ManyToOne(inversedBy: 'participantUser')]
+    private ?Participant $participant = null;
+
+    /**
+     * @var Collection<int, Gift>
+     */
+    #[ORM\OneToMany(targetEntity: Gift::class, mappedBy: 'createdBy', orphanRemoval: true)]
+    private Collection $gifts;
+
+    public function __construct()
+    {
+        $this->gifts = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -171,6 +187,48 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsVerified(bool $isVerified): static
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    public function getParticipant(): ?Participant
+    {
+        return $this->participant;
+    }
+
+    public function setParticipant(?Participant $participant): static
+    {
+        $this->participant = $participant;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Gift>
+     */
+    public function getGifts(): Collection
+    {
+        return $this->gifts;
+    }
+
+    public function addGift(Gift $gift): static
+    {
+        if (!$this->gifts->contains($gift)) {
+            $this->gifts->add($gift);
+            $gift->setCreatedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGift(Gift $gift): static
+    {
+        if ($this->gifts->removeElement($gift)) {
+            // set the owning side to null (unless already changed)
+            if ($gift->getCreatedBy() === $this) {
+                $gift->setCreatedBy(null);
+            }
+        }
 
         return $this;
     }
