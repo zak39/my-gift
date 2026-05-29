@@ -1,0 +1,80 @@
+<div{{ attributes }}>
+    <div class="card card-xs lg:card-side bg-base-100 shadow-sm">
+        <figure>
+        <img
+            class="md:size-104 size-95 object-contain"
+            src="https://img.daisyui.com/images/stock/photo-1494232410401-ad00d5433cfa.webp"
+            alt="Album" />
+        </figure>
+        <div class="card-body ml-2">
+            <div class="flex justify-between items-center gap-3">
+                <h2 class="card-title">
+                    <span class="md:text-xl text-lg">{{ title }}</span>
+                </h2>
+                <button class="btn btn-circle btn-soft btn-secondary">
+                    <twig:ux:icon name="rivet-icons:heart" />
+                </button>
+            </div>
+            <div>
+                <span class="badge badge-lg badge-accent">
+                    {{ price|format_currency('EUR') }}
+                </span>
+            </div>
+
+            <div class="md:w-3xl">
+                <p class="md:text-lg mt-4 text-base md:line-clamp-4 hidden">
+                    {{ description }}
+                </p>
+                <div class="card-actions my-4">
+                    <a 
+                        href={{ link }}
+                        class="link link-primary text-lg">
+                        {{ link }}
+                    </a>
+                </div>
+            </div>
+            <div class="card-actions justify-start mb-4">
+                <div class="badge badge-outline badge-accent">Video game</div>
+                <div class="badge badge-outline badge-accent">Funny</div>
+            </div>
+            <div class="card-actions justify-end mr-4">
+                <twig:atomic:Button name="Share"
+                    type="primary">
+                    <twig:block name="icon">
+                        <twig:ux:icon name="lucide:share" />
+                    </twig:block>
+                </twig:atomic:Button>
+                <twig:atomic:Button:Soft name="Give"
+                    type="secondary">
+                    <twig:block name="icon">
+                        <twig:ux:icon name="famicons:gift" />
+                    </twig:block>
+                </twig:atomic:Button:Soft>
+                <twig:atomic:Button:Soft name="Participate"
+                    type="secondary">
+                    <twig:block name="icon">
+                        <twig:ux:icon name="ri:hand-coin-fill" />
+                    </twig:block>
+                </twig:atomic:Button:Soft>
+                <twig:atomic:Button:Outline name="See"
+                    type="secondary">
+                    <twig:block name="icon">
+                        <twig:ux:icon name="fluent:eye-12-filled" />
+                    </twig:block>
+                </twig:atomic:Button:Outline>
+                <twig:atomic:Button:Outline name="Edit"
+                    type="secondary">
+                    <twig:block name="icon">
+                        <twig:ux:icon name="ic:baseline-edit" />
+                    </twig:block>
+                </twig:atomic:Button:Outline>
+                <twig:atomic:Button:Outline name="Delete"
+                    type="secondary">
+                    <twig:block name="icon">
+                        <twig:ux:icon name="heroicons:trash-16-solid" />
+                    </twig:block>
+                </twig:atomic:Button:Outline>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,10 @@
+<div{{ attributes }}>
+    <button class="btn btn-{{ type }} btn-{{ size }}">
+        {% block icon %}{% endblock %}
+        {% if to == '#' %}
+            {{ name }}
+        {% else %}
+            <a href={{ path(to) }}>{{ name }}</a>
+        {% endif %}
+    </button>
+</div>
