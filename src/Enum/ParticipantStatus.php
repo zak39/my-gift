@@ -7,7 +7,7 @@ enum ParticipantStatus: string
     case RESERVED = 'reserved';
     case PARTICIPATING = 'participating';
     case CANCELLED = 'cancelled';
-    
+
     /*
     public static function status(string $status): self {
         return match ($status) {

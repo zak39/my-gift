@@ -31,14 +31,14 @@ final class GiftController extends AbstractController
 
         $form = $this->createForm(GiftType::class, $gift);
         $form->handleRequest($request);
-        
+
         if ($form->isSubmitted() && $form->isValid()) {
             $gift->setCreatedAt(new \DateTimeImmutable());
             $gift->setCreatedBy($this->getUser());
             $gift->setStatus(GiftStatus::CREATED);
 
             $title = $gift->getTitle();
-            $slug = str_replace(" ", "-", $title);
+            $slug = str_replace(' ', '-', $title);
             $slug = strtolower($slug);
             $gift->setSlug($slug);
 

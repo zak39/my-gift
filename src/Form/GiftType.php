@@ -7,9 +7,7 @@ use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Event\PostSubmitEvent;
 use Symfony\Component\Form\Event\PreSubmitEvent;
-use Symfony\Component\Form\Event\SubmitEvent;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
@@ -26,32 +24,32 @@ class GiftType extends AbstractType
     public function __construct(private Security $security)
     {
     }
-    
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('title', TextType::class, [
                 'attr' => [
-                    'class' => 'input'
+                    'class' => 'input',
                 ],
                 'label' => 'Titre du cadeau',
                 'label_attr' => [
-                    'class' => 'label'
-                ]
+                    'class' => 'label',
+                ],
             ])
             ->add('description', TextType::class, [
                 'attr' => [
-                    'class' => 'input'
+                    'class' => 'input',
                 ],
                 'label' => 'Description du cadeau',
                 'label_attr' => [
-                    'class' => 'label'
-                ]
+                    'class' => 'label',
+                ],
             ])
             ->add('link', UrlType::class, [
                 'attr' => [
                     'class' => 'input',
-                    'placeholder' => 'URL'
+                    'placeholder' => 'URL',
                 ],
                 'label' => 'Lien',
                 'label_attr' => [
@@ -68,22 +66,22 @@ class GiftType extends AbstractType
                 ],
                 'required' => false,
             ])
-            ->add('price', MoneyType::class,[
+            ->add('price', MoneyType::class, [
                 'attr' => [
-                    'class' => 'input'
+                    'class' => 'input',
                 ],
                 'label' => 'Prix du cadeau',
                 'label_attr' => [
-                    'class' => 'label'
-                ]
+                    'class' => 'label',
+                ],
             ])
             ->add('isPublic', CheckboxType::class, [
                 'attr' => [
-                    'class' => 'toggle toggle-primary'
+                    'class' => 'toggle toggle-primary',
                 ],
                 'label' => 'Afficher publiquement le cadeau',
                 'label_attr' => [
-                    'class' => 'label'
+                    'class' => 'label',
                 ],
                 'required' => false,
             ])

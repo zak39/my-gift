@@ -10,8 +10,9 @@ enum GiftStatus: string
     case READY = 'ready';
     case GIVEN = 'given';
     case DELETED = 'deleted';
-    
-    public static function status(string $status): self {
+
+    public static function status(string $status): self
+    {
         return match ($status) {
             self::CREATED->value => self::CREATED,
             self::RESERVED->value => self::RESERVED,
@@ -19,7 +20,7 @@ enum GiftStatus: string
             self::READY->value => self::READY,
             self::GIVEN->value => self::GIVEN,
             self::DELETED->value => self::DELETED,
-            default => throw new \Exception('Unknown status: ' . $status),
+            default => throw new \Exception('Unknown status: '.$status),
         };
     }
 }
