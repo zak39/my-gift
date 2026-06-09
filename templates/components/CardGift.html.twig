@@ -20,24 +20,29 @@
                     {{ price|format_currency('EUR') }}
                 </span>
             </div>
-
-            <div class="md:w-3xl">
-                <p class="md:text-lg mt-4 text-base md:line-clamp-4 hidden">
+            {% if link %}
+                <p class="md:w-3xl md:text-lg text-sm md:line-clamp-4 hidden">
                     {{ description }}
                 </p>
-                <div class="card-actions my-4">
+            {% else %}
+                <p class="md:w-3xl md:text-lg text-sm md:line-clamp-7 hidden">
+                    {{ description }}
+                </p>
+            {% endif %}
+            {% if link %}
+                <div class="md:w-3xl card-actions my-3">
                     <a 
                         href={{ link }}
                         class="link link-primary text-lg">
                         {{ link }}
                     </a>
-                </div>
-            </div>
-            <div class="card-actions justify-start mb-4">
+                </div>                
+            {% endif %}
+            <div class="card-actions justify-start md:mb-2 md:mt-2 mb-4 mt-4">
                 <div class="badge badge-outline badge-accent">Video game</div>
                 <div class="badge badge-outline badge-accent">Funny</div>
             </div>
-            <div class="card-actions justify-end mr-4">
+            <div class="card-actions justify-end mr-4 mb-4">
                 <twig:atomic:Button name="Share"
                     type="primary">
                     <twig:block name="icon">
