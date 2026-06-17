@@ -54,6 +54,9 @@ class Gift
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $link = null;
 
+    #[ORM\ManyToOne(inversedBy: 'gifts')]
+    private ?Section $section = null;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
@@ -210,6 +213,18 @@ class Gift
     public function setLink(?string $link): static
     {
         $this->link = $link;
+
+        return $this;
+    }
+
+    public function getSection(): ?Section
+    {
+        return $this->section;
+    }
+
+    public function setSection(?Section $section): static
+    {
+        $this->section = $section;
 
         return $this;
     }

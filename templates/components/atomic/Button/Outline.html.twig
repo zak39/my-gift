@@ -1,6 +1,12 @@
 <div{{ attributes }}>
-    <button class="btn btn-outline btn-{{ type }} btn-{{ size }}">
-        {% block icon %}{% endblock %}
-        {{ name }}
-    </button>
+    {% if to == '#' %}
+        <a href="#">
+    {% else %}
+        <a href={{ path(to, parameters) }}>
+    {% endif %}
+        <button class="btn btn-outline btn-{{ type }} btn-{{ size }}">
+            {% block icon %}{% endblock %}
+            {{ name }}
+        </button>
+    </a>
 </div>
