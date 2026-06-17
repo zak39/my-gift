@@ -9,52 +9,44 @@
 </div>
 
 {% for message in app.flashes('success') %}
-    <div role="alert" class="alert alert-success">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <span>{{ message }}</span>
-    </div>
+    <twig:Alert type="success" :message="message" />
 {% endfor %}
 
 <div class="flex flex-col gap-6 my-8">
-    <div class="collapse collapse-arrow bg-base-100 border border-base-300">
-        <input type="checkbox" />
-        <div class="collapse-title font-semibold">Cadeaux sans section</div>
-            <div class="collapse-content text-sm flex flex-col gap-4">
-                Les cadeaux qui ne sont pas encore dans une section.
-                {% for gift in giftsWithoutSection %}
+    <twig:molecule:Section title="Cadeaux sans section"
+        description="Les cadeaux qui ne sont pas encore dans une section.">
+        <twig:block name="gifts">
+            {% for gift in giftsWithoutSection %}
+                <twig:CardGift :id="gift.id"
+                    :title="gift.title"
+                    :description="gift.description"
+                    :price="gift.price"
+                    :link="gift.link" />
+            {% endfor %}
+        </twig:block>
+    </twig:molecule:Section>
+
+    {% for section in sections %}
+        <twig:molecule:Section :title="section.title"
+            :description="section.description">
+            <twig:block name="gifts">
+                {% for gift in section.gifts %}
                     <twig:CardGift :id="gift.id"
                         :title="gift.title"
                         :description="gift.description"
                         :price="gift.price"
                         :link="gift.link" />
                 {% endfor %}
-            </div>
-    </div>
-    {% for section in sections %}
-        <div class="collapse collapse-arrow bg-base-100 border border-base-300">
-            <input type="checkbox" />
-            <div class="collapse-title font-semibold">{{ section.title }}</div>
-                <div class="collapse-content text-sm flex flex-col gap-4">
-                    {{ section.description }}
-                    <div class="flex justify-end gap-1">
-                        <a href={{ path('app_section_edit', { 'id': section.id }) }}>
-                            <button class="btn btn-outline btn-secondary">Editer</button>
-                        </a>
-                        <a href={{ path('app_section_delete', { 'id': section.id }) }}>
-                            <button class="btn btn-outline btn-neutral">Supprimer</button>
-                        </a>
-                    </div>
-                    {% for gift in section.gifts %}
-                        <twig:CardGift :id="gift.id"
-                            :title="gift.title"
-                            :description="gift.description"
-                            :price="gift.price"
-                            :link="gift.link" />
-                    {% endfor %}
-                </div>
-        </div>
+            </twig:block>
+            <twig:block name="actionButtons">
+                <a href={{ path('app_section_edit', { 'id': section.id }) }}>
+                    <button class="btn btn-outline btn-secondary">Editer</button>
+                </a>
+                <a href={{ path('app_section_delete', { 'id': section.id }) }}>
+                    <button class="btn btn-outline btn-neutral">Supprimer</button>
+                </a>
+            </twig:block>
+        </twig:molecule:Section>
     {% endfor %}
 </div>
 {% endblock %}
