@@ -45,7 +45,7 @@
                 <twig:Modal :id="section.id"
                     :title="section.title"
                     class="remove_section">
-                    <twig:block name="message" />
+                    <twig:block name="message">
                         <p class="py-4">Est-ce que vous êtes sûr de supprimer la section <b>{{ section.title }}</b> ?</p>
                         <p class="py-4">La suppression de la section ne supprimera pas les cadeaux. Ils seront déplacer dans la section <b>Cadeaux sans Section</b></p>
                     </twig:block>
