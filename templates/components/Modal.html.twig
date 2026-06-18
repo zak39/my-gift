@@ -1,0 +1,17 @@
+<div{{ attributes }}>
+    <button class="btn btn-outline btn-neutral" onclick="modal_{{ class }}_{{ id }}.showModal()">Supprimer</button>
+    <dialog id="modal_{{ class }}_{{ id }}" class="modal modal-bottom sm:modal-middle">
+        <div class="modal-box">
+            <h3 class="text-lg font-bold">{{ title }}</h3>
+            {% block message %}
+            {% endblock %}
+            <div class="modal-action">
+                {% block actionButtons %}
+                {% endblock %}
+                <form method="dialog">
+                    <button class="btn btn-outline btn-neutral">Fermer</button>
+                </form>
+            </div>
+        </div>
+    </dialog>
+</div>

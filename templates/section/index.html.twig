@@ -11,7 +11,6 @@
 {% for message in app.flashes('success') %}
     <twig:Alert type="success" :message="message" />
 {% endfor %}
-
 <div class="flex flex-col gap-6 my-8">
     <twig:molecule:Section title="Cadeaux sans section"
         description="Les cadeaux qui ne sont pas encore dans une section.">
@@ -42,9 +41,19 @@
                 <a href={{ path('app_section_edit', { 'id': section.id }) }}>
                     <button class="btn btn-outline btn-secondary">Editer</button>
                 </a>
-                <a href={{ path('app_section_delete', { 'id': section.id }) }}>
-                    <button class="btn btn-outline btn-neutral">Supprimer</button>
-                </a>
+                <twig:Modal :id="section.id"
+                    :title="section.title"
+                    class="remove_section">
+                    <twig:block name="message" />
+                        <p class="py-4">Est-ce que vous êtes sûr de supprimer la section <b>{{ section.title }}</b> ?</p>
+                        <p class="py-4">La suppression de la section ne supprimera pas les cadeaux. Ils seront déplacer dans la section <b>Cadeaux sans Section</b></p>
+                    </twig:block>
+                    <twig:block name="actionButtons">
+                        <a href={{ path('app_section_delete', { 'id': section.id }) }}>
+                            <button class="btn btn-error">Supprimer</button>
+                        </a>
+                    </twig:block>
+                </twig:Modal>
             </twig:block>
         </twig:molecule:Section>
     {% endfor %}
