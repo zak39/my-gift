@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Gift;
 use App\Enum\GiftStatus;
+use App\Form\GiftEditType;
 use App\Form\GiftType;
 use App\Repository\GiftRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -11,7 +12,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Form\GiftEditType;
 
 final class GiftController extends AbstractController
 {

@@ -16,7 +16,7 @@ class SectionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('title', TextType::class,[
+            ->add('title', TextType::class, [
                 'attr' => [
                     'class' => 'input md:input-md input-xl w-full',
                 ],
@@ -28,7 +28,7 @@ class SectionType extends AbstractType
             ->add('description', TextareaType::class, [
                 'attr' => [
                     'class' => 'textarea md:textarea-md textarea-lg w-full',
-                    'placeholder' => 'Description'
+                    'placeholder' => 'Description',
                 ],
                 'label' => 'Description',
                 'label_attr' => [

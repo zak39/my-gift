@@ -18,8 +18,8 @@ final class SectionController extends AbstractController
     {
         $user = $this->getUser();
         $giftsWithoutSection = $giftRepository->findBy([
-            "createdBy" => $this->getUser(),
-            "section" => null
+            'createdBy' => $this->getUser(),
+            'section' => null,
         ]);
 
         return $this->render('section/index.html.twig', [
@@ -48,8 +48,8 @@ final class SectionController extends AbstractController
             $entityManager->persist($section);
             $entityManager->flush();
 
-            $this->addFlash("success", "La section \"{$section->getTitle()}\" a bien été créée.");
-            
+            $this->addFlash('success', "La section \"{$section->getTitle()}\" a bien été créée.");
+
             return $this->redirectToRoute('app_section');
         }
 
@@ -79,15 +79,14 @@ final class SectionController extends AbstractController
     #[Route('/section/{id}/delete', name: 'app_section_delete')]
     public function delete(Section $section, EntityManagerInterface $entityManager): Response
     {
-        foreach ($section->getGifts() as $gift)
-        {
+        foreach ($section->getGifts() as $gift) {
             $section->removeGift($gift);
         }
 
         $entityManager->remove($section);
         $entityManager->flush();
 
-        $this->addFlash("success", "La section \"{$section->getTitle()}\" a bien été supprimée. Les cadeaux sont déplacés dans la section \"Cadeaux sans section\".");
+        $this->addFlash('success', "La section \"{$section->getTitle()}\" a bien été supprimée. Les cadeaux sont déplacés dans la section \"Cadeaux sans section\".");
 
         return $this->redirectToRoute('app_section');
     }

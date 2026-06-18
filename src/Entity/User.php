@@ -244,7 +244,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @return Collection<int, Section>
      */
     public function getSections(): Collection
-    {        
+    {
         return $this->sections;
     }
 
