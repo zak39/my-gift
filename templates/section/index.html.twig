@@ -38,9 +38,10 @@
                 {% endfor %}
             </twig:block>
             <twig:block name="actionButtons">
-                <a href={{ path('app_section_edit', { 'id': section.id }) }}>
-                    <button class="btn btn-outline btn-secondary">Editer</button>
-                </a>
+                <twig:atomic:Button:Outline name="Editer"
+                    type="secondary"
+                    to="app_section_edit"
+                    :parameters="{ id: section.id }" />
                 <twig:Modal :id="section.id"
                     :title="section.title"
                     class="remove_section">
@@ -49,9 +50,10 @@
                         <p class="py-4">La suppression de la section ne supprimera pas les cadeaux. Ils seront déplacer dans la section <b>Cadeaux sans Section</b></p>
                     </twig:block>
                     <twig:block name="actionButtons">
-                        <a href={{ path('app_section_delete', { 'id': section.id }) }}>
-                            <button class="btn btn-error">Supprimer</button>
-                        </a>
+                        <twig:atomic:Button name="Supprimer"
+                            type="error"
+                            to="app_section_delete"
+                            :parameters="{ id: section.id }" />
                     </twig:block>
                 </twig:Modal>
             </twig:block>
