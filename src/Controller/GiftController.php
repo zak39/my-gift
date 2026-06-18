@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Gift;
 use App\Enum\GiftStatus;
+use App\Form\GiftEditType;
 use App\Form\GiftType;
 use App\Repository\GiftRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -49,6 +50,24 @@ final class GiftController extends AbstractController
         }
 
         return $this->render('gift/create.html.twig', [
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/gift/{id}/edit', name: 'app_gift_edit')]
+    public function edit(Request $request, Gift $gift, EntityManagerInterface $entityManager): Response
+    {
+        $form = $this->createForm(GiftEditType::class, $gift);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($gift);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_section');
+        }
+
+        return $this->render('gift/edit.html.twig', [
             'form' => $form,
         ]);
     }

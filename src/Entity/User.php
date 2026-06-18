@@ -57,9 +57,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Gift::class, mappedBy: 'createdBy', orphanRemoval: true)]
     private Collection $gifts;
 
+    /**
+     * @var Collection<int, Section>
+     */
+    #[ORM\OneToMany(targetEntity: Section::class, mappedBy: 'createdBy')]
+    private Collection $sections;
+
     public function __construct()
     {
         $this->gifts = new ArrayCollection();
+        $this->sections = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -227,6 +234,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($gift->getCreatedBy() === $this) {
                 $gift->setCreatedBy(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Section>
+     */
+    public function getSections(): Collection
+    {
+        return $this->sections;
+    }
+
+    public function addSection(Section $section): static
+    {
+        if (!$this->sections->contains($section)) {
+            $this->sections->add($section);
+            $section->setCreatedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSection(Section $section): static
+    {
+        if ($this->sections->removeElement($section)) {
+            // set the owning side to null (unless already changed)
+            if ($section->getCreatedBy() === $this) {
+                $section->setCreatedBy(null);
             }
         }
 

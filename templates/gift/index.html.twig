@@ -3,23 +3,21 @@
 {% block title %}Hello GiftController!{% endblock %}
 
 {% block body %}
-<div class="my-4">
-    <div class="flex items-center gap-6">
-        <h1 class="text-2xl">Les cadeaux</h1>
-        <twig:atomic:Button class="my-4"
-            name="Créer un cadeau"
-            type="primary"
-            size="xs"
-            to="app_gift_create" />
-        </twig:atomic:Button>
-    </div>
-    <div class="flex flex-col gap-4 my-4 items-center">
-        {% for gift in gifts %}
-            <twig:CardGift :title="gift.title"
-                :description="gift.description"
-                :price="gift.price"
-                :link="gift.link" />
-        {% endfor %}
-    </div>
+<div class="flex items-center justify-between my-6">
+    <h1 class="text-xl">Les cadeaux</h1>
+    <twig:atomic:Button name="Créer un cadeau"
+        type="primary"
+        size="xs"
+        to="app_gift_create" />
+    </twig:atomic:Button>
+</div>
+<div class="flex flex-col items-center gap-6 my-8">
+    {% for gift in gifts %}
+        <twig:CardGift :id="gift.id"
+            :title="gift.title"
+            :description="gift.description"
+            :price="gift.price"
+            :link="gift.link" />
+    {% endfor %}
 </div>
 {% endblock %}

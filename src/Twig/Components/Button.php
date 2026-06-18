@@ -11,4 +11,5 @@ final class Button
     public string $name = '';
     public string $size = 'md';
     public string $to = '#';
+    public array $parameters = [];
 }

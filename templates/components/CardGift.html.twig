@@ -2,7 +2,7 @@
     <div class="card card-xs lg:card-side bg-base-100 shadow-sm">
         <figure>
         <img
-            class="md:size-104 size-95 object-contain"
+            class="md:size-104 size-95 md:object-contain object-cover"
             src="https://img.daisyui.com/images/stock/photo-1494232410401-ad00d5433cfa.webp"
             alt="Album" />
         </figure>
@@ -68,7 +68,9 @@
                     </twig:block>
                 </twig:atomic:Button:Outline>
                 <twig:atomic:Button:Outline name="Edit"
-                    type="secondary">
+                    type="secondary"
+                    to="app_gift_edit"
+                    :parameters="{ id: id }">
                     <twig:block name="icon">
                         <twig:ux:icon name="ic:baseline-edit" />
                     </twig:block>

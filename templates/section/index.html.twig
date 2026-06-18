@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Section des cadeaux{% endblock %}
+
+{% block body %}
+<div class="flex items-center justify-between my-6">
+    <h1 class="text-xl">Mes sections de cadeau</h1>
+    <twig:atomic:Button name="Créer une section" to="app_section_new" />
+</div>
+
+{% for message in app.flashes('success') %}
+    <twig:Alert type="success" :message="message" />
+{% endfor %}
+<div class="flex flex-col gap-6 my-8">
+    <twig:molecule:Section title="Cadeaux sans section"
+        description="Les cadeaux qui ne sont pas encore dans une section.">
+        <twig:block name="gifts">
+            {% for gift in giftsWithoutSection %}
+                <twig:CardGift :id="gift.id"
+                    :title="gift.title"
+                    :description="gift.description"
+                    :price="gift.price"
+                    :link="gift.link" />
+            {% endfor %}
+        </twig:block>
+    </twig:molecule:Section>
+
+    {% for section in sections %}
+        <twig:molecule:Section :title="section.title"
+            :description="section.description">
+            <twig:block name="gifts">
+                {% for gift in section.gifts %}
+                    <twig:CardGift :id="gift.id"
+                        :title="gift.title"
+                        :description="gift.description"
+                        :price="gift.price"
+                        :link="gift.link" />
+                {% endfor %}
+            </twig:block>
+            <twig:block name="actionButtons">
+                <twig:atomic:Button:Outline name="Editer"
+                    type="secondary"
+                    to="app_section_edit"
+                    :parameters="{ id: section.id }" />
+                <twig:Modal :id="section.id"
+                    :title="section.title"
+                    class="remove_section">
+                    <twig:block name="message">
+                        <p class="py-4">Est-ce que vous êtes sûr de supprimer la section <b>{{ section.title }}</b> ?</p>
+                        <p class="py-4">La suppression de la section ne supprimera pas les cadeaux. Ils seront déplacer dans la section <b>Cadeaux sans Section</b></p>
+                    </twig:block>
+                    <twig:block name="actionButtons">
+                        <twig:atomic:Button name="Supprimer"
+                            type="error"
+                            to="app_section_delete"
+                            :parameters="{ id: section.id }" />
+                    </twig:block>
+                </twig:Modal>
+            </twig:block>
+        </twig:molecule:Section>
+    {% endfor %}
+</div>
+{% endblock %}
