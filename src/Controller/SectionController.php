@@ -76,7 +76,7 @@ final class SectionController extends AbstractController
         ]);
     }
 
-    #[Route('/section/{id}/delete', name: 'app_section_delete')]
+    #[Route('/section/{id}/delete', name: 'app_section_delete', methods: ['DELETE'])]
     public function delete(Section $section, EntityManagerInterface $entityManager): Response
     {
         foreach ($section->getGifts() as $gift) {
