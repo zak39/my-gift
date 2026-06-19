@@ -50,10 +50,13 @@
                         <p class="py-4">La suppression de la section ne supprimera pas les cadeaux. Ils seront déplacer dans la section <b>Cadeaux sans Section</b></p>
                     </twig:block>
                     <twig:block name="actionButtons">
-                        <twig:atomic:Button name="Supprimer"
-                            type="error"
-                            to="app_section_delete"
-                            :parameters="{ id: section.id }" />
+                        <form method="post" action="{{ path('app_section_delete', { id: section.id }) }}">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-outline btn-secondary">
+                                <twig:ux:icon name="heroicons:trash-16-solid" />
+                                Supprimer
+                            </button>
+                        </form>
                     </twig:block>
                 </twig:Modal>
             </twig:block>

@@ -1,5 +1,11 @@
 <div{{ attributes }}>
-    <button class="btn btn-outline btn-neutral" onclick="modal_{{ class }}_{{ id }}.showModal()">Supprimer</button>
+    <twig:atomic:Button:Outline name="Supprimer"
+        onclick="modal_{{ class }}_{{ id }}.showModal()"
+        type="secondary">
+        <twig:block name="icon">
+            <twig:ux:icon name="heroicons:trash-16-solid" />
+        </twig:block>
+    </twig:atomic:Button:Outline>
     <dialog id="modal_{{ class }}_{{ id }}" class="modal modal-bottom sm:modal-middle">
         <div class="modal-box">
             <h3 class="text-lg font-bold">{{ title }}</h3>

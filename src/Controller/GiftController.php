@@ -71,4 +71,15 @@ final class GiftController extends AbstractController
             'form' => $form,
         ]);
     }
+
+    #[Route('/gift/{id}/delete', name: 'app_gift_delete', methods: ['DELETE'])]
+    public function delete(Gift $gift, EntityManagerInterface $entityManager): Response
+    {
+        $entityManager->remove($gift);
+        $entityManager->flush();
+
+        $this->addFlash('success', "Le cadeau \"{$gift->getTitle()}\" a bien été supprimé.");
+
+        return $this->redirectToRoute('app_section');
+    }
 }
