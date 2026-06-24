@@ -16,11 +16,7 @@
         description="Les cadeaux qui ne sont pas encore dans une section.">
         <twig:block name="gifts">
             {% for gift in giftsWithoutSection %}
-                <twig:CardGift :id="gift.id"
-                    :title="gift.title"
-                    :description="gift.description"
-                    :price="gift.price"
-                    :link="gift.link" />
+                <twig:CardGift :gift="gift" />
             {% endfor %}
         </twig:block>
     </twig:molecule:Section>
@@ -30,11 +26,7 @@
             :description="section.description">
             <twig:block name="gifts">
                 {% for gift in section.gifts %}
-                    <twig:CardGift :id="gift.id"
-                        :title="gift.title"
-                        :description="gift.description"
-                        :price="gift.price"
-                        :link="gift.link" />
+                    <twig:CardGift :gift="gift" />
                 {% endfor %}
             </twig:block>
             <twig:block name="actionButtons">

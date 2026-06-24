@@ -3,13 +3,13 @@
         <figure>
         <img
             class="md:size-104 size-95 md:object-contain object-cover"
-            src="https://img.daisyui.com/images/stock/photo-1494232410401-ad00d5433cfa.webp"
-            alt="Album" />
+            src={{ gift.image ? vich_uploader_asset(gift, 'imageFile') : "https://img.daisyui.com/images/stock/photo-1494232410401-ad00d5433cfa.webp" }}
+            alt={{ gift.title }} />
         </figure>
         <div class="card-body ml-2">
             <div class="flex justify-between items-center gap-3">
                 <h2 class="card-title">
-                    <span class="md:text-xl text-lg">{{ title }}</span>
+                    <span class="md:text-xl text-lg">{{ gift.title }}</span>
                 </h2>
                 <button class="btn btn-circle btn-soft btn-secondary">
                     <twig:ux:icon name="rivet-icons:heart" />
@@ -17,24 +17,24 @@
             </div>
             <div>
                 <span class="badge badge-lg badge-accent">
-                    {{ price|format_currency('EUR') }}
+                    {{ gift.price|format_currency('EUR') }}
                 </span>
             </div>
-            {% if link %}
+            {% if gift.link %}
                 <p class="md:w-3xl md:text-lg text-sm md:line-clamp-4 hidden">
-                    {{ description }}
+                    {{ gift.description }}
                 </p>
             {% else %}
                 <p class="md:w-3xl md:text-lg text-sm md:line-clamp-7 hidden">
-                    {{ description }}
+                    {{ gift.description }}
                 </p>
             {% endif %}
-            {% if link %}
+            {% if gift.link %}
                 <div class="md:w-3xl card-actions my-3">
                     <a 
-                        href={{ link }}
+                        href={{ gift.link }}
                         class="link link-primary text-lg">
-                        {{ link }}
+                        {{ gift.link }}
                     </a>
                 </div>                
             {% endif %}
@@ -70,19 +70,19 @@
                 <twig:atomic:Button:Outline name="Edit"
                     type="secondary"
                     to="app_gift_edit"
-                    :parameters="{ id: id }">
+                    :parameters="{ id: gift.id }">
                     <twig:block name="icon">
                         <twig:ux:icon name="ic:baseline-edit" />
                     </twig:block>
                 </twig:atomic:Button:Outline>
                 <twig:Modal title="Supprimer un cadeau"
                     class="remove_gift"
-                    :id="id">
+                    :id="gift.id">
                     <twig:block name="message">
-                        <p class="py-4">Est-ce que vous êtes sûr de supprimer le cadeau <b>{{ title }}</b> ?</p>
+                        <p class="py-4">Est-ce que vous êtes sûr de supprimer le cadeau <b>{{ gift.title }}</b> ?</p>
                     </twig:block>
                     <twig:block name="actionButtons">
-                        <form method="post" action="{{ path('app_gift_delete', { id: id }) }}">
+                        <form method="post" action="{{ path('app_gift_delete', { id: gift.id }) }}">
                             <input type="hidden" name="_method" value="DELETE">
                             <button type="submit" class="btn btn-outline btn-secondary">
                                 <twig:ux:icon name="heroicons:trash-16-solid" />
