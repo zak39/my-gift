@@ -13,11 +13,7 @@
 </div>
 <div class="flex flex-col items-center gap-6 my-8">
     {% for gift in gifts %}
-        <twig:CardGift :id="gift.id"
-            :title="gift.title"
-            :description="gift.description"
-            :price="gift.price"
-            :link="gift.link" />
+        <twig:CardGift :gift="gift" />
     {% endfor %}
 </div>
 {% endblock %}

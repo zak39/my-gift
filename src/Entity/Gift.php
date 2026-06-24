@@ -8,8 +8,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Attribute\Uploadable;
+use Vich\UploaderBundle\Mapping\Attribute\UploadableField;
 
 #[ORM\Entity(repositoryClass: GiftRepository::class)]
+#[Uploadable]
 class Gift
 {
     #[ORM\Id]
@@ -25,6 +29,9 @@ class Gift
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
+
+    #[UploadableField(mapping: 'imageGift', fileNameProperty: 'image')]
+    private ?File $imageFile = null;
 
     #[ORM\Column(nullable: true)]
     private ?float $price = null;
@@ -56,6 +63,9 @@ class Gift
 
     #[ORM\ManyToOne(inversedBy: 'gifts')]
     private ?Section $section = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updateAt = null;
 
     public function __construct()
     {
@@ -99,6 +109,23 @@ class Gift
     public function setImage(?string $image): static
     {
         $this->image = $image;
+
+        return $this;
+    }
+
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+    public function setImageFile(?File $imageFile): static
+    {
+        $this->imageFile = $imageFile;
+
+        // Force VichUploaderBundle to process the file by resetting the filename
+        if (null !== $imageFile) {
+            $this->updateAt = new \DateTimeImmutable();
+        }
 
         return $this;
     }
@@ -225,6 +252,18 @@ class Gift
     public function setSection(?Section $section): static
     {
         $this->section = $section;
+
+        return $this;
+    }
+
+    public function getUpdateAt(): ?\DateTimeImmutable
+    {
+        return $this->updateAt;
+    }
+
+    public function setUpdateAt(?\DateTimeImmutable $updateAt): static
+    {
+        $this->updateAt = $updateAt;
 
         return $this;
     }

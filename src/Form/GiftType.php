@@ -47,10 +47,11 @@ class GiftType extends AbstractType
                 ],
                 'required' => false,
             ])
-            ->add('image', FileType::class, [
+            ->add('imageFile', FileType::class, [
                 'attr' => [
                     'class' => 'file-input md:input-md input-xl w-full',
                 ],
+                'label' => 'Image',
                 'label_attr' => [
                     'class' => 'label md:text-base text-xl',
                 ],
