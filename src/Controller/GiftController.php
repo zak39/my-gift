@@ -80,9 +80,8 @@ final class GiftController extends AbstractController
     #[Route('/gift/{id}/show', name: 'app_gift_show')]
     public function show(Gift $gift): Response
     {
-        
         return $this->render('gift/show.html.twig', [
-            'gift' => $gift
+            'gift' => $gift,
         ]);
     }
 

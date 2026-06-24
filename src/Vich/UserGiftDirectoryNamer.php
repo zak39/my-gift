@@ -3,8 +3,8 @@
 namespace App\Vich;
 
 use Symfony\Bundle\SecurityBundle\Security;
-use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
 use Vich\UploaderBundle\Mapping\PropertyMapping;
+use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
 
 final class UserGiftDirectoryNamer implements DirectoryNamerInterface
 {

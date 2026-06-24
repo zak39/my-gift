@@ -121,12 +121,12 @@ class Gift
     public function setImageFile(?File $imageFile): static
     {
         $this->imageFile = $imageFile;
-        
+
         // Force VichUploaderBundle to process the file by resetting the filename
-        if ($imageFile !== null) {
+        if (null !== $imageFile) {
             $this->updateAt = new \DateTimeImmutable();
         }
-        
+
         return $this;
     }
 
