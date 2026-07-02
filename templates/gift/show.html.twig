@@ -1,0 +1,137 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détaille du cadeau - {{ gift.title }}{% endblock %}
+
+{% block body %}
+<div class="flex md:flex-row flex-col gap-2 justify-center md:m-9 m-3">
+  <div class="flex flex-col gap-2 w-full">
+    <div class="card md:w-full">
+      <figure class="rounded-lg">
+        <img
+          class="size-96 object-cover"
+          src={{ gift.image ? vich_uploader_asset(gift, 'imageFile') : "https://img.daisyui.com/images/stock/photo-1494232410401-ad00d5433cfa.webp" }}
+          alt={{ gift.title }} />
+      </figure>
+    </div>
+
+    <div class="card card-border bg-base-100 md:w-full">
+      <div class="card-body">
+        <h2 class="card-title">
+          {{ gift.title }}
+        </h2>
+          <p class="md:text-base text-lg md:text-md">
+            {{ gift.description }}
+          </p>
+      </div>
+    </div>
+
+    <div class="card card-border bg-base-100 md:w-full">
+      <card class="card-body">
+          <span>Prix : <div class="badge badge-soft badge-success">{{ gift.price|format_currency('EUR', { padding_position: 'before_suffix' }) }}</div></span>
+          <span>Publié : <div class="badge badge-soft badge-accent">{{ (gift.isPublic) ? 'Oui' : 'Non'  }}</div></span>
+      </card>
+    </div>
+
+    
+    <div class="card card-border bg-base-100 md:w-full">
+      <class class="card-body flex md:flex-row gap-4">
+        <a href="{{ gift.link }}" class="btn btn-primary">
+            <twig:block name="icon">
+                <twig:ux:icon name="akar-icons:link-out" />
+            </twig:block>
+          Aller sur la boutique
+        </a>
+        <twig:atomic:Button:Outline name="Edit"
+            type="secondary"
+            to="app_gift_edit"
+            :full="true"
+            :parameters="{ id: gift.id }">
+        </twig:atomic:Button:Outline>
+        <twig:Modal title="Supprimer un cadeau"
+            class="remove_gift"
+            :id="gift.id"
+            :full="true">
+            <twig:block name="message">
+                <p class="py-4">Est-ce que vous êtes sûr de supprimer le cadeau <b>{{ gift.title }}</b> ?</p>
+            </twig:block>
+            <twig:block name="actionButtons">
+                <form method="post" action="{{ path('app_gift_delete', { id: gift.id }) }}">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit" class="btn btn-outline btn-secondary">
+                        {# <twig:ux:icon name="heroicons:trash-16-solid" />#}
+                        Supprimer
+                    </button>
+                </form>
+            </twig:block>
+        </twig:Modal>
+      </class>
+    </div>
+
+    <div class="card card-border bg-base-100 md:w-full md:self-baseline">
+
+          <div class="flex flex-col items-baseline p-4 w-full">
+            <p>
+              <small class="">créé le : {{ gift.createdAt|format_datetime('medium', 'none', locale: 'fr') }}</small>
+            </p>
+            <p>
+              <small>mis à jour le : {{ gift.updateAt|format_datetime('medium', 'none', locale: 'fr') }}</small>
+            </p>
+          </div>
+    </div>
+
+    <div class="card card-border bg-base-100 md:w-full">
+      <div class="card-body ">
+        {% if gift.participants|length > 0 %}
+          <h2 class="card-title w-full">Offert par</h2>
+
+          {% for participant in gift.participants %}
+            <div class="card card-border md:card-md card-lg base-100 shadow-sm w-full">
+              <div class="flex gap-8 items-center p-3">
+                <div class="avatar">
+                  <div class="w-12 rounded-full">
+                    <img src={{ participant.participantUser.profileImage }} />
+                  </div>
+                </div>
+                <div class="flex flex-col gap-1.5">
+                  <h2 class="card-title">{{ participant.participantUser.firstname }} {{ participant.participantUser.lastname }}</h2>
+                  <small>{{ participant.givenDate }}</small>
+                  <div class="badge badge-soft md:badge-md badge-lg badge-accent">
+                    {{ participant.amount }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+          
+          <div class="card card-border">
+            <div class="flex flex-col justify-center items-center gap-7 p-4">
+              <div class="radial-progress text-primary" style="--value:90; --size:12rem;" aria-valuenow="90" role="progressbar">90%</div>
+              <div>
+                <p>
+                  Au total : <span class="">138€</span>
+                </p>
+                <p>
+                  Encore 12.90€
+                </p>
+              </div>
+            </div>
+          </div>
+        {% else %}
+            <div class="card-title w-full">
+              <h6 class="text-sm">Personne ne vous a offert le cadeau pour le moment.</h6>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="flex md:flex-row flex-col gap-1 md:justify-center">
+  <twig:atomic:Button:Outline class="flex justify-end mt-2 mb-8"
+    name="Retour"
+    type="neutral"
+    to="app_section"
+    :full="true"
+    size="md" />
+</div>
+{% endblock %}

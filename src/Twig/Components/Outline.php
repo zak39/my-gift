@@ -12,4 +12,5 @@ final class Outline
     public string $name;
     public string $size = 'md';
     public array $parameters = [];
+    public bool $full = false;
 }
