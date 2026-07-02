@@ -30,13 +30,12 @@
                 </p>
             {% endif %}
             {% if gift.link %}
-                <div class="md:w-3xl card-actions my-3">
-                    <a 
-                        href={{ gift.link }}
-                        class="link link-primary text-lg">
-                        {{ gift.link }}
-                    </a>
-                </div>                
+                <a href="{{ gift.link }}" class="btn btn-primary md:w-2xs w-full md:my-2">
+                    <twig:block name="icon">
+                        <twig:ux:icon name="akar-icons:link-out" />
+                    </twig:block>
+                Aller sur la boutique
+                </a>
             {% endif %}
             <div class="card-actions justify-start md:mb-2 md:mt-2 mb-4 mt-4">
                 <div class="badge badge-outline badge-accent">Video game</div>
@@ -44,9 +43,14 @@
             </div>
             <div class="card-actions justify-end mr-4 mb-4">
                 <twig:atomic:Button name="Share"
+                    data-controller="copy"
+                    data-copy-text-value="{{ absolute_url(path('app_gift_show', { 'id': gift.id })) }}"
+                    data-action="click->copy#copy"
                     type="primary">
                     <twig:block name="icon">
+                    <span data-copy-target="icon">
                         <twig:ux:icon name="lucide:share" />
+                    </span>
                     </twig:block>
                 </twig:atomic:Button>
                 <twig:atomic:Button:Soft name="Give"
@@ -61,7 +65,9 @@
                         <twig:ux:icon name="ri:hand-coin-fill" />
                     </twig:block>
                 </twig:atomic:Button:Soft>
-                <twig:atomic:Button:Outline name="See"
+                <twig:atomic:Button:Outline name="Voir"
+                    to="app_gift_show"
+                    :parameters="{ id: gift.id }"
                     type="secondary">
                     <twig:block name="icon">
                         <twig:ux:icon name="fluent:eye-12-filled" />

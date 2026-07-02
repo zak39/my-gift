@@ -2,7 +2,7 @@
     {% if to == '#' %}
         <button type="button" class="btn btn-{{ type }} btn-{{ size }}">
             {% block icon %}{% endblock %}
-            {{ name }}
+            <span data-copy-target="label">{{ name }}</span>
         </button>
     {% else %}
         <a href="{{ path(to, parameters) }}" class="btn btn-{{ type }} btn-{{ size }}">
