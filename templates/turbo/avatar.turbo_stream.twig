@@ -1,0 +1,11 @@
+<twig:Turbo:Stream:Replace target="#user_avatar_header">
+    <twig:atomic:Image id="user_avatar_header"
+      source="{{ user.avatar ? vich_uploader_asset(user, 'avatarFile') : 'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp' }}"
+      alt="Photo de profil {{ user.firstname }} {{ user.lastname }}" />
+</twig:Turbo:Stream:Replace>
+
+<twig:Turbo:Stream:Replace target="#user_avatar_settings">
+    <twig:atomic:Image id="user_avatar_settings"
+      source="{{ user.avatar ? vich_uploader_asset(user, 'avatarFile') : 'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp' }}"
+      alt="Photo de profil {{ user.firstname }} {{ user.lastname }}" />
+</twig:Turbo:Stream:Replace>

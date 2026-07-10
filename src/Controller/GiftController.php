@@ -62,8 +62,6 @@ final class GiftController extends AbstractController
         $form->handleRequest($request);
 
         $imagePath = $helper->asset($gift, 'imageFile');
-        // dd($gift->getImageFile());
-        // dd($gift, $imagePath);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($gift);
