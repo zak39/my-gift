@@ -7,10 +7,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Vich\UploaderBundle\Mapping\Attribute\Uploadable;
+use Vich\UploaderBundle\Mapping\Attribute\UploadableField;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[Uploadable]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
@@ -45,6 +49,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $firstname = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $avatar = null;
+
+    #[UploadableField(mapping: 'avatar', fileNameProperty: 'avatar')]
+    private ?File $avatarFile = null;
+
     #[ORM\Column]
     private bool $isVerified = false;
 
@@ -62,6 +72,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\OneToMany(targetEntity: Section::class, mappedBy: 'createdBy')]
     private Collection $sections;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $avatar_updated_at = null;
 
     public function __construct()
     {
@@ -139,6 +152,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __serialize(): array
     {
         $data = (array) $this;
+        unset($data["\0".self::class."\0avatarFile"]);
         $data["\0".self::class."\0password"] = hash('crc32c', $this->password);
 
         return $data;
@@ -182,6 +196,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setFirstname(string $firstname): static
     {
         $this->firstname = $firstname;
+
+        return $this;
+    }
+
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(?string $avatar): static
+    {
+        $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    public function getAvatarFile(): ?File
+    {
+        return $this->avatarFile;
+    }
+
+    public function setAvatarFile(?File $avatarFile): static
+    {
+        $this->avatarFile = $avatarFile;
+
+        if (null !== $avatarFile) {
+            $this->avatar_updated_at = new \DateTimeImmutable();
+        }
 
         return $this;
     }
@@ -266,6 +308,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $section->setCreatedBy(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAvatarUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->avatar_updated_at;
+    }
+
+    public function setAvatarUpdatedAt(\DateTimeImmutable $avatar_updated_at): static
+    {
+        $this->avatar_updated_at = $avatar_updated_at;
 
         return $this;
     }

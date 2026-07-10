@@ -16,6 +16,7 @@ final class SectionController extends AbstractController
     #[Route('/section', name: 'app_section')]
     public function index(GiftRepository $giftRepository): Response
     {
+        /** @var App\Entity\User */
         $user = $this->getUser();
         $giftsWithoutSection = $giftRepository->findBy([
             'createdBy' => $this->getUser(),
@@ -73,6 +74,7 @@ final class SectionController extends AbstractController
 
         return $this->render('section/edit.html.twig', [
             'form' => $form,
+            'edit' => $this->getUser(),
         ]);
     }
 

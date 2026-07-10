@@ -1,0 +1,189 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil{% endblock %}
+
+{% block body %}
+<div class="max-w-5xl mx-auto py-8 px-4">
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-error mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{{ message }}</span>
+            </div>
+        {% endfor %}
+        <div id="user_profile_flash">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>{{ message }}</span>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="grid gap-6 lg:grid-cols-[280px_1fr] items-start">
+            <div class="space-y-4 text-center p-4 bg-base-100 border border-base-200 rounded-md shadow-sm self-start">
+                <twig:molecule:Avatar size="32">
+                    <twig:block name="image">
+                        <twig:atomic:Image id="user_avatar_settings"
+                            source="{{ user.avatar ? vich_uploader_asset(user, 'avatarFile') : 'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp' }}"
+                            alt="Photo de profil {{ user.firstname }} {{ user.lastname }}" />
+                    </twig:block>
+                </twig:molecule:Avatar>
+                <div>
+                    <h2 class="text-2xl font-semibold">{{ user.firstname }} {{ user.lastname }}</h2>
+                    <p class="text-sm text-base-content/70">{{ user.email }}</p>
+                </div>
+                <div class="mt-4 text-sm text-base-content/60">
+                    Mettez à jour vos informations publiques et votre photo de profil.
+                </div>
+            </div>
+                <div class="self-start">
+                    <turbo-frame id="user_profile_form">
+                        {{ form_start(profileForm, {'attr': {'class': 'space-y-4'}, 'enctype': 'multipart/form-data'}) }}
+                            {% if form_errors(profileForm) %}
+                                <div class="alert alert-error mb-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span>{{ form_errors(profileForm) }}</span>
+                                </div>
+                            {% endif %}
+                        <div class="space-y-4">
+                            <div class="p-4 bg-base-100 border border-base-200 rounded-md shadow-sm">
+                                <h3 class="text-sm font-medium mb-3">Informations personnelles</h3>
+                                <div class="grid gap-4 md:grid-cols-2">
+                                    <div>
+                                        {{ form_label(profileForm.firstname) }}
+                                        {{ form_widget(profileForm.firstname, {
+                                            'attr': {
+                                                'class': 'input w-full' ~ (form_errors(profileForm.firstname) ? ' input-error' : ''),
+                                            },
+                                        }) }}
+                                        {% if form_errors(profileForm.firstname) %}
+                                            <div class="text-error mt-2 p-2 text-sm">
+                                                {{ form_errors(profileForm.firstname) }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        {{ form_label(profileForm.lastname) }}
+                                        {{ form_widget(profileForm.lastname, {
+                                            'attr': {
+                                                'class': 'input w-full' ~ (form_errors(profileForm.lastname) ? ' input-error' : ''),
+                                            },
+                                        }) }}
+                                        {% if form_errors(profileForm.lastname) %}
+                                            <div class="text-error mt-2 p-2 text-sm">
+                                                {{ form_errors(profileForm.lastname) }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="p-4 bg-base-100 border border-base-200 rounded-md shadow-sm">
+                                <h3 class="text-sm font-medium mb-3">Sécurité</h3>
+                                <div class="mb-4">
+                                    {{ form_label(profileForm.oldPassword) }}
+                                    <div data-controller="password-toggle" class="relative">
+                                        {{ form_widget(profileForm.oldPassword, {
+                                            'attr': {
+                                                'class': 'input w-full pr-24' ~ (form_errors(profileForm.oldPassword) ? ' input-error' : ''),
+                                                'autocomplete': 'current-password',
+                                                'data-password-toggle-target': 'field',
+                                            },
+                                        }) }}
+                                        <button type="button" data-password-toggle-target="button" data-action="password-toggle#toggle" class="btn btn-sm btn-ghost absolute top-1/2 right-2 -translate-y-1/2" aria-label="Afficher le mot de passe">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M11.83 9L15 12.16V12a3 3 0 0 0-3-3zm-4.3.8l1.55 1.55c-.05.21-.08.42-.08.65a3 3 0 0 0 3 3c.22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53a5 5 0 0 1-5-5c0-.79.2-1.53.53-2.2M2 4.27l2.28 2.28l.45.45C3.08 8.3 1.78 10 1 12c1.73 4.39 6 7.5 11 7.5c1.55 0 3.03-.3 4.38-.84l.43.42L19.73 22L21 20.73L3.27 3M12 7a5 5 0 0 1 5 5c0 .64-.13 1.26-.36 1.82l2.93 2.93c1.5-1.25 2.7-2.89 3.43-4.75c-1.73-4.39-6-7.5-11-7.5c-1.4 0-2.74.25-4 .7l2.17 2.15C10.74 7.13 11.35 7 12 7"/></svg>
+                                        </button>
+                                    </div>
+                                    {% if form_errors(profileForm.oldPassword) %}
+                                        <div class="text-error mt-2 p-2 text-sm">
+                                            {{ form_errors(profileForm.oldPassword) }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div>
+                                    <h4 class="text-sm font-medium mb-3">Changer le mot de passe</h4>
+                                    <div class="grid gap-4 md:grid-cols-2">
+                                        <div>
+                                            {{ form_label(profileForm.plainPassword.first) }}
+                                            <div data-controller="password-toggle" class="relative">
+                                                {{ form_widget(profileForm.plainPassword.first, {
+                                                    'attr': {
+                                                        'class': 'input w-full pr-24' ~ (form_errors(profileForm.plainPassword.first) ? ' input-error' : ''),
+                                                        'autocomplete': 'new-password',
+                                                        'data-password-toggle-target': 'field',
+                                                    },
+                                                }) }}
+                                                <button type="button" data-password-toggle-target="button" data-action="password-toggle#toggle" class="btn btn-sm btn-ghost absolute top-1/2 right-2 -translate-y-1/2" aria-label="Afficher le mot de passe">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M11.83 9L15 12.16V12a3 3 0 0 0-3-3zm-4.3.8l1.55 1.55c-.05.21-.08.42-.08.65a3 3 0 0 0 3 3c.22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53a5 5 0 0 1-5-5c0-.79.2-1.53.53-2.2M2 4.27l2.28 2.28l.45.45C3.08 8.3 1.78 10 1 12c1.73 4.39 6 7.5 11 7.5c1.55 0 3.03-.3 4.38-.84l.43.42L19.73 22L21 20.73L3.27 3M12 7a5 5 0 0 1 5 5c0 .64-.13 1.26-.36 1.82l2.93 2.93c1.5-1.25 2.7-2.89 3.43-4.75c-1.73-4.39-6-7.5-11-7.5c-1.4 0-2.74.25-4 .7l2.17 2.15C10.74 7.13 11.35 7 12 7"/></svg>
+                                                </button>
+                                            </div>
+                                            {% if form_errors(profileForm.plainPassword.first) %}
+                                                <div class="text-error mt-2 p-2 text-sm">
+                                                    {{ form_errors(profileForm.plainPassword.first) }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            {{ form_label(profileForm.plainPassword.second) }}
+                                            <div data-controller="password-toggle" class="relative">
+                                                {{ form_widget(profileForm.plainPassword.second, {
+                                                    'attr': {
+                                                        'class': 'input w-full pr-24' ~ (form_errors(profileForm.plainPassword.second) ? ' input-error' : ''),
+                                                        'autocomplete': 'new-password',
+                                                        'data-password-toggle-target': 'field',
+                                                    },
+                                                }) }}
+                                                <button type="button" data-password-toggle-target="button" data-action="password-toggle#toggle" class="btn btn-sm btn-ghost absolute top-1/2 right-2 -translate-y-1/2" aria-label="Afficher le mot de passe">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M11.83 9L15 12.16V12a3 3 0 0 0-3-3zm-4.3.8l1.55 1.55c-.05.21-.08.42-.08.65a3 3 0 0 0 3 3c.22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53a5 5 0 0 1-5-5c0-.79.2-1.53.53-2.2M2 4.27l2.28 2.28l.45.45C3.08 8.3 1.78 10 1 12c1.73 4.39 6 7.5 11 7.5c1.55 0 3.03-.3 4.38-.84l.43.42L19.73 22L21 20.73L3.27 3M12 7a5 5 0 0 1 5 5c0 .64-.13 1.26-.36 1.82l2.93 2.93c1.5-1.25 2.7-2.89 3.43-4.75c-1.73-4.39-6-7.5-11-7.5c-1.4 0-2.74.25-4 .7l2.17 2.15C10.74 7.13 11.35 7 12 7"/></svg>
+                                                </button>
+                                            </div>
+                                            {% if form_errors(profileForm.plainPassword.second) %}
+                                                <div class="text-error mt-2 p-2 text-sm">
+                                                    {{ form_errors(profileForm.plainPassword.second) }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {% if form_errors(profileForm.plainPassword) %}
+                                        <div class="alert alert-error mt-2 p-2 text-sm">
+                                            {{ form_errors(profileForm.plainPassword) }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                </div>
+
+                                <div class="p-4 bg-base-100 border border-base-200 rounded-md shadow-sm">
+                                    <h3 class="text-sm font-medium mb-3">Photo de profil</h3>
+                                    <div>
+                                        {{ form_label(profileForm.avatarFile) }}
+                                        {{ form_widget(profileForm.avatarFile, {
+                                            'attr': {
+                                                'class': 'file-input file-input-bordered w-full' ~ (form_errors(profileForm.avatarFile) ? ' input-error' : ''),
+                                            },
+                                        }) }}
+                                        {% if form_errors(profileForm.avatarFile) %}
+                                            <div class="text-error mt-2 p-2 text-sm">
+                                                {{ form_errors(profileForm.avatarFile) }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                            {{ form_widget(profileForm._token) }}
+                        <div class="pt-4">
+                            <button type="submit" class="btn btn-primary w-full">Enregistrer les modifications</button>
+                        </div>
+                    {{ form_end(profileForm, {'render_rest': false}) }}
+                    </turbo-frame>
+                </div>
+            </div>
+    </div>
+</div>
+{% endblock %}
