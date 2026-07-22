@@ -76,6 +76,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $avatar_updated_at = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $avatarDefault = null;
+
+    #[UploadableField(
+        mapping: 'avatar',
+        fileNameProperty: 'avatarDefault'
+    )]
+    private ?File $avatarDefaultFile = null;
+
     public function __construct()
     {
         $this->gifts = new ArrayCollection();
@@ -320,6 +329,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAvatarUpdatedAt(\DateTimeImmutable $avatar_updated_at): static
     {
         $this->avatar_updated_at = $avatar_updated_at;
+
+        return $this;
+    }
+
+    public function getAvatarDefault(): ?string
+    {
+        return $this->avatarDefault;
+    }
+
+    public function setAvatarDefault(string $avatarDefault): static
+    {
+        $this->avatarDefault = $avatarDefault;
+
+        return $this;
+    }
+
+    public function getAvatarDefaultFile(): ?File
+    {
+        return $this->avatarDefaultFile;
+    }
+
+    public function setAvatarDefaultFile(?File $avatarDefaultFile): static
+    {
+        $this->avatarDefaultFile = $avatarDefaultFile;
+
+        if (null !== $avatarDefaultFile) {
+            $this->avatar_updated_at = new \DateTimeImmutable();
+        }
 
         return $this;
     }
