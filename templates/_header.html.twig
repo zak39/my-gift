@@ -8,9 +8,13 @@
             <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
                 <twig:molecule:Avatar size="10">
                     <twig:block name="image">
-                        <twig:atomic:Image id="user_avatar_header"
-                            source="{{ is_granted('IS_AUTHENTICATED') ? (app.user.avatar ? vich_uploader_asset(app.user, 'avatarFile') : 'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp') : 'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp' }}"
-                            alt="{{ is_granted('IS_AUTHENTICATED') ? ('Photo de profil ' ~ app.user.firstname ~ ' ' ~ app.user.lastname) : 'Profile photo'  }}" />
+                        {% if is_granted('IS_AUTHENTICATED') %}
+                            <twig:atomic:Image id="user_avatar_header"
+                                source="{{ app.user.avatar ? vich_uploader_asset(app.user, 'avatarFile') : vich_uploader_asset(app.user, 'avatarDefaultFile') }}"
+                                alt="{{ 'Photo de profil ' ~ app.user.firstname ~ ' ' ~ app.user.lastname  }}" />
+                        {% else %}
+                            <twig:ux:icon name="solar:user-bold" class="size-7" />
+                        {% endif %}
                     </twig:block>
                 </twig:molecule:Avatar>
             </div>
