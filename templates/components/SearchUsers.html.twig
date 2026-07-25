@@ -34,7 +34,7 @@
         <div data-loading="show" class="col-span-full text-center">
             <h1 class="skeleton skeleton-text text-xl">Recherche d'utilisateurs en cours...</h1>
         </div>
-        {% for user in computed.users %}
+        {% for user in this.users %}
             <div data-loading="hide">
                 <twig:molecule:UserCard :user="user" />
             </div>
@@ -43,5 +43,9 @@
                 <h1 class="text-xl ">Aucun utilisateur trouvé avec le mot "{{ query }}"!</h1>
             </div>
         {% endfor %}
+
+        <div data-loading="hide" class="col-span-full flex justify-center">
+            {{ knp_pagination_render(this.users, 'components/pagination.html.twig') }}
+        </div>
     </div>
 </div>
