@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Gift | Liste des cadeaux de {{ user.firstname }} {{ user.lastname }} {% endblock %}
+
+{% block body %}
+<div class="md:w-fit mx-auto">
+    <div class="flex md:flex-row md:items-center md:justify-between flex-col gap-4 my-6">
+        <h1 class="md:text-xl text-lg">Les cadeaux de {{ user.firstname }} {{ user.lastname }}</h1>
+        <twig:atomic:Button class="md:self-baseline self-end" name="Créer une section" to="app_section_new" />
+    </div>
+
+    {% for message in app.flashes('success') %}
+        <twig:Alert type="success" :message="message" />
+    {% endfor %}
+    <div class="grid gap-6 grid-cols-1 lg:grid-cols-[280px_1fr] items-start mb-8 md:w-fit md:mx-auto">
+        <div class="flex flex-col gap-4 items-center space-y-4 text-center p-4 bg-base-100 border border-base-200 rounded-md shadow-sm">
+            <twig:molecule:Avatar class="md:h-32 md:w-32 h-24 w-24">
+                <twig:block name="image">
+                    <twig:atomic:Image class="h-24 w-24 md:h-32 md:w-32" id="user_avatar_settings"
+                        source="{{ user.avatar ? vich_uploader_asset(user, 'avatarFile') : vich_uploader_asset(user, 'avatarDefaultFile') }}"
+                        alt="Photo de profil {{ user.firstname }} {{ user.lastname }}" />
+                </twig:block>
+            </twig:molecule:Avatar>
+            <div>
+                <h2 class="md:text-2xl text-xl font-semibold">{{ user.firstname }} {{ user.lastname }}</h2>
+            </div>
+        </div>
+        <div class="md:self-start">
+            <div class="flex flex-col gap-6 mb-8 md:w-5xl">
+                {% for section in sections %}
+                    <twig:molecule:Section :title="section.title"
+                        :description="section.description">
+                        <twig:block name="gifts">
+                            {% for gift in section.gifts %}
+                                {% if gift.isPublic %}
+                                    <twig:CardGift :gift="gift" />
+                                {% endif %}
+                            {% endfor %}
+                        </twig:block>
+                        <twig:block name="actionButtons">
+                            <twig:atomic:Button:Outline name="Editer"
+                                type="secondary"
+                                to="app_section_edit"
+                                :parameters="{ id: section.id }" />
+                            <twig:Modal :id="section.id"
+                                :title="section.title"
+                                class="remove_section">
+                                <twig:block name="message">
+                                    <p class="py-4">Est-ce que vous êtes sûr de supprimer la section <b>{{ section.title }}</b> ?</p>
+                                    <p class="py-4">La suppression de la section ne supprimera pas les cadeaux. Ils seront déplacer dans la section <b>Cadeaux sans Section</b></p>
+                                </twig:block>
+                                <twig:block name="actionButtons">
+                                    <form method="post" action="{{ path('app_section_delete', { id: section.id }) }}">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="submit" class="btn btn-outline btn-secondary">
+                                            <twig:ux:icon name="heroicons:trash-16-solid" />
+                                            Supprimer
+                                        </button>
+                                    </form>
+                                </twig:block>
+                            </twig:Modal>
+                        </twig:block>
+                    </twig:molecule:Section>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

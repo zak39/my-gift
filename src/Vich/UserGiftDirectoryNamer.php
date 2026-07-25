@@ -14,8 +14,7 @@ final class UserGiftDirectoryNamer implements DirectoryNamerInterface
 
     public function directoryName($object, PropertyMapping $mapping): string
     {
-        /** @var App\Entity\User */
-        $user = $this->security->getUser();
+        $user = $object->getCreatedBy();
 
         return sprintf('users/%d/images/gifts', $user->getId());
     }

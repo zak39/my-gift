@@ -80,6 +80,7 @@ class GiftEditType extends AbstractType
             ])
             ->add('section', EntityType::class, [
                 'class' => Section::class,
+                'choices' => $options['sections'],
                 'attr' => [
                     'class' => 'select md:select-md select-xl w-full',
                 ],
@@ -95,6 +96,7 @@ class GiftEditType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Gift::class,
+            'sections' => [],
         ]);
     }
 }

@@ -20,7 +20,7 @@
                 <div class="flex md:flex-row flex-col-reverse md:justify-between md:gap-0 gap-2 my-6">
                     <button type="submit" class="btn btn-primary md:w-3xs md:btn-md btn-lg w-full">Editer la section</button>
                     <button class="btn btn-soft md:w-3xs md:btn-md btn-lg w-full">
-                        <a href={{ path('app_section') }}>
+                        <a href={{ path('app_section', { 'id': user.id }) }}>
                             Retour
                         </a>
                     </button>

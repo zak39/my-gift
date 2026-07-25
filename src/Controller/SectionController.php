@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Section;
+use App\Entity\User;
 use App\Form\SectionType;
 use App\Repository\GiftRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,19 +14,18 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class SectionController extends AbstractController
 {
-    #[Route('/section', name: 'app_section')]
-    public function index(GiftRepository $giftRepository): Response
+    #[Route('/section/{id}', requirements: [ 'id' => '\d+' ], name: 'app_section')]
+    public function index(GiftRepository $giftRepository, User $user): Response
     {
-        /** @var App\Entity\User */
-        $user = $this->getUser();
         $giftsWithoutSection = $giftRepository->findBy([
-            'createdBy' => $this->getUser(),
+            'createdBy' => $user,
             'section' => null,
         ]);
 
         return $this->render('section/index.html.twig', [
             'giftsWithoutSection' => $giftsWithoutSection,
             'sections' => $user->getSections(),
+            'user' => $user,
         ]);
     }
 
@@ -33,6 +33,7 @@ final class SectionController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $section = new Section();
+        /** @var User */
         $user = $this->getUser();
 
         $form = $this->createForm(SectionType::class, $section);
@@ -51,7 +52,7 @@ final class SectionController extends AbstractController
 
             $this->addFlash('success', "La section \"{$section->getTitle()}\" a bien été créée.");
 
-            return $this->redirectToRoute('app_section');
+            return $this->redirectToRoute('app_section', [ 'id' => $user->getId() ]);
         }
 
         return $this->render('section/new.html.twig', [
@@ -69,12 +70,15 @@ final class SectionController extends AbstractController
             $entityManager->persist($section);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_section');
+            /** @var User */
+            $user = $this->getUser();
+
+            return $this->redirectToRoute('app_section', [ 'id' => $user->getId() ]);
         }
 
         return $this->render('section/edit.html.twig', [
             'form' => $form,
-            'edit' => $this->getUser(),
+            'user' => $this->getUser(),
         ]);
     }
 
@@ -90,6 +94,24 @@ final class SectionController extends AbstractController
 
         $this->addFlash('success', "La section \"{$section->getTitle()}\" a bien été supprimée. Les cadeaux sont déplacés dans la section \"Cadeaux sans section\".");
 
-        return $this->redirectToRoute('app_section');
+        /** @var User */
+        $user = $this->getUser();
+
+        return $this->redirectToRoute('app_section', [ 'id' => $user->getId() ]);
+    }
+
+    #[Route('/users/{id}/sections', requirements: [ 'id' => '\d+' ], name: 'app_section_user_page')]
+    public function userPage(GiftRepository $giftRepository, User $user): Response
+    {
+        $giftsWithoutSection = $giftRepository->findBy([
+            'createdBy' => $user,
+            'section' => null,
+        ]);
+
+        return $this->render('section/user_page.html.twig', [
+            'giftsWithoutSection' => $giftsWithoutSection,
+            'sections' => $user->getSections(),
+            'user' => $user,
+        ]);
     }
 }
