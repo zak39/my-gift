@@ -19,7 +19,7 @@ final class GiftController extends AbstractController
     #[Route('/gift', name: 'app_gift')]
     public function index(GiftRepository $repository): Response
     {
-        /** @var  App\Entity\User */
+        /** @var App\Entity\User */
         $user = $this->getUser();
 
         return $this->render('gift/index.html.twig', [
@@ -62,7 +62,7 @@ final class GiftController extends AbstractController
         /** @var App\Entity\User */
         $user = $this->getUser();
 
-        $form = $this->createForm(GiftEditType::class, $gift, [ 'sections' => $user->getSections() ]);
+        $form = $this->createForm(GiftEditType::class, $gift, ['sections' => $user->getSections()]);
         $form->handleRequest($request);
 
         $imagePath = $helper->asset($gift, 'imageFile');
@@ -71,7 +71,7 @@ final class GiftController extends AbstractController
             $entityManager->persist($gift);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_section', [ 'id' => $user->getId() ]);
+            return $this->redirectToRoute('app_section', ['id' => $user->getId()]);
         }
 
         return $this->render('gift/edit.html.twig', [

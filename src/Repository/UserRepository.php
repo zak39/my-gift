@@ -16,13 +16,12 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    const MAX_PER_PAGE = 12;
-    
+    public const MAX_PER_PAGE = 12;
+
     public function __construct(
         ManagerRegistry $registry,
-        private PaginatorInterface $paginator
-    )
-    {
+        private PaginatorInterface $paginator,
+    ) {
         parent::__construct($registry, User::class);
     }
 
@@ -64,7 +63,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 self::MAX_PER_PAGE
             )
         ;
-
     }
 
     //    /**

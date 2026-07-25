@@ -22,9 +22,8 @@ final class SearchUsers
     public int $page = 1;
 
     public function __construct(
-        private UserRepository $userRepository
-    )
-    {
+        private UserRepository $userRepository,
+    ) {
     }
 
     /**

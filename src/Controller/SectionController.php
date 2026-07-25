@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class SectionController extends AbstractController
 {
-    #[Route('/section/{id}', requirements: [ 'id' => '\d+' ], name: 'app_section')]
+    #[Route('/section/{id}', requirements: ['id' => '\d+'], name: 'app_section')]
     public function index(GiftRepository $giftRepository, User $user): Response
     {
         $giftsWithoutSection = $giftRepository->findBy([
@@ -52,7 +52,7 @@ final class SectionController extends AbstractController
 
             $this->addFlash('success', "La section \"{$section->getTitle()}\" a bien été créée.");
 
-            return $this->redirectToRoute('app_section', [ 'id' => $user->getId() ]);
+            return $this->redirectToRoute('app_section', ['id' => $user->getId()]);
         }
 
         return $this->render('section/new.html.twig', [
@@ -73,7 +73,7 @@ final class SectionController extends AbstractController
             /** @var User */
             $user = $this->getUser();
 
-            return $this->redirectToRoute('app_section', [ 'id' => $user->getId() ]);
+            return $this->redirectToRoute('app_section', ['id' => $user->getId()]);
         }
 
         return $this->render('section/edit.html.twig', [
@@ -97,10 +97,10 @@ final class SectionController extends AbstractController
         /** @var User */
         $user = $this->getUser();
 
-        return $this->redirectToRoute('app_section', [ 'id' => $user->getId() ]);
+        return $this->redirectToRoute('app_section', ['id' => $user->getId()]);
     }
 
-    #[Route('/users/{id}/sections', requirements: [ 'id' => '\d+' ], name: 'app_section_user_page')]
+    #[Route('/users/{id}/sections', requirements: ['id' => '\d+'], name: 'app_section_user_page')]
     public function userPage(GiftRepository $giftRepository, User $user): Response
     {
         $giftsWithoutSection = $giftRepository->findBy([
