@@ -11,7 +11,10 @@
           <h2 class="card-title">{{ user.firstname }} {{ user.lastname }}</h2>
       </div>
       <div class="card-actions justify-end">
-        <a href={{ path('app_section_user_page', { id: user.id }) }} class="btn md:btn-sm btn-md btn-primary">Voir profil</a>
+        <twig:atomic:Button class="md:btn-sm btn-md"
+          name="Voir profil"
+          to="app_section_user_page"
+          :parameters="{ id: user.id }" />
       </div>
     </div>
   </div>
