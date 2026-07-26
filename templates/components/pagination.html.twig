@@ -1,0 +1,41 @@
+{% if pageCount > 1 %}
+    <div class="inline-block">
+        <div class="join">
+
+        {% if previous is defined %}
+            <button class="join-item btn bg-base-100"
+                rel="prev"
+                data-action="live#action"
+                data-live-action-param="goToPage"
+                data-live-page-param="{{ previous }}">
+                Précédent
+            </button>
+        {% endif %}
+
+        {% for page in pagesInRange %}
+            {% if page != current %}
+                <button class="join-item btn bg-base-100"
+                    data-action="live#action"
+                    data-live-action-param="goToPage"
+                    data-live-page-param="{{ page }}">
+                    {{ page }}
+                </button>
+            {% else %}
+                <button class="join-item btn bg-accent">{{ page }}</button>
+            {% endif %}
+
+        {% endfor %}
+
+        {% if next is defined %}
+            <button class="join-item btn bg-base-100"
+                rel="next"
+                data-action="live#action"
+                data-live-action-param="goToPage"
+                data-live-page-param="{{ next }}">
+                Suivant
+            </button>
+        {% endif %}
+
+        </div>
+    </div>
+{% endif %}

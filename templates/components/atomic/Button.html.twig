@@ -5,7 +5,7 @@
             <span data-copy-target="label">{{ name }}</span>
         </button>
     {% else %}
-        <a href="{{ path(to, parameters) }}" class="btn btn-{{ type }} btn-{{ size }}">
+        <a href="{{ path(to, parameters) }}" class="btn btn-{{ type }} btn-{{ size }} btn-sm">
             {{ name }}
         </a>
     {% endif %}
