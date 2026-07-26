@@ -11,47 +11,37 @@
     {% endif %}
     <div class="navbar-end">
         {# <input type="text" placeholder="Search" class="input input-bordered w-24 md:w-auto" /> #}
-        <div class="dropdown dropdown-end">
-            <div class="join">
-                <div class="btn rounded-full">
-                    <button class="btn rounded-l-full btn-ghost join-item">Se connecter</button>
-                    <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar join-item">
-                        <twig:molecule:Avatar size="10">
-                            <twig:block name="image">
-                                {% if is_granted('IS_AUTHENTICATED') %}
-                                    <twig:atomic:Image id="user_avatar_header"
-                                        source="{{ app.user.avatar ? vich_uploader_asset(app.user, 'avatarFile') : vich_uploader_asset(app.user, 'avatarDefaultFile') }}"
-                                        alt="{{ 'Photo de profil ' ~ app.user.firstname ~ ' ' ~ app.user.lastname  }}" />
-                                {% else %}
-                                    <twig:ux:icon name="solar:user-bold" class="size-7" />
-                                {% endif %}
-                            </twig:block>
-                        </twig:molecule:Avatar>
-                    </div>
+        {% if not is_granted('IS_AUTHENTICATED') %}
+            <a class="btn rounded-full" href={{ path('app_login') }}>
+                Se connecter
+                <twig:ux:icon name="solar:user-bold" class="size-7" />
+            </a>
+        {% else %}
+            <div class="dropdown dropdown-end">
+                <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+                    <twig:molecule:Avatar size="10">
+                        <twig:block name="image">
+                            <twig:atomic:Image id="user_avatar_header"
+                                source="{{ app.user.avatar ? vich_uploader_asset(app.user, 'avatarFile') : vich_uploader_asset(app.user, 'avatarDefaultFile') }}"
+                                alt="{{ 'Photo de profil ' ~ app.user.firstname ~ ' ' ~ app.user.lastname  }}" />
+                        </twig:block>
+                    </twig:molecule:Avatar>
                 </div>
-            </div>
-            <ul
-                tabindex="-1"
-                class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-                {% if is_granted('IS_AUTHENTICATED') %}
-                    <li>
-                    <a class="justify-between" href={{ path('app_user_profile') }}>
-                        Profile
-                        <span class="badge">New</span>
-                    </a>
-                    </li>
-                    <li><a href={{ path('app_gift') }}>Mes cadeaux</a></li>
-                    <li><a href={{ path('app_section', {id: app.user.id }) }}>Mes listes</a></li>
-                    <li><a>Settings</a></li>
-                    <li><a href={{ path('app_logout') }}>Se déconnecter</a></li>
-                {% else %}
-                    <li>
-                        <a class="justify-between" href={{ path('app_login') }}>
-                            Se connecter
+                <ul
+                    tabindex="-1"
+                    class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+                        <li>
+                        <a class="justify-between" href={{ path('app_user_profile') }}>
+                            Profile
+                            <span class="badge">New</span>
                         </a>
-                    </li>                    
-                {% endif %}
-            </ul>
-        </div>
+                        </li>
+                        <li><a href={{ path('app_gift') }}>Mes cadeaux</a></li>
+                        <li><a href={{ path('app_section', {id: app.user.id }) }}>Mes listes</a></li>
+                        <li><a>Settings</a></li>
+                        <li><a href={{ path('app_logout') }}>Se déconnecter</a></li>
+                </ul>
+            </div>
+        {% endif %}
     </div>
 </div>
