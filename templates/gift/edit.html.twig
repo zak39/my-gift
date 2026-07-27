@@ -5,47 +5,56 @@
 {% block body %}
 <div class="flex justify-center my-16">
     <div class="flex flex-col items-center md:w-4xl w-full">
-        <h1 class="text-xl self-baseline mb-4">Créer un cadeau</h1>
-        {{ form_start(form, { "attr": { "class": "w-full", "enctype": "multipart/form-data" } }) }}
-            <div class="flex flex-col gap-8 w-full">
-                <div class="flex flex-col">
-                    {{ form_row(form.title) }}
+        <div class="card bg-base-100 w-full">
+            <div class="card-body">
+                <div class="card-title">
+                    <h1 class="">Créer un cadeau</h1>
                 </div>
-                <div class="flex flex-col">
-                    {{ form_row(form.description) }}
-                </div>
-                <div class="flex flex-col">
-                    {{ form_label(form.link) }}
-                    <label class="input md:input-md input-xl w-full">
-                        <span class="label">https://</span>
-                        {{ form_widget(form.link) }}
-                    </label>
-                </div>
-                <div class="flex flex-col">
-                    {{ form_row(form.imageFile) }}
-                </div>
-                <div class="flex flex-col">
-                    {{ form_label(form.price) }}
-                    {{ form_widget(form.price) }}
-                </div>
-                <div class="flex flex-col">
-                    {{ form_label(form.section) }}
-                    {{ form_widget(form.section) }}
-                </div>
-                <div class="flex flex-col">
-                    {{ form_label(form.isPublic) }}
-                    {{ form_widget(form.isPublic) }}
-                </div>
+                {{ form_start(form, { "attr": { "class": "w-full", "enctype": "multipart/form-data" } }) }}
+                    <div class="flex flex-col gap-8 w-full">
+                        <div class="flex flex-col">
+                            {{ form_row(form.title) }}
+                        </div>
+                        <div class="flex flex-col">
+                            {{ form_row(form.description) }}
+                        </div>
+                        <div class="flex flex-col">
+                            {{ form_label(form.link) }}
+                            <label class="input input-md w-full">
+                                <span class="label">https://</span>
+                                {{ form_widget(form.link) }}
+                            </label>
+                        </div>
+                        <div class="flex flex-col">
+                            {{ form_row(form.imageFile) }}
+                        </div>
+                        <div class="flex flex-col">
+                            {{ form_label(form.price) }}
+                            {{ form_widget(form.price) }}
+                        </div>
+                        <div class="flex flex-col">
+                            {{ form_label(form.section) }}
+                            {{ form_widget(form.section) }}
+                        </div>
+                        <div class="flex flex-col">
+                            <fieldset class="fieldset bg-base-100 border-base-300 rounded-box w-xs border p-4">
+                                <legend class="fieldset-legend">{{ form.isPublic.vars.label }}</legend>
+                                {{ form_widget(form.isPublic) }}
+                                <p class="label">Rendre votre cadeau lisible aux autres utilisateurs.</p>
+                            </fieldset>
+                        </div>
+                    </div>
+                    <div class="card-actions flex md:flex-row flex-col-reverse md:justify-end justify-center md:gap-4 gap-2 my-6">
+                        <button type="submit" class="btn btn-primary md:btn-md btn-lg md:w-48 w-full">Editer le cadeau</button>
+                        <button class="btn btn-soft md:btn-md btn-lg md:w-48 w-full">
+                            <a href={{ path('app_gift') }}>
+                                Retour
+                            </a>
+                        </button>
+                    </div>
+                {{ form_end(form) }}
             </div>
-            <div class="flex md:flex-row flex-col-reverse md:justify-between md:gap-0 gap-2 my-6">
-                <button type="submit" class="btn btn-primary md:w-3xs md:btn-md btn-lg w-full">Editer le cadeau</button>
-                <button class="btn btn-soft md:w-3xs md:btn-md btn-lg w-full">
-                    <a href={{ path('app_gift') }}>
-                        Retour
-                    </a>
-                </button>
-            </div>
-        {{ form_end(form) }}
+        </div>
     </div>
 </div>
 {% endblock %}

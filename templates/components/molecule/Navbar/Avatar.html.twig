@@ -1,0 +1,25 @@
+<div {{ attributes }} class="dropdown dropdown-end">
+    <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+        <twig:molecule:Avatar size="10">
+            <twig:block name="image">
+                <twig:atomic:Image id="user_avatar_header"
+                    source="{{ app.user.avatar ? vich_uploader_asset(app.user, 'avatarFile') : vich_uploader_asset(app.user, 'avatarDefaultFile') }}"
+                    alt="{{ 'Photo de profil ' ~ app.user.firstname ~ ' ' ~ app.user.lastname  }}" />
+            </twig:block>
+        </twig:molecule:Avatar>
+    </div>
+    <ul
+        tabindex="-1"
+        class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+            <li>
+            <a class="justify-between" href={{ path('app_user_profile') }}>
+                Profile
+                <span class="badge">New</span>
+            </a>
+            </li>
+            <li><twig:atomic:Router:Link link="{{ path('app_gift') }}" name="Mes cadeaux" /></li>
+            <li><twig:atomic:Router:Link link="{{ path('app_section', {id: app.user.id }) }}" name="Mes listes" /></li>
+            <li><twig:atomic:Router:Link name="Settings" /></li>
+            <li><twig:atomic:Router:Link link="{{ path('app_logout') }}" name="Se déconnecter" /></li>
+    </ul>
+</div>
