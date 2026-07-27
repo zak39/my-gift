@@ -7,6 +7,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
@@ -21,6 +22,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function __construct(
         ManagerRegistry $registry,
         private PaginatorInterface $paginator,
+        private Security $security,
     ) {
         parent::__construct($registry, User::class);
     }
@@ -41,20 +43,21 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     public function search(?string $query = null, int $page = 1): PaginationInterface
     {
-        /*
-        return $this->createQueryBuilder('u')
-            ->where('LOWER(u.firstname) LIKE :query')
-            ->orWhere('LOWER(u.lastname) LIKE :query')
-            ->setParameter('query', '%'.strtolower($query).'%')
-            ->getQuery()
-            ->getResult()
-        ;
-        */
+        /** @var User|null */
+        $user = $this->security->getUser();
 
         $queryBuilder = $this->createQueryBuilder('u')
             ->where('LOWER(u.firstname) LIKE :query')
             ->orWhere('LOWER(u.lastname) LIKE :query')
-            ->setParameter('query', '%'.strtolower($query).'%');
+            ->setParameter('query', '%'.strtolower($query).'%')
+        ;
+
+        if ($user instanceof User) {
+            $queryBuilder
+                ->andWhere('u.id != :currentUser')
+                ->setParameter('currentUser', $user->getId())
+            ;
+        }
 
         return $this->paginator
             ->paginate(

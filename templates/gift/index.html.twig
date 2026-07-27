@@ -5,11 +5,10 @@
 {% block body %}
 <div class="flex items-center justify-between my-6">
     <h1 class="text-xl">Les cadeaux</h1>
-    <twig:atomic:Button name="Créer un cadeau"
+    <twig:atomic:Button class="md:btn-lg btn-md"
+        name="Créer un cadeau"
         type="primary"
-        size="xs"
         to="app_gift_create" />
-    </twig:atomic:Button>
 </div>
 <div class="flex flex-col items-center gap-6 my-8">
     {% for gift in gifts %}

@@ -4,52 +4,6 @@
 
 {% block body %}
 <div class="hero bg-base-200 min-h-screen">
-    <div class="flex flex-col-reverse">
-        {% if error %}
-            <div role="alert" class="alert alert-error">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>{{ error.messageKey|trans(error.messageData, 'security') }}</span>
-            </div>
-        {% endif %}
-        <div class="hero-content flex-col lg:flex-row-reverse">
-            {% if app.user is null %}
-                <div class="text-center lg:text-left">
-                <h1 class="text-5xl font-bold">Connectez-vous !</h1>
-                <p class="py-6">
-                    Connectez-vous pour regarder qui vous a offert un joli cadeau 🎁 
-                </p>
-                </div>
-                <div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-                    <div class="card-body">
-                        <form method="post">
-                            <fieldset class="fieldset">
-                            <label class="label">Email</label>
-                            <input type="email" class="input" type="email" value="{{ last_username }}" name="_username" id="username" autocomplete="email" required autofocus placeholder="Email" />
-                            <label class="label">Mot de passe</label>
-                            <input type="password" class="input" name="_password" id="password" autocomplete="current-password" required placeholder="Mot de passe" />
-                            <div><a class="link link-hover">Mot de passe oublié ?</a></div>
-                            <input class="input" type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
-
-                            <div class="flex items-center gap-1.5 my-4">
-                                <input type="checkbox" class="checkbox checkbox-secondary" name="_remember_me" id="_remember_me">
-                                <label for="_remember_me">Se souvenir de moi</label>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary mt-4">Se connecter</button>
-                            </fieldset>
-                        </form>
-                    </div>
-                </div>
-            {% endif %}
-            {% if app.user %}
-                <div class="card mb-3">
-                    <p>Vous êtes déjà connecté en tant que {{ app.user.userIdentifier }}.</p>
-                    <a class="btn btn-neutral my-4" href="{{ logout_path() }}">Se déconnecter</a>
-                </div>
-            {% endif %}
-        </div>
-    </div>
+    {{ include('security/_login_form.html.twig') }}
 </div>
 {% endblock %}

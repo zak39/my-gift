@@ -22,59 +22,59 @@ class GiftEditType extends AbstractType
         $builder
             ->add('title', TextType::class, [
                 'attr' => [
-                    'class' => 'input md:input-md input-xl w-full',
+                    'class' => 'input input-md w-full',
                 ],
                 'label' => 'Titre du cadeau',
                 'label_attr' => [
-                    'class' => 'label md:text-base text-xl',
+                    'class' => 'label text-base',
                 ],
             ])
             ->add('description', TextareaType::class, [
                 'attr' => [
-                    'class' => 'textarea md:textarea-md textarea-lg w-full',
+                    'class' => 'textarea textarea-md w-full',
                 ],
                 'label' => 'Description du cadeau',
                 'label_attr' => [
-                    'class' => 'label md:text-base text-xl',
+                    'class' => 'label text-base',
                 ],
             ])
             ->add('link', UrlType::class, [
                 'attr' => [
-                    'class' => 'input md:input-md input-xl w-full',
+                    'class' => 'input input-md w-full',
                     'placeholder' => 'URL',
                 ],
                 'label' => 'Lien',
                 'label_attr' => [
-                    'class' => 'label md:text-base text-xl',
+                    'class' => 'label text-base',
                 ],
                 'required' => false,
             ])
             ->add('imageFile', FileType::class, [
                 'attr' => [
-                    'class' => 'file-input md:input-md input-xl w-full',
+                    'class' => 'file-input input-md w-full',
                 ],
                 'label' => 'Image',
                 'label_attr' => [
-                    'class' => 'label md:text-base text-xl',
+                    'class' => 'label text-base',
                 ],
                 'required' => false,
             ])
             ->add('price', MoneyType::class, [
                 'attr' => [
-                    'class' => 'input md:input-md input-xl w-full',
+                    'class' => 'input input-md w-full',
                 ],
                 'label' => 'Prix du cadeau',
                 'label_attr' => [
-                    'class' => 'label md:text-base text-xl',
+                    'class' => 'label text-base',
                 ],
             ])
             ->add('isPublic', CheckboxType::class, [
                 'attr' => [
-                    'class' => 'toggle toggle-primary mb-8 md:toggle-md toggle-lg',
+                    'class' => 'toggle toggle-primary mb-4 md:toggle-md toggle-lg',
                 ],
                 'label' => 'Afficher publiquement le cadeau',
                 'label_attr' => [
-                    'class' => 'label md:text-base text-xl mb-2',
+                    'class' => 'label text-base mb-2',
                 ],
                 'required' => false,
             ])
@@ -82,11 +82,11 @@ class GiftEditType extends AbstractType
                 'class' => Section::class,
                 'choices' => $options['sections'],
                 'attr' => [
-                    'class' => 'select md:select-md select-xl w-full',
+                    'class' => 'select select-md w-full',
                 ],
                 'choice_label' => 'title',
                 'label_attr' => [
-                    'class' => 'label md:text-base text-xl mb-2',
+                    'class' => 'label text-base mb-2',
                 ],
             ])
         ;
