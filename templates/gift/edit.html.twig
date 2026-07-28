@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Créer son cadeau{% endblock %}
+{% block title %}My Gift | Créer son cadeau{% endblock %}
 
 {% block body %}
 <div class="flex justify-center my-16">
@@ -8,29 +8,58 @@
         <div class="card bg-base-100 w-full">
             <div class="card-body">
                 <div class="card-title">
-                    <h1 class="">Créer un cadeau</h1>
+                    <h1>Créer un cadeau</h1>
                 </div>
                 {{ form_start(form, { "attr": { "class": "w-full", "enctype": "multipart/form-data" } }) }}
                     <div class="flex flex-col gap-8 w-full">
                         <div class="flex flex-col">
-                            {{ form_row(form.title) }}
+                            {{ form_label(form.title) }}
+                            <label class="input md:input-md input-xl w-full">
+                                {{ form_widget(form.title) }}
+                                {% if form.title.vars.required %}
+                                    <span class="badge badge-neutral badge-xs">Requis</span>
+                                {% endif %}
+                            </label>
+                            {% if form.title.vars.errors|length > 0 %}
+                                <div class="alert alert-error alert-soft my-2">{{ form_errors(form.title) }}</div>
+                            {% endif %}
                         </div>
                         <div class="flex flex-col">
                             {{ form_row(form.description) }}
+                            {% if form.description.vars.errors|length > 0 %}
+                                <div class="alert alert-error alert-soft my-2">{{ form_errors(form.description) }}</div>
+                            {% endif %}
                         </div>
                         <div class="flex flex-col">
                             {{ form_label(form.link) }}
-                            <label class="input input-md w-full">
-                                <span class="label">https://</span>
+                            <label class="input md:input-md input-xl w-full">
+                                https://
                                 {{ form_widget(form.link) }}
+                                {% if form.link.vars.required %}
+                                    <span class="badge badge-neutral badge-xs">Requis</span>
+                                {% endif %}
                             </label>
+                            {% if form.link.vars.errors|length > 0 %}
+                                <div role="alert" class="alert alert-error alert-soft my-2">{{ form_errors(form.link) }}</div>
+                            {% endif %}
                         </div>
                         <div class="flex flex-col">
                             {{ form_row(form.imageFile) }}
+                            {% if form.imageFile.vars.errors|length > 0 %}
+                                <div class="alert alert-error alert-soft my-2">{{ form_errors(form.imageFile) }}</div>
+                            {% endif %}
                         </div>
                         <div class="flex flex-col">
                             {{ form_label(form.price) }}
-                            {{ form_widget(form.price) }}
+                            <label class="input md:input-md input-xl w-full">
+                                {{ form_widget(form.price) }}
+                                {% if form.price.vars.required %}
+                                    <span class="badge badge-neutral badge-xs">Requis</span>
+                                {% endif %}
+                            </label>
+                            {% if form.price.vars.errors|length > 0 %}
+                                <div class="alert alert-error alert-soft my-2">{{ form_errors(form.price) }}</div>
+                            {% endif %}
                         </div>
                         <div class="flex flex-col">
                             {{ form_label(form.section) }}

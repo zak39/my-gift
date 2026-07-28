@@ -10,6 +10,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Attribute\Uploadable;
 use Vich\UploaderBundle\Mapping\Attribute\UploadableField;
 
@@ -25,6 +26,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\Email(message: 'L\'adresse email "{{ value }}" n\'est pas valide.')]
+    #[Assert\NotBlank(message: 'Il faut renseigner une adresse email.')]
     #[ORM\Column(length: 180)]
     private ?string $email = null;
 
@@ -43,9 +46,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[Assert\NotBlank(message: 'Il faut renseigner un nom de famille.')]
     #[ORM\Column(length: 255)]
     private ?string $lastname = null;
 
+    #[Assert\NotBlank(message: 'Il faut renseigner un prénom.')]
     #[ORM\Column(length: 255)]
     private ?string $firstname = null;
 

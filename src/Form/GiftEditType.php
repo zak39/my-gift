@@ -21,9 +21,6 @@ class GiftEditType extends AbstractType
     {
         $builder
             ->add('title', TextType::class, [
-                'attr' => [
-                    'class' => 'input input-md w-full',
-                ],
                 'label' => 'Titre du cadeau',
                 'label_attr' => [
                     'class' => 'label text-base',
@@ -37,10 +34,10 @@ class GiftEditType extends AbstractType
                 'label_attr' => [
                     'class' => 'label text-base',
                 ],
+                'required' => false,
             ])
             ->add('link', UrlType::class, [
                 'attr' => [
-                    'class' => 'input input-md w-full',
                     'placeholder' => 'URL',
                 ],
                 'label' => 'Lien',
@@ -60,9 +57,6 @@ class GiftEditType extends AbstractType
                 'required' => false,
             ])
             ->add('price', MoneyType::class, [
-                'attr' => [
-                    'class' => 'input input-md w-full',
-                ],
                 'label' => 'Prix du cadeau',
                 'label_attr' => [
                     'class' => 'label text-base',
@@ -88,6 +82,9 @@ class GiftEditType extends AbstractType
                 'label_attr' => [
                     'class' => 'label text-base mb-2',
                 ],
+                // Créer une nouvelle option pour la déplacer dans aucune section
+                'placeholder' => "Dans aucune section",
+                'required' => false,
             ])
         ;
     }

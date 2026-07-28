@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Attribute\Uploadable;
 use Vich\UploaderBundle\Mapping\Attribute\UploadableField;
 
@@ -21,9 +22,15 @@ class Gift
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\NotNull(message: 'Vous devez renseigner le titre de votre cadeau.')]
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
+    #[Assert\Length(
+        min: 2,
+        max: 255,
+        maxMessage: 'Votre description est trop longue ! (255 caractères max)'
+    )]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
@@ -33,6 +40,8 @@ class Gift
     #[UploadableField(mapping: 'imageGift', fileNameProperty: 'image')]
     private ?File $imageFile = null;
 
+    #[Assert\NotBlank(message: 'Vous devez renseigner le prix de votre cadeau.')]
+    #[Assert\Positive(message: 'Le prix de votre cadeau doit être possitif.')]
     #[ORM\Column(nullable: true)]
     private ?float $price = null;
 
@@ -58,6 +67,11 @@ class Gift
     #[ORM\Column(enumType: GiftStatus::class)]
     private ?GiftStatus $status = null;
 
+    #[Assert\Url(
+        message: 'Le champ doit être une URL avec "http://..." ou "https://...".',
+        requireTld: true,
+        tldMessage: 'Le nom de domaine de votre URL doit être valide (ex: .com, .fr, .net...).'
+        )]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $link = null;
 
@@ -82,7 +96,7 @@ class Gift
         return $this->title;
     }
 
-    public function setTitle(string $title): static
+    public function setTitle(?string $title): static
     {
         $this->title = $title;
 

@@ -3,8 +3,6 @@
 namespace App\Form;
 
 use App\Entity\Section;
-use App\Entity\User;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -17,9 +15,6 @@ class SectionType extends AbstractType
     {
         $builder
             ->add('title', TextType::class, [
-                'attr' => [
-                    'class' => 'input md:input-md input-xl w-full',
-                ],
                 'label' => 'Titre',
                 'label_attr' => [
                     'class' => 'label md:text-base text-xl',
@@ -34,6 +29,7 @@ class SectionType extends AbstractType
                 'label_attr' => [
                     'class' => 'label md:text-base text-xl',
                 ],
+                'required' => false,
             ])
             /*
             ->add('slug')
