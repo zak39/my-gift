@@ -19,9 +19,6 @@ class GiftType extends AbstractType
     {
         $builder
             ->add('title', TextType::class, [
-                'attr' => [
-                    'class' => 'input md:input-md input-xl w-full',
-                ],
                 'label' => 'Titre du cadeau',
                 'label_attr' => [
                     'class' => 'label md:text-base text-xl',
@@ -35,10 +32,10 @@ class GiftType extends AbstractType
                 'label_attr' => [
                     'class' => 'label md:text-base text-xl',
                 ],
+                'required' => false,
             ])
             ->add('link', UrlType::class, [
                 'attr' => [
-                    'class' => 'input md:input-md input-xl w-full',
                     'placeholder' => 'URL',
                 ],
                 'label' => 'Lien',
@@ -58,9 +55,6 @@ class GiftType extends AbstractType
                 'required' => false,
             ])
             ->add('price', MoneyType::class, [
-                'attr' => [
-                    'class' => 'input md:input-md input-xl w-full',
-                ],
                 'label' => 'Prix du cadeau',
                 'label_attr' => [
                     'class' => 'label md:text-base text-xl',

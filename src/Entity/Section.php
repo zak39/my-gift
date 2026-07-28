@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SectionRepository::class)]
 class Section
@@ -16,9 +17,22 @@ class Section
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\NotBlank]
+    #[Assert\Length(
+        min: 10,
+        max: 255,
+        minMessage: 'Votre titre de section est trop courte ({{ min }} caractères min)',
+        maxMessage: 'Votre titre de section est trop longue ({{ max }} caractères max)',
+    )]
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
+    #[Assert\Length(
+        min: 10,
+        max: 255,
+        minMessage: 'Le titre de votre section est trop courte ({{ min }} caractères minimum)',
+        maxMessage: 'Le titre de votre section est trop longue ({{ max }} caractères maximum)'
+    )]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 

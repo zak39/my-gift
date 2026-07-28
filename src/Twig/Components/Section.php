@@ -8,5 +8,5 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 final class Section
 {
     public string $title;
-    public string $description;
+    public ?string $description = null;
 }
