@@ -9,5 +9,4 @@ final class Soft
 {
     public string $type = 'primary';
     public string $name;
-    public string $size = 'md';
 }

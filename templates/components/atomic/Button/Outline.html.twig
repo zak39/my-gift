@@ -1,12 +1,4 @@
-<div{{ attributes }}>
-    {% if to == '#' %}
-        <a class="{{ full ? 'w-full' : '' }}">
-    {% else %}
-        <a class="{{ full ? 'w-full' : '' }}" href={{ path(to, parameters) }}>
-    {% endif %}
-        <button class="btn btn-outline btn-{{ type }} btn-{{ size }} {{ full ? 'w-full' : '' }}">
-            {% block icon %}{% endblock %}
-            {{ name }}
-        </button>
-    </a>
-</div>
+<button {{ attributes }} class="btn btn-outline btn-{{ type }} btn-{{ size }} {{ full ? 'w-full' : '' }}">
+    {% block icon %}{% endblock %}
+    {{ name }}
+</button>

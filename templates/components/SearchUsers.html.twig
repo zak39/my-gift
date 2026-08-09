@@ -39,9 +39,9 @@
                 <twig:molecule:UserCard :user="user" />
             </div>
         {% else %}
-            <div data-loading="hide" class="col-span-full text-center">
-                <h1 class="text-xl ">Aucun utilisateur trouvé avec "{{ query }}"!</h1>
-            </div>
+            <twig:molecule:EmptyContentHero class="col-span-full text-center"
+                title="Aucun utilisateur trouvé"
+                description='Aucun utilisateur trouvé avec "{{ query }}" !' />
         {% endfor %}
 
         <div data-loading="hide" class="col-span-full flex justify-center">

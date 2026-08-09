@@ -81,22 +81,22 @@
                         <twig:ux:icon name="ri:hand-coin-fill" />
                     </twig:block>
                 </twig:atomic:Button:Soft>
-                <twig:atomic:Button:Outline name="Voir"
-                    to="app_gift_show"
-                    :parameters="{ id: gift.id }"
+                <twig:atomic:ButtonLink class="btn-outline"
+                    name="Voir"
+                    :to="path('app_gift_show', { id: gift.id })"
                     type="secondary">
                     <twig:block name="icon">
                         <twig:ux:icon name="fluent:eye-12-filled" />
                     </twig:block>
-                </twig:atomic:Button:Outline>
-                <twig:atomic:Button:Outline name="Edit"
-                    type="secondary"
-                    to="app_gift_edit"
-                    :parameters="{ id: gift.id }">
+                </twig:atomic:ButtonLink>
+                <twig:atomic:ButtonLink class="btn-outline"
+                    name="Editer"
+                    :to="path('app_gift_edit', { id: gift.id })"
+                    type="secondary">
                     <twig:block name="icon">
                         <twig:ux:icon name="ic:baseline-edit" />
                     </twig:block>
-                </twig:atomic:Button:Outline>
+                </twig:atomic:ButtonLink>
                 <twig:Modal title="Supprimer un cadeau"
                     class="remove_gift"
                     :id="gift.id">

@@ -6,7 +6,7 @@
 <div class="md:w-fit mx-auto">
     <div class="flex md:flex-row md:items-center md:justify-between flex-col gap-4 my-6">
         <h1 class="md:text-xl text-lg">Les cadeaux de {{ user.firstname }} {{ user.lastname }}</h1>
-        <twig:atomic:Button class="md:self-baseline self-end" name="Créer une section" to="app_section_new" />
+        <twig:atomic:ButtonLink class="md:self-baseline self-end" name="Créer une section" :to="path('app_section_new')" />
     </div>
 
     {% for message in app.flashes('success') %}
@@ -38,10 +38,10 @@
                             {% endfor %}
                         </twig:block>
                         <twig:block name="actionButtons">
-                            <twig:atomic:Button:Outline name="Editer"
+                            <twig:atomic:ButtonLink class="btn-outline"
+                                name="Editer"
                                 type="secondary"
-                                to="app_section_edit"
-                                :parameters="{ id: section.id }" />
+                                :to="path('app_section_edit', { id: section.id })" />
                             <twig:Modal :id="section.id"
                                 :title="section.title"
                                 class="remove_section">
@@ -61,6 +61,10 @@
                             </twig:Modal>
                         </twig:block>
                     </twig:molecule:Section>
+                {% else %}
+                    <twig:molecule:EmptyContent class="md:mt-0 mt-4"
+                        title="Mince ! {{ user.firstname }} n'a pas encore de cadeau à offrir 😥"
+                        description="Revenez plus tard pour lui offrir un joli cadeau 😉" />
                 {% endfor %}
             </div>
         </div>

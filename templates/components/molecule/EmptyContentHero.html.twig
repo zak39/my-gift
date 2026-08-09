@@ -1,0 +1,12 @@
+<div {{ attributes }} class="hero bg-base-200 min-h-96">
+  <div class="hero-content text-center">
+    <div class="md:max-w-xl">
+      <h1 class="md:text-2xl text-3xl font-bold">{{ title }}</h1>
+      <p class="py-6 md:text-base text-lg">
+        {{ description }}
+      </p>
+      {% block action_buttons %}
+      {% endblock %}
+    </div>
+  </div>
+</div>
