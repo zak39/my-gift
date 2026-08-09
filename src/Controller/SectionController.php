@@ -22,7 +22,6 @@ final class SectionController extends AbstractController
             'section' => null,
         ]);
 
-        // dd($giftsWithoutSection);
         return $this->render('section/index.html.twig', [
             'giftsWithoutSection' => $giftsWithoutSection,
             'sections' => $user->getSections(),

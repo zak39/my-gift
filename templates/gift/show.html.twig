@@ -41,12 +41,10 @@
             </twig:block>
           Aller sur la boutique
         </a>
-        <twig:atomic:Button:Outline name="Edit"
+        <twig:atomic:ButtonLink class="btn-outline"
+            name="Editer"
             type="secondary"
-            to="app_gift_edit"
-            :full="true"
-            :parameters="{ id: gift.id }">
-        </twig:atomic:Button:Outline>
+            :to="path('app_gift_edit', { id: gift.id })" />
         <twig:Modal title="Supprimer un cadeau"
             class="remove_gift"
             :id="gift.id"
@@ -127,12 +125,10 @@
   </div>
 </div>
 <div class="flex md:flex-row flex-col gap-1 md:justify-center">
-  <twig:atomic:Button:Outline class="flex justify-end mt-2 mb-8"
+    <twig:atomic:ButtonLink class="btn-outline btn-md flex justify-end mt-2 mb-8"
     name="Retour"
     type="neutral"
-    to="app_section"
-    :parameters="{ 'id': gift.createdBy.id }"
-    :full="true"
+    :to="path('app_section', { id: gift.createdBy.id })"
     size="md" />
 </div>
 {% endblock %}

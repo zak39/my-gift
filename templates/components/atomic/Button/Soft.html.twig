@@ -1,6 +1,4 @@
-<div{{ attributes }}>
-    <button class="btn btn-soft btn-{{ type }} btn-{{ size }}">
-        {% block icon %}{% endblock %}
-        {{ name }}
-    </button>
-</div>
+<button {{ attributes.defaults({ class: "btn btn-soft btn-" ~ type }) }}>
+    {% block icon %}{% endblock %}
+    {{ name }}
+</button>

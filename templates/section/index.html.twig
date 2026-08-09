@@ -1,13 +1,15 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}My Gift | Section des cadeaux{% endblock %}
+{% block title %}My Gift | Les sections de mes cadeaux{% endblock %}
 
 {% block body %}
 <div class="flex md:flex-row flex-col md:items-center items-start justify-between my-6 md:gap-0 gap-8">
     <h1 class="text-xl">Mes sections de cadeau</h1>
-    <div class="flex gap-4 md:flex-row flex-col">
-        <twig:atomic:Button name="Créer une section" to="app_section_new" />
-        <twig:atomic:Button class="md:btn-lg btn-md" name="Créer un cadeau" type="primary" to="app_gift_create" />
+    <div class="flex gap-4 md:flex-row flex-col justify-end">
+        {% if sections is not empty %}
+            <twig:atomic:ButtonLink class="btn-md" name="Créer une section" :to="path('app_section_new')" />
+            <twig:atomic:ButtonLink class="btn-md" name="Créer un cadeau" :to="path('app_gift_create')" />
+        {% endif %}
     </div>
 </div>
 
@@ -15,14 +17,16 @@
     <twig:Alert type="success" :message="message" />
 {% endfor %}
 <div class="flex flex-col gap-6 my-8">
-    <twig:molecule:Section title="Cadeaux sans section"
-        description="Les cadeaux qui ne sont pas encore dans une section.">
-        <twig:block name="gifts">
-            {% for gift in giftsWithoutSection %}
-                <twig:CardGift :gift="gift" />
-            {% endfor %}
-        </twig:block>
-    </twig:molecule:Section>
+    {% if sections is not empty %}
+        <twig:molecule:Section title="Cadeaux sans section"
+            description="Les cadeaux qui ne sont pas encore dans une section.">
+            <twig:block name="gifts">
+                {% for gift in giftsWithoutSection %}
+                    <twig:CardGift :gift="gift" />
+                {% endfor %}
+            </twig:block>
+        </twig:molecule:Section>        
+    {% endif %}
 
     {% for section in sections %}
         <twig:molecule:Section :title="section.title"
@@ -33,10 +37,9 @@
                 {% endfor %}
             </twig:block>
             <twig:block name="actionButtons">
-                <twig:atomic:Button:Outline name="Editer"
+                <twig:atomic:ButtonLink name="Editer"
                     type="secondary"
-                    to="app_section_edit"
-                    :parameters="{ id: section.id }" />
+                    :to="path('app_section_edit', { id: section.id })" />
                 <twig:Modal :id="section.id"
                     :title="section.title"
                     class="remove_section">
@@ -56,6 +59,17 @@
                 </twig:Modal>
             </twig:block>
         </twig:molecule:Section>
+
+        {% else %}
+            <twig:molecule:EmptyContentHero
+                title="Vous n'avez pas encore créé de section" 
+                description="Commencez à créer votre première section">
+                <twig:block name="action_buttons">
+                    <twig:atomic:ButtonLink class="md:btn-md btn-lg"
+                        name="Créer votre première section"
+                        :to="path('app_section_new')" />
+                </twig:block>
+            </twig:molecule:EmptyContentHero>
     {% endfor %}
 </div>
 {% endblock %}

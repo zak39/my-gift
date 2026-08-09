@@ -11,10 +11,9 @@
           <h2 class="card-title">{{ user.firstname }} {{ user.lastname }}</h2>
       </div>
       <div class="card-actions justify-end">
-        <twig:atomic:Button class="md:btn-sm btn-md"
+        <twig:atomic:ButtonLink class="md:btn-sm btn-md"
           name="Voir profil"
-          to="app_section_user_page"
-          :parameters="{ id: user.id }" />
+          :to="path('app_section_user_page', { id: user.id })" />
       </div>
     </div>
   </div>

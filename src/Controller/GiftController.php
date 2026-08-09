@@ -95,6 +95,8 @@ final class GiftController extends AbstractController
 
         $this->addFlash('success', "Le cadeau \"{$gift->getTitle()}\" a bien été supprimé.");
 
-        return $this->redirectToRoute('app_section');
+        /** @var \App\Entity\User */
+        $user = $this->getUser();
+        return $this->redirectToRoute('app_section', [ 'id' => $user->getId() ]);
     }
 }

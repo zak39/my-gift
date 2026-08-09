@@ -1,12 +1,4 @@
-<div{{ attributes }}>
-    {% if to == '#' %}
-        <button type="button" class="btn btn-{{ type }} btn-{{ size }}">
-            {% block icon %}{% endblock %}
-            <span data-copy-target="label">{{ name }}</span>
-        </button>
-    {% else %}
-        <a href="{{ path(to, parameters) }}" class="btn btn-{{ type }} btn-{{ size }} btn-sm">
-            {{ name }}
-        </a>
-    {% endif %}
-</div>
+<button {{ attributes.defaults({ class: "btn btn-" ~ type }) }} type="button">
+    {% block icon %}{% endblock %}
+    <span data-copy-target="label">{{ name }}</span>
+</button>
