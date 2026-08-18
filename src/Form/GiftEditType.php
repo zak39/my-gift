@@ -83,7 +83,7 @@ class GiftEditType extends AbstractType
                     'class' => 'label text-base mb-2',
                 ],
                 // Créer une nouvelle option pour la déplacer dans aucune section
-                'placeholder' => "Dans aucune section",
+                'placeholder' => 'Dans aucune section',
                 'required' => false,
             ])
         ;
