@@ -97,6 +97,7 @@ final class GiftController extends AbstractController
 
         /** @var \App\Entity\User */
         $user = $this->getUser();
-        return $this->redirectToRoute('app_section', [ 'id' => $user->getId() ]);
+
+        return $this->redirectToRoute('app_section', ['id' => $user->getId()]);
     }
 }

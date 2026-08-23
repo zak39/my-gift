@@ -32,10 +32,8 @@ class UserProfileType extends AbstractType
                 'always_empty' => false,
                 'attr' => [
                     'autocomplete' => 'current-password',
-                    'class' => 'input',
                 ],
                 'label' => 'Mot de passe actuel',
-                'label_attr' => ['class' => 'label'],
             ])
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
@@ -45,17 +43,14 @@ class UserProfileType extends AbstractType
                 'options' => [
                     'attr' => [
                         'autocomplete' => 'new-password',
-                        'class' => 'input password-fields',
                     ],
                 ],
                 'first_options' => [
                     'label' => 'Nouveau mot de passe',
-                    'label_attr' => ['class' => 'label'],
                     'always_empty' => false,
                 ],
                 'second_options' => [
                     'label' => 'Répétez le mot de passe',
-                    'label_attr' => ['class' => 'label'],
                     'always_empty' => false,
                 ],
             ])

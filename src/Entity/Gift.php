@@ -71,7 +71,7 @@ class Gift
         message: 'Le champ doit être une URL avec "http://..." ou "https://...".',
         requireTld: true,
         tldMessage: 'Le nom de domaine de votre URL doit être valide (ex: .com, .fr, .net...).'
-        )]
+    )]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $link = null;
 
