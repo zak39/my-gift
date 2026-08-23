@@ -50,10 +50,22 @@ function status(): void
     run('symfony server:status');
 }
 
+#[AsTask(description: 'Run the TailwindCSS watcher', aliases: ['sf:tw:build'])]
+function tailwindBuild(#[AsOption(name: 'watch', description: 'Watch for changes')] bool $watch = false): void
+{
+    $cmd = ['symfony', 'console', 'tailwind:build'];
+
+    if ($watch) {
+        $cmd[] = '--watch';
+    }
+
+    run($cmd);
+}
+
 #[AsTask(description: 'Build TailwindCSS and compile via asset-map', aliases: ['sf:b:f'])]
 function buildFront(): void
 {
-    run('symfony console tailwind:build');
+    tailwindBuild();
     run('symfony console asset-map:compile');
 }
 
