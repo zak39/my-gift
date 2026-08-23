@@ -10,69 +10,7 @@
                 <div class="card-title">
                     <h1>Créer un cadeau</h1>
                 </div>
-                {{ form_start(form, { "attr": { "class": "w-full", "enctype": "multipart/form-data" } }) }}
-                    <div class="flex flex-col gap-8 w-full">
-                        <div class="flex flex-col">
-                            {{ form_label(form.title) }}
-                            <label class="input md:input-md input-xl w-full">
-                                {{ form_widget(form.title) }}
-                                {% if form.title.vars.required %}
-                                    <span class="badge badge-neutral badge-xs">Requis</span>
-                                {% endif %}
-                            </label>
-                            {% if form.title.vars.errors|length > 0 %}
-                                <div class="alert alert-error alert-soft my-2">{{ form_errors(form.title) }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="flex flex-col">
-                            {{ form_row(form.description) }}
-                            {% if form.description.vars.errors|length > 0 %}
-                                <div class="alert alert-error alert-soft my-2">{{ form_errors(form.description) }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="flex flex-col">
-                            {{ form_label(form.link) }}
-                            <label class="input md:input-md input-xl w-full">
-                                https://
-                                {{ form_widget(form.link) }}
-                                {% if form.link.vars.required %}
-                                    <span class="badge badge-neutral badge-xs">Requis</span>
-                                {% endif %}
-                            </label>
-                            {% if form.link.vars.errors|length > 0 %}
-                                <div role="alert" class="alert alert-error alert-soft my-2">{{ form_errors(form.link) }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="flex flex-col">
-                            {{ form_row(form.imageFile) }}
-                            {% if form.imageFile.vars.errors|length > 0 %}
-                                <div class="alert alert-error alert-soft my-2">{{ form_errors(form.imageFile) }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="flex flex-col">
-                            {{ form_label(form.price) }}
-                            <label class="input md:input-md input-xl w-full">
-                                {{ form_widget(form.price) }}
-                                {% if form.price.vars.required %}
-                                    <span class="badge badge-neutral badge-xs">Requis</span>
-                                {% endif %}
-                            </label>
-                            {% if form.price.vars.errors|length > 0 %}
-                                <div class="alert alert-error alert-soft my-2">{{ form_errors(form.price) }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="flex flex-col">
-                            <fieldset class="fieldset bg-base-100 border-base-300 rounded-box w-xs border p-4">
-                                <legend class="fieldset-legend">{{ form.isPublic.vars.label }}</legend>
-                                {{ form_widget(form.isPublic) }}
-                                <p class="label">Rendre votre cadeau lisible aux autres utilisateurs.</p>
-                            </fieldset>
-                        </div>
-                    </div>
-                    <div class="card-actions flex md:flex-row flex-col-reverse md:justify-end justify-center md:gap-4 gap-2 my-6">
-                        <button type="submit" class="btn btn-primary md:w-3xs md:btn-md btn-lg w-full my-6">Créer un cadeau</button>
-                    </div>
-                {{ form_end(form) }}
+                <twig:GiftForm :form="form" :initialFormData="gift" />
             </div>
         </div>
     </div>

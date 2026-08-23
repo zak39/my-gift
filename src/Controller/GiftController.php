@@ -7,6 +7,7 @@ use App\Enum\GiftStatus;
 use App\Form\GiftEditType;
 use App\Form\GiftType;
 use App\Repository\GiftRepository;
+use App\Services\ImageDownloader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,7 +29,7 @@ final class GiftController extends AbstractController
     }
 
     #[Route('/gift/create', name: 'app_gift_create')]
-    public function create(Request $request, EntityManagerInterface $entityManager): Response
+    public function create(Request $request, EntityManagerInterface $entityManager, ImageDownloader $imageDownloader): Response
     {
         $gift = new Gift();
 
@@ -36,6 +37,17 @@ final class GiftController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // If we retrieved the image from OpenGraph
+            if (!$gift->getImageFile()) {
+                $openGraphImageUrl = $form->get('openGraphImageUrl')->getData();
+                if ($openGraphImageUrl) {
+                    $imageFile = $imageDownloader->download($openGraphImageUrl);
+                    if ($imageFile) {
+                        $gift->setImageFile($imageFile);
+                    }
+                }
+            }
+
             $gift->setCreatedAt(new \DateTimeImmutable());
             $gift->setCreatedBy($this->getUser());
             $gift->setStatus(GiftStatus::CREATED);
@@ -53,6 +65,7 @@ final class GiftController extends AbstractController
 
         return $this->render('gift/create.html.twig', [
             'form' => $form,
+            'gift' => $gift,
         ]);
     }
 

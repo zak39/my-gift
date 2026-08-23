@@ -1,0 +1,102 @@
+<div{{ attributes }}>
+    {{ form_start(form, { "attr": { "class": "w-full", "enctype": "multipart/form-data" } }) }}
+        <div class="flex flex-col gap-8 w-full">
+            <div class="flex flex-col">
+                {{ form_label(form.link) }}
+                <label class="input md:input-md input-xl w-full">
+                    <span class="label">https://</span>
+                    {{ form_widget(form.link, {
+                        attr: {
+                            'data-model': 'on(change)|link',
+                        }
+                    }) }}
+                    {% if form.link.vars.required %}
+                        <span class="badge badge-neutral badge-xs">Requis</span>
+                    {% endif %}
+                    <span class="loading loading-spinner md:loading-md loading-xl" data-loading="show" data-loading-delay="200"></span>
+                </label>
+                {% if form.link.vars.errors|length > 0 %}
+                    <div role="alert" class="alert alert-error alert-soft my-2">{{ form_errors(form.link) }}</div>
+                {% endif %}
+                <div role="alert" class="alert my-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current text-info h-6 w-6 shrink-0">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Collez le lien du cadeau et pour que cela cherchez automatiquement les informations comme le titre, la description et l'image.</span>
+                </div>
+                {# If we retrieved the image from OpenGraph  #}
+                {% if openGraphFailed %}
+                    <div role="alert" class="alert alert-warning alert-soft">
+                        <span>Impossible de récupérer les informations automatiquement. Vous pouvez quand même compléter les champs ci-dessous et créer votre cadeau.</span>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="flex flex-col">
+                {{ form_label(form.title) }}
+                <label class="input md:input-md input-xl w-full">
+                    {{ form_widget(form.title, { attr: { 'data-loading': 'addAttribute(disabled)' } }) }}
+                    {% if form.title.vars.required %}
+                        <span class="badge badge-neutral badge-xs">Requis</span>
+                    {% endif %}
+                </label>
+                {% if form.title.vars.errors|length > 0 %}
+                    <div class="alert alert-error alert-soft my-2">{{ form_errors(form.title) }}</div>
+                {% endif %}
+            </div>
+            <div class="flex flex-col">
+                {{ form_row(form.description, { attr: { 'data-loading': 'addAttribute(disabled)' } }) }}
+                {% if form.description.vars.errors|length > 0 %}
+                    <div class="alert alert-error alert-soft my-2">{{ form_errors(form.description) }}</div>
+                {% endif %}
+            </div>
+            <div class="flex flex-col"
+                {{ stimulus_controller('file-preview', { openGraphUrl: form.openGraphImageUrl.vars.value ?? '' }) }}>
+                {{ form_row(form.imageFile, {
+                        attr:
+                            {
+                                'data-loading': 'addAttribute(disabled)',
+                                'data-file-preview-target': 'input',
+                                'data-action': 'change->file-preview#show'
+                            }
+                        }
+                ) }}
+                {% if form.imageFile.vars.errors|length > 0 %}
+                    <div class="alert alert-error alert-soft my-2">{{ form_errors(form.imageFile) }}</div>
+                {% endif %}
+
+                {{ form_widget(form.openGraphImageUrl) }}
+
+                {# {% if form.openGraphImageUrl.vars.value %} #}
+                    <div class="flex items-center gap-3 mt-2">
+                        <img class="w-20 h-20 object-cover rounded-box"
+                            data-file-preview-target="preview"
+                            alt="Aperçu de l'image">
+                        <p class="text-sm text-base-content/70" data-file-preview-target="caption"></p>
+                    </div>
+                {# {% endif %} #}
+            </div>
+            <div class="flex flex-col">
+                {{ form_label(form.price) }}
+                <label class="input md:input-md input-xl w-full">
+                    {{ form_widget(form.price) }}
+                    {% if form.price.vars.required %}
+                        <span class="badge badge-neutral badge-xs">Requis</span>
+                    {% endif %}
+                </label>
+                {% if form.price.vars.errors|length > 0 %}
+                    <div class="alert alert-error alert-soft my-2">{{ form_errors(form.price) }}</div>
+                {% endif %}
+            </div>
+            <div class="flex flex-col">
+                <fieldset class="fieldset bg-base-100 border-base-300 rounded-box w-xs border p-4">
+                    <legend class="fieldset-legend">{{ form.isPublic.vars.label }}</legend>
+                    {{ form_widget(form.isPublic) }}
+                    <p class="label">Rendre votre cadeau lisible aux autres utilisateurs.</p>
+                </fieldset>
+            </div>
+        </div>
+        <div class="card-actions flex md:flex-row flex-col-reverse md:justify-end justify-center md:gap-4 gap-2 my-6">
+            <button type="submit" class="btn btn-primary md:w-3xs md:btn-md btn-lg w-full my-6">Créer un cadeau</button>
+        </div>
+    {{ form_end(form) }}
+</div>
