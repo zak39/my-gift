@@ -6,6 +6,7 @@ use App\Entity\Gift;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -68,6 +69,10 @@ class GiftType extends AbstractType
                 'label_attr' => [
                     'class' => 'label md:text-base text-xl mb-2',
                 ],
+                'required' => false,
+            ])
+            ->add('openGraphImageUrl', HiddenType::class, [
+                'mapped' => false,
                 'required' => false,
             ])
             /*
