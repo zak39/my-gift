@@ -7,9 +7,11 @@ use App\Enum\GiftStatus;
 use App\Form\GiftEditType;
 use App\Form\GiftType;
 use App\Repository\GiftRepository;
+use App\Services\FavoriteGiftGrouper;
 use App\Services\ImageDownloader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -112,5 +114,47 @@ final class GiftController extends AbstractController
         $user = $this->getUser();
 
         return $this->redirectToRoute('app_section', ['id' => $user->getId()]);
+    }
+
+    #[Route('/gift/{id}/favorite', name: 'app_gift_add_favorite', methods: ['POST'])]
+    public function addFavorite(Gift $gift, EntityManagerInterface $entityManager): Response
+    {
+        /** @var \App\Entity\User */
+        $user = $this->getUser();
+
+        // dd($user);
+
+        $user->addFavoriteGift($gift);
+        $entityManager->flush();
+
+        return new JsonResponse([
+            'message' => sprintf('Le cadeau %s a été ajouté à vos favoris.', $gift->getTitle()),
+        ]);
+    }
+
+    #[Route('/gift/{id}/favorite/remove', name: 'app_gift_remove_favorite', methods: ['POST'])]
+    public function removeFavorite(Gift $gift, EntityManagerInterface $entityManager): Response
+    {
+        /** @var \App\Entity\User */
+        $user = $this->getUser();
+
+        $user->removeFavoriteGift($gift);
+        $entityManager->flush();
+
+        return new JsonResponse([
+            'message' => sprintf('Le cadeau %s a été retiré à vos favoris.', $gift->getTitle()),
+        ]);
+    }
+
+    #[Route('/user/favorites', name: 'app_gift_user_favorites', methods: ['GET'])]
+    public function getFavoriteGiftsBy(FavoriteGiftGrouper $favoriteGiftGrouper): Response
+    {
+        /** @var \App\Entity\User */
+        $user = $this->getUser();
+
+        return $this->render('gift/favorites.html.twig', [
+            'user' => $user,
+            'favoriteGiftsByUsers' => $favoriteGiftGrouper->groupedByCreator($user),
+        ]);
     }
 }

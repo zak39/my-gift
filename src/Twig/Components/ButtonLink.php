@@ -10,4 +10,5 @@ final class ButtonLink
     public string $type = 'primary';
     public string $name;
     public string $to;
+    public bool $wide = false;
 }

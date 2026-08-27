@@ -32,6 +32,7 @@
             </li>
             <li><twig:atomic:Router:Link link="{{ path('app_gift') }}" name="Mes cadeaux" /></li>
             <li><twig:atomic:Router:Link link="{{ path('app_section', {id: app.user.id }) }}" name="Mes listes" /></li>
+            <li><twig:atomic:Router:Link link="{{ path('app_gift_user_favorites') }}" name="Mes Favoris" /></li>
             <li><twig:atomic:Router:Link name="Settings" /></li>
             <li><twig:atomic:Router:Link link="{{ path('app_logout') }}" name="Se déconnecter" /></li>
         </ul>

@@ -12,4 +12,5 @@ final class Button
     public string $size = 'md';
     public string $to = '#';
     public array $parameters = [];
+    public bool $wide = false;
 }

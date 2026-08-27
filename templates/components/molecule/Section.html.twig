@@ -1,15 +1,17 @@
-<div{{ attributes }}>
-    <div class="collapse collapse-arrow bg-base-100 border border-base-300">
-        <input type="checkbox" />
-        <div class="collapse-title font-semibold">{{ title }}</div>
-            <div class="collapse-content text-sm flex flex-col gap-4">
-                {{ description }}
-                <div class="flex justify-end gap-1">
-                    {% block actionButtons %}
-                    {% endblock %}
-                </div>
-                {% block gifts %}
+<div{{ attributes }} class="collapse collapse-arrow bg-base-100 border border-base-300">
+    <input type="checkbox" />
+    <div class="collapse-title font-semibold flex gap-2 items-center">
+        {% block avatarOwner %}
+        {% endblock %}
+        <span class="text-wrap w-xl">{{ title }}</span>
+    </div>
+        <div class="collapse-content text-sm flex flex-col gap-4">
+            {{ description }}
+            <div class="flex justify-end gap-1">
+                {% block actionButtons %}
                 {% endblock %}
             </div>
-    </div>
+            {% block gifts %}
+            {% endblock %}
+        </div>
 </div>

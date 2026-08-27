@@ -4,7 +4,7 @@ namespace App\Twig\Components;
 
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
-#[AsTwigComponent('atomic:EmptyContent')]
+#[AsTwigComponent('molecule:EmptyContent')]
 final class EmptyContent
 {
     public ?string $title = null;

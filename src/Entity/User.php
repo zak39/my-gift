@@ -90,10 +90,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?File $avatarDefaultFile = null;
 
+    /**
+     * @var Collection<int, Gift>
+     */
+    #[ORM\ManyToMany(targetEntity: Gift::class, inversedBy: 'favoritedBy')]
+    #[ORM\JoinTable(name: 'user_favorite_gift')]
+    private Collection $favoriteGifts;
+
     public function __construct()
     {
         $this->gifts = new ArrayCollection();
         $this->sections = new ArrayCollection();
+        $this->favoriteGifts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -212,6 +220,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->firstname = $firstname;
 
         return $this;
+    }
+
+    public function getFullname(): string
+    {
+        return "$this->firstname $this->lastname";
     }
 
     public function getAvatar(): ?string
@@ -364,5 +377,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Gift>
+     */
+    public function getFavoriteGifts(): Collection
+    {
+        return $this->favoriteGifts;
+    }
+
+    public function addFavoriteGift(Gift $favoriteGift): static
+    {
+        if (!$this->favoriteGifts->contains($favoriteGift)) {
+            $this->favoriteGifts->add($favoriteGift);
+        }
+
+        return $this;
+    }
+
+    public function removeFavoriteGift(Gift $favoriteGift): static
+    {
+        $this->favoriteGifts->removeElement($favoriteGift);
+
+        return $this;
+    }
+
+    public function hasFavoriteGift(Gift $gift): bool
+    {
+        return $this->favoriteGifts->contains($gift);
     }
 }
