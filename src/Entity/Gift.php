@@ -81,9 +81,16 @@ class Gift
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updateAt = null;
 
+    /**
+     * @var Collection<int, User>
+     */
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'favoriteGifts')]
+    private Collection $favoritedBy;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
+        $this->favoritedBy = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -278,6 +285,33 @@ class Gift
     public function setUpdateAt(?\DateTimeImmutable $updateAt): static
     {
         $this->updateAt = $updateAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getFavoritedBy(): Collection
+    {
+        return $this->favoritedBy;
+    }
+
+    public function addFavoritedBy(User $favoritedBy): static
+    {
+        if (!$this->favoritedBy->contains($favoritedBy)) {
+            $this->favoritedBy->add($favoritedBy);
+            $favoritedBy->addFavoriteGift($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFavoritedBy(User $favoritedBy): static
+    {
+        if ($this->favoritedBy->removeElement($favoritedBy)) {
+            $favoritedBy->removeFavoriteGift($this);
+        }
 
         return $this;
     }

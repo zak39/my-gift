@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Gift | Mes Favoris{% endblock %}
+
+{% block body %}
+<div class="flex md:flex-row flex-col md:items-center items-start justify-between my-6 md:gap-0 gap-8">
+    <h1 class="text-xl">Mes Favoris</h1>
+</div>
+
+
+<div class="flex flex-col items-center gap-6 my-8">
+    {% for userId, data in favoriteGiftsByUsers %}
+        {% for sectionId, sectionData in data.sections %}
+            <twig:molecule:Section :title="data.user.fullname ~ ' - ' ~ sectionData.section.title">
+                <twig:block name="avatarOwner">
+                    <twig:molecule:Avatar class="md:h-12 md:w-12 h-12 w-12">
+                        <twig:block name="image">
+                            <twig:atomic:Image class="h-12 w-12 md:h-12 md:w-12" id="user_avatar_settings"
+                                source="{{ data.user.avatar ? vich_uploader_asset(data.user, 'avatarFile') : vich_uploader_asset(data.user, 'avatarDefaultFile') }}"
+                                alt="Photo de profil {{ data.user.firstname }} {{ data.user.lastname }}" />
+                        </twig:block>
+                    </twig:molecule:Avatar>
+                </twig:block>
+                <twig:block name="gifts">
+                    {% for gift in sectionData.gifts %}
+                        <twig:CardGift :gift="gift" />
+                    {% endfor %}
+                </twig:block>
+            </twig:molecule:Section>
+        {% endfor %}
+    {% else %}
+        <twig:molecule:EmptyContentHero class="md:mt-0 mt-4"
+            title="Vous n'avez pas encore mis de cadeau en favoris">
+            <twig:block name="action_buttons">
+                <twig:atomic:ButtonLink class="md:btn-lg btn-md"
+                    name="Commencez par trouver vos amis"
+                    :to="path('app_user')" />
+            </twig:block>
+        </twig:molecule:EmptyContentHero>
+    {% endfor %}
+</div>
+{% endblock %}

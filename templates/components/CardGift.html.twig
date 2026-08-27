@@ -27,8 +27,21 @@
                 <h2 class="card-title">
                     <span class="md:text-xl text-lg">{{ gift.title }}</span>
                 </h2>
-                <button class="btn btn-circle btn-soft btn-secondary">
-                    <twig:ux:icon name="rivet-icons:heart" />
+
+                <button class="btn btn-circle btn-soft btn-secondary"
+                    data-controller="favorite"
+                    data-favorite-id-value="{{ gift.id }}"
+                    data-favorite-is-favorite-value="{{ app.user.hasFavoriteGift(gift) ? 'true' : 'false' }}"
+                    data-favorite-target="button"
+                    data-action="click->favorite#addFavorite">
+                    <twig:ux:icon
+                        class="{{ app.user.hasFavoriteGift(gift) ? '' : 'hidden' }}"
+                        name="rivet-icons:heart-solid"
+                        data-favorite-target="favoriteIcon" />
+                    <twig:ux:icon
+                        class="{{ app.user.hasFavoriteGift(gift) ? 'hidden' }}"
+                        name="rivet-icons:heart"
+                        data-favorite-target="notFavoriteIcon" />
                 </button>
             </div>
             <div>

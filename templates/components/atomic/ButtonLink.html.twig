@@ -1,4 +1,6 @@
-<a {{ attributes.defaults({ class: "btn btn-" ~ type }) }} href={{ to }}>
+<a {{ attributes.defaults({
+        class: "btn btn-" ~ type ~ ( wide ? ' btn-wide' : '' )}
+    )}} href={{ to }}>
     {% block icon %}{% endblock %}
     {{ name }}
 </a>

@@ -1,4 +1,5 @@
-<button {{ attributes.defaults({ class: "btn btn-" ~ type }) }} type="button">
+<button {{ attributes.defaults({
+        class: "btn btn-" ~ type ~ ( wide ? ' btn-wide' : '' )}) }} type="button">
     {% block icon %}{% endblock %}
     <span data-copy-target="label">{{ name }}</span>
 </button>
