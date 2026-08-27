@@ -1,6 +1,6 @@
-<div {{ attributes }} class="dropdown dropdown-end">
+<div {{ attributes }} class="dropdown dropdown-end md:flex hidden">
     <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
-        <twig:molecule:Avatar size="10">
+        <twig:molecule:Avatar size="4">
             <twig:block name="image">
                 <twig:atomic:Image id="user_avatar_header"
                     source="{{ app.user.avatar ? vich_uploader_asset(app.user, 'avatarFile') : vich_uploader_asset(app.user, 'avatarDefaultFile') }}"
