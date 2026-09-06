@@ -63,9 +63,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private bool $isVerified = false;
 
-    #[ORM\ManyToOne(inversedBy: 'participantUser')]
-    private ?Participant $participant = null;
-
     /**
      * @var Collection<int, Gift>
      */
@@ -97,11 +94,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinTable(name: 'user_favorite_gift')]
     private Collection $favoriteGifts;
 
+    /*
+     * @var Collection<int, Participant>
+     */
+    #[ORM\OneToMany(targetEntity: Participant::class, mappedBy: 'participantUser')]
+    private Collection $participations;
+
     public function __construct()
     {
         $this->gifts = new ArrayCollection();
         $this->sections = new ArrayCollection();
         $this->favoriteGifts = new ArrayCollection();
+        $this->participations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -267,18 +271,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getParticipant(): ?Participant
-    {
-        return $this->participant;
-    }
-
-    public function setParticipant(?Participant $participant): static
-    {
-        $this->participant = $participant;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Gift>
      */
@@ -396,6 +388,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /**
+     * @return Collection<int, Participant>
+     */
+    public function getParticipations(): Collection
+    {
+        return $this->participations;
+    }
+
+    public function addParticipation(Participant $participation): static
+    {
+        if (!$this->participations->contains($participation)) {
+            $this->participations->add($participation);
+            $participation->setParticipantUser($this);
+        }
+
+        return $this;
+    }
+
     public function removeFavoriteGift(Gift $favoriteGift): static
     {
         $this->favoriteGifts->removeElement($favoriteGift);
@@ -406,5 +416,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function hasFavoriteGift(Gift $gift): bool
     {
         return $this->favoriteGifts->contains($gift);
+    }
+
+    public function removeParticipation(Participant $participation): static
+    {
+        if ($this->participations->removeElement($participation)) {
+            // set the owning side to null (unless already changed)
+            if ($participation->getParticipantUser() === $this) {
+                $participation->setParticipantUser(null);
+            }
+        }
+
+        return $this;
     }
 }

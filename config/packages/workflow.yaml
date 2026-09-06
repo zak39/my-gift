@@ -1,0 +1,37 @@
+framework:
+    workflows:
+        gift_request:
+            type: 'state_machine'
+            audit_trail:
+                enabled: true
+            marking_store:
+                type: 'method'
+                property: 'status'
+            supports:
+                - App\Entity\Gift
+            initial_marking: !php/enum App\Enum\GiftStatus::CREATED
+            places: !php/enum App\Enum\GiftStatus
+            transitions:
+                reserve:
+                    from: !php/enum App\Enum\GiftStatus::CREATED
+                    to: !php/enum App\Enum\GiftStatus::RESERVED
+                contribute:
+                    from: !php/enum App\Enum\GiftStatus::CREATED
+                    to: !php/enum App\Enum\GiftStatus::CONTRIBUTING
+                disengage:
+                    from: !php/enum App\Enum\GiftStatus::RESERVED
+                    to: !php/enum App\Enum\GiftStatus::CREATED
+                cancelled_contribution:
+                    from: !php/enum App\Enum\GiftStatus::CONTRIBUTING
+                    to: !php/enum App\Enum\GiftStatus::CREATED
+                finalize:
+                    from:
+                        - !php/enum App\Enum\GiftStatus::RESERVED
+                        - !php/enum App\Enum\GiftStatus::CONTRIBUTING
+                    to: !php/enum App\Enum\GiftStatus::READY
+                give:
+                    from: !php/enum App\Enum\GiftStatus::READY
+                    to: !php/enum App\Enum\GiftStatus::GIVEN
+                archive:
+                    from: !php/enum App\Enum\GiftStatus::GIVEN
+                    to: !php/enum App\Enum\GiftStatus::ARCHIVED

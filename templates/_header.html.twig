@@ -3,7 +3,6 @@
         <a class="btn btn-ghost text-xl" href={{ path('app_landing_page') }}>MyGift</a>
     </div>
     <div class="navbar-end">
-        {# <input type="text" placeholder="Search" class="input input-bordered w-24 md:w-auto" /> #}
         {% if not is_granted('IS_AUTHENTICATED') %}
             {# Navbar content for unauthenticated users #}
             <twig:molecule:Navbar:Visitor />

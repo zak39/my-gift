@@ -1,4 +1,5 @@
-<button {{ attributes }} class="btn btn-outline btn-{{ type }} btn-{{ size }} {{ full ? 'w-full' : '' }}">
+<button {{ attributes.defaults({
+    class: "btn btn-outline btn-" ~ type ~ ( wide ? ' btn-wide' : '' )}) }}>
     {% block icon %}{% endblock %}
-    {{ name }}
+    {% block name %}{% endblock %}
 </button>

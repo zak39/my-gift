@@ -12,8 +12,11 @@
       </div>
       <div class="card-actions justify-end">
         <twig:atomic:ButtonLink class="md:btn-sm btn-md"
-          name="Voir profil"
-          :to="path('app_section_user_page', { id: user.id })" />
+          :to="path('app_section_user_page', { id: user.id })">
+          <twig:block name="name">
+              <span>Voir profil</span>
+          </twig:block>
+        </twig:atomic:ButtonLink>
       </div>
     </div>
   </div>

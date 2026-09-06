@@ -1,21 +1,17 @@
-<div{{ attributes }}>
-    <twig:atomic:Button class="btn-outline"
-        name="Supprimer"
-        onclick="modal_{{ class }}_{{ id }}.showModal()"
-        type="secondary">
-        <twig:block name="icon">
-            <twig:ux:icon name="heroicons:trash-16-solid" />
-        </twig:block>
-    </twig:atomic:Button>
+<div{{ attributes }} class="contents">
+    {% block handlerButton %}
+    {% endblock %}
     <dialog id="modal_{{ class }}_{{ id }}" class="modal modal-bottom sm:modal-middle">
         <div class="modal-box">
             <h3 class="text-lg font-bold">{{ title }}</h3>
             {% block message %}
             {% endblock %}
-            <div class="modal-action">
-                {% block actionButtons %}
-                {% endblock %}
-                <form method="dialog">
+            <div class="modal-action flex-col gap-6">
+                <div class="flex flex-row justify-between gap-2">
+                    {% block actionButtons %}
+                    {% endblock %}
+                </div>
+                <form class="self-end" method="dialog">
                     <button class="btn btn-outline btn-neutral">Fermer</button>
                 </form>
             </div>

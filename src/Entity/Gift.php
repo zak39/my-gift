@@ -48,7 +48,7 @@ class Gift
     /**
      * @var Collection<int, Participant>
      */
-    #[ORM\OneToMany(targetEntity: Participant::class, mappedBy: 'gift')]
+    #[ORM\OneToMany(targetEntity: Participant::class, mappedBy: 'gift', orphanRemoval: true)]
     private Collection $participants;
 
     #[ORM\ManyToOne(inversedBy: 'gifts')]
@@ -86,6 +86,9 @@ class Gift
      */
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'favoriteGifts')]
     private Collection $favoritedBy;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $givenAt = null;
 
     public function __construct()
     {
@@ -314,5 +317,57 @@ class Gift
         }
 
         return $this;
+    }
+
+    public function getGivenAt(): ?\DateTimeImmutable
+    {
+        return $this->givenAt;
+    }
+
+    public function setGivenAt(?\DateTimeImmutable $givenAt): static
+    {
+        $this->givenAt = $givenAt;
+
+        return $this;
+    }
+
+    public function getParticipant(User $user): ?Participant
+    {
+        foreach ($this->participants as $participant) {
+            if ($participant->getParticipantUser() === $user) {
+                return $participant;
+            }
+        }
+
+        return null;
+    }
+
+    public function getTotalContributed(): float
+    {
+        $otherParticipantsTotal = 0;
+        foreach ($this->participants as $otherParticipant) {
+            $otherParticipantsTotal += $otherParticipant->getAmount() ?? 0;
+        }
+
+        return $otherParticipantsTotal;
+    }
+
+    public function getRemainingAmount(): float
+    {
+        return $this->price - $this->getTotalContributed();
+    }
+
+    public function getRemainingAmountExcluding(Participant $excluded): float
+    {
+        $total = 0;
+        foreach ($this->participants as $participant) {
+            if ($excluded === $participant) {
+                continue;
+            }
+
+            $total += $participant->getAmount();
+        }
+
+        return $this->price - $total;
     }
 }

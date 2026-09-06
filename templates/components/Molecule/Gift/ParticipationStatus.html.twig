@@ -1,0 +1,50 @@
+<div{{ attributes }}>
+    {% if gift.status.isReserve %}
+        <div class="flex items-center gap-3 md:my-2 my-3 text-sm">
+            {% set participant = this.firstParticipant %}
+            {% if participant.isAnonymous %}
+                <div class="leading-tight">
+                    <span class="md:font-medium md:text-base text-lg">{{ participant.pseudoAnonyme }}</span>
+                    <span class="text-base-content/80 md:text-base text-lg">a réservé ce cadeau</span>
+                </div>
+            {% else %}
+                <twig:molecule:Avatar class="size-8">
+                    <twig:block name="image">
+                        <twig:atomic:Image
+                            source="{{ participant.participantUser.avatar ? vich_uploader_asset(participant.participantUser, 'avatarFile') : vich_uploader_asset(participant.participantUser, 'avatarDefaultFile') }}"
+                            alt="{{ 'Photo de profil ' ~ participant.participantUser.fullname }}" />
+                    </twig:block>
+                </twig:molecule:Avatar>
+                <div class="leading-tight">
+                    <span class="font-bold md:text-base text-sm">
+                        {{ this.isCurrentUser(participant.participantUser) ? 'Vous' : participant.participantUser.fullname }}
+                    </span>
+                    <span class="text-base-content/80 md:text-base text-sm">
+                        {{ this.isCurrentUser(participant.participantUser) ? 'avez réservé ce cadeau' : 'a réservé ce cadeau' }}
+                    </span>
+                </div>
+            {% endif %}
+        </div>
+    {% elseif gift.status.isContributing %}
+        <div class="flex items-center gap-3 md:my-2 my-3 text-sm">
+            <div class="avatar-group -space-x-6">
+                {% for participant in gift.participants|slice(0, 4) %}
+                    <div class="avatar">
+                        <div class="w-12">
+                            <img alt="{{ participant.participantUser.fullname }}"
+                                src="{{ participant.participantUser.avatar ? vich_uploader_asset(participant.participantUser, 'avatarFile') : vich_uploader_asset(participant.participantUser, 'avatarDefaultFile') }}" />
+                        </div>
+                    </div>
+                {% endfor %}
+                {% set otherParticipants = (gift.participants|length) - 4 %}
+                {% if otherParticipants > 0 %}
+                    <div class="avatar avatar-placeholder">
+                        <div class="bg-neutral text-neutral-content w-12">
+                            <span>+{{ otherParticipants }}</span>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+</div>

@@ -4,9 +4,9 @@ namespace App\Entity;
 
 use App\Enum\ParticipantStatus;
 use App\Repository\ParticipantRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Validator\RemainingAmount;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ParticipantRepository::class)]
 class Participant
@@ -16,17 +16,9 @@ class Participant
     #[ORM\Column]
     private ?int $id = null;
 
-    /**
-     * @var Collection<int, User>
-     */
-    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'participant')]
-    private Collection $participantUser;
-
     #[ORM\Column(nullable: true)]
+    #[RemainingAmount]
     private ?float $amount = null;
-
-    #[ORM\Column]
-    private ?\DateTimeImmutable $givenDate = null;
 
     #[ORM\Column]
     private ?bool $anonymous = null;
@@ -37,44 +29,27 @@ class Participant
     #[ORM\ManyToOne(inversedBy: 'participants')]
     private ?Gift $gift = null;
 
+    #[ORM\ManyToOne(inversedBy: 'participations')]
+    private ?User $participantUser = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\When(
+        expression: 'this.isAnonymous()',
+        constraints: [
+            new Assert\NotBlank(
+                message: 'Vous devez saisir un pseudo pour qu\'on ne vous ne reconnaisse pas.'
+            ),
+        ]
+    )]
+    private ?string $pseudoAnonyme = null;
+
     public function __construct()
     {
-        $this->participantUser = new ArrayCollection();
     }
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    /**
-     * @return Collection<int, User>
-     */
-    public function getParticipantUser(): Collection
-    {
-        return $this->participantUser;
-    }
-
-    public function addParticipantUser(User $participantUser): static
-    {
-        if (!$this->participantUser->contains($participantUser)) {
-            $this->participantUser->add($participantUser);
-            $participantUser->setParticipant($this);
-        }
-
-        return $this;
-    }
-
-    public function removeParticipantUser(User $participantUser): static
-    {
-        if ($this->participantUser->removeElement($participantUser)) {
-            // set the owning side to null (unless already changed)
-            if ($participantUser->getParticipant() === $this) {
-                $participantUser->setParticipant(null);
-            }
-        }
-
-        return $this;
     }
 
     public function getAmount(): ?float
@@ -89,19 +64,12 @@ class Participant
         return $this;
     }
 
-    public function getGivenDate(): ?\DateTimeImmutable
-    {
-        return $this->givenDate;
-    }
-
-    public function setGivenDate(\DateTimeImmutable $givenDate): static
-    {
-        $this->givenDate = $givenDate;
-
-        return $this;
-    }
-
     public function isAnonymous(): ?bool
+    {
+        return $this->anonymous;
+    }
+
+    public function getAnonymous(): ?bool
     {
         return $this->anonymous;
     }
@@ -135,5 +103,37 @@ class Participant
         $this->gift = $gift;
 
         return $this;
+    }
+
+    public function getParticipantUser(): ?User
+    {
+        return $this->participantUser;
+    }
+
+    public function setParticipantUser(?User $participantUser): static
+    {
+        $this->participantUser = $participantUser;
+
+        return $this;
+    }
+
+    public function getPseudoAnonyme(): ?string
+    {
+        return $this->pseudoAnonyme;
+    }
+
+    public function setPseudoAnonyme(?string $pseudoAnonyme): static
+    {
+        $this->pseudoAnonyme = $pseudoAnonyme;
+
+        return $this;
+    }
+
+    public function getDisplayName(): string
+    {
+        return $this->isAnonymous()
+            ? $this->getPseudoAnonyme()
+            : $this->getParticipantUser()->getFullname()
+        ;
     }
 }

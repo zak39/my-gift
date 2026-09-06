@@ -7,8 +7,11 @@
     <h1 class="text-xl">Les cadeaux</h1>
     {% if gifts is not empty %}
         <twig:atomic:ButtonLink class="btn-md"
-            name="Créer un cadeau"
-            :to="path('app_gift_create')" />    
+            :to="path('app_gift_create')">
+            <twig:block name="name">
+              <span>Créer un cadeau</span>
+            </twig:block>
+        </twig:atomic:ButtonLink>
     {% endif %}
 </div>
 <div class="flex flex-col items-center gap-6 my-8">
@@ -20,8 +23,11 @@
             description="Commencez à créer votre premier cadeau">
             <twig:block name="action_buttons">
                 <twig:atomic:ButtonLink class="md:btn-md btn-lg"
-                    name="Créer votre premier cadeau"
-                    :to="path('app_gift_create')" />
+                    :to="path('app_gift_create')">
+                    <twig:block name="name">
+                        <span>Créer votre premier cadeau</span>
+                    </twig:block>
+                </twig:atomic:ButtonLink>
             </twig:block>
         </twig:molecule:EmptyContentHero>
     {% endfor %}

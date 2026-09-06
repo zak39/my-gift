@@ -9,7 +9,6 @@ final class UserAvatarDirectoryNamer implements DirectoryNamerInterface
 {
     public function directoryName($object, PropertyMapping $mapping): string
     {
-        // return sprintf('users/%d/images/avatar', $user->getId());
         return sprintf('users/%d/images/avatar', $object->getId());
     }
 }

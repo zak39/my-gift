@@ -9,7 +9,7 @@ enum GiftStatus: string
     case CONTRIBUTING = 'contributing';
     case READY = 'ready';
     case GIVEN = 'given';
-    case DELETED = 'deleted';
+    case ARCHIVED = 'archived';
 
     public static function status(string $status): self
     {
@@ -19,8 +19,27 @@ enum GiftStatus: string
             self::CONTRIBUTING->value => self::CONTRIBUTING,
             self::READY->value => self::READY,
             self::GIVEN->value => self::GIVEN,
-            self::DELETED->value => self::DELETED,
+            self::ARCHIVED->value => self::ARCHIVED,
             default => throw new \Exception('Unknown status: '.$status),
+        };
+    }
+
+    public function isReserve(): bool
+    {
+        return match ($this) {
+            self::RESERVED,
+            self::READY,
+            self::GIVEN,
+            self::ARCHIVED => true,
+            default => false,
+        };
+    }
+
+    public function isContributing(): bool
+    {
+        return match ($this) {
+            self::CONTRIBUTING => true,
+            default => false,
         };
     }
 }
