@@ -1,0 +1,9 @@
+<div{{ attributes }} class="contents">
+    <twig:Molecule:Gift:StatusButtons :gift="gift" />
+    <twig:Molecule:Gift:ShareLinkButton :gift="gift" />
+    {% if gift.link %}
+        <twig:Molecule:Gift:LinkButton :gift="gift" />
+    {% endif %}
+    <twig:Molecule:Gift:EditButton :gift="gift" />
+    <twig:Molecule:Gift:DeleteButton :gift="gift" />
+</div>

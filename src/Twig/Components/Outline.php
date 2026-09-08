@@ -9,8 +9,7 @@ final class Outline
 {
     public string $type = 'primary';
     public string $to = '#';
-    public string $name;
     public string $size = 'md';
     public array $parameters = [];
-    public bool $full = false;
+    public bool $wide = false;
 }

@@ -33,8 +33,11 @@
             title="Vous n'avez pas encore mis de cadeau en favoris">
             <twig:block name="action_buttons">
                 <twig:atomic:ButtonLink class="md:btn-lg btn-md"
-                    name="Commencez par trouver vos amis"
-                    :to="path('app_user')" />
+                    :to="path('app_user')">
+                    <twig:block name="name">
+                        <span>Commencez par trouver vos amis</span>
+                    </twig:block>
+                </twig:atomic:ButtonLink>
             </twig:block>
         </twig:molecule:EmptyContentHero>
     {% endfor %}

@@ -8,14 +8,13 @@ enum ParticipantStatus: string
     case PARTICIPATING = 'participating';
     case CANCELLED = 'cancelled';
 
-    /*
-    public static function status(string $status): self {
+    public static function status(string $status): self
+    {
         return match ($status) {
             self::RESERVED->value => self::RESERVED,
             self::PARTICIPATING->value => self::PARTICIPATING,
             self::CANCELLED->value => self::CANCELLED,
-            default => throw new \Exception('Unknown status: ' . $status),
+            default => throw new \Exception('Unknown status: '.$status),
         };
     }
-    */
 }

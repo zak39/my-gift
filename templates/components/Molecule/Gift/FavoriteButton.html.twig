@@ -1,0 +1,17 @@
+<div{{ attributes }} class="contents">
+    <button class="btn btn-circle btn-soft btn-secondary"
+        data-controller="favorite"
+        data-favorite-id-value="{{ gift.id }}"
+        data-favorite-is-favorite-value="{{ isFavorite ? 'true' : 'false' }}"
+        data-favorite-target="button"
+        data-action="click->favorite#addFavorite">
+        <twig:ux:icon
+            class="{{ isFavorite ? '' : 'hidden' }}"
+            name="rivet-icons:heart-solid"
+            data-favorite-target="favoriteIcon" />
+        <twig:ux:icon
+            class="{{ isFavorite ? 'hidden' }}"
+            name="rivet-icons:heart"
+            data-favorite-target="notFavoriteIcon" />
+    </button>
+</div>

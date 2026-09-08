@@ -8,7 +8,6 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 final class Button
 {
     public string $type = 'primary';
-    public string $name = '';
     public string $size = 'md';
     public string $to = '#';
     public array $parameters = [];

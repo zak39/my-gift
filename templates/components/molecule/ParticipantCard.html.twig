@@ -1,0 +1,13 @@
+<div{{ attributes }} class="card card-border md:card-md card-lg base-100 shadow-sm md:w-xs w-full">
+    <div class="flex gap-8 items-center p-3">
+        <twig:Molecule:Gift:ParticipantAvatar :participant="participant" />
+        <div class="flex flex-col gap-1.5">
+            <h2 class="card-title">{{ this.displayName }}</h2>
+            {% if showAmount %}
+                <div class="badge badge-soft md:badge-md badge-lg badge-accent">
+                    {{ participant.amount|format_currency('EUR') }}
+                </div>                
+            {% endif %}
+        </div>
+    </div>
+</div>

@@ -2,5 +2,5 @@
         class: "btn btn-" ~ type ~ ( wide ? ' btn-wide' : '' )}
     )}} href={{ to }}>
     {% block icon %}{% endblock %}
-    {{ name }}
+    {% block name %}{% endblock %}
 </a>

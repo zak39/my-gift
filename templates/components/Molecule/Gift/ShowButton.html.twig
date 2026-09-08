@@ -1,0 +1,12 @@
+<div{{ attributes }} class="contents">
+    <twig:atomic:ButtonLink class="btn-outline"
+        :to="path('app_gift_show', { id: gift.id })"
+        type="secondary">
+        <twig:block name="icon">
+            <twig:ux:icon name="fluent:eye-12-filled" />
+        </twig:block>
+        <twig:block name="name">
+            <span class="{{ hideLabelOnMobile ? 'md:block hidden' : '' }}">Voir</span>
+        </twig:block>
+    </twig:atomic:ButtonLink>
+</div>

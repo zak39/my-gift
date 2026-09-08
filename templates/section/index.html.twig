@@ -7,8 +7,18 @@
     <h1 class="text-xl">Mes sections de cadeau</h1>
     <div class="flex gap-4 md:flex-row flex-col justify-end">
         {% if sections is not empty %}
-            <twig:atomic:ButtonLink class="btn-md" name="Créer une section" :to="path('app_section_new')" />
-            <twig:atomic:ButtonLink class="btn-md" name="Créer un cadeau" :to="path('app_gift_create')" />
+            <twig:atomic:ButtonLink class="btn-md btn-ghost"
+                :to="path('app_section_new')">
+                <twig:block name="name">
+                    <span>Créer une section</span>
+                </twig:block>
+            </twig:atomic:ButtonLink>
+            <twig:atomic:ButtonLink class="btn-md btn-ghost"
+                :to="path('app_gift_create')">
+                <twig:block name="name">
+                    <span>Créer un cadeau</span>
+                </twig:block>
+            </twig:atomic:ButtonLink>
         {% endif %}
     </div>
 </div>
@@ -37,9 +47,12 @@
                 {% endfor %}
             </twig:block>
             <twig:block name="actionButtons">
-                <twig:atomic:ButtonLink name="Editer"
-                    type="secondary"
-                    :to="path('app_section_edit', { id: section.id })" />
+                <twig:atomic:ButtonLink class="btn-ghost btn-neutral"
+                    :to="path('app_section_edit', { id: section.id })">
+                    <twig:block name="name">
+                        <span>Editer</span>
+                    </twig:block>
+                </twig:atomic:ButtonLink>
                 <twig:Modal :id="section.id"
                     :title="section.title"
                     class="remove_section">
@@ -66,8 +79,11 @@
                 description="Commencez à créer votre première section">
                 <twig:block name="action_buttons">
                     <twig:atomic:ButtonLink class="md:btn-md btn-lg"
-                        name="Créer votre première section"
-                        :to="path('app_section_new')" />
+                        :to="path('app_section_new')">
+                        <twig:block name="name">
+                            <span>Créer votre première section</span>
+                        </twig:block>
+                    </twig:atomic:ButtonLink>
                 </twig:block>
             </twig:molecule:EmptyContentHero>
     {% endfor %}

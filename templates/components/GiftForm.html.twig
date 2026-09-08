@@ -66,14 +66,12 @@
 
                 {{ form_widget(form.openGraphImageUrl) }}
 
-                {# {% if form.openGraphImageUrl.vars.value %} #}
-                    <div class="flex items-center gap-3 mt-2">
-                        <img class="w-20 h-20 object-cover rounded-box"
-                            data-file-preview-target="preview"
-                            alt="Aperçu de l'image">
-                        <p class="text-sm text-base-content/70" data-file-preview-target="caption"></p>
-                    </div>
-                {# {% endif %} #}
+                <div class="flex items-center gap-3 mt-2">
+                    <img class="w-20 h-20 object-cover rounded-box"
+                        data-file-preview-target="preview"
+                        alt="Aperçu de l'image">
+                    <p class="text-sm text-base-content/70" data-file-preview-target="caption"></p>
+                </div>
             </div>
             <div class="flex flex-col">
                 {{ form_label(form.price) }}
