@@ -22,7 +22,13 @@ class Gift
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Assert\NotNull(message: 'Vous devez renseigner le titre de votre cadeau.')]
+    #[Assert\NotNull(message: 'Vous devez renseigner le titre de votre cadeau')]
+    #[Assert\Length(
+        min: 2,
+        max: 255,
+        minMessage: 'Votre titre est trop court ! (2 caractères minimum)',
+        maxMessage: 'Votre titre est trop long ! (255 caractères max)'
+    )]
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
@@ -34,14 +40,19 @@ class Gift
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
+    #[Assert\Image(
+        allowLandscape: false,
+        mimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
+        mimeTypesMessage: 'Le format de l\'image n\'est pas valide (formats acceptés : JPEG, PNG, WEBP)'
+    )]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
     #[UploadableField(mapping: 'imageGift', fileNameProperty: 'image')]
     private ?File $imageFile = null;
 
-    #[Assert\NotBlank(message: 'Vous devez renseigner le prix de votre cadeau.')]
-    #[Assert\Positive(message: 'Le prix de votre cadeau doit être possitif.')]
+    #[Assert\NotBlank(message: 'Vous devez renseigner le prix de votre cadeau')]
+    #[Assert\Positive(message: 'Le prix de votre cadeau doit être possitif')]
     #[ORM\Column(nullable: true)]
     private ?float $price = null;
 

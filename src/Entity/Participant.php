@@ -18,6 +18,7 @@ class Participant
 
     #[ORM\Column(nullable: true)]
     #[RemainingAmount]
+    #[Assert\Positive(message: 'Le montant doit être positif')]
     private ?float $amount = null;
 
     #[ORM\Column]

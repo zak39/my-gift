@@ -18,7 +18,7 @@ use Vich\UploaderBundle\Mapping\Attribute\UploadableField;
 #[Uploadable]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[UniqueEntity(fields: ['email'], message: 'Il existe déjà un compte avec cette adresse email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -26,8 +26,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Assert\Email(message: 'L\'adresse email "{{ value }}" n\'est pas valide.')]
-    #[Assert\NotBlank(message: 'Il faut renseigner une adresse email.')]
+    #[Assert\Email(message: 'L\'adresse email "{{ value }}" n\'est pas valide')]
+    #[Assert\NotBlank(message: 'Il faut renseigner une adresse email')]
     #[ORM\Column(length: 180)]
     private ?string $email = null;
 
@@ -41,20 +41,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Assert\Length(
+        min: 8,
+        max: 255,
+        minMessage: 'Votre mot de passe est trop court ({{ limit }} caractères minimum)',
+        maxMessage: 'Votre mot de passe est trop long ({{ limit }} caractères maximum)'
+    )]
     private ?string $password = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[Assert\NotBlank(message: 'Il faut renseigner un nom de famille.')]
+    #[Assert\NotBlank(message: 'Il faut renseigner un nom de famille')]
     #[ORM\Column(length: 255)]
     private ?string $lastname = null;
 
-    #[Assert\NotBlank(message: 'Il faut renseigner un prénom.')]
+    #[Assert\NotBlank(message: 'Il faut renseigner un prénom')]
     #[ORM\Column(length: 255)]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Image(
+        allowLandscape: false,
+        mimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
+        mimeTypesMessage: 'Le format de l\'image n\'est pas valide (formats acceptés : JPEG, PNG, WEBP)'
+    )]
     private ?string $avatar = null;
 
     #[UploadableField(mapping: 'avatar', fileNameProperty: 'avatar')]
