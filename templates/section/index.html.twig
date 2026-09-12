@@ -9,14 +9,14 @@
         {% if sections is not empty %}
             {% if app.user == user %}
                 <twig:atomic:ButtonLink class="btn-md"
-                    style="ghost"
+                    style="block"
                     :to="path('app_section_new')">
                     <twig:block name="name">
                         <span>Créer une section</span>
                     </twig:block>
                 </twig:atomic:ButtonLink>
                 <twig:atomic:ButtonLink class="btn-md"
-                    style="ghost"
+                    style="block"
                     :to="path('app_gift_create')">
                     <twig:block name="name">
                         <span>Créer un cadeau</span>
@@ -33,7 +33,8 @@
 <div class="flex flex-col gap-6 my-8">
     {% if sections is not empty %}
         <twig:molecule:Section title="Cadeaux sans section"
-            description="Les cadeaux qui ne sont pas encore dans une section.">
+            description="Les cadeaux qui ne sont pas encore dans une section."
+            :checked="true">
             <twig:block name="gifts">
                 {% for gift in giftsWithoutSection %}
                     <twig:CardGift :gift="gift" />
@@ -97,6 +98,8 @@
                 description="Commencez à créer votre première section">
                 <twig:block name="action_buttons">
                     <twig:atomic:ButtonLink class="md:btn-md btn-lg"
+                        type="accent"
+                        style="block"
                         :to="path('app_section_new')">
                         <twig:block name="name">
                             <span>Créer votre première section</span>

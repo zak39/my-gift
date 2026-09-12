@@ -40,15 +40,15 @@ class Gift
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $image = null;
+
+    #[UploadableField(mapping: 'imageGift', fileNameProperty: 'image')]
     #[Assert\Image(
         allowLandscape: false,
         mimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
         mimeTypesMessage: 'Le format de l\'image n\'est pas valide (formats acceptés : JPEG, PNG, WEBP)'
     )]
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $image = null;
-
-    #[UploadableField(mapping: 'imageGift', fileNameProperty: 'image')]
     private ?File $imageFile = null;
 
     #[Assert\NotBlank(message: 'Vous devez renseigner le prix de votre cadeau')]

@@ -9,4 +9,5 @@ final class Section
 {
     public string $title;
     public ?string $description = null;
+    public bool $checked = false;
 }

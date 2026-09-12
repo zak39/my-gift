@@ -37,6 +37,8 @@
                     :id="gift.id">
                 <twig:block name="handlerButton">
                     <twig:atomic:Button class="md:w-52 w-full"
+                        type="accent"
+                        style="block"
                         onclick="modal_offer_gift_{{ gift.id }}.showModal()"
                         type="accent">
                         <twig:block name="icon">
@@ -53,6 +55,7 @@
                     <div class="flex md:flex-row flex-row-reverse justify-between gap-2 w-full">
                     <twig:atomic:ButtonLink
                         type="accent"
+                        style="block"
                         :to="path('app_gift_reserved', { id: gift.id })">
                         <twig:block name="icon">
                             <twig:ux:icon name="famicons:gift" />
@@ -61,8 +64,9 @@
                             <span>Réserver le cadeau</span>
                         </twig:block>
                     </twig:atomic:ButtonLink>
-                    <twig:atomic:ButtonLink class="btn-outline"
+                    <twig:atomic:ButtonLink
                         type="neutral"
+                        style="outline"
                         :to="path('app_gift_participated', { id: gift.id })">
                         <twig:block name="icon">
                             <twig:ux:icon name="ri:hand-coin-fill" />
@@ -147,7 +151,7 @@
                                 <input type="hidden"
                                     name="_token"
                                     value="{{ csrf_token('cancelled-contribution-gift-' ~ gift.id) }}">
-                                <button type="submit" class="btn btn-wide btn-error md:w-64 w-full">
+                                <button type="submit" class="btn btn-wide btn-accent md:w-64 w-full">
                                     <twig:ux:icon name="mdi:gift-off" />
                                     Oui, annuler ma contribution
                                 </button>

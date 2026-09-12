@@ -39,7 +39,8 @@
             <div class="flex flex-col gap-6 mb-8 md:w-5xl">
                 {% for section in sections %}
                     <twig:molecule:Section :title="section.title"
-                        :description="section.description">
+                        :description="section.description"
+                        :checked="loop.first">
                         <twig:block name="gifts">
                             {% for gift in section.gifts %}
                                 {% if gift.isPublic %}

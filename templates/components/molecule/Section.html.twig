@@ -1,5 +1,5 @@
 <div{{ attributes }} class="collapse collapse-arrow bg-base-100 border border-base-300">
-    <input type="checkbox" />
+    <input type="checkbox" {{ checked ? 'checked' : '' }}/>
     <div class="collapse-title font-semibold flex gap-2 items-center">
         {% block avatarOwner %}
         {% endblock %}
