@@ -9,15 +9,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class UserProfileController extends AbstractController
 {
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
     #[Route('/user/profile', name: 'app_user_profile')]
     public function index(Request $request, UserProfileService $profileService): Response
     {
         /** @var User $user */
         $user = $this->getUser();
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         $form = $this->createForm(UserProfileType::class, $user);
         $form->handleRequest($request);

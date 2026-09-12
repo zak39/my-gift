@@ -11,7 +11,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('IS_AUTHENTICATED')]
 final class SectionController extends AbstractController
 {
     #[Route('/section/{id}', requirements: ['id' => '\d+'], name: 'app_section')]
@@ -63,6 +65,8 @@ final class SectionController extends AbstractController
     #[Route('/section/{id}/edit', name: 'app_section_edit')]
     public function edit(Request $request, Section $section, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted('section.is_creator', $section);
+
         $form = $this->createForm(SectionType::class, $section);
         $form->handleRequest($request);
 
@@ -85,6 +89,8 @@ final class SectionController extends AbstractController
     #[Route('/section/{id}/delete', name: 'app_section_delete', methods: ['DELETE'])]
     public function delete(Section $section, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted('section.is_creator', $section);
+
         foreach ($section->getGifts() as $gift) {
             $section->removeGift($gift);
         }
