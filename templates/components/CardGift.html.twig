@@ -7,7 +7,9 @@
                     <span class="md:text-xl text-lg">{{ gift.title }}</span>
                 </h2>
 
-                <twig:Molecule:Gift:FavoriteButton :gift="gift" :isFavorite="app.user.hasFavoriteGift(gift)" />
+                {% if is_granted('gift.is_creator', gift) == false %}
+                    <twig:Molecule:Gift:FavoriteButton :gift="gift" :isFavorite="app.user.hasFavoriteGift(gift)" />
+                {% endif %}
             </div>
             <div class="md:my-0 my-4">
                 <span class="badge badge-lg badge-neutral">
@@ -26,7 +28,7 @@
 
             <twig:Molecule:Gift:ParticipationStatus :gift="gift" />
 
-            {% if gift.getParticipant(app.user) %}
+            {% if gift.getParticipant(app.user) and gift.status.isContributing %}
                 <p>Vous participez déjà à ce cadeau</p>
             {% endif %}
 
@@ -46,8 +48,10 @@
                     <twig:Molecule:Gift:LinkButton :gift="gift" :hideLabelOnMobile="true" />
                 {% endif %}
                 <twig:Molecule:Gift:ShowButton :gift="gift" :hideLabelOnMobile="true" />
-                <twig:Molecule:Gift:EditButton :gift="gift" :hideLabelOnMobile="true" />
-                <twig:Molecule:Gift:DeleteButton :gift="gift" :hideLabelOnMobile="true" />
+                {% if is_granted('gift.is_creator', gift) %}
+                    <twig:Molecule:Gift:EditButton :gift="gift" :hideLabelOnMobile="true" />
+                    <twig:Molecule:Gift:DeleteButton :gift="gift" :hideLabelOnMobile="true" />
+                {% endif %}
             </div>
         </div>
     </div>

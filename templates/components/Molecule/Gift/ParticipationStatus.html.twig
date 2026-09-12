@@ -16,6 +16,7 @@
                     </twig:block>
                 </twig:molecule:Avatar>
                 <div class="leading-tight">
+                    {# {% set statut_message = gift.status.value == 'ready' ? 'réservé' : 'donné' %} #}
                     <span class="font-bold md:text-base text-sm">
                         {{ this.isCurrentUser(participant.participantUser) ? 'Vous' : participant.participantUser.fullname }}
                     </span>

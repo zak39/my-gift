@@ -4,6 +4,8 @@
     {% if gift.link %}
         <twig:Molecule:Gift:LinkButton :gift="gift" />
     {% endif %}
-    <twig:Molecule:Gift:EditButton :gift="gift" />
-    <twig:Molecule:Gift:DeleteButton :gift="gift" />
+    {% if is_granted('gift.is_creator', gift) %}
+        <twig:Molecule:Gift:EditButton :gift="gift" />
+        <twig:Molecule:Gift:DeleteButton :gift="gift" />
+    {% endif %}
 </div>

@@ -14,8 +14,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
+#[IsGranted('IS_AUTHENTICATED')]
 final class GiftController extends AbstractController
 {
     #[Route('/gift', name: 'app_gift')]
@@ -73,6 +75,8 @@ final class GiftController extends AbstractController
     #[Route('/gift/{id}/edit', name: 'app_gift_edit')]
     public function edit(Request $request, Gift $gift, EntityManagerInterface $entityManager, UploaderHelper $helper): Response
     {
+        $this->denyAccessUnlessGranted('gift.is_creator', $gift);
+
         /** @var App\Entity\User */
         $user = $this->getUser();
 
@@ -104,6 +108,8 @@ final class GiftController extends AbstractController
     #[Route('/gift/{id}/delete', name: 'app_gift_delete', methods: ['DELETE'])]
     public function delete(Gift $gift, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted('gift.is_creator', $gift);
+
         $entityManager->remove($gift);
         $entityManager->flush();
 

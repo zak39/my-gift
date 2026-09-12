@@ -1,5 +1,5 @@
 <button {{ attributes.defaults({
-        class: "btn btn-" ~ type ~ ( wide ? ' btn-wide' : '' )}) }} type="button">
+        class: "btn btn-" ~ style ~ " btn-" ~ type ~ ( wide ? ' btn-wide' : '' )}) }} type="button">
     {% block icon %}{% endblock %}
     {% block name %}{% endblock %}
 </button>

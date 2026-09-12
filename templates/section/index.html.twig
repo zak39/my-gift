@@ -7,20 +7,22 @@
     <h1 class="text-xl">Mes sections de cadeau</h1>
     <div class="flex gap-4 md:flex-row flex-col justify-end">
         {% if sections is not empty %}
-            <twig:atomic:ButtonLink class="btn-md"
-                style="ghost"
-                :to="path('app_section_new')">
-                <twig:block name="name">
-                    <span>Créer une section</span>
-                </twig:block>
-            </twig:atomic:ButtonLink>
-            <twig:atomic:ButtonLink class="btn-md"
-                style="ghost"
-                :to="path('app_gift_create')">
-                <twig:block name="name">
-                    <span>Créer un cadeau</span>
-                </twig:block>
-            </twig:atomic:ButtonLink>
+            {% if app.user == user %}
+                <twig:atomic:ButtonLink class="btn-md"
+                    style="ghost"
+                    :to="path('app_section_new')">
+                    <twig:block name="name">
+                        <span>Créer une section</span>
+                    </twig:block>
+                </twig:atomic:ButtonLink>
+                <twig:atomic:ButtonLink class="btn-md"
+                    style="ghost"
+                    :to="path('app_gift_create')">
+                    <twig:block name="name">
+                        <span>Créer un cadeau</span>
+                    </twig:block>
+                </twig:atomic:ButtonLink>
+            {% endif %}
         {% endif %}
     </div>
 </div>
@@ -49,29 +51,43 @@
                 {% endfor %}
             </twig:block>
             <twig:block name="actionButtons">
-                <twig:atomic:ButtonLink class="btn-ghost btn-neutral"
-                    :to="path('app_section_edit', { id: section.id })">
-                    <twig:block name="name">
-                        <span>Editer</span>
-                    </twig:block>
-                </twig:atomic:ButtonLink>
-                <twig:Modal :id="section.id"
-                    :title="section.title"
-                    class="remove_section">
-                    <twig:block name="message">
-                        <p class="py-4">Est-ce que vous êtes sûr de supprimer la section <b>{{ section.title }}</b> ?</p>
-                        <p class="py-4">La suppression de la section ne supprimera pas les cadeaux. Ils seront déplacer dans la section <b>Cadeaux sans Section</b></p>
-                    </twig:block>
-                    <twig:block name="actionButtons">
-                        <form method="post" action="{{ path('app_section_delete', { id: section.id }) }}">
-                            <input type="hidden" name="_method" value="DELETE">
-                            <button type="submit" class="btn btn-outline btn-secondary">
-                                <twig:ux:icon name="heroicons:trash-16-solid" />
-                                Supprimer
-                            </button>
-                        </form>
-                    </twig:block>
-                </twig:Modal>
+                {% if app.user == user %}
+                    <twig:atomic:ButtonLink
+                        type="neutral"
+                        style="ghost"
+                        :to="path('app_section_edit', { id: section.id })">
+                        <twig:block name="name">
+                            <span>Editer</span>
+                        </twig:block>
+                    </twig:atomic:ButtonLink>
+                    <twig:Modal :id="section.id"
+                        :title="section.title"
+                        class="remove_section">
+                        <twig:block name="handlerButton">
+                            <twig:atomic:Button
+                                type="neutral"
+                                style="ghost"
+                                onclick="modal_remove_section_{{ section.id }}.showModal()">
+                                <twig:block name="name">
+                                    <span>Supprimer</span>
+                                </twig:block>
+                            </twig:atomic:Button>
+                        </twig:block>
+                        <twig:block name="message">
+                            <p class="py-4">Est-ce que vous êtes sûr de supprimer la section <b>{{ section.title }}</b> ?</p>
+                            <p class="py-4">La suppression de la section ne supprimera pas les cadeaux. Ils seront déplacer dans la section <b>Cadeaux sans Section</b></p>
+                        </twig:block>
+                        <twig:block name="actionButtons">
+                            <form method="post" action="{{ path('app_section_delete', { id: section.id }) }}">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit" class="btn btn-outline btn-secondary">
+                                    <twig:ux:icon name="heroicons:trash-16-solid" />
+                                    Supprimer
+                                </button>
+                            </form>
+                        </twig:block>
+                    </twig:Modal>
+                {% endif %}
             </twig:block>
         </twig:molecule:Section>
 
