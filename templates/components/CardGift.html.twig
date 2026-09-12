@@ -11,10 +11,17 @@
                     <twig:Molecule:Gift:FavoriteButton :gift="gift" :isFavorite="app.user.hasFavoriteGift(gift)" />
                 {% endif %}
             </div>
-            <div class="md:my-0 my-4">
+            <div class="my-4 flex md:flex-row flex-col md:gap-4 gap-2 ">
                 <span class="badge badge-lg badge-neutral">
                     {{ gift.price|format_currency('EUR') }}
                 </span>
+                {% if is_granted('gift.is_creator', gift) %}
+                    {% if gift.isPublic %}
+                        <twig:molecule:GiftMeta label="Publié" value="Oui" badgeValueColor="success" />
+                    {% else %}
+                        <twig:molecule:GiftMeta label="Publié" value="Non" badgeValueColor="error" />
+                    {% endif %}
+                {% endif %}
             </div>
             {% if gift.link %}
                 <p class="md:w-2xl md:text-lg text-sm md:block hidden">

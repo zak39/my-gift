@@ -11,16 +11,11 @@
     <ul
         tabindex="-1"
         class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-            <li>
-            <a class="justify-between" href={{ path('app_user_profile') }}>
-                Profile
-                <span class="badge">New</span>
-            </a>
-            </li>
+            <li><twig:atomic:Router:Link link="{{ path('app_user_profile') }}" name="Profil" /></li>
+            <li><twig:atomic:Router:Link link="{{ path('app_dashboard') }}" name="Mon Dashboard" /></li>
             <li><twig:atomic:Router:Link link="{{ path('app_gift') }}" name="Mes cadeaux" /></li>
             <li><twig:atomic:Router:Link link="{{ path('app_section', {id: app.user.id }) }}" name="Mes listes" /></li>
             <li><twig:atomic:Router:Link link="{{ path('app_gift_user_favorites') }}" name="Mes Favoris" /></li>
-            <li><twig:atomic:Router:Link name="Settings" /></li>
             <li><twig:atomic:Router:Link link="{{ path('app_logout') }}" name="Se déconnecter" /></li>
     </ul>
 </div>

@@ -1,0 +1,14 @@
+<div{{ attributes }} class="stats stats-vertical sm:stats-horizontal shadow bg-base-100 w-full">
+    <div class="stat place-items-center">
+        <div class="stat-title">Mes cadeaux</div>
+        <div class="stat-value text-primary">{{ giftsCount }}</div>
+    </div>
+    <div class="stat place-items-center">
+        <div class="stat-title">Mes cadeaux en cours de participations</div>
+        <div class="stat-value text-secondary">{{ contributingGiftsCount }}</div>
+    </div>
+    <div class="stat place-items-center">
+        <div class="stat-title">Réservés</div>
+        <div class="stat-value">{{ reservedGiftsCount }}</div>
+    </div>
+</div>

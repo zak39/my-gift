@@ -1,0 +1,24 @@
+<div{{ attributes }}>
+    <div class="card  lg:card-side bg-base-100 shadow-sm">
+        <twig:Organism:Gift:Thumbnail :gift="gift" />
+        <div class="card-body justify-start">
+            <h2 class="card-title text-sm">
+                {{ gift.title }}
+            </h2>
+            <span class="badge badge-sm badge-neutral w-fit">
+                {{ gift.price|format_currency('EUR') }}
+            </span>
+            <twig:Molecule:Gift:ParticipationStatus :gift="gift" />
+            {% if is_granted('gift.is_creator', gift) %}
+                {% if gift.isPublic %}
+                    <twig:molecule:GiftMeta label="Publié" value="Oui" badgeValueColor="success" />
+                {% else %}
+                    <twig:molecule:GiftMeta label="Publié" value="Non" badgeValueColor="error" />
+                {% endif %}
+            {% endif %}
+            <div class="card-actions justify-end mt-auto">
+                <twig:Molecule:Gift:ShowButton :gift="gift" :hideLabelOnMobile="true" />
+            </div>
+        </div>
+    </div>
+</div>

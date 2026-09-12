@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Gift | Mon Dashboard{% endblock %}
+
+{% block body %}
+<div class="container mx-auto px-4 py-6 flex flex-col gap-6">
+    <h1 class="text-2xl font-bold">Mon Dashboard</h1>
+
+    <twig:Organism:Dashboard:Stats
+        :giftsCount="myGiftsCount"
+        :contributingGiftsCount="myContributingGiftsCount"
+        :reservedGiftsCount="myReservedGiftsCount"
+    />
+
+    <twig:Organism:Dashboard:GiftTabs
+        :myGifts="myLastGifts"
+        :myFavoritesGifts="myLastFavoritesGifts"
+        :myContributingGifts="myLastContributingGifts"
+        :myReservedGifts="myLastReservedGifts"
+        :myLastParticipationGifts="myLastParticipationGifts"
+        :myLastReservedParticipationGifts="myLastReservedParticipationGifts"
+        :myLastParticipatingParticipationGifts="myLastParticipatingParticipationGifts"
+    />
+</div>
+{% endblock %}
