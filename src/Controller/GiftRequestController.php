@@ -94,4 +94,16 @@ final class GiftRequestController extends AbstractController
             'gift' => $gift,
         ]);
     }
+
+    #[Route('/cancelled-contribution', name: 'app_gift_cancelled_contribution', methods: ['POST'])]
+    public function cancelledContribution(Gift $gift, GiftLifecycle $giftLifecycle, Request $request): Response
+    {
+        if (!$this->isCsrfTokenValid('cancelled-contribution-gift-'.$gift->getId(), $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $giftLifecycle->cancelledContribution($gift, $this->getUser());
+
+        return $this->redirectToRoute('app_section_user_page', ['id' => $gift->getCreatedBy()->getId()]);
+    }
 }

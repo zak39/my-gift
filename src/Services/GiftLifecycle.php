@@ -139,4 +139,24 @@ class GiftLifecycle
             $this->ready($gift, $user);
         }
     }
+
+    public function cancelledContribution(Gift $gift, User $user): void
+    {
+        if (!$this->giftRequestWorkflow->can($gift, 'cancelled_contribution')) {
+            throw new \LogicException('Le cadeau ne peut pas encore être annulé.');
+        }
+
+        $participant = $this->getParticipant($gift, $user);
+        if (!$participant) {
+            throw new \LogicException('Aucune participation trouvée pour cet utilisateur sur ce cadeau.');
+        }
+
+        $gift->removeParticipant($participant);
+
+        if ($gift->getParticipants()->isEmpty()) {
+            $this->giftRequestWorkflow->apply($gift, 'cancelled_contribution');
+        }
+
+        $this->entityManager->flush();
+    }
 }
