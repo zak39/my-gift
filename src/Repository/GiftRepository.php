@@ -34,7 +34,7 @@ class GiftRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
-    public function findGiftByParticipant(User $user, ?ParticipantStatus $status): array
+    public function findGiftByParticipant(User $user, ?ParticipantStatus $status = null): array
     {
         $queryBuilder = $this->createQueryBuilder('g')
             ->innerJoin('g.participants', 'p')
@@ -42,8 +42,10 @@ class GiftRepository extends ServiceEntityRepository
             ->setParameter('user', $user);
 
         if ($status) {
-            $queryBuilder->andWhere('p.status = :status')
-                ->setParameter('status', $status);
+            $queryBuilder
+                ->andWhere('p.status = :status')
+                ->setParameter('status', $status)
+            ;
         }
 
         return $queryBuilder->getQuery()->getResult();

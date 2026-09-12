@@ -8,6 +8,6 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 final class Stats
 {
     public int $myGiftsCount;
-    public int $myContributingGiftsCount;
+    public int $myParticipatingGiftsCount;
     public int $myReservedGiftsCount;
 }

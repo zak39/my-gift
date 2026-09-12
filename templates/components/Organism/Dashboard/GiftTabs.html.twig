@@ -1,47 +1,27 @@
 <div{{ attributes }} class="tabs tabs-box">
-    <input type="radio" name="dashboard_tabs" class="tab" aria-label="Mes cadeaux ({{ myGifts|length }})" checked="checked" />
+    <input type="radio" name="dashboard_tabs" class="tab" aria-label="Mes derniers cadeaux créés ({{ myGifts|length }})" checked="checked" />
     <twig:Molecule:Dashboard:GiftTabPanel
         :gifts="myGifts"
         emptyMessage="Vous n'avez pas encore ajouté de cadeau."
         seeAllRoute="{{ path('app_gift') }}"
     />
 
-    <input type="radio" name="dashboard_tabs" class="tab" aria-label="Favoris ({{ myFavoritesGifts|length }})" />
+    <input type="radio" name="dashboard_tabs" class="tab" aria-label="Mes derniers cadeaux en favoris ({{ myFavoritesGifts|length }})" />
     <twig:Molecule:Dashboard:GiftTabPanel
         :gifts="myFavoritesGifts"
         emptyMessage="Aucun favori pour le moment."
         seeAllRoute="{{ path('app_gift_user_favorites') }}"
     />
 
-    <input type="radio" name="dashboard_tabs" class="tab" aria-label="Mes cadeaux en cours de participations ({{ myContributingGifts|length }})" />
-    <twig:Molecule:Dashboard:GiftTabPanel
-        :gifts="myContributingGifts"
-        emptyMessage="Aucun cadeau Mes cadeaux en cours de participations."
-        seeAllRoute="{{ path('app_gift') }}"
-    />
-
-    <input type="radio" name="dashboard_tabs" class="tab" aria-label="Réservés ({{ myReservedGifts|length }})" />
-    <twig:Molecule:Dashboard:GiftTabPanel
-        :gifts="myReservedGifts"
-        emptyMessage="Aucun cadeau réservé."
-        seeAllRoute="{{ path('app_gift') }}"
-    />
-
-    <input type="radio" name="dashboard_tabs" class="tab" aria-label="Mes Participations ({{ myLastParticipationGifts|length }})" />
-    <twig:Molecule:Dashboard:GiftTabPanel
-        :gifts="myLastParticipationGifts"
-        emptyMessage="Aucun cadeau Mes Participations."
-    />
-
-    <input type="radio" name="dashboard_tabs" class="tab" aria-label="Mes Participations réservées ({{ myLastReservedParticipationGifts|length }})" />
+    <input type="radio" name="dashboard_tabs" class="tab" aria-label="Mes cadeaux réservés en cours ({{ myLastReservedParticipationGifts|length }})" />
     <twig:Molecule:Dashboard:GiftTabPanel
         :gifts="myLastReservedParticipationGifts"
-        emptyMessage="Aucun cadeau Mes Participations réservées."
+        emptyMessage="Aucun cadeau réservé."
     />
 
-    <input type="radio" name="dashboard_tabs" class="tab" aria-label="Mes Participations en cours ({{ myLastParticipatingParticipationGifts|length }})" />
+    <input type="radio" name="dashboard_tabs" class="tab" aria-label="Mes participations à des cadeaux en cours ({{ myLastParticipatingParticipationGifts|length }})" />
     <twig:Molecule:Dashboard:GiftTabPanel
         :gifts="myLastParticipatingParticipationGifts"
-        emptyMessage="Aucun cadeau Mes Participations en cours."
+        emptyMessage="Aucune participation à un cadeau."
     />
 </div>
