@@ -19,7 +19,7 @@ class Section
 
     #[Assert\NotBlank]
     #[Assert\Length(
-        min: 10,
+        min: 2,
         max: 255,
         minMessage: 'Votre titre de section est trop courte ({{ min }} caractères min)',
         maxMessage: 'Votre titre de section est trop longue ({{ max }} caractères max)',
@@ -28,7 +28,7 @@ class Section
     private ?string $title = null;
 
     #[Assert\Length(
-        min: 10,
+        min: 2,
         max: 255,
         minMessage: 'Le titre de votre section est trop courte ({{ min }} caractères minimum)',
         maxMessage: 'Le titre de votre section est trop longue ({{ max }} caractères maximum)'
