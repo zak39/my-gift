@@ -17,10 +17,12 @@
         <twig:molecule:GiftMeta label="Créé le" value="{{ gift.createdAt|format_datetime('medium', 'none', locale: 'fr') }}" badgeValueType="soft" />
         <twig:molecule:GiftMeta label="Mis à jour" value="{{ gift.updateAt|format_datetime('medium', 'none', locale: 'fr') }}" badgeValueType="soft" />
         <twig:molecule:GiftMeta label="Prix" value="{{ gift.price|format_currency('EUR', { padding_position: 'before_suffix' }) }}" badgeValueType="soft" />
-        {% if gift.isPublic %}
-        <twig:molecule:GiftMeta label="Public" value="Oui" badgeValueColor="success" />
-        {% else %}
-        <twig:molecule:GiftMeta label="Public" value="Non" badgeValueColor="error" />
+        {% if is_granted('gift.is_creator', gift) %}
+            {% if gift.isPublic %}
+                <twig:molecule:GiftMeta label="Public" value="Oui" badgeValueColor="success" />
+            {% else %}
+                <twig:molecule:GiftMeta label="Public" value="Non" badgeValueColor="error" />
+            {% endif %}
         {% endif %}
     </div>
     </div>

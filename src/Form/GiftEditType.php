@@ -64,7 +64,7 @@ class GiftEditType extends AbstractType
             ])
             ->add('isPublic', CheckboxType::class, [
                 'attr' => [
-                    'class' => 'toggle toggle-primary mb-4 md:toggle-md toggle-lg',
+                    'class' => 'toggle toggle-accent mb-4 md:toggle-md toggle-lg',
                 ],
                 'label' => 'Afficher publiquement le cadeau',
                 'label_attr' => [
