@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Gift;
+use App\Entity\User;
+use App\Enum\ParticipantStatus;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -14,6 +16,37 @@ class GiftRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Gift::class);
+    }
+
+    public function findFavoritesGifts(User $user, ?int $limit = null)
+    {
+        $queryBuilder = $this->createQueryBuilder('g')
+            ->innerJoin('g.favoritedBy', 'u')
+            ->where('u.id = :userId')
+            ->setParameter('userId', $user->getId())
+            ->orderBy('g.createdAt', 'DESC')
+        ;
+
+        if ($limit) {
+            $queryBuilder->setMaxResults($limit);
+        }
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
+    public function findGiftByParticipant(User $user, ?ParticipantStatus $status): array
+    {
+        $queryBuilder = $this->createQueryBuilder('g')
+            ->innerJoin('g.participants', 'p')
+            ->where('p.participantUser = :user')
+            ->setParameter('user', $user);
+
+        if ($status) {
+            $queryBuilder->andWhere('p.status = :status')
+                ->setParameter('status', $status);
+        }
+
+        return $queryBuilder->getQuery()->getResult();
     }
 
     //    /**

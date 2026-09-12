@@ -14,6 +14,10 @@ final class LandingPageController extends AbstractController
     #[Route('/', name: 'app_landing_page')]
     public function index(AuthenticationUtils $authenticationUtils): Response
     {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('app_dashboard');
+        }
+
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
 
