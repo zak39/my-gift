@@ -4,7 +4,7 @@
 
 <div{{ attributes }} class="contents">
     {% if gift.participants|length > 0 %}
-        <h2 class="card-title w-full text-xl">Offert par</h2>
+        <h2 class="card-title w-full text-xl mb-6">Offert par</h2>
         <div class="flex flex-col-reverse gap-16 items-center w-full">
             <div class="flex flex-col gap-2 w-full items-center">
                 {% if gift.participants|length > 1 or gift.status.value == 'contributing' %}
@@ -16,12 +16,13 @@
                         </div>
                     </div>
                     {% for participant in gift.participants %}
-                        <twig:molecule:ParticipantCard :participant="participant" :showAmount="true" />
+                        <twig:molecule:ParticipantCard :participant="participant"
+                            :showAmount="true"
+                            avatarSize="size-12 md:size-16" />
                     {% endfor %}
                 {% else %}
-                    <div class="card card-border md:card-md card-lg base-100 shadow-sm md:w-xs">
-                        <twig:molecule:ParticipantCard :participant="gift.participants[0]" />
-                    </div>
+                    <twig:molecule:ParticipantCard :participant="gift.participants[0]"
+                        avatarSize="size-12 md:size-16" />
                 {% endif %}
             </div>
         </div>

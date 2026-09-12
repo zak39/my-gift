@@ -15,12 +15,12 @@
                 </span>
             </div>
             {% if gift.link %}
-                <p class="md:w-2xl md:text-lg text-sm md:line-clamp-4 hidden">
-                    {{ gift.description }}
+                <p class="md:w-2xl md:text-lg text-sm md:block hidden">
+                    {{ gift.description|u.truncate(200, '...') }}
                 </p>
             {% else %}
-                <p class="md:w-2xl md:text-lg text-sm md:line-clamp-7 hidden">
-                    {{ gift.description }}
+                <p class="md:w-2xl md:text-lg text-sm md:block hidden">
+                    {{ gift.description|u.truncate(200, '...') }}
                 </p>
             {% endif %}
 

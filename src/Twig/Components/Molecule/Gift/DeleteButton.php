@@ -10,4 +10,5 @@ final class DeleteButton
 {
     public Gift $gift;
     public bool $hideLabelOnMobile = false;
+    public string $style = 'outline';
 }

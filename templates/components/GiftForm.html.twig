@@ -1,7 +1,7 @@
 <div{{ attributes }}>
     {{ form_start(form, { "attr": { "class": "w-full", "enctype": "multipart/form-data" } }) }}
         <div class="flex flex-col gap-8 w-full">
-            <div class="flex flex-col">
+            <div class="flex flex-col gap-2">
                 {{ form_label(form.link) }}
                 <label class="input md:input-md input-xl w-full">
                     <span class="label">https://</span>
@@ -11,7 +11,7 @@
                         }
                     }) }}
                     {% if form.link.vars.required %}
-                        <span class="badge badge-neutral badge-xs">Requis</span>
+                        <span class="badge badge-accent badge-xs">Requis</span>
                     {% endif %}
                     <span class="loading loading-spinner md:loading-md loading-xl" data-loading="show" data-loading-delay="200"></span>
                 </label>
@@ -31,34 +31,42 @@
                     </div>
                 {% endif %}
             </div>
-            <div class="flex flex-col">
+            <div class="flex flex-col gap-2">
                 {{ form_label(form.title) }}
                 <label class="input md:input-md input-xl w-full">
                     {{ form_widget(form.title, { attr: { 'data-loading': 'addAttribute(disabled)' } }) }}
                     {% if form.title.vars.required %}
-                        <span class="badge badge-neutral badge-xs">Requis</span>
+                        <span class="badge badge-accent badge-xs">Requis</span>
                     {% endif %}
                 </label>
                 {% if form.title.vars.errors|length > 0 %}
                     <div class="alert alert-error alert-soft my-2">{{ form_errors(form.title) }}</div>
                 {% endif %}
             </div>
-            <div class="flex flex-col">
-                {{ form_row(form.description, { attr: { 'data-loading': 'addAttribute(disabled)' } }) }}
+            <div class="flex flex-col gap-2">
+                {{ form_label(form.description) }}
+                {{ form_widget(form.description, { attr: { 'data-loading': 'addAttribute(disabled)' } }) }}
+                {% if form.description.vars.required %}
+                    <span class="badge badge-accent badge-xs">Requis</span>
+                {% endif %}
                 {% if form.description.vars.errors|length > 0 %}
                     <div class="alert alert-error alert-soft my-2">{{ form_errors(form.description) }}</div>
                 {% endif %}
             </div>
-            <div class="flex flex-col"
+            <div class="flex flex-col gap-2"
                 {{ stimulus_controller('file-preview', { openGraphUrl: form.openGraphImageUrl.vars.value ?? '' }) }}>
-                {{ form_row(form.imageFile, {
-                        attr:
-                            {
-                                'data-loading': 'addAttribute(disabled)',
-                                'data-file-preview-target': 'input',
-                                'data-action': 'change->file-preview#show'
-                            }
+                {{ form_label(form.imageFile) }}
+                {% if form.imageFile.vars.required %}
+                    <span class="badge badge-accent badge-xs">Requis</span>
+                {% endif %}
+                {{ form_widget(form.imageFile, {
+                    attr:
+                        {
+                            'data-loading': 'addAttribute(disabled)',
+                            'data-file-preview-target': 'input',
+                            'data-action': 'change->file-preview#show',
                         }
+                    }
                 ) }}
                 {% if form.imageFile.vars.errors|length > 0 %}
                     <div class="alert alert-error alert-soft my-2">{{ form_errors(form.imageFile) }}</div>
@@ -73,19 +81,19 @@
                     <p class="text-sm text-base-content/70" data-file-preview-target="caption"></p>
                 </div>
             </div>
-            <div class="flex flex-col">
+            <div class="flex flex-col gap-2">
                 {{ form_label(form.price) }}
                 <label class="input md:input-md input-xl w-full">
                     {{ form_widget(form.price) }}
                     {% if form.price.vars.required %}
-                        <span class="badge badge-neutral badge-xs">Requis</span>
+                        <span class="badge badge-accent badge-xs">Requis</span>
                     {% endif %}
                 </label>
                 {% if form.price.vars.errors|length > 0 %}
                     <div class="alert alert-error alert-soft my-2">{{ form_errors(form.price) }}</div>
                 {% endif %}
             </div>
-            <div class="flex flex-col">
+            <div class="flex flex-col gap-2">
                 <fieldset class="fieldset bg-base-100 border-base-300 rounded-box w-xs border p-4">
                     <legend class="fieldset-legend">{{ form.isPublic.vars.label }}</legend>
                     {{ form_widget(form.isPublic) }}
@@ -94,7 +102,7 @@
             </div>
         </div>
         <div class="card-actions flex md:flex-row flex-col-reverse md:justify-end justify-center md:gap-4 gap-2 my-6">
-            <button type="submit" class="btn btn-primary md:w-3xs md:btn-md btn-lg w-full my-6">Créer un cadeau</button>
+            <button type="submit" class="btn btn-accent md:w-3xs md:btn-md btn-lg w-full my-6">Créer un cadeau</button>
         </div>
     {{ form_end(form) }}
 </div>

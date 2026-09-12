@@ -6,7 +6,6 @@ use App\Entity\Gift;
 use App\Enum\GiftStatus;
 use App\Form\GiftEditType;
 use App\Form\GiftType;
-use App\Repository\GiftRepository;
 use App\Services\FavoriteGiftGrouper;
 use App\Services\ImageDownloader;
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,7 +19,7 @@ use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 final class GiftController extends AbstractController
 {
     #[Route('/gift', name: 'app_gift')]
-    public function index(GiftRepository $repository): Response
+    public function index(): Response
     {
         /** @var App\Entity\User */
         $user = $this->getUser();

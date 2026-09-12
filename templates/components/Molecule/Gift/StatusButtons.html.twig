@@ -5,6 +5,7 @@
                 <twig:atomic:ButtonLink
                     class="md:w-60 w-full"
                     type="accent"
+                    style="block"
                     :to="path('app_gift_participated', { id: gift.id })">
                     <twig:block name="icon">
                         <twig:ux:icon name="ri:hand-coin-fill" />
@@ -15,7 +16,9 @@
                 </twig:atomic:ButtonLink> 
             {% else %}
                 <twig:atomic:ButtonLink
+                    class="md:w-60 w-full"
                     type="accent"
+                    style="block"
                     :to="path('app_gift_participated', { id: gift.id })">
                     <twig:block name="icon">
                         <twig:ux:icon name="ri:hand-coin-fill" />
