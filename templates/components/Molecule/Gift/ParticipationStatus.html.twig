@@ -27,14 +27,9 @@
         </div>
     {% elseif gift.status.isContributing %}
         <div class="flex items-center gap-3 md:my-2 my-3 text-sm">
-            <div class="avatar-group -space-x-6">
+            <div class="avatar-group -space-x-3">
                 {% for participant in gift.participants|slice(0, 4) %}
-                    <div class="avatar">
-                        <div class="w-12">
-                            <img alt="{{ participant.participantUser.fullname }}"
-                                src="{{ participant.participantUser.avatar ? vich_uploader_asset(participant.participantUser, 'avatarFile') : vich_uploader_asset(participant.participantUser, 'avatarDefaultFile') }}" />
-                        </div>
-                    </div>
+                    <twig:Molecule:Gift:ParticipantAvatar :participant="participant" :size="avatarSize" />
                 {% endfor %}
                 {% set otherParticipants = (gift.participants|length) - 4 %}
                 {% if otherParticipants > 0 %}

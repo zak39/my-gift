@@ -9,4 +9,5 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 final class ParticipantAvatar
 {
     public Participant $participant;
+    public string $size = '';
 }

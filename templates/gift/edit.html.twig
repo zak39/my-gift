@@ -17,7 +17,7 @@
                             <label class="input md:input-md input-xl w-full">
                                 {{ form_widget(form.title) }}
                                 {% if form.title.vars.required %}
-                                    <span class="badge badge-neutral badge-xs">Requis</span>
+                                    <span class="badge badge-accent badge-xs">Requis</span>
                                 {% endif %}
                             </label>
                             {% if form.title.vars.errors|length > 0 %}
@@ -36,7 +36,7 @@
                                 https://
                                 {{ form_widget(form.link) }}
                                 {% if form.link.vars.required %}
-                                    <span class="badge badge-neutral badge-xs">Requis</span>
+                                    <span class="badge badge-accent badge-xs">Requis</span>
                                 {% endif %}
                             </label>
                             {% if form.link.vars.errors|length > 0 %}
@@ -54,7 +54,7 @@
                             <label class="input md:input-md input-xl w-full">
                                 {{ form_widget(form.price) }}
                                 {% if form.price.vars.required %}
-                                    <span class="badge badge-neutral badge-xs">Requis</span>
+                                    <span class="badge badge-accent badge-xs">Requis</span>
                                 {% endif %}
                             </label>
                             {% if form.price.vars.errors|length > 0 %}
@@ -74,7 +74,7 @@
                         </div>
                     </div>
                     <div class="card-actions flex md:flex-row flex-col-reverse md:justify-end justify-center md:gap-4 gap-2 my-6">
-                        <button type="submit" class="btn btn-primary md:btn-md btn-lg md:w-48 w-full">Editer le cadeau</button>
+                        <button type="submit" class="btn btn-accent md:btn-md btn-lg md:w-48 w-full">Editer le cadeau</button>
                         <button class="btn btn-soft md:btn-md btn-lg md:w-48 w-full">
                             <a href={{ path('app_gift') }}>
                                 Retour

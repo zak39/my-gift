@@ -3,7 +3,7 @@
         class="remove_gift"
         :id="gift.id">
         <twig:block name="handlerButton">
-            <twig:atomic:Button class="btn-outline"
+            <twig:atomic:Button class="btn-{{ style }}"
                 onclick="modal_remove_gift_{{ gift.id }}.showModal()"
                 type="secondary">
                 <twig:block name="icon">
@@ -20,7 +20,7 @@
         <twig:block name="actionButtons">
             <form method="post" action="{{ path('app_gift_delete', { id: gift.id }) }}">
                 <input type="hidden" name="_method" value="DELETE">
-                <button type="submit" class="btn btn-outline btn-error">
+                <button type="submit" class="btn btn-error">
                     <twig:ux:icon name="heroicons:trash-16-solid" />
                     Supprimer
                 </button>

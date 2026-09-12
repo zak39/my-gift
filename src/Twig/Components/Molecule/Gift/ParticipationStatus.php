@@ -12,6 +12,7 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 final class ParticipationStatus
 {
     public ?Gift $gift = null;
+    public string $avatarSize = 'size-8';
 
     public function __construct(private Security $security)
     {

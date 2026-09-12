@@ -1,12 +1,12 @@
 <div{{ attributes }}>
     {% if participant.isAnonymous %}
-        <div class="avatar avatar-placeholder size-16">
+        <div class="avatar avatar-placeholder {{ size }}">
             <div class="bg-secondary text-secondary-content w-24 rounded-full">
                 <span class="text-3xl">{{ participant.pseudoAnonyme|u.truncate(2)|capitalize }}</span>
             </div>
         </div>
     {% else %}
-        <twig:molecule:Avatar class="size-16">
+        <twig:molecule:Avatar class="{{ size }}">
             <twig:block name="image">
                 <twig:atomic:Image
                     source="{{ participant.participantUser.avatar ? vich_uploader_asset(participant.participantUser, 'avatarFile') : vich_uploader_asset(participant.participantUser, 'avatarDefaultFile') }}"

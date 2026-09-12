@@ -8,6 +8,7 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 final class ButtonLink
 {
     public string $type = '';
+    public string $style = 'soft';
     public string $to;
     public bool $wide = false;
 }

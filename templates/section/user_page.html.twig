@@ -6,7 +6,11 @@
 <div class="md:w-fit mx-auto">
     <div class="flex md:flex-row md:items-center md:justify-between flex-col gap-4 my-6">
         <h1 class="md:text-xl text-lg">Les cadeaux de {{ user.firstname }} {{ user.lastname }}</h1>
-        <twig:atomic:ButtonLink class="md:self-baseline self-end btn-ghost" :to="path('app_section_new')">
+        <twig:atomic:ButtonLink
+            class="md:self-baseline self-end"
+            type="neutral"
+            style="ghost"
+            :to="path('app_section_new')">
             <twig:block name="name">
                 <span>Créer une section</span>
             </twig:block>
@@ -42,8 +46,9 @@
                             {% endfor %}
                         </twig:block>
                         <twig:block name="actionButtons">
-                            <twig:atomic:ButtonLink class="btn-ghost btn-neutral"
-                                type="accent"
+                            <twig:atomic:ButtonLink
+                                style="ghost"
+                                type="neutral"
                                 :to="path('app_section_edit', { id: section.id })">
                                 <twig:block name="name">
                                     <span>Editer</span>
