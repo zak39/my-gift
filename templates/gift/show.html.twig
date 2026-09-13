@@ -5,6 +5,9 @@
 {% block body %}
 <div class="flex flex-col justify-center items-center">
   <div class="card bg-base-100 p-6 card-sm md:m-9 m-3 md:w-5xl">
+
+    <twig:Molecule:Breadcrumbs items="{{ breadcrumbs }}" />
+    
     <twig:Organism:GiftHeader :gift="gift" />         
 
     <div class="card-body flex md:flex-row gap-2 justify-center flex-wrap">
@@ -18,7 +21,7 @@
       <twig:atomic:ButtonLink class="btn-outline btn-md flex justify-end mt-2 mb-8"
         name="Retour"
         type="neutral"
-        :to="path('app_section', { id: gift.createdBy.id })"
+        :to="btnReturn"
         size="md">
         <twig:block name="name">
           <span>Retour</span>

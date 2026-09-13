@@ -4,6 +4,10 @@
 
 {% block body %}
 <div class="md:w-fit mx-auto">
+    <div class="my-4">
+        <twig:Molecule:Breadcrumbs :items="items"
+        />
+    </div>
     <div class="flex md:flex-row md:items-center md:justify-between flex-col gap-4 my-6">
         <h1 class="md:text-xl text-lg">Les cadeaux de {{ user.firstname }} {{ user.lastname }}</h1>
         {% if app.user == user %}
@@ -95,6 +99,17 @@
                 {% endfor %}
             </div>
         </div>
+    </div>
+    <div class="flex justify-end">
+        <twig:atomic:ButtonLink class="btn-outline btn-md"
+            name="Retour"
+            type="neutral"
+            :to="btnReturn"
+            size="md">
+            <twig:block name="name">
+                <span>Retour</span>
+            </twig:block>
+        </twig:atomic:ButtonLink>
     </div>
 </div>
 {% endblock %}

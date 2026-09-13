@@ -6,6 +6,7 @@ use App\Entity\Section;
 use App\Entity\User;
 use App\Form\SectionType;
 use App\Repository\GiftRepository;
+use App\Services\BreadcrumbBuilder;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -107,7 +108,7 @@ final class SectionController extends AbstractController
     }
 
     #[Route('/users/{id}/sections', requirements: ['id' => '\d+'], name: 'app_section_user_page')]
-    public function userPage(GiftRepository $giftRepository, User $user): Response
+    public function userPage(GiftRepository $giftRepository, User $user, BreadcrumbBuilder $breadcrumbBuilder, Request $request): Response
     {
         $giftsWithoutSection = $giftRepository->findBy([
             'createdBy' => $user,
@@ -118,6 +119,8 @@ final class SectionController extends AbstractController
             'giftsWithoutSection' => $giftsWithoutSection,
             'sections' => $user->getSections(),
             'user' => $user,
+            'items' => $breadcrumbBuilder->giftFromUserSection($user),
+            'btnReturn' => $request->headers->get('referer'),
         ]);
     }
 }

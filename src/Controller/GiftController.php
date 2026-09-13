@@ -6,6 +6,7 @@ use App\Entity\Gift;
 use App\Enum\GiftStatus;
 use App\Form\GiftEditType;
 use App\Form\GiftType;
+use App\Services\BreadcrumbBuilder;
 use App\Services\FavoriteGiftGrouper;
 use App\Services\ImageDownloader;
 use Doctrine\ORM\EntityManagerInterface;
@@ -98,10 +99,20 @@ final class GiftController extends AbstractController
     }
 
     #[Route('/gift/{id}/show', name: 'app_gift_show')]
-    public function show(Gift $gift): Response
+    public function show(Gift $gift, BreadcrumbBuilder $breadcrumbBuilder, Request $request): Response
     {
+        $user = $this->getUser();
+
+        $isOwnGift = $gift->getCreatedBy() === $user;
+        $items = $isOwnGift
+            ? $breadcrumbBuilder->giftFromMySections($gift)
+            : $breadcrumbBuilder->giftFromUserPage($gift)
+        ;
+
         return $this->render('gift/show.html.twig', [
             'gift' => $gift,
+            'breadcrumbs' => $items,
+            'btnReturn' => $request->headers->get('referer'),
         ]);
     }
 
