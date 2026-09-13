@@ -24,21 +24,13 @@ enum GiftStatus: string
         };
     }
 
-    public function isReserve(): bool
-    {
-        return match ($this) {
-            self::RESERVED,
-            self::READY,
-            self::GIVEN,
-            self::ARCHIVED => true,
-            default => false,
-        };
-    }
-
-    public function isContributing(): bool
+    public function hasReachedContributing(): bool
     {
         return match ($this) {
             self::CONTRIBUTING => true,
+            self::READY => true,
+            self::GIVEN => true,
+            self::ARCHIVED => true,
             default => false,
         };
     }

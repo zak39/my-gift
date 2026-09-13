@@ -35,7 +35,7 @@
 
             <twig:Molecule:Gift:ParticipationStatus :gift="gift" />
 
-            {% if gift.getParticipant(app.user) and gift.status.isContributing %}
+            {% if gift.getParticipant(app.user) and gift.status.hasReachedContributing %}
                 <p>Vous participez déjà à ce cadeau</p>
             {% endif %}
 
