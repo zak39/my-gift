@@ -127,8 +127,6 @@ final class GiftController extends AbstractController
         /** @var \App\Entity\User */
         $user = $this->getUser();
 
-        // dd($user);
-
         $user->addFavoriteGift($gift);
         $entityManager->flush();
 

@@ -1,32 +1,5 @@
 <div{{ attributes }}>
-    {% if gift.status.isReserve %}
-        <div class="flex items-center gap-3 md:my-2 my-3 text-sm">
-            {% set participant = this.firstParticipant %}
-            {% if participant.isAnonymous %}
-                <div class="leading-tight">
-                    <span class="md:font-medium md:text-base text-lg">{{ participant.pseudoAnonyme }}</span>
-                    <span class="text-base-content/80 md:text-base text-lg">a réservé ce cadeau</span>
-                </div>
-            {% else %}
-                <twig:molecule:Avatar class="size-8">
-                    <twig:block name="image">
-                        <twig:atomic:Image
-                            source="{{ participant.participantUser.avatar ? vich_uploader_asset(participant.participantUser, 'avatarFile') : vich_uploader_asset(participant.participantUser, 'avatarDefaultFile') }}"
-                            alt="{{ 'Photo de profil ' ~ participant.participantUser.fullname }}" />
-                    </twig:block>
-                </twig:molecule:Avatar>
-                <div class="leading-tight">
-                    {# {% set statut_message = gift.status.value == 'ready' ? 'réservé' : 'donné' %} #}
-                    <span class="font-bold md:text-base text-sm">
-                        {{ this.isCurrentUser(participant.participantUser) ? 'Vous' : participant.participantUser.fullname }}
-                    </span>
-                    <span class="text-base-content/80 md:text-base text-sm">
-                        {{ this.isCurrentUser(participant.participantUser) ? 'avez réservé ce cadeau' : 'a réservé ce cadeau' }}
-                    </span>
-                </div>
-            {% endif %}
-        </div>
-    {% elseif gift.status.isContributing %}
+    {% if gift.participants|length > 1 %}
         <div class="flex items-center gap-3 md:my-2 my-3 text-sm">
             <div class="avatar-group -space-x-3">
                 {% for participant in gift.participants|slice(0, 4) %}
@@ -42,5 +15,33 @@
                 {% endif %}
             </div>
         </div>
+    {% else %}
+        {% set participant = this.firstParticipant %}
+        {% if participant %}
+            <div class="flex items-center gap-3 md:my-2 my-3 text-sm">
+                {% if participant.isAnonymous %}
+                    <div class="leading-tight">
+                        <span class="md:font-medium md:text-base text-lg">{{ participant.pseudoAnonyme }}</span>
+                        <span class="text-base-content/80 md:text-base text-lg">a réservé ce cadeau</span>
+                    </div>
+                {% else %}
+                    <twig:molecule:Avatar class="size-8">
+                        <twig:block name="image">
+                            <twig:atomic:Image
+                                source="{{ participant.participantUser.avatar ? vich_uploader_asset(participant.participantUser, 'avatarFile') : vich_uploader_asset(participant.participantUser, 'avatarDefaultFile') }}"
+                                alt="{{ 'Photo de profil ' ~ participant.participantUser.fullname }}" />
+                        </twig:block>
+                    </twig:molecule:Avatar>
+                    <div class="leading-tight">
+                        <span class="font-bold md:text-base text-sm">
+                            {{ this.isCurrentUser(participant.participantUser) ? 'Vous' : participant.participantUser.fullname }}
+                        </span>
+                        <span class="text-base-content/80 md:text-base text-sm">
+                            {{ this.isCurrentUser(participant.participantUser) ? 'avez réservé ce cadeau' : 'a réservé ce cadeau' }}
+                        </span>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
     {% endif %}
 </div>
