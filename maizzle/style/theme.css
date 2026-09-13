@@ -1,0 +1,29 @@
+.email-bg { background-color: #d1d1d1; }
+
+.email-card {
+    background-color: #ffffff;
+    border-color: #e8e8e8;
+    color: #333c4d;
+    border-radius: 1rem;
+}
+.accent-button {
+    background-color: #66cc8a;
+    color: #223d30;
+    border-radius: 0.5rem;
+}
+.accent-link { color: #66cc8a; }
+
+@media (prefers-color-scheme: dark) {
+    .email-bg { background-color: #110d0d !important; }
+    .email-card {
+        background-color: #1b1717 !important;
+        border-color: #161212 !important;
+        color: #cac9c9 !important;
+    }
+    .accent-button {
+        background-color: #1fb854 !important;
+        color: #000000 !important;
+        border-radius: 2rem !important;
+    }
+    .accent-link { color: #1fb854 !important; }
+}
