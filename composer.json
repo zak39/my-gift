@@ -99,7 +99,9 @@
             "@auto-scripts"
         ],
         "cs:check": "php-cs-fixer fix --dry-run",
-        "cs:fix": "php-cs-fixer fix"
+        "cs:fix": "php-cs-fixer fix",
+        "maizzle:build": "cd maizzle && npx maizzle build",
+        "maizzle:dev": "cd maizzle && npx maizzle serve"
     },
     "conflict": {
         "symfony/symfony": "*"
