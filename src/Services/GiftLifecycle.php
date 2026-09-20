@@ -7,9 +7,13 @@ use App\Entity\Participant;
 use App\Entity\User;
 use App\Enum\GiftStatus;
 use App\Enum\ParticipantStatus;
+use App\Event\GiftReadyEvent;
+use App\Event\ParticipantJoinedEvent;
+use App\Event\ParticipantLeftEvent;
 use App\Repository\ParticipantRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 class GiftLifecycle
@@ -19,6 +23,7 @@ class GiftLifecycle
         private WorkflowInterface $giftRequestWorkflow,
         private EntityManagerInterface $entityManager,
         private ParticipantRepository $participantRepository,
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -46,6 +51,8 @@ class GiftLifecycle
             ->setStatus(ParticipantStatus::RESERVED)
         ;
 
+        $gift->addParticipant($participant);
+
         $this->giftRequestWorkflow->apply($gift, 'reserve');
 
         $this->entityManager->persist($participant);
@@ -65,7 +72,9 @@ class GiftLifecycle
         }
 
         $gift->removeParticipant($participant);
-        $this->giftRequestWorkflow->apply($gift, 'disengage');
+        $this->giftRequestWorkflow->apply($gift, 'disengage', [
+            'participant' => $participant,
+        ]);
         $this->entityManager->flush();
     }
 
@@ -120,8 +129,12 @@ class GiftLifecycle
         ;
 
         if (GiftStatus::CREATED === $gift->getStatus()) {
-            $this->giftRequestWorkflow->apply($gift, 'contribute');
+            $this->giftRequestWorkflow->apply($gift, 'contribute', [
+                'participant' => $newParticipant,
+            ]);
         }
+
+        $this->eventDispatcher->dispatch(new ParticipantJoinedEvent($gift, $newParticipant));
 
         $this->entityManager->persist($newParticipant);
         $this->entityManager->flush();
@@ -137,6 +150,7 @@ class GiftLifecycle
 
         if ($total >= $gift->getPrice()) {
             $this->ready($gift, $user);
+            $this->eventDispatcher->dispatch(new GiftReadyEvent($gift));
         }
     }
 
@@ -153,8 +167,12 @@ class GiftLifecycle
 
         $gift->removeParticipant($participant);
 
+        $this->eventDispatcher->dispatch(new ParticipantLeftEvent($gift, $participant));
+
         if ($gift->getParticipants()->isEmpty()) {
-            $this->giftRequestWorkflow->apply($gift, 'cancelled_contribution');
+            $this->giftRequestWorkflow->apply($gift, 'cancelled_contribution', [
+                'participant' => $participant,
+            ]);
         }
 
         $this->entityManager->flush();
