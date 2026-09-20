@@ -4,29 +4,30 @@
 
 {% block body %}
 <div class="flex flex-col justify-center items-center">
-  <div class="card bg-base-100 p-6 card-sm md:m-9 m-3 md:w-5xl">
+  <div class="w-full md:w-5xl md:mx-9 mx-3 md:mb-9 mb-3">
+    <twig:Molecule:Breadcrumbs :items="breadcrumbs" />
 
-    <twig:Molecule:Breadcrumbs items="{{ breadcrumbs }}" />
-    
-    <twig:Organism:GiftHeader :gift="gift" />         
+    <div class="card bg-base-100 p-6 card-sm">
+      <twig:Organism:GiftHeader :gift="gift" />
 
-    <div class="card-body flex md:flex-row gap-2 justify-center flex-wrap">
-      <twig:Organism:ActionsButtons :gift="gift" />
-    </div>
+      <div class="card-body flex md:flex-row gap-2 justify-center flex-wrap">
+        <twig:Organism:ActionsButtons :gift="gift" />
+      </div>
 
-    <div class="card-body justify-center items-center">
-      <twig:Organism:Contributors :gift="gift" />
-    </div>
-    <div class="card-actions justify-end">
-      <twig:atomic:ButtonLink class="btn-outline btn-md flex justify-end mt-2 mb-8"
-        name="Retour"
-        type="neutral"
-        :to="btnReturn"
-        size="md">
-        <twig:block name="name">
-          <span>Retour</span>
-        </twig:block>
-      </twig:atomic:ButtonLink>
+      <div class="card-body justify-center items-center">
+        <twig:Organism:Contributors :gift="gift" />
+      </div>
+      <div class="card-actions justify-end">
+        <twig:atomic:ButtonLink class="btn-outline btn-md flex justify-end mt-2 mb-8"
+          name="Retour"
+          type="neutral"
+          :to="btnReturn"
+          size="md">
+          <twig:block name="name">
+            <span>Retour</span>
+          </twig:block>
+        </twig:atomic:ButtonLink>
+      </div>
     </div>
   </div>
 </div>

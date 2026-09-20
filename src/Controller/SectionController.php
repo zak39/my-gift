@@ -119,7 +119,7 @@ final class SectionController extends AbstractController
             'giftsWithoutSection' => $giftsWithoutSection,
             'sections' => $user->getSections(),
             'user' => $user,
-            'items' => $breadcrumbBuilder->giftFromUserSection($user),
+            'breadcrumbs' => $breadcrumbBuilder->giftFromUserSection($user),
             'btnReturn' => $request->headers->get('referer'),
         ]);
     }

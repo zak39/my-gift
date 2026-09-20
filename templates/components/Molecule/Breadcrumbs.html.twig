@@ -1,4 +1,4 @@
-<div{{ attributes }} class="breadcrumbs text-sm max-w-xs md:max-w-2xl">
+<div {{ attributes.defaults({ class: 'breadcrumbs text-sm max-w-xs md:max-w-2xl my-4' }) }}>
     <ul>
         {% for item in items %}
             <li>

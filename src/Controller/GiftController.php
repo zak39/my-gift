@@ -104,14 +104,14 @@ final class GiftController extends AbstractController
         $user = $this->getUser();
 
         $isOwnGift = $gift->getCreatedBy() === $user;
-        $items = $isOwnGift
+        $breadcrumbs = $isOwnGift
             ? $breadcrumbBuilder->giftFromMySections($gift)
             : $breadcrumbBuilder->giftFromUserPage($gift)
         ;
 
         return $this->render('gift/show.html.twig', [
             'gift' => $gift,
-            'breadcrumbs' => $items,
+            'breadcrumbs' => $breadcrumbs,
             'btnReturn' => $request->headers->get('referer'),
         ]);
     }
