@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "maizzle serve",
     "build": "maizzle build",
-    "postinstall": "maizzle prepare"
+    "postinstall": "maizzle prepare",
+    "maizzle": "maizzle"
   },
   "dependencies": {
     "@maizzle/framework": "latest"
