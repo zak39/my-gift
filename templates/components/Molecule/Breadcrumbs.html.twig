@@ -1,0 +1,15 @@
+<div {{ attributes.defaults({ class: 'breadcrumbs text-sm max-w-xs md:max-w-2xl my-4' }) }}>
+    <ul>
+        {% for item in items %}
+            <li>
+                {% if item.url is not null %}
+                    <a href="{{ item.url }}">
+                        {{ item.label }}
+                    </a>
+                {% else %}
+                    <span class="font-semibold">{{ item.label }}</span>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</div>
