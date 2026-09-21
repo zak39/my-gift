@@ -1,8 +1,9 @@
 <div{{ attributes }} class="contents">
-    <twig:atomic:Button:Outline data-controller="copy"
+    <twig:atomic:Button :style="style"
+        data-controller="copy"
         data-copy-text-value="{{ absolute_url(path('app_gift_show', { 'id': gift.id })) }}"
         data-action="click->copy#copy"
-        type="secondary">
+        :color="color">
         <twig:block name="icon">
             <span data-copy-target="icon">
                 <twig:ux:icon name="lucide:share" />
@@ -11,5 +12,5 @@
         <twig:block name="name">
             <span class="{{ hideLabelOnMobile ? 'md:block hidden' : '' }}" data-copy-target="label">Partager</span>
         </twig:block>
-    </twig:atomic:Button:Outline>
+    </twig:atomic:Button>
 </div>

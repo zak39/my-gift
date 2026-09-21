@@ -10,7 +10,7 @@
         {% if app.user == user %}
             <twig:atomic:ButtonLink
                 class="md:self-baseline self-end"
-                type="neutral"
+                color="neutral"
                 style="ghost"
                 :to="path('app_section_new')">
                 <twig:block name="name">
@@ -52,7 +52,7 @@
                         <twig:block name="actionButtons">
                 {% if app.user == user %}
                     <twig:atomic:ButtonLink
-                        type="neutral"
+                        color="neutral"
                         style="ghost"
                         :to="path('app_section_edit', { id: section.id })">
                         <twig:block name="name">
@@ -64,7 +64,7 @@
                         class="remove_section">
                         <twig:block name="handlerButton">
                             <twig:atomic:Button
-                                type="neutral"
+                                color="neutral"
                                 style="ghost"
                                 onclick="modal_remove_section_{{ section.id }}.showModal()">
                                 <twig:block name="name">
@@ -100,7 +100,7 @@
     <div class="flex justify-end">
         <twig:atomic:ButtonLink class="btn-outline btn-md"
             name="Retour"
-            type="neutral"
+            color="neutral"
             :to="btnReturn"
             size="md">
             <twig:block name="name">

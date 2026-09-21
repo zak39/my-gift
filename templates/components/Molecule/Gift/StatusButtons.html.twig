@@ -5,7 +5,7 @@
                 {% if gift.getParticipant(app.user) %}
                     <twig:atomic:ButtonLink
                         class="md:w-60 w-full"
-                        type="accent"
+                        color="accent"
                         style="block"
                         :to="path('app_gift_participated', { id: gift.id })">
                         <twig:block name="icon">
@@ -18,7 +18,7 @@
                 {% else %}
                     <twig:atomic:ButtonLink
                         class="md:w-60 w-full"
-                        type="accent"
+                        color="accent"
                         style="block"
                         :to="path('app_gift_participated', { id: gift.id })">
                         <twig:block name="icon">
@@ -37,10 +37,9 @@
                     :id="gift.id">
                 <twig:block name="handlerButton">
                     <twig:atomic:Button class="md:w-52 w-full"
-                        type="accent"
+                        color="accent"
                         style="block"
-                        onclick="modal_offer_gift_{{ gift.id }}.showModal()"
-                        type="accent">
+                        onclick="modal_offer_gift_{{ gift.id }}.showModal()">
                         <twig:block name="icon">
                             <twig:ux:icon name="famicons:gift" />
                         </twig:block>
@@ -52,9 +51,8 @@
                 <twig:block name="message">
                 </twig:block>
                 <twig:block name="actionButtons">
-                    <div class="flex md:flex-row flex-row-reverse justify-between gap-2 w-full">
-                    <twig:atomic:ButtonLink
-                        type="accent"
+                    <twig:atomic:ButtonLink class="sm:flex-1"
+                        color="accent"
                         style="block"
                         :to="path('app_gift_reserved', { id: gift.id })">
                         <twig:block name="icon">
@@ -64,8 +62,8 @@
                             <span>Réserver le cadeau</span>
                         </twig:block>
                     </twig:atomic:ButtonLink>
-                    <twig:atomic:ButtonLink
-                        type="neutral"
+                    <twig:atomic:ButtonLink class="sm:flex-1"
+                        color="neutral"
                         style="outline"
                         :to="path('app_gift_participated', { id: gift.id })">
                         <twig:block name="icon">
@@ -75,7 +73,6 @@
                             Participer au cadeau
                         </twig:block>
                     </twig:atomic:ButtonLink>
-                    </div>
                 </twig:block>
                 </twig:Modal>
             {% endif %}
@@ -98,7 +95,7 @@
                     <twig:block name="handlerButton">
                         <twig:atomic:Button:Outline class="md:w-52 w-full"
                             onclick="modal_disengage_gift_{{ gift.id }}.showModal()"
-                            type="neutral">
+                            color="neutral">
                         <twig:block name="icon">
                             <twig:ux:icon name="mdi:gift-off" />
                         </twig:block>
@@ -133,7 +130,7 @@
                     <twig:block name="handlerButton">
                         <twig:atomic:Button:Outline class="md:w-56 w-full"
                             onclick="modal_cancelled_contribution_gift_{{ gift.id }}.showModal()"
-                            type="neutral">
+                            color="neutral">
                         <twig:block name="icon">
                             <twig:ux:icon name="mdi:gift-off" />
                         </twig:block>

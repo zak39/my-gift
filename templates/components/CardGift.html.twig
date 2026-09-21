@@ -1,65 +1,20 @@
-<div{{ attributes }}>
-    <div class="card card-xs lg:card-side bg-base-100 shadow-sm">
-        <twig:Organism:Gift:Thumbnail :gift="gift" />
-        <div class="card-body ml-2">
-            <div class="flex justify-between items-center gap-3">
-                <h2 class="card-title">
-                    <span class="md:text-xl text-lg">{{ gift.title }}</span>
-                </h2>
+<div {{ attributes.defaults({ class: 'w-full max-w-5xl' }) }}>
+    <article class="card lg:card-side bg-base-100 border border-base-300 shadow-sm transition-shadow duration-200 hover:shadow-md">
+        <twig:Organism:Gift:Thumbnail
+            :gift="gift"
+            class="bg-base-200 lg:w-72 lg:shrink-0 xl:w-80"
+            imageClass="h-56 w-full object-cover sm:h-72 lg:h-full" />
 
-                {% if is_granted('gift.is_creator', gift) == false %}
-                    <twig:Molecule:Gift:FavoriteButton :gift="gift" :isFavorite="app.user.hasFavoriteGift(gift)" />
-                {% endif %}
-            </div>
-            <div class="my-4 flex md:flex-row flex-col md:gap-4 gap-2 ">
-                <span class="badge badge-lg badge-neutral">
-                    {{ gift.price|format_currency('EUR') }}
-                </span>
-                {% if is_granted('gift.is_creator', gift) %}
-                    {% if gift.isPublic %}
-                        <twig:molecule:GiftMeta label="Publié" value="Oui" badgeValueColor="success" />
-                    {% else %}
-                        <twig:molecule:GiftMeta label="Publié" value="Non" badgeValueColor="error" />
-                    {% endif %}
-                {% endif %}
-            </div>
-            {% if gift.link %}
-                <p class="md:w-2xl md:text-lg text-sm md:block hidden">
-                    {{ gift.description|u.truncate(200, '...') }}
-                </p>
-            {% else %}
-                <p class="md:w-2xl md:text-lg text-sm md:block hidden">
-                    {{ gift.description|u.truncate(200, '...') }}
-                </p>
-            {% endif %}
-
-            <twig:Molecule:Gift:ParticipationStatus :gift="gift" />
-
-            {% if gift.getParticipant(app.user) and gift.status.hasReachedContributing %}
-                <p>Vous participez déjà à ce cadeau</p>
-            {% endif %}
-
-            <div class="flex md:flex-row flex-col md:gap-6 gap-4 justify-end items-center md:my-8 my-6">
-                <twig:Molecule:Gift:StatusButtons :gift="gift" />
+        <div class="card-body gap-0">
+            <div class="flex items-center justify-between gap-3">
+                <twig:Molecule:Gift:Badges :gift="gift" />
+                <twig:Molecule:Gift:FavoriteButton :gift="gift" />
             </div>
 
-            {% if workflow_has_marked_place(gift, 'archived') %}
-                <div class="card-actions justify-start md:my-2 md:mt-2 my-4">
-                    <div class="badge badge-outline badge-neutral">Archivé</div>
-                </div>
-            {% endif %}
-
-            <div class="card-actions justify-end mr-4 mb-4">
-                <twig:Molecule:Gift:ShareLinkButton :gift="gift" :hideLabelOnMobile="true" />
-                {% if gift.link %}
-                    <twig:Molecule:Gift:LinkButton :gift="gift" :hideLabelOnMobile="true" />
-                {% endif %}
-                <twig:Molecule:Gift:ShowButton :gift="gift" :hideLabelOnMobile="true" />
-                {% if is_granted('gift.is_creator', gift) %}
-                    <twig:Molecule:Gift:EditButton :gift="gift" :hideLabelOnMobile="true" />
-                    <twig:Molecule:Gift:DeleteButton :gift="gift" :hideLabelOnMobile="true" />
-                {% endif %}
-            </div>
+            <twig:Molecule:Gift:Heading :gift="gift" />
+            <twig:Molecule:Gift:Description :gift="gift" />
+            <twig:Molecule:Gift:Participants :gift="gift" />
+            <twig:Organism:Gift:CardActions :gift="gift" />
         </div>
-    </div>
+    </article>
 </div>

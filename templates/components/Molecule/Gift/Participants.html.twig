@@ -1,0 +1,12 @@
+{% if gift.participants|length > 0 %}
+    <div {{ attributes.defaults({ class: 'mt-3 flex flex-wrap items-center gap-x-4' }) }}>
+        <twig:Molecule:Gift:ParticipationStatus :gift="gift" />
+
+        {% if gift.getParticipant(app.user) and gift.status.hasReachedContributing %}
+            <p class="flex items-center gap-2 text-sm text-success">
+                <twig:ux:icon name="lucide:circle-check" class="size-4 shrink-0" />
+                Vous participez déjà à ce cadeau
+            </p>
+        {% endif %}
+    </div>
+{% endif %}

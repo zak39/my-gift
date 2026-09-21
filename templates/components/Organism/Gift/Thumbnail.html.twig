@@ -1,8 +1,9 @@
-<div{{ attributes }} class="contents">
-    <figure>
-        <img
-            class="md:size-104 size-95 md:object-contain object-cover"
-            src={{ gift.image ? vich_uploader_asset(gift, 'imageFile') : "https://img.daisyui.com/images/stock/photo-1494232410401-ad00d5433cfa.webp" }}
-            alt={{ gift.title }} />
-    </figure>
-</div>
+<figure {{ attributes }}>
+    <img
+        class="{{ imageClass }}"
+        src="{{ gift.image ? vich_uploader_asset(gift, 'imageFile') : 'https://img.daisyui.com/images/stock/photo-1494232410401-ad00d5433cfa.webp' }}"
+        alt="{{ gift.title }}"
+        width="400"
+        height="400"
+        loading="lazy" />
+</figure>
