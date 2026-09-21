@@ -10,5 +10,6 @@ final class ShowButton
 {
     public Gift $gift;
     public bool $hideLabelOnMobile = false;
+    public string $color = '';
     public string $style = 'outline';
 }

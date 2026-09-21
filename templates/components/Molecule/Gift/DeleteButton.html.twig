@@ -3,9 +3,9 @@
         class="remove_gift"
         :id="gift.id">
         <twig:block name="handlerButton">
-            <twig:atomic:Button class="btn-{{ style }}"
+            <twig:atomic:Button :style="style"
                 onclick="modal_remove_gift_{{ gift.id }}.showModal()"
-                type="secondary">
+                :color="color">
                 <twig:block name="icon">
                     <twig:ux:icon name="heroicons:trash-16-solid" />
                 </twig:block>

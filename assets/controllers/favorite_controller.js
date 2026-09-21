@@ -1,7 +1,7 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ['favoriteIcon', 'notFavoriteIcon'];
+    static targets = ['button', 'favoriteIcon', 'notFavoriteIcon'];
 
     static values = {
         id: Number,
@@ -41,6 +41,14 @@ export default class extends Controller {
             'hidden',
             this.isFavoriteValue
         )
+
+        this.buttonTarget.setAttribute('aria-pressed', String(this.isFavoriteValue));
+        this.buttonTarget.setAttribute(
+            'aria-label',
+            this.isFavoriteValue
+                ? 'Retirer ce cadeau de mes favoris'
+                : 'Ajouter ce cadeau à mes favoris'
+        );
 
         if (this.isFavoriteValue) {
             this.playPopAnimation(this.favoriteIconTarget);

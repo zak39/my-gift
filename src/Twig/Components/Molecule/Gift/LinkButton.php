@@ -11,5 +11,5 @@ final class LinkButton
     public Gift $gift;
     public bool $hideLabelOnMobile = false;
     public string $style = 'outline';
-    public string $type = 'secondary';
+    public string $color = '';
 }

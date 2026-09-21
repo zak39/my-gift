@@ -1,8 +1,8 @@
 <div{{ attributes }} class="contents">
     <twig:atomic:ButtonLink
-        style="outline"
+        :style="style"
         :to="path('app_gift_show', { id: gift.id })"
-        type="secondary">
+        :color="color">
         <twig:block name="icon">
             <twig:ux:icon name="fluent:eye-12-filled" />
         </twig:block>

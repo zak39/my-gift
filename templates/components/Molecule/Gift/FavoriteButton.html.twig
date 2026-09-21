@@ -1,17 +1,20 @@
-<div{{ attributes }} class="contents">
-    <button class="btn btn-circle btn-soft btn-secondary"
+{% if is_granted('gift.is_creator', gift) == false %}
+    <button {{ attributes.defaults({ class: 'btn btn-circle btn-ghost' }) }}
+        type="button"
+        aria-pressed="{{ this.isFavorite ? 'true' : 'false' }}"
+        aria-label="{{ this.isFavorite ? 'Retirer ce cadeau de mes favoris' : 'Ajouter ce cadeau à mes favoris' }}"
         data-controller="favorite"
         data-favorite-id-value="{{ gift.id }}"
-        data-favorite-is-favorite-value="{{ isFavorite ? 'true' : 'false' }}"
+        data-favorite-is-favorite-value="{{ this.isFavorite ? 'true' : 'false' }}"
         data-favorite-target="button"
         data-action="click->favorite#addFavorite">
         <twig:ux:icon
-            class="{{ isFavorite ? '' : 'hidden' }}"
+            class="size-5 text-secondary {{ this.isFavorite ? '' : 'hidden' }}"
             name="rivet-icons:heart-solid"
             data-favorite-target="favoriteIcon" />
         <twig:ux:icon
-            class="{{ isFavorite ? 'hidden' }}"
+            class="size-5 {{ this.isFavorite ? 'hidden' }}"
             name="rivet-icons:heart"
             data-favorite-target="notFavoriteIcon" />
     </button>
-</div>
+{% endif %}

@@ -1,6 +1,15 @@
-<a{{ attributes }} href="{{ gift.link }}" target="_blank" class="btn btn-{{ style }} btn-{{ type }}">
-    <twig:block name="icon">
-        <twig:ux:icon name="akar-icons:link-out" />
-    </twig:block>
-    <span class="{{ hideLabelOnMobile ? 'md:block hidden' : '' }}">Aller sur la boutique</span>
-</a>
+<div{{ attributes }} class="contents">
+    <twig:atomic:ButtonLink
+        :to="gift.link"
+        :style="style"
+        :color="color"
+        target="_blank"
+        rel="noopener">
+        <twig:block name="icon">
+            <twig:ux:icon name="akar-icons:link-out" />
+        </twig:block>
+        <twig:block name="name">
+            <span class="{{ hideLabelOnMobile ? 'md:block hidden' : '' }}">Aller sur la boutique</span>
+        </twig:block>
+    </twig:atomic:ButtonLink>
+</div>

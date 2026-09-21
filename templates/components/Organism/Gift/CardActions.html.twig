@@ -1,0 +1,17 @@
+<div {{ attributes.defaults({ class: 'mt-auto flex flex-col gap-3 pt-6 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between' }) }}>
+    <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+        <twig:Molecule:Gift:StatusButtons :gift="gift" />
+        <twig:Molecule:Gift:ShowButton :gift="gift" style="outline" />
+    </div>
+
+    <div class="flex flex-wrap items-start justify-end gap-2">
+        <twig:Molecule:Gift:ShareLinkButton :gift="gift" style="ghost" :hideLabelOnMobile="true" />
+        {% if gift.link %}
+            <twig:Molecule:Gift:LinkButton :gift="gift" style="ghost" :hideLabelOnMobile="true" />
+        {% endif %}
+        {% if is_granted('gift.is_creator', gift) %}
+            <twig:Molecule:Gift:EditButton :gift="gift" style="ghost" :hideLabelOnMobile="true" />
+            <twig:Molecule:Gift:DeleteButton :gift="gift" style="ghost" :hideLabelOnMobile="true" />
+        {% endif %}
+    </div>
+</div>

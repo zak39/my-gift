@@ -54,7 +54,7 @@
             <twig:block name="actionButtons">
                 {% if app.user == user %}
                     <twig:atomic:ButtonLink
-                        type="neutral"
+                        color="neutral"
                         style="ghost"
                         :to="path('app_section_edit', { id: section.id })">
                         <twig:block name="name">
@@ -66,7 +66,7 @@
                         class="remove_section">
                         <twig:block name="handlerButton">
                             <twig:atomic:Button
-                                type="neutral"
+                                color="neutral"
                                 style="ghost"
                                 onclick="modal_remove_section_{{ section.id }}.showModal()">
                                 <twig:block name="name">
@@ -98,7 +98,7 @@
                 description="Commencez à créer votre première section">
                 <twig:block name="action_buttons">
                     <twig:atomic:ButtonLink class="md:btn-md btn-lg"
-                        type="accent"
+                        color="accent"
                         style="block"
                         :to="path('app_section_new')">
                         <twig:block name="name">

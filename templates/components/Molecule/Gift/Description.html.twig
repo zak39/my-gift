@@ -1,0 +1,5 @@
+{% if gift.description %}
+    <p {{ attributes.defaults({ class: 'mt-4 text-sm text-base-content/70 md:text-base' }) }}>
+        {{ gift.description|u.truncate(160, '...', false) }}
+    </p>
+{% endif %}
