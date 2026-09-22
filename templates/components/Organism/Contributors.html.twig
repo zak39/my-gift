@@ -1,36 +1,37 @@
-{% if gift.participants|length > 1 or gift.status.value == 'contributing' %} 
-  {% set percent = (gift.totalContributed * 100) / gift.price %}
-{% endif %}
-
-<div{{ attributes }} class="contents">
-    {% if gift.participants|length > 0 or (workflow_has_marked_place(gift, 'given') or workflow_has_marked_place(gift, 'archived')) %}
+<div {{ attributes.defaults({ class: 'contents' }) }}>
+    {% if this.showWho %}
         <h2 class="card-title w-full text-xl mb-6">Offert par</h2>
         <div class="flex flex-col-reverse gap-16 items-center w-full">
             <div class="flex flex-col gap-2 w-full items-center">
-                {% if gift.participants|length > 1 or gift.status.value == 'contributing' %}
-                    <div class="flex flex-col justify-center items-center gap-8 mb-6">
-                        <twig:molecule:GiftContributingProgress percent="{{ percent|round }}" color="success" />
-                        <div class="flex md:flex-row flex-col gap-4">
-                            <twig:molecule:GiftMeta label="Total" value="{{ gift.totalContributed|format_currency('EUR')}} " />
-                            <twig:molecule:GiftMeta label="Reste" value="{{ gift.remainingAmount|format_currency('EUR') }}" />
+                {% if this.pooled %}
+                    {% if this.showPot %}
+                        <div class="flex flex-col justify-center items-center gap-8 mb-6">
+                            <twig:molecule:GiftContributingProgress :percent="this.percent" color="success" />
+                            <div class="flex md:flex-row flex-col gap-4">
+                                <twig:molecule:GiftMeta label="Total" value="{{ gift.totalContributed|format_currency('EUR') }}" />
+                                <twig:molecule:GiftMeta label="Reste" value="{{ this.remaining|format_currency('EUR') }}" />
+                            </div>
                         </div>
-                    </div>
+                    {% endif %}
+
                     {% for participant in gift.participants %}
                         <twig:molecule:ParticipantCard :participant="participant"
-                            :showAmount="true"
+                            :showAmount="this.showAmounts"
                             avatarSize="size-12 md:size-16" />
                     {% endfor %}
                 {% else %}
-                    <twig:molecule:ParticipantCard :participant="gift.participants[0]"
+                    <twig:molecule:ParticipantCard :participant="gift.participants|first"
                         avatarSize="size-12 md:size-16" />
                 {% endif %}
             </div>
         </div>
-    {% else %}
-        {% if app.user == gift.createdBy %}
-            <div class="card-title w-full">
+    {% elseif this.isCreator %}
+        <div class="card-title w-full">
+            {% if this.potInProgress %}
+                <h6 class="text-sm">Une cagnotte est en cours pour ce cadeau. Vous découvrirez qui y a participé une fois qu'elle sera complète.</h6>
+            {% else %}
                 <h6 class="text-sm">Personne ne vous a offert le cadeau pour le moment.</h6>
-            </div>
-        {% endif %}
+            {% endif %}
+        </div>
     {% endif %}
 </div>
