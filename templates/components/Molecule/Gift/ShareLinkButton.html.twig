@@ -1,5 +1,10 @@
-<div{{ attributes }} class="contents">
+{% set wrapper = iconOnly
+    ? { class: 'tooltip', 'data-tip': 'Copier le lien du cadeau' }
+    : { class: 'contents' } %}
+
+<div {{ attributes.defaults(wrapper) }}>
     <twig:atomic:Button :style="style"
+        class="{{ iconOnly ? 'btn-circle' : '' }}"
         data-controller="copy"
         data-copy-text-value="{{ absolute_url(path('app_gift_show', { 'id': gift.id })) }}"
         data-action="click->copy#copy"
@@ -10,7 +15,7 @@
             </span>
         </twig:block>
         <twig:block name="name">
-            <span class="{{ hideLabelOnMobile ? 'md:block hidden' : '' }}" data-copy-target="label">Partager</span>
+            <span class="{{ iconOnly ? 'sr-only' : '' }}" data-copy-target="label">Partager</span>
         </twig:block>
     </twig:atomic:Button>
 </div>

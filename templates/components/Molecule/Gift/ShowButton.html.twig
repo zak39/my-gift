@@ -1,4 +1,4 @@
-<div{{ attributes }} class="contents">
+<div {{ attributes.defaults({ class: 'contents' }) }}>
     <twig:atomic:ButtonLink
         :style="style"
         :to="path('app_gift_show', { id: gift.id })"
@@ -7,7 +7,7 @@
             <twig:ux:icon name="fluent:eye-12-filled" />
         </twig:block>
         <twig:block name="name">
-            <span class="{{ hideLabelOnMobile ? 'md:block hidden' : '' }}">Voir</span>
+            <span>Voir</span>
         </twig:block>
     </twig:atomic:ButtonLink>
 </div>

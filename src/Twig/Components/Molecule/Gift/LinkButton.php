@@ -9,7 +9,7 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 final class LinkButton
 {
     public Gift $gift;
-    public bool $hideLabelOnMobile = false;
+    public bool $iconOnly = false;
     public string $style = 'outline';
     public string $color = '';
 }

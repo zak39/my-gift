@@ -1,7 +1,12 @@
-<div{{ attributes }} class="contents">
+{% set wrapper = iconOnly
+    ? { class: 'tooltip', 'data-tip': 'Aller sur la boutique' }
+    : { class: 'contents' } %}
+
+<div {{ attributes.defaults(wrapper) }}>
     <twig:atomic:ButtonLink
         :to="gift.link"
         :style="style"
+        class="{{ iconOnly ? 'btn-circle' : '' }}"
         :color="color"
         target="_blank"
         rel="noopener">
@@ -9,7 +14,7 @@
             <twig:ux:icon name="akar-icons:link-out" />
         </twig:block>
         <twig:block name="name">
-            <span class="{{ hideLabelOnMobile ? 'md:block hidden' : '' }}">Aller sur la boutique</span>
+            <span class="{{ iconOnly ? 'sr-only' : '' }}">Aller sur la boutique</span>
         </twig:block>
     </twig:atomic:ButtonLink>
 </div>

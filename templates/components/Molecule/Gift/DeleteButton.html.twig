@@ -1,16 +1,21 @@
-<div{{ attributes }} class="contents">
+{% set wrapper = iconOnly
+    ? { class: 'tooltip', 'data-tip': 'Supprimer le cadeau' }
+    : { class: 'contents' } %}
+
+<div {{ attributes.defaults(wrapper) }}>
     <twig:Modal title="Supprimer un cadeau"
         class="remove_gift"
         :id="gift.id">
         <twig:block name="handlerButton">
             <twig:atomic:Button :style="style"
+                class="{{ iconOnly ? 'btn-circle' : '' }}"
                 onclick="modal_remove_gift_{{ gift.id }}.showModal()"
                 :color="color">
                 <twig:block name="icon">
                     <twig:ux:icon name="heroicons:trash-16-solid" />
                 </twig:block>
                 <twig:block name="name">
-                    <span class="{{ hideLabelOnMobile ? 'md:block hidden' : '' }}">Supprimer</span>
+                    <span class="{{ iconOnly ? 'sr-only' : '' }}">Supprimer</span>
                 </twig:block>
             </twig:atomic:Button>
         </twig:block>
