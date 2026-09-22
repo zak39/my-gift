@@ -1,0 +1,29 @@
+<nav {{ attributes.defaults({ class: 'min-w-0' }) }} aria-label="Sections de la liste">
+    <ul class="menu menu-horizontal w-full flex-nowrap overflow-x-auto rounded-box border border-base-300 bg-base-100 lg:menu-vertical lg:flex-wrap lg:overflow-visible">
+        <li class="menu-title hidden lg:block">Sections</li>
+
+        {% for section in sections %}
+            <li>
+                <a href="#section-{{ section.id }}"
+                    class="whitespace-nowrap lg:whitespace-normal"
+                    onclick="document.getElementById('section-{{ section.id }}-toggle').checked = true">
+                    <twig:ux:icon name="lucide:tag" class="size-4 shrink-0" />
+                    <span class="lg:break-words">{{ section.title }}</span>
+                    <span class="badge badge-sm badge-ghost tabular-nums">{{ this.giftCount(section.gifts) }}</span>
+                </a>
+            </li>
+        {% endfor %}
+
+        {% if this.hasGiftsWithoutSection %}
+            <li>
+                <a href="#section-sans-section"
+                    class="whitespace-nowrap lg:whitespace-normal"
+                    onclick="document.getElementById('section-sans-section-toggle').checked = true">
+                    <twig:ux:icon name="lucide:package-open" class="size-4 shrink-0" />
+                    <span class="lg:break-words">Cadeaux sans section</span>
+                    <span class="badge badge-sm badge-ghost tabular-nums">{{ this.giftCount(giftsWithoutSection) }}</span>
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>

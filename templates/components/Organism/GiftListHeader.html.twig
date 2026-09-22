@@ -1,0 +1,68 @@
+<section {{ attributes.defaults({ class: 'relative overflow-hidden rounded-box border border-base-300 bg-base-100 shadow-sm' }) }}>
+    {# Gift-wrap ribbon: the page's signature element, repeated on every list. #}
+    <div aria-hidden="true"
+        class="h-2.5 w-full bg-[repeating-linear-gradient(135deg,var(--color-primary)_0_0.75rem,var(--color-secondary)_0.75rem_1.5rem)]"></div>
+
+    <div class="flex flex-col gap-5 p-5 sm:p-7 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
+        <div class="flex items-center gap-4 sm:gap-6">
+            <twig:molecule:Avatar class="h-20 w-20 shrink-0 rounded-full ring-2 ring-base-300 ring-offset-2 ring-offset-base-100 sm:h-24 sm:w-24">
+                <twig:block name="image">
+                    <twig:atomic:Image class="h-20 w-20 sm:h-24 sm:w-24" id="user_avatar_settings"
+                        source="{{ user.avatar ? vich_uploader_asset(user, 'avatarFile') : vich_uploader_asset(user, 'avatarDefaultFile') }}"
+                        alt="Photo de profil {{ user.firstname }} {{ user.lastname }}" />
+                </twig:block>
+            </twig:molecule:Avatar>
+
+            <div class="min-w-0">
+                <h1 class="text-2xl leading-tight font-bold break-words sm:text-3xl">
+                    {{ ownerView ? 'Mes cadeaux' : ('Les cadeaux de ' ~ user.firstname ~ ' ' ~ user.lastname) }}
+                </h1>
+                {% if this.total > 0 %}
+                    <p class="mt-2 flex items-center gap-2 text-sm text-base-content/70">
+                        <twig:ux:icon name="lucide:gift" class="size-4 shrink-0" />
+                        <span class="tabular-nums">{{ this.total }} cadeau{{ this.total > 1 ? 'x' : '' }}</span>
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <twig:Organism:GiftListHeader:Actions :user="user" :ownerView="ownerView" />
+    </div>
+
+    {% if this.total > 0 %}
+        <div class="border-t border-base-300 px-5 py-4 sm:px-7">
+            <div class="stats stats-vertical w-full bg-transparent sm:stats-horizontal">
+                {% if ownerView %}
+                    <twig:Molecule:Stat
+                        icon="lucide:eye"
+                        title="Publiés"
+                        :value="this.publishedCount"
+                        description="visibles sur votre profil public"
+                        :highlight="true" />
+                    <twig:Molecule:Stat
+                        icon="lucide:eye-off"
+                        title="Brouillons"
+                        :value="this.draftCount"
+                        :description="this.draftCount > 0 ? 'personne ne les voit encore' : 'tout est publié'" />
+                {% else %}
+                    <twig:Molecule:Stat
+                        icon="lucide:gift"
+                        title="Encore disponibles"
+                        :value="this.availableCount"
+                        description="à réserver ou à cagnotter"
+                        :highlight="true" />
+                    <twig:Molecule:Stat
+                        icon="lucide:piggy-bank"
+                        title="Cagnottes en cours"
+                        :value="this.contributingCount" />
+                {% endif %}
+
+                <twig:Molecule:Stat
+                    icon="lucide:package-check"
+                    title="Déjà pris en charge"
+                    :value="this.takenCount"
+                    description="réservés, prêts ou offerts" />
+            </div>
+        </div>
+    {% endif %}
+</section>

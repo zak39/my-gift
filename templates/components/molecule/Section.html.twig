@@ -1,17 +1,39 @@
-<div{{ attributes }} class="collapse collapse-arrow bg-base-100 border border-base-300">
-    <input type="checkbox" {{ checked ? 'checked' : '' }}/>
-    <div class="collapse-title font-semibold flex gap-2 items-center">
-        {% block avatarOwner %}
-        {% endblock %}
-        <span class="text-wrap w-xl">{{ title }}</span>
-    </div>
-        <div class="collapse-content text-sm flex flex-col gap-4">
-            {{ description }}
-            <div class="flex justify-end gap-1">
-                {% block actionButtons %}
+<section {{ attributes.defaults({ class: 'relative scroll-mt-6 overflow-hidden rounded-box border border-base-300 bg-base-100 shadow-sm' }) }}
+    {% if anchor %}id="{{ anchor }}"{% endif %}>
+    {# Ribbon on the edge of the section, echoing the gift wrap of the list header. #}
+    <span aria-hidden="true" class="absolute inset-y-0 start-0 w-1.5 bg-primary"></span>
+
+    <div class="collapse collapse-arrow">
+        <input type="checkbox"
+            {% if anchor %}id="{{ anchor }}-toggle"{% endif %}
+            {{ checked ? 'checked' : '' }}
+            aria-label="Afficher ou masquer les cadeaux de la section {{ title }}" />
+
+        <div class="collapse-title ps-6">
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                {% block avatarOwner %}
+                {% endblock %}
+                <h2 class="text-base font-semibold break-words sm:text-lg">{{ title }}</h2>
+                {% if giftCount is not null %}
+                    <span class="badge badge-sm badge-ghost tabular-nums">
+                        {{ giftCount }} cadeau{{ giftCount > 1 ? 'x' }}
+                    </span>
+                {% endif %}
+            </div>
+            {% if description %}
+                <p class="mt-1 text-sm text-base-content/70">{{ description }}</p>
+            {% endif %}
+        </div>
+
+        <div class="collapse-content ps-6">
+            <div class="flex flex-col gap-4">
+                <div class="flex flex-wrap justify-end gap-1 empty:hidden">
+                    {% block actionButtons %}
+                    {% endblock %}
+                </div>
+                {% block gifts %}
                 {% endblock %}
             </div>
-            {% block gifts %}
-            {% endblock %}
         </div>
-</div>
+    </div>
+</section>
