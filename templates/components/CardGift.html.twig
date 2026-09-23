@@ -3,7 +3,7 @@
         <twig:Organism:Gift:Thumbnail
             :gift="gift"
             class="bg-base-200 lg:w-72 lg:shrink-0 xl:w-80"
-            imageClass="h-56 w-full object-cover sm:h-72 lg:h-full" />
+            imageClass="h-56 w-full object-contain p-4 sm:h-72 lg:h-full" />
 
         <div class="card-body gap-0">
             <div class="flex items-center justify-between gap-3">
@@ -13,6 +13,7 @@
 
             <twig:Molecule:Gift:Heading :gift="gift" />
             <twig:Molecule:Gift:Description :gift="gift" />
+            <twig:Molecule:Gift:ContributionBar :gift="gift" />
             <twig:Molecule:Gift:Participants :gift="gift" />
             <twig:Organism:Gift:CardActions :gift="gift" />
         </div>

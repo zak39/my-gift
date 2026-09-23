@@ -19,10 +19,8 @@
       </div>
       <div class="card-actions justify-end">
         <twig:atomic:ButtonLink class="btn-outline btn-md flex justify-end mt-2 mb-8"
-          name="Retour"
           color="neutral"
-          :to="btnReturn"
-          size="md">
+          :to="btnReturn|default(null) ?: path('app_section_user_page', { id: gift.createdBy.id })">
           <twig:block name="name">
             <span>Retour</span>
           </twig:block>

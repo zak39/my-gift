@@ -1,0 +1,12 @@
+<div {{ attributes.defaults({ class: 'stat content-start px-0 sm:px-6' }) }}>
+    {# Element opacity, not an alpha colour: with alpha the stroke is painted per
+       sub-path, so overlapping segments compound into dark spots on the joints. #}
+    <div class="stat-figure text-base-content opacity-60">
+        <twig:ux:icon :name="icon" class="size-8" />
+    </div>
+    <div class="stat-title">{{ title }}</div>
+    <div class="stat-value tabular-nums {{ highlight ? 'text-primary' : '' }}">{{ value }}</div>
+    {% if description %}
+        <div class="stat-desc">{{ description }}</div>
+    {% endif %}
+</div>

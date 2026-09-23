@@ -9,7 +9,7 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 final class EditButton
 {
     public Gift $gift;
-    public bool $hideLabelOnMobile = false;
+    public bool $iconOnly = false;
     public string $color = '';
     public string $style = 'outline';
 }

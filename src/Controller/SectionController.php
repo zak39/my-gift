@@ -17,6 +17,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('IS_AUTHENTICATED')]
 final class SectionController extends AbstractController
 {
+    #[IsGranted('user.is_owner', subject: 'user')]
     #[Route('/section/{id}', requirements: ['id' => '\d+'], name: 'app_section')]
     public function index(GiftRepository $giftRepository, User $user): Response
     {

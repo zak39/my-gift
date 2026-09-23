@@ -368,6 +368,30 @@ class Gift
         return $this->price - $this->getTotalContributed();
     }
 
+    /**
+     * Clamped for display: a price lowered below what is already collected makes
+     * getRemainingAmount() negative, and "il reste -160,00 € à réunir" is not
+     * something to put on screen. See GitHub issue #39 for the root cause.
+     */
+    public function getRemainingToCollect(): float
+    {
+        return max(0, $this->getRemainingAmount());
+    }
+
+    public function isPoolComplete(): bool
+    {
+        return $this->price > 0 && $this->getRemainingAmount() <= 0;
+    }
+
+    public function getContributionPercent(): int
+    {
+        if (!$this->price) {
+            return 0;
+        }
+
+        return (int) min(100, round($this->getTotalContributed() / $this->price * 100));
+    }
+
     public function getRemainingAmountExcluding(Participant $excluded): float
     {
         $total = 0;

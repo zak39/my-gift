@@ -3,106 +3,89 @@
 {% block title %}My Gift | Liste des cadeaux de {{ user.firstname }} {{ user.lastname }} {% endblock %}
 
 {% block body %}
-<div class="md:w-fit mx-auto">
+{% set isOwner = is_granted('user.is_owner', user) %}
+{# "Cadeaux sans section" is the owner's own housekeeping label, so visitors get the
+   gifts as plain cards: same content, without the bucket or its index entry. #}
+{% set publicGiftsWithoutSection = giftsWithoutSection|filter(gift => gift.isPublic) %}
+{% set hasContent = sections|length > 0 or publicGiftsWithoutSection|length > 0 %}
+
+<div class="mx-auto w-full max-w-6xl pb-12">
     <twig:Molecule:Breadcrumbs :items="breadcrumbs" />
-    <div class="flex md:flex-row md:items-center md:justify-between flex-col gap-4 my-6">
-        <h1 class="md:text-xl text-lg">Les cadeaux de {{ user.firstname }} {{ user.lastname }}</h1>
-        {% if app.user == user %}
-            <twig:atomic:ButtonLink
-                class="md:self-baseline self-end"
-                color="neutral"
-                style="ghost"
-                :to="path('app_section_new')">
-                <twig:block name="name">
-                    <span>Créer une section</span>
-                </twig:block>
-            </twig:atomic:ButtonLink>
-        {% endif %}
-    </div>
 
     {% for message in app.flashes('success') %}
-        <twig:Alert type="success" :message="message" />
+        <twig:Alert type="success" :message="message" class="mb-4" />
     {% endfor %}
-    <div class="grid gap-6 grid-cols-1 lg:grid-cols-[280px_1fr] items-start mb-8 md:w-fit md:mx-auto">
-        <div class="flex flex-col gap-4 items-center space-y-4 text-center p-4 bg-base-100 border border-base-200 rounded-md shadow-sm">
-            <twig:molecule:Avatar class="md:h-32 md:w-32 h-24 w-24">
-                <twig:block name="image">
-                    <twig:atomic:Image class="h-24 w-24 md:h-32 md:w-32" id="user_avatar_settings"
-                        source="{{ user.avatar ? vich_uploader_asset(user, 'avatarFile') : vich_uploader_asset(user, 'avatarDefaultFile') }}"
-                        alt="Photo de profil {{ user.firstname }} {{ user.lastname }}" />
-                </twig:block>
-            </twig:molecule:Avatar>
-            <div>
-                <h2 class="md:text-2xl text-xl font-semibold">{{ user.firstname }} {{ user.lastname }}</h2>
-            </div>
-        </div>
-        <div class="md:self-start">
-            <div class="flex flex-col gap-6 mb-8 md:w-5xl">
+
+    <twig:Organism:GiftListHeader
+        :user="user"
+        :sections="sections"
+        :giftsWithoutSection="publicGiftsWithoutSection" />
+
+    {% if hasContent %}
+        <div class="mt-6 grid items-start gap-6 lg:grid-cols-[15rem_minmax(0,1fr)]">
+            <twig:Molecule:SectionNav
+                class="lg:sticky lg:top-6"
+                :sections="sections"
+                :giftsWithoutSection="isOwner ? publicGiftsWithoutSection : []" />
+
+            <div class="flex min-w-0 flex-col gap-5">
                 {% for section in sections %}
-                    <twig:molecule:Section :title="section.title"
+                    <twig:molecule:Section
+                        :title="section.title"
                         :description="section.description"
-                        :checked="loop.first">
+                        :checked="loop.first"
+                        :anchor="'section-' ~ section.id"
+                        :giftCount="section.gifts|filter(gift => gift.isPublic)|length">
                         <twig:block name="gifts">
-                            {% for gift in section.gifts %}
-                                {% if gift.isPublic %}
-                                    <twig:CardGift :gift="gift" />
-                                {% endif %}
+                            {% for gift in section.gifts|filter(gift => gift.isPublic) %}
+                                <twig:CardGift :gift="gift" />
+                            {% else %}
+                                <p class="py-4 text-sm text-base-content/70">
+                                    Aucun cadeau publié dans cette section pour le moment.
+                                </p>
                             {% endfor %}
                         </twig:block>
                         <twig:block name="actionButtons">
-                {% if app.user == user %}
-                    <twig:atomic:ButtonLink
-                        color="neutral"
-                        style="ghost"
-                        :to="path('app_section_edit', { id: section.id })">
-                        <twig:block name="name">
-                            <span>Editer</span>
-                        </twig:block>
-                    </twig:atomic:ButtonLink>
-                    <twig:Modal :id="section.id"
-                        :title="section.title"
-                        class="remove_section">
-                        <twig:block name="handlerButton">
-                            <twig:atomic:Button
-                                color="neutral"
-                                style="ghost"
-                                onclick="modal_remove_section_{{ section.id }}.showModal()">
-                                <twig:block name="name">
-                                    <span>Supprimer</span>
-                                </twig:block>
-                            </twig:atomic:Button>
-                        </twig:block>
-                        <twig:block name="message">
-                            <p class="py-4">Est-ce que vous êtes sûr de supprimer la section <b>{{ section.title }}</b> ?</p>
-                            <p class="py-4">La suppression de la section ne supprimera pas les cadeaux. Ils seront déplacer dans la section <b>Cadeaux sans Section</b></p>
-                        </twig:block>
-                        <twig:block name="actionButtons">
-                            <form method="post" action="{{ path('app_section_delete', { id: section.id }) }}">
-                                <input type="hidden" name="_method" value="DELETE">
-                                <button type="submit" class="btn btn-outline btn-secondary">
-                                    <twig:ux:icon name="heroicons:trash-16-solid" />
-                                    Supprimer
-                                </button>
-                            </form>
-                        </twig:block>
-                    </twig:Modal>
-                {% endif %}
+                            <twig:Organism:Section:Actions :section="section" />
                         </twig:block>
                     </twig:molecule:Section>
-                {% else %}
-                    <twig:molecule:EmptyContent class="md:mt-0 mt-4"
-                        title="Mince ! {{ user.firstname }} n'a pas encore de cadeau à offrir 😥"
-                        description="Revenez plus tard pour lui offrir un joli cadeau 😉" />
                 {% endfor %}
+
+                {% if publicGiftsWithoutSection|length > 0 %}
+                    {% if isOwner %}
+                        <twig:molecule:Section
+                            title="Cadeaux sans section"
+                            description="Les cadeaux qui n'ont pas encore été rangés dans une section."
+                            anchor="section-sans-section"
+                            :giftCount="publicGiftsWithoutSection|length">
+                            <twig:block name="gifts">
+                                {% for gift in publicGiftsWithoutSection %}
+                                    <twig:CardGift :gift="gift" />
+                                {% endfor %}
+                            </twig:block>
+                        </twig:molecule:Section>
+                    {% else %}
+                        {% for gift in publicGiftsWithoutSection %}
+                            <twig:CardGift :gift="gift" />
+                        {% endfor %}
+                    {% endif %}
+                {% endif %}
             </div>
         </div>
-    </div>
-    <div class="flex justify-end">
-        <twig:atomic:ButtonLink class="btn-outline btn-md"
-            name="Retour"
+    {% else %}
+        <twig:molecule:EmptyContent class="mt-6"
+            title="Mince ! {{ user.firstname }} n'a pas encore de cadeau à offrir 😥"
+            description="Revenez plus tard pour lui offrir un joli cadeau 😉" />
+    {% endif %}
+
+    <div class="mt-8 flex justify-start">
+        <twig:atomic:ButtonLink
             color="neutral"
-            :to="btnReturn"
-            size="md">
+            style="ghost"
+            :to="btnReturn|default(null) ?: path('app_user')">
+            <twig:block name="icon">
+                <twig:ux:icon name="lucide:arrow-left" class="size-4" />
+            </twig:block>
             <twig:block name="name">
                 <span>Retour</span>
             </twig:block>

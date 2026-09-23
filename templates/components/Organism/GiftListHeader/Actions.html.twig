@@ -1,0 +1,35 @@
+<div {{ attributes.defaults({ class: 'flex flex-wrap items-center gap-2 lg:shrink-0 lg:justify-end' }) }}>
+    {% if ownerView %}
+        <a href="{{ path('app_gift_create') }}" class="btn btn-primary">
+            <twig:ux:icon name="lucide:plus" class="size-4" />
+            Ajouter un cadeau
+        </a>
+        <a href="{{ path('app_section_new') }}" class="btn btn-outline btn-neutral">
+            <twig:ux:icon name="lucide:folder-plus" class="size-4" />
+            Créer une section
+        </a>
+        <a href="{{ path('app_section_user_page', { id: user.id }) }}" class="btn btn-ghost">
+            <twig:ux:icon name="lucide:eye" class="size-4" />
+            Voir mon profil public
+        </a>
+    {% else %}
+        {# Distinct from ownerView: the owner previewing their own public profile is the
+           owner, but is not in the management view. #}
+        {% if is_granted('user.is_owner', user) %}
+            <a href="{{ path('app_section_new') }}" class="btn btn-primary">
+                <twig:ux:icon name="lucide:folder-plus" class="size-4" />
+                Créer une section
+            </a>
+        {% endif %}
+        <button type="button"
+            class="btn btn-outline btn-neutral"
+            data-controller="copy"
+            data-copy-text-value="{{ app.request.uri }}"
+            data-action="click->copy#copy">
+            <span data-copy-target="icon">
+                <twig:ux:icon name="lucide:share" class="size-4" />
+            </span>
+            <span data-copy-target="label">Partager le profil</span>
+        </button>
+    {% endif %}
+</div>
