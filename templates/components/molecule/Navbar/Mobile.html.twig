@@ -12,13 +12,7 @@
     <div class="menu bg-base-200 min-h-full w-80 p-4">
         <!-- Sidebar content here -->
         <div class="flex gap-4 items-center mb-6">
-            <twig:molecule:Avatar class="w-16">
-                <twig:block name="image">
-                    <twig:atomic:Image id="user_avatar_header"
-                        source="{{ app.user.avatar ? vich_uploader_asset(app.user, 'avatarFile') : vich_uploader_asset(app.user, 'avatarDefaultFile') }}"
-                        alt="{{ 'Photo de profil ' ~ app.user.firstname ~ ' ' ~ app.user.lastname  }}" />
-                </twig:block>
-            </twig:molecule:Avatar>
+            <twig:Molecule:UserAvatar :user="app.user" sizeClass="w-16" id="user_avatar_header" />
             <span class="text-2xl">
                 {{ app.user.firstname|capitalize }} {{ app.user.lastname|capitalize }}
             </span>

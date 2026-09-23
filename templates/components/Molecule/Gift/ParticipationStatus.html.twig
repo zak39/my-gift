@@ -28,13 +28,7 @@
                         <span class="text-base-content/80 md:text-base text-lg">a réservé ce cadeau</span>
                     </div>
                 {% else %}
-                    <twig:molecule:Avatar class="size-8">
-                        <twig:block name="image">
-                            <twig:atomic:Image
-                                source="{{ participant.participantUser.avatar ? vich_uploader_asset(participant.participantUser, 'avatarFile') : vich_uploader_asset(participant.participantUser, 'avatarDefaultFile') }}"
-                                alt="{{ 'Photo de profil ' ~ participant.participantUser.fullname }}" />
-                        </twig:block>
-                    </twig:molecule:Avatar>
+                    <twig:Molecule:UserAvatar :user="participant.participantUser" sizeClass="size-8" />
                     <div class="leading-tight">
                         <span class="font-bold md:text-base text-sm">
                             {{ this.isCurrentUser(participant.participantUser) ? 'Vous' : participant.participantUser.fullname }}

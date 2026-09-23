@@ -5,13 +5,10 @@
 
     <div class="flex flex-col gap-5 p-5 sm:p-7 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
         <div class="flex items-center gap-4 sm:gap-6">
-            <twig:molecule:Avatar class="h-20 w-20 shrink-0 rounded-full ring-2 ring-base-300 ring-offset-2 ring-offset-base-100 sm:h-24 sm:w-24">
-                <twig:block name="image">
-                    <twig:atomic:Image class="h-20 w-20 sm:h-24 sm:w-24" id="user_avatar_settings"
-                        source="{{ user.avatar ? vich_uploader_asset(user, 'avatarFile') : vich_uploader_asset(user, 'avatarDefaultFile') }}"
-                        alt="Photo de profil {{ user.firstname }} {{ user.lastname }}" />
-                </twig:block>
-            </twig:molecule:Avatar>
+            <twig:Molecule:UserAvatar
+                :user="user"
+                sizeClass="h-20 w-20 shrink-0 rounded-full ring-2 ring-base-300 ring-offset-2 ring-offset-base-100 sm:h-24 sm:w-24"
+                id="user_avatar_settings" />
 
             <div class="min-w-0">
                 <h1 class="text-2xl leading-tight font-bold break-words sm:text-3xl">

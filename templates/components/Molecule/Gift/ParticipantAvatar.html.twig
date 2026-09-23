@@ -6,12 +6,6 @@
             </div>
         </div>
     {% else %}
-        <twig:molecule:Avatar class="{{ size }}">
-            <twig:block name="image">
-                <twig:atomic:Image
-                    source="{{ participant.participantUser.avatar ? vich_uploader_asset(participant.participantUser, 'avatarFile') : vich_uploader_asset(participant.participantUser, 'avatarDefaultFile') }}"
-                    alt="{{ 'Photo de profil ' ~ participant.participantUser.fullname }}" />
-            </twig:block>
-        </twig:molecule:Avatar>
+        <twig:Molecule:UserAvatar :user="participant.participantUser" :sizeClass="size" />
     {% endif %}
 </div>
