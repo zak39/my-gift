@@ -3,7 +3,6 @@
 namespace App\Twig\Components\Organism;
 
 use App\Entity\Gift;
-use App\Enum\GiftStatus;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
@@ -16,17 +15,21 @@ final class Contributors
     {
     }
 
-    public function isCreator(): bool
+    public function showWho(): bool
     {
-        return $this->security->isGranted('gift.is_creator', $this->gift);
+        return !$this->gift->getParticipants()->isEmpty()
+            && $this->security->isGranted('gift.can_see_contributors', $this->gift)
+        ;
     }
 
-    /**
-     * `contributing` means the collected amount has not reached the price yet.
-     */
-    public function isPotInProgress(): bool
+    public function showAmounts(): bool
     {
-        return GiftStatus::CONTRIBUTING === $this->gift->getStatus();
+        return $this->security->isGranted('gift.can_see_amounts', $this->gift);
+    }
+
+    public function showPot(): bool
+    {
+        return $this->gift->getPrice() > 0 && $this->showAmounts();
     }
 
     /**
@@ -34,50 +37,23 @@ final class Contributors
      */
     public function isPooled(): bool
     {
-        return $this->gift->getTotalContributed() > 0 || $this->isPotInProgress();
+        return $this->gift->getTotalContributed() > 0
+            || $this->gift->getStatus()?->isPoolOpen()
+        ;
     }
 
     /**
-     * The creator may see who is giving, except while a pot is still filling up.
+     * The creator is told a pool exists without learning anything about it.
      */
-    public function showWho(): bool
+    public function isWaitingOnPool(): bool
     {
-        if ($this->gift->getParticipants()->isEmpty()) {
-            return false;
-        }
-
-        return !($this->isCreator() && $this->isPotInProgress());
+        return $this->gift->getStatus()?->isPoolOpen()
+            && !$this->security->isGranted('gift.can_see_contributors', $this->gift)
+        ;
     }
 
-    /**
-     * Amounts are for the people chipping in, never for the person being given to.
-     */
-    public function showAmounts(): bool
+    public function isCreator(): bool
     {
-        return !$this->isCreator();
-    }
-
-    public function showPot(): bool
-    {
-        return $this->showAmounts() && $this->gift->getPrice() > 0;
-    }
-
-    public function getPercent(): int
-    {
-        $price = $this->gift->getPrice();
-
-        if (!$price) {
-            return 0;
-        }
-
-        return (int) min(100, round($this->gift->getTotalContributed() / $price * 100));
-    }
-
-    /**
-     * Clamped for display: a last contributor may give more than what was left.
-     */
-    public function getRemaining(): float
-    {
-        return max(0, $this->gift->getRemainingAmount());
+        return $this->security->isGranted('gift.is_creator', $this->gift);
     }
 }

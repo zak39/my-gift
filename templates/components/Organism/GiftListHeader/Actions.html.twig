@@ -13,7 +13,9 @@
             Voir mon profil public
         </a>
     {% else %}
-        {% if this.isOwner %}
+        {# Distinct from ownerView: the owner previewing their own public profile is the
+           owner, but is not in the management view. #}
+        {% if is_granted('user.is_owner', user) %}
             <a href="{{ path('app_section_new') }}" class="btn btn-primary">
                 <twig:ux:icon name="lucide:folder-plus" class="size-4" />
                 Créer une section

@@ -33,7 +33,7 @@ final class GiftListHeader
      *
      * @return list<Gift>
      */
-    public function getGifts(): array
+    private function getGifts(): array
     {
         if (null !== $this->gifts) {
             return $this->gifts;

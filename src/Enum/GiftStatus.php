@@ -24,6 +24,15 @@ enum GiftStatus: string
         };
     }
 
+    /**
+     * The pool is still filling up: GiftLifecycle moves a gift to READY as soon as
+     * the collected amount reaches the price, so CONTRIBUTING means "not funded yet".
+     */
+    public function isPoolOpen(): bool
+    {
+        return self::CONTRIBUTING === $this;
+    }
+
     public function hasReachedContributing(): bool
     {
         return match ($this) {

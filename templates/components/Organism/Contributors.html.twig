@@ -1,22 +1,24 @@
 <div {{ attributes.defaults({ class: 'contents' }) }}>
-    {% if this.showWho %}
+    {% if computed.showWho %}
         <h2 class="card-title w-full text-xl mb-6">Offert par</h2>
         <div class="flex flex-col-reverse gap-16 items-center w-full">
             <div class="flex flex-col gap-2 w-full items-center">
-                {% if this.pooled %}
-                    {% if this.showPot %}
+                {% if computed.pooled %}
+                    {% if computed.showPot %}
                         <div class="flex flex-col justify-center items-center gap-8 mb-6">
-                            <twig:molecule:GiftContributingProgress :percent="this.percent" color="success" />
+                            <twig:molecule:GiftContributingProgress
+                                :percent="gift.contributionPercent"
+                                color="success" />
                             <div class="flex md:flex-row flex-col gap-4">
                                 <twig:molecule:GiftMeta label="Total" value="{{ gift.totalContributed|format_currency('EUR') }}" />
-                                <twig:molecule:GiftMeta label="Reste" value="{{ this.remaining|format_currency('EUR') }}" />
+                                <twig:molecule:GiftMeta label="Reste" value="{{ gift.remainingToCollect|format_currency('EUR') }}" />
                             </div>
                         </div>
                     {% endif %}
 
                     {% for participant in gift.participants %}
                         <twig:molecule:ParticipantCard :participant="participant"
-                            :showAmount="this.showAmounts"
+                            :showAmount="computed.showAmounts"
                             avatarSize="size-12 md:size-16" />
                     {% endfor %}
                 {% else %}
@@ -25,9 +27,9 @@
                 {% endif %}
             </div>
         </div>
-    {% elseif this.isCreator %}
+    {% elseif computed.isCreator %}
         <div class="card-title w-full">
-            {% if this.potInProgress %}
+            {% if computed.waitingOnPool %}
                 <h6 class="text-sm">Une cagnotte est en cours pour ce cadeau. Vous découvrirez qui y a participé une fois qu'elle sera complète.</h6>
             {% else %}
                 <h6 class="text-sm">Personne ne vous a offert le cadeau pour le moment.</h6>

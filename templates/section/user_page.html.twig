@@ -3,7 +3,7 @@
 {% block title %}My Gift | Liste des cadeaux de {{ user.firstname }} {{ user.lastname }} {% endblock %}
 
 {% block body %}
-{% set isOwner = app.user == user %}
+{% set isOwner = is_granted('user.is_owner', user) %}
 {# "Cadeaux sans section" is the owner's own housekeeping label, so visitors get the
    gifts as plain cards: same content, without the bucket or its index entry. #}
 {% set publicGiftsWithoutSection = giftsWithoutSection|filter(gift => gift.isPublic) %}
@@ -46,51 +46,7 @@
                             {% endfor %}
                         </twig:block>
                         <twig:block name="actionButtons">
-                            {% if isOwner %}
-                                <twig:atomic:ButtonLink
-                                    class="btn-sm"
-                                    color="neutral"
-                                    style="ghost"
-                                    :to="path('app_section_edit', { id: section.id })">
-                                    <twig:block name="icon">
-                                        <twig:ux:icon name="ic:baseline-edit" class="size-4" />
-                                    </twig:block>
-                                    <twig:block name="name">
-                                        <span>Editer la section</span>
-                                    </twig:block>
-                                </twig:atomic:ButtonLink>
-                                <twig:Modal :id="section.id"
-                                    :title="section.title"
-                                    class="remove_section">
-                                    <twig:block name="handlerButton">
-                                        <twig:atomic:Button
-                                            class="btn-sm"
-                                            color="neutral"
-                                            style="ghost"
-                                            onclick="modal_remove_section_{{ section.id }}.showModal()">
-                                            <twig:block name="icon">
-                                                <twig:ux:icon name="heroicons:trash-16-solid" class="size-4" />
-                                            </twig:block>
-                                            <twig:block name="name">
-                                                <span>Supprimer la section</span>
-                                            </twig:block>
-                                        </twig:atomic:Button>
-                                    </twig:block>
-                                    <twig:block name="message">
-                                        <p class="py-4">Est-ce que vous êtes sûr de supprimer la section <b>{{ section.title }}</b> ?</p>
-                                        <p class="py-4">La suppression de la section ne supprimera pas les cadeaux. Ils seront déplacer dans la section <b>Cadeaux sans Section</b></p>
-                                    </twig:block>
-                                    <twig:block name="actionButtons">
-                                        <form method="post" action="{{ path('app_section_delete', { id: section.id }) }}">
-                                            <input type="hidden" name="_method" value="DELETE">
-                                            <button type="submit" class="btn btn-outline btn-secondary">
-                                                <twig:ux:icon name="heroicons:trash-16-solid" />
-                                                Supprimer
-                                            </button>
-                                        </form>
-                                    </twig:block>
-                                </twig:Modal>
-                            {% endif %}
+                            <twig:Organism:Section:Actions :section="section" />
                         </twig:block>
                     </twig:molecule:Section>
                 {% endfor %}

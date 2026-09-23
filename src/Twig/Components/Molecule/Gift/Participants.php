@@ -4,7 +4,6 @@ namespace App\Twig\Components\Molecule\Gift;
 
 use App\Entity\Gift;
 use App\Entity\User;
-use App\Enum\GiftStatus;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
@@ -17,21 +16,11 @@ final class Participants
     {
     }
 
-    /**
-     * The creator may see who is giving, except while a pot is still filling up:
-     * `contributing` means the collected amount has not reached the price yet.
-     */
     public function showContributors(): bool
     {
-        if ($this->gift->getParticipants()->isEmpty()) {
-            return false;
-        }
-
-        $hiddenFromCreator = $this->security->isGranted('gift.is_creator', $this->gift)
-            && GiftStatus::CONTRIBUTING === $this->gift->getStatus()
+        return !$this->gift->getParticipants()->isEmpty()
+            && $this->security->isGranted('gift.can_see_contributors', $this->gift)
         ;
-
-        return !$hiddenFromCreator;
     }
 
     /**
