@@ -1,18 +1,26 @@
-<div{{ attributes }}>
-  <div class="card card-border bg-base-100 md:w-80 w-96">
-    <div class="card-body">
-      <div class="flex gap-4">
-          <twig:Molecule:UserAvatar :user="user" sizeClass="md:h-16 md:w-16 h-14 w-14" />
-          <h2 class="card-title">{{ user.firstname }} {{ user.lastname }}</h2>
-      </div>
-      <div class="card-actions justify-end">
-        <twig:atomic:ButtonLink class="md:btn-sm btn-md"
-          :to="path('app_section_user_page', { id: user.id })">
-          <twig:block name="name">
-              <span>Voir profil</span>
-          </twig:block>
-        </twig:atomic:ButtonLink>
-      </div>
+{# Same surface as CardGift, so a friend's card reads as part of the gift-list family. #}
+<article {{ attributes.defaults({ class: 'card h-full border border-base-300 bg-base-100 shadow-sm transition-shadow duration-200 hover:shadow-md' }) }}>
+    <div class="card-body gap-4 p-5">
+        <div class="flex items-center gap-4">
+            <twig:Molecule:UserAvatar
+                :user="user"
+                sizeClass="h-14 w-14 shrink-0 rounded-full ring-2 ring-base-300 ring-offset-2 ring-offset-base-100" />
+            <h2 class="card-title min-w-0 break-words">{{ user.fullname }}</h2>
+        </div>
+
+        <div class="card-actions mt-auto justify-end">
+            <twig:atomic:ButtonLink
+                class="btn-sm"
+                color="neutral"
+                style="ghost"
+                :to="path('app_section_user_page', { id: user.id })">
+                <twig:block name="name">
+                    <span>Voir sa liste</span>
+                </twig:block>
+                <twig:block name="icon">
+                    <twig:ux:icon name="lucide:arrow-right" class="size-4" />
+                </twig:block>
+            </twig:atomic:ButtonLink>
+        </div>
     </div>
-  </div>
-</div>
+</article>

@@ -1,44 +1,66 @@
-<div{{ attributes }}>
-    <div class="flex md:flex-row flex-col gap-4">
-        <label class="input md:w-xl w-sm" data-controller="reset-searchbar">
-            <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <g
-                stroke-linejoin="round"
-                stroke-linecap="round"
-                stroke-width="2.5"
-                fill="none"
-                stroke="currentColor"
-                >
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.3-4.3"></path>
-                </g>
-            </svg>
+<div {{ attributes.defaults({ class: 'flex flex-col' }) }}>
+    <div class="rounded-box border border-base-300 bg-base-100 p-4 shadow-sm sm:p-5">
+        <label class="input w-full" data-controller="reset-searchbar">
+            <twig:ux:icon name="lucide:search" class="size-4 shrink-0 opacity-50" />
+            <span class="sr-only">Chercher un ami par son prénom ou son nom</span>
             <input type="search"
-                class="md:input-md input-lg"
-                placeholder="Chercher un ami"
+                class="grow"
+                placeholder="Chercher un ami par son prénom ou son nom"
                 data-reset-searchbar-target="field"
                 data-model="debounce(300)|query" />
-            <button class="btn btn-xs btn-circle" data-action="reset-searchbar#reset">
-                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16"><path fill="currentColor" d="M12.293 2.293a1 1 0 0 1 1.414 1.414L9.414 8l4.293 4.293a1 1 0 1 1-1.414 1.414L8 9.414l-4.293 4.293a1 1 0 1 1-1.414-1.414L6.586 8L2.293 3.707a1 1 0 1 1 1.414-1.414L8 6.586z"/></svg>
+            <button type="button"
+                class="btn btn-ghost btn-xs btn-circle"
+                aria-label="Effacer la recherche"
+                data-action="reset-searchbar#reset">
+                <twig:ux:icon name="lucide:x" class="size-4" />
             </button>
         </label>
+
+        {% set total = this.users.getTotalItemCount() %}
+        {% if total > 0 %}
+            <p class="mt-2 text-sm text-base-content/70">
+                <span class="tabular-nums">
+                    {{ total }}
+                </span>
+                {% if query is empty %}
+                    utilisateur{{ total > 1 ? 's' : '' }}
+                {% else %}
+                    utilisateur{{ total > 1 ? 's' : '' }} trouvé{{ total > 1 ? 's' : '' }} pour « {{ query }} »
+                {% endif %}
+            </p>
+        {% endif %}
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 justify-items-center gap-4 w-full my-8">
-        <div data-loading="show" class="col-span-full text-center">
-            <h1 class="skeleton skeleton-text text-xl">Recherche d'utilisateurs en cours...</h1>
-        </div>
-        {% for user in this.users %}
-            <div data-loading="hide">
-                <twig:molecule:UserCard :user="user" />
+    {# The skeletons borrow the card geometry and sit in the same grid, so a search never
+       collapses the layout. min-loading keeps them up for a minimum time: a local response
+       is so fast that plain `data-loading` would only flash them for a frame. #}
+    <div class="group mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+        data-controller="min-loading"
+        data-min-loading-duration-value="500">
+        <p class="sr-only hidden group-data-searching:block" role="status">Recherche d'amis en cours…</p>
+        {% for i in 1..9 %}
+            <div aria-hidden="true"
+                class="hidden group-data-searching:flex flex-col gap-4 rounded-box border border-base-300 bg-base-100 p-5 shadow-sm">
+                <div class="flex items-center gap-4">
+                    <div class="skeleton size-14 shrink-0 rounded-full"></div>
+                    <div class="flex w-full flex-col gap-2">
+                        <div class="skeleton h-4 w-3/4"></div>
+                        <div class="skeleton h-4 w-1/2"></div>
+                    </div>
+                </div>
+                <div class="skeleton h-8 w-32 self-end"></div>
             </div>
+        {% endfor %}
+
+        {% for user in this.users %}
+            <twig:molecule:UserCard :user="user" class="group-data-searching:hidden" />
         {% else %}
-            <twig:molecule:EmptyContentHero class="col-span-full text-center"
+            <twig:molecule:EmptyContentHero class="col-span-full rounded-box group-data-searching:hidden"
                 title="Aucun utilisateur trouvé"
                 description='Aucun utilisateur trouvé avec "{{ query }}" !' />
         {% endfor %}
 
-        <div data-loading="hide" class="col-span-full flex justify-center">
+        <div class="col-span-full flex justify-center group-data-searching:hidden">
             {{ knp_pagination_render(this.users, 'components/pagination.html.twig') }}
         </div>
     </div>

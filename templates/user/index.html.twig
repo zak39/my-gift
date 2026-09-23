@@ -3,10 +3,15 @@
 {% block title %}My Gift | Trouver vos amis{% endblock %}
 
 {% block body %}
-<div class="w-full max-w-5xl mx-auto">
-    <div class="flex items-center justify-between my-6">
-        <h1 class="text-xl">Trouver vos amis</h1>
-    </div>
-    <twig:SearchUsers />
+<div class="mx-auto w-full max-w-6xl py-6 pb-12">
+    <header>
+        <h1 class="text-2xl leading-tight font-bold sm:text-3xl">Trouver vos amis</h1>
+        <p class="mt-2 flex items-center gap-2 text-sm text-base-content/70">
+            <twig:ux:icon name="lucide:users" class="size-4 shrink-0" />
+            <span>Retrouvez vos proches pour découvrir leurs listes de cadeaux.</span>
+        </p>
+    </header>
+
+    <twig:SearchUsers class="mt-6" />
 </div>
 {% endblock %}
