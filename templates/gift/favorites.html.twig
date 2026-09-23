@@ -1,45 +1,89 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}My Gift | Mes Favoris{% endblock %}
+{% block title %}My Gift | Mes favoris{% endblock %}
 
 {% block body %}
-<div class="flex md:flex-row flex-col md:items-center items-start justify-between my-6 md:gap-0 gap-8">
-    <h1 class="text-xl">Mes Favoris</h1>
-</div>
+{# Favourites are always someone else's gifts: the heart is hidden on your own cards. #}
+{% set friendCount = favoriteGiftsByUsers|length %}
+{% set giftCount = user.favoriteGifts|length %}
 
+<div class="mx-auto w-full max-w-6xl py-6 pb-12">
+    <header>
+        <h1 class="text-2xl leading-tight font-bold sm:text-3xl">Mes favoris</h1>
+        {% if giftCount > 0 %}
+            <p class="mt-2 flex items-center gap-2 text-sm text-base-content/70">
+                <twig:ux:icon name="lucide:heart" class="size-4 shrink-0" />
+                <span class="tabular-nums">
+                    {{ giftCount }} cadeau{{ giftCount > 1 ? 'x' }}
+                    mis de côté chez {{ friendCount }} ami{{ friendCount > 1 ? 's' }}
+                </span>
+            </p>
+        {% endif %}
+    </header>
 
-<div class="flex flex-col items-center gap-6 my-8">
-    {% for userId, data in favoriteGiftsByUsers %}
-        {% for sectionId, sectionData in data.sections %}
-            <twig:molecule:Section :title="data.user.fullname ~ ' - ' ~ sectionData.section.title">
-                <twig:block name="avatarOwner">
-                    <twig:molecule:Avatar class="md:h-12 md:w-12 h-12 w-12">
-                        <twig:block name="image">
-                            <twig:atomic:Image class="h-12 w-12 md:h-12 md:w-12" id="user_avatar_settings"
-                                source="{{ data.user.avatar ? vich_uploader_asset(data.user, 'avatarFile') : vich_uploader_asset(data.user, 'avatarDefaultFile') }}"
-                                alt="Photo de profil {{ data.user.firstname }} {{ data.user.lastname }}" />
-                        </twig:block>
-                    </twig:molecule:Avatar>
-                </twig:block>
-                <twig:block name="gifts">
-                    {% for gift in sectionData.gifts %}
+    {% if favoriteGiftsByUsers is not empty %}
+        <div class="mt-6 flex flex-col gap-8">
+            {% for group in favoriteGiftsByUsers %}
+                <article class="flex min-w-0 flex-col gap-4">
+                    <div class="flex flex-wrap items-center gap-3">
+                        <twig:Molecule:UserAvatar :user="group.user" sizeClass="h-12 w-12 shrink-0" />
+                        <h2 class="min-w-0 text-lg font-semibold break-words">{{ group.user.fullname }}</h2>
+                        <twig:atomic:ButtonLink
+                            class="btn-sm ms-auto"
+                            color="neutral"
+                            style="ghost"
+                            :to="path('app_section_user_page', { id: group.user.id })">
+                            <twig:block name="name">
+                                <span>Voir sa liste</span>
+                            </twig:block>
+                            <twig:block name="icon">
+                                <twig:ux:icon name="lucide:arrow-right" class="size-4" />
+                            </twig:block>
+                        </twig:atomic:ButtonLink>
+                    </div>
+
+                    {% for entry in group.sections %}
+                        <twig:molecule:Section
+                            :title="entry.section.title"
+                            :description="entry.section.description"
+                            :checked="loop.first"
+                            :anchor="'favoris-' ~ group.user.id ~ '-' ~ entry.section.id"
+                            :giftCount="entry.gifts|length">
+                            <twig:block name="gifts">
+                                {% for gift in entry.gifts %}
+                                    <twig:CardGift :gift="gift" />
+                                {% endfor %}
+                            </twig:block>
+                        </twig:molecule:Section>
+                    {% endfor %}
+
+                    {# Gifts their owner never filed under a section: plain cards, like on
+                       the public list page, since "sans section" is the owner's own label. #}
+                    {% for gift in group.giftsWithoutSection %}
                         <twig:CardGift :gift="gift" />
                     {% endfor %}
-                </twig:block>
-            </twig:molecule:Section>
-        {% endfor %}
+                </article>
+            {% endfor %}
+        </div>
     {% else %}
-        <twig:molecule:EmptyContentHero class="md:mt-0 mt-4"
-            title="Vous n'avez pas encore mis de cadeau en favoris">
+        <twig:molecule:EmptyContentHero class="mt-6"
+            title="Vous n'avez pas encore mis de cadeau en favoris"
+            description="Parcourez les listes de vos amis et gardez sous la main les cadeaux qui vous plaisent.">
             <twig:block name="action_buttons">
-                <twig:atomic:ButtonLink class="md:btn-lg btn-md"
+                {# Solid primary: the single call to action of an otherwise empty page. #}
+                <twig:atomic:ButtonLink
+                    color="primary"
+                    style=""
                     :to="path('app_user')">
+                    <twig:block name="icon">
+                        <twig:ux:icon name="lucide:users" class="size-4" />
+                    </twig:block>
                     <twig:block name="name">
                         <span>Commencez par trouver vos amis</span>
                     </twig:block>
                 </twig:atomic:ButtonLink>
             </twig:block>
         </twig:molecule:EmptyContentHero>
-    {% endfor %}
+    {% endif %}
 </div>
 {% endblock %}
