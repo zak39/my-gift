@@ -3,7 +3,8 @@
         <div class="join">
 
         {% if previous is defined %}
-            <button class="join-item btn bg-base-100"
+            <button class="join-item hidden sm:inline btn btn-sm sm:btn-md bg-base-100"
+                aria-label="Page précédente"
                 rel="prev"
                 data-action="live#action"
                 data-live-action-param="goToPage"
@@ -14,20 +15,21 @@
 
         {% for page in pagesInRange %}
             {% if page != current %}
-                <button class="join-item btn bg-base-100"
+                <button class="join-item btn btn-sm sm:btn-md bg-base-100"
                     data-action="live#action"
                     data-live-action-param="goToPage"
                     data-live-page-param="{{ page }}">
                     {{ page }}
                 </button>
             {% else %}
-                <button class="join-item btn bg-accent">{{ page }}</button>
+                <button class="join-item btn btn-sm sm:btn-md bg-accent">{{ page }}</button>
             {% endif %}
 
         {% endfor %}
 
         {% if next is defined %}
-            <button class="join-item btn bg-base-100"
+            <button class="join-item btn btn-sm sm:btn-md bg-base-100"
+                aria-label="Page suivante"
                 rel="next"
                 data-action="live#action"
                 data-live-action-param="goToPage"
