@@ -6,6 +6,7 @@ use App\Entity\Gift;
 use App\Enum\GiftStatus;
 use App\Form\GiftEditType;
 use App\Form\GiftType;
+use App\Repository\GiftRepository;
 use App\Services\BreadcrumbBuilder;
 use App\Services\FavoriteGiftGrouper;
 use App\Services\ImageDownloader;
@@ -161,14 +162,16 @@ final class GiftController extends AbstractController
     }
 
     #[Route('/user/favorites', name: 'app_gift_user_favorites', methods: ['GET'])]
-    public function getFavoriteGiftsBy(FavoriteGiftGrouper $favoriteGiftGrouper): Response
+    public function getFavoriteGiftsBy(FavoriteGiftGrouper $favoriteGiftGrouper, GiftRepository $giftRepository): Response
     {
         /** @var \App\Entity\User */
         $user = $this->getUser();
 
+        $gifts = $giftRepository->findFavoritesGifts($user);
+
         return $this->render('gift/favorites.html.twig', [
-            'user' => $user,
-            'favoriteGiftsByUsers' => $favoriteGiftGrouper->groupedByCreator($user),
+            'giftCount' => \count($gifts),
+            'favoriteGiftsByUsers' => $favoriteGiftGrouper->groupedByCreator($gifts),
         ]);
     }
 }

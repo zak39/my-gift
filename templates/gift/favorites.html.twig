@@ -5,7 +5,6 @@
 {% block body %}
 {# Favourites are always someone else's gifts: the heart is hidden on your own cards. #}
 {% set friendCount = favoriteGiftsByUsers|length %}
-{% set giftCount = user.favoriteGifts|length %}
 
 <div class="mx-auto w-full max-w-6xl py-6 pb-12">
     <header>
@@ -14,8 +13,8 @@
             <p class="mt-2 flex items-center gap-2 text-sm text-base-content/70">
                 <twig:ux:icon name="lucide:heart" class="size-4 shrink-0" />
                 <span class="tabular-nums">
-                    {{ giftCount }} cadeau{{ giftCount > 1 ? 'x' }}
-                    mis de côté chez {{ friendCount }} ami{{ friendCount > 1 ? 's' }}
+                    {{ giftCount }} cadeau{{ giftCount > 1 ? 'x' : '' }}
+                    mis de côté chez {{ friendCount }} ami{{ friendCount > 1 ? 's' : '' }}
                 </span>
             </p>
         {% endif %}
@@ -55,12 +54,6 @@
                                 {% endfor %}
                             </twig:block>
                         </twig:molecule:Section>
-                    {% endfor %}
-
-                    {# Gifts their owner never filed under a section: plain cards, like on
-                       the public list page, since "sans section" is the owner's own label. #}
-                    {% for gift in group.giftsWithoutSection %}
-                        <twig:CardGift :gift="gift" />
                     {% endfor %}
                 </article>
             {% endfor %}
