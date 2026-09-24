@@ -111,10 +111,14 @@ final class SectionController extends AbstractController
     #[Route('/users/{id}/sections', requirements: ['id' => '\d+'], name: 'app_section_user_page')]
     public function userPage(GiftRepository $giftRepository, User $user, BreadcrumbBuilder $breadcrumbBuilder, Request $request): Response
     {
-        $giftsWithoutSection = $giftRepository->findBy([
-            'createdBy' => $user,
-            'section' => null,
-        ]);
+        $giftsWithoutSection = [];
+        if ($this->isGranted('user.is_owner', $user)) {
+            $giftsWithoutSection = $giftRepository->findBy([
+                'createdBy' => $user,
+                'section' => null,
+                'isPublic' => true,
+            ]);
+        }
 
         return $this->render('section/user_page.html.twig', [
             'giftsWithoutSection' => $giftsWithoutSection,
