@@ -22,7 +22,13 @@ class GiftRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('g')
             ->innerJoin('g.favoritedBy', 'u')
+            // The inner join on section drops gifts left outside one; both joins also
+            // load the creator and section the favourites page displays.
+            ->innerJoin('g.createdBy', 'c')
+            ->innerJoin('g.section', 's')
+            ->addSelect('c', 's')
             ->where('u.id = :userId')
+            ->andWhere('g.isPublic = true')
             ->setParameter('userId', $user->getId())
             ->orderBy('g.createdAt', 'DESC')
         ;

@@ -3,31 +3,30 @@
 namespace App\Services;
 
 use App\Entity\Gift;
-use App\Entity\Section;
-use App\Entity\User;
 
 class FavoriteGiftGrouper
 {
     /**
-     * The favourite gifts of $user, grouped by the friend who offers them, then by section.
+     * Gifts grouped by the friend who offers them, then by section.
      *
-     * A gift does not have to belong to a section, so the ones without land in
-     * `giftsWithoutSection` and the page renders them on their own under the friend.
+     * Every gift must belong to a section: callers
+     * filter out the others (see `GiftRepository::findFavoritesGifts()`).
      *
      * Everything comes back as lists: the template only ever iterates, and entity ids
      * as array keys made Twig walk an extra level for nothing.
      *
+     * @param iterable<Gift> $gifts
+     *
      * @return list<array{
-     *     user: User,
-     *     sections: list<array{section: Section, gifts: list<Gift>}>,
-     *     giftsWithoutSection: list<Gift>,
+     *     user: \App\Entity\User,
+     *     sections: list<array{section: \App\Entity\Section, gifts: list<Gift>}>,
      * }>
      */
-    public function groupedByCreator(User $user): array
+    public function groupedByCreator(iterable $gifts): array
     {
         $grouped = [];
 
-        foreach ($user->getFavoriteGifts() as $gift) {
+        foreach ($gifts as $gift) {
             $createdBy = $gift->getCreatedBy();
             $creatorId = $createdBy->getId();
             $section = $gift->getSection();
@@ -35,14 +34,7 @@ class FavoriteGiftGrouper
             $grouped[$creatorId] ??= [
                 'user' => $createdBy,
                 'sections' => [],
-                'giftsWithoutSection' => [],
             ];
-
-            if (null === $section) {
-                $grouped[$creatorId]['giftsWithoutSection'][] = $gift;
-
-                continue;
-            }
 
             $sectionId = $section->getId();
             $grouped[$creatorId]['sections'][$sectionId] ??= [
