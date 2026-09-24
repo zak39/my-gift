@@ -99,6 +99,7 @@ final class GiftController extends AbstractController
         ]);
     }
 
+    #[IsGranted('gift.can_see', subject: 'gift')]
     #[Route('/gift/{id}/show', name: 'app_gift_show')]
     public function show(Gift $gift, BreadcrumbBuilder $breadcrumbBuilder, Request $request): Response
     {
@@ -133,6 +134,7 @@ final class GiftController extends AbstractController
         return $this->redirectToRoute('app_section', ['id' => $user->getId()]);
     }
 
+    #[IsGranted('gift.can_see', subject: 'gift')]
     #[Route('/gift/{id}/favorite', name: 'app_gift_add_favorite', methods: ['POST'])]
     public function addFavorite(Gift $gift, EntityManagerInterface $entityManager): Response
     {

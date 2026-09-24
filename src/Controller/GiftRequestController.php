@@ -17,6 +17,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/gift/{id}/request', requirements: ['id' => '\d+'])]
 final class GiftRequestController extends AbstractController
 {
+    #[IsGranted('gift.can_see', subject: 'gift')]
     #[Route('/reserved', name: 'app_gift_reserved', methods: ['POST', 'GET'])]
     public function reserved(Gift $gift, Request $request, GiftLifecycle $giftLifecycle): Response
     {
@@ -74,6 +75,7 @@ final class GiftRequestController extends AbstractController
         return $this->redirectToRoute('app_section_user_page', ['id' => $gift->getCreatedBy()->getId()]);
     }
 
+    #[IsGranted('gift.can_see', subject: 'gift')]
     #[Route('/participated', name: 'app_gift_participated', methods: ['GET', 'POST'])]
     public function participated(Gift $gift, GiftLifecycle $giftLifecycle, Request $request): Response
     {
