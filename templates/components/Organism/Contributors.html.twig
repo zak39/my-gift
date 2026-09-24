@@ -1,39 +1,29 @@
-<div {{ attributes.defaults({ class: 'contents' }) }}>
-    {% if computed.showWho %}
-        <h2 class="card-title w-full text-xl mb-6">Offert par</h2>
-        <div class="flex flex-col-reverse gap-16 items-center w-full">
-            <div class="flex flex-col gap-2 w-full items-center">
-                {% if computed.pooled %}
-                    {% if computed.showPot %}
-                        <div class="flex flex-col justify-center items-center gap-8 mb-6">
-                            <twig:molecule:GiftContributingProgress
-                                :percent="gift.contributionPercent"
-                                color="success" />
-                            <div class="flex md:flex-row flex-col gap-4">
-                                <twig:molecule:GiftMeta label="Total" value="{{ gift.totalContributed|format_currency('EUR') }}" />
-                                <twig:molecule:GiftMeta label="Reste" value="{{ gift.remainingToCollect|format_currency('EUR') }}" />
-                            </div>
-                        </div>
-                    {% endif %}
-
-                    {% for participant in gift.participants %}
-                        <twig:molecule:ParticipantCard :participant="participant"
-                            :showAmount="computed.showAmounts"
-                            avatarSize="size-12 md:size-16" />
-                    {% endfor %}
-                {% else %}
-                    <twig:molecule:ParticipantCard :participant="gift.participants|first"
-                        avatarSize="size-12 md:size-16" />
-                {% endif %}
-            </div>
-        </div>
-    {% elseif computed.isCreator %}
-        <div class="card-title w-full">
-            {% if computed.waitingOnPool %}
-                <h6 class="text-sm">Une cagnotte est en cours pour ce cadeau. Vous découvrirez qui y a participé une fois qu'elle sera complète.</h6>
-            {% else %}
-                <h6 class="text-sm">Personne ne vous a offert le cadeau pour le moment.</h6>
+{% if computed.showWho %}
+    <section {{ attributes.defaults({ class: 'flex flex-col gap-3' }) }} aria-labelledby="gift-contributors-title">
+        <h2 id="gift-contributors-title" class="flex items-center gap-2 text-lg font-semibold">
+            <twig:ux:icon name="lucide:heart-handshake" class="size-5" />
+            Offert par
+            {% if computed.pooled %}
+                <span class="badge badge-ghost badge-sm tabular-nums">{{ gift.participants|length }}</span>
             {% endif %}
-        </div>
-    {% endif %}
-</div>
+        </h2>
+
+        <ul class="list rounded-box border border-base-300">
+            {% for participant in gift.participants %}
+                <twig:molecule:ParticipantCard :participant="participant"
+                    :showAmount="computed.pooled and computed.showAmounts" />
+            {% endfor %}
+        </ul>
+    </section>
+{% elseif computed.isCreator %}
+    <div {{ attributes.defaults({ class: 'alert alert-soft' }) }} role="status">
+        <twig:ux:icon name="{{ computed.waitingOnPool ? 'lucide:piggy-bank' : 'lucide:hourglass' }}" class="size-5" />
+        <span>
+            {% if computed.waitingOnPool %}
+                Une cagnotte est en cours pour ce cadeau. Vous découvrirez qui y a participé une fois qu'elle sera complète.
+            {% else %}
+                Personne ne vous a offert ce cadeau pour le moment.
+            {% endif %}
+        </span>
+    </div>
+{% endif %}

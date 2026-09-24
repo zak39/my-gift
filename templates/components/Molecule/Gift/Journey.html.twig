@@ -1,0 +1,20 @@
+<section {{ attributes.defaults({ class: 'rounded-box bg-base-200/60 px-2 py-4' }) }} aria-labelledby="gift-journey-title">
+    <h2 id="gift-journey-title" class="sr-only">Parcours du cadeau</h2>
+
+    <ol class="steps steps-vertical w-full sm:steps-horizontal">
+        {% for step in computed.steps %}
+            {% set isCurrent = loop.index0 == computed.currentStep %}
+            {% set isDone = loop.index0 < computed.currentStep %}
+            <li class="step {{ isDone or isCurrent ? 'step-success' : '' }}"
+                {% if isCurrent %}aria-current="step"{% endif %}>
+                <span class="step-icon">
+                    <twig:ux:icon :name="isDone ? 'lucide:check' : step.icon" class="size-4" />
+                </span>
+                <span class="text-sm {{ isCurrent ? 'font-semibold' : 'text-base-content/70' }}">
+                    {{ step.label }}
+                    {% if isCurrent %}<span class="sr-only">(étape actuelle)</span>{% elseif isDone %}<span class="sr-only">(terminée)</span>{% endif %}
+                </span>
+            </li>
+        {% endfor %}
+    </ol>
+</section>

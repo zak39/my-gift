@@ -27,19 +27,9 @@ final class Contributors
         return $this->security->isGranted('gift.can_see_amounts', $this->gift);
     }
 
-    public function showPot(): bool
-    {
-        return $this->gift->getPrice() > 0 && $this->showAmounts();
-    }
-
-    /**
-     * Several people chipping in, as opposed to a single reservation with no money.
-     */
     public function isPooled(): bool
     {
-        return $this->gift->getTotalContributed() > 0
-            || $this->gift->getStatus()?->isPoolOpen()
-        ;
+        return $this->gift->isPooled();
     }
 
     /**

@@ -3,30 +3,36 @@
 {% block title %}My Gift | Détail du cadeau | {{ gift.title }}{% endblock %}
 
 {% block body %}
-<div class="flex flex-col justify-center items-center">
-  <div class="w-full md:w-5xl md:mx-9 mx-3 md:mb-9 mb-3">
-    <twig:Molecule:Breadcrumbs :items="breadcrumbs" />
+<div class="mx-auto w-full max-w-6xl px-4 pb-12 md:px-8">
+  <twig:Molecule:Breadcrumbs :items="breadcrumbs" />
 
-    <div class="card bg-base-100 p-6 card-sm">
+  <article class="mt-2 grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
+    <twig:Organism:Gift:Thumbnail :gift="gift"
+      class="lg:col-span-5 lg:sticky lg:top-6 lg:self-start"
+      imageClass="aspect-square w-full rounded-box bg-base-200 object-cover object-center"
+      loading="eager" />
+
+    <div class="flex min-w-0 flex-col gap-8 lg:col-span-7">
       <twig:Organism:GiftHeader :gift="gift" />
 
-      <div class="card-body flex md:flex-row gap-2 justify-center flex-wrap">
-        <twig:Organism:ActionsButtons :gift="gift" />
-      </div>
+      <twig:Molecule:Gift:Journey :gift="gift" />
 
-      <div class="card-body justify-center items-center">
-        <twig:Organism:Contributors :gift="gift" />
-      </div>
-      <div class="card-actions justify-end">
-        <twig:atomic:ButtonLink class="btn-outline btn-md flex justify-end mt-2 mb-8"
-          color="neutral"
+      <twig:Organism:ActionsButtons :gift="gift" />
+
+      <twig:Organism:Contributors :gift="gift" />
+
+      <div>
+        <twig:atomic:ButtonLink class="btn-ghost btn-sm"
           :to="btnReturn|default(null) ?: path('app_section_user_page', { id: gift.createdBy.id })">
+          <twig:block name="icon">
+            <twig:ux:icon name="lucide:arrow-left" class="size-4" />
+          </twig:block>
           <twig:block name="name">
-            <span>Retour</span>
+            <span>Retour à la liste</span>
           </twig:block>
         </twig:atomic:ButtonLink>
       </div>
     </div>
-  </div>
+  </article>
 </div>
 {% endblock %}

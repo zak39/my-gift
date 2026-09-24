@@ -16,4 +16,9 @@ final class Thumbnail
      * height for the stacked breakpoint has to hand it back with `lg:h-full`.
      */
     public string $imageClass = 'h-full w-full object-cover';
+
+    /**
+     * Lazy by default for list cards; a page whose first viewport is the image passes "eager".
+     */
+    public string $loading = 'lazy';
 }

@@ -11,7 +11,7 @@ final class ParticipantCard
 {
     public ?Participant $participant = null;
     public bool $showAmount = false;
-    public string $avatarSize = 'size-8';
+    public string $avatarSize = 'size-10';
 
     public function __construct(
         private Security $security,
