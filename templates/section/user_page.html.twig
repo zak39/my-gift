@@ -3,11 +3,8 @@
 {% block title %}My Gift | Liste des cadeaux de {{ user.firstname }} {{ user.lastname }} {% endblock %}
 
 {% block body %}
-{% set isOwner = is_granted('user.is_owner', user) %}
-{# "Cadeaux sans section" is the owner's own housekeeping label, so visitors get the
-   gifts as plain cards: same content, without the bucket or its index entry. #}
-{% set publicGiftsWithoutSection = giftsWithoutSection|filter(gift => gift.isPublic) %}
-{% set hasContent = sections|length > 0 or publicGiftsWithoutSection|length > 0 %}
+{# The controller only sends public gifts without section, and only to the owner. #}
+{% set hasContent = sections|length > 0 or giftsWithoutSection|length > 0 %}
 
 <div class="mx-auto w-full max-w-6xl pb-12">
     <twig:Molecule:Breadcrumbs :items="breadcrumbs" />
@@ -19,14 +16,14 @@
     <twig:Organism:GiftListHeader
         :user="user"
         :sections="sections"
-        :giftsWithoutSection="publicGiftsWithoutSection" />
+        :giftsWithoutSection="giftsWithoutSection" />
 
     {% if hasContent %}
         <div class="mt-6 grid items-start gap-6 lg:grid-cols-[15rem_minmax(0,1fr)]">
             <twig:Molecule:SectionNav
                 class="lg:sticky lg:top-6"
                 :sections="sections"
-                :giftsWithoutSection="isOwner ? publicGiftsWithoutSection : []" />
+                :giftsWithoutSection="giftsWithoutSection" />
 
             <div class="flex min-w-0 flex-col gap-5">
                 {% for section in sections %}
@@ -51,24 +48,18 @@
                     </twig:molecule:Section>
                 {% endfor %}
 
-                {% if publicGiftsWithoutSection|length > 0 %}
-                    {% if isOwner %}
-                        <twig:molecule:Section
-                            title="Cadeaux sans section"
-                            description="Les cadeaux qui n'ont pas encore été rangés dans une section."
-                            anchor="section-sans-section"
-                            :giftCount="publicGiftsWithoutSection|length">
-                            <twig:block name="gifts">
-                                {% for gift in publicGiftsWithoutSection %}
-                                    <twig:CardGift :gift="gift" />
-                                {% endfor %}
-                            </twig:block>
-                        </twig:molecule:Section>
-                    {% else %}
-                        {% for gift in publicGiftsWithoutSection %}
-                            <twig:CardGift :gift="gift" />
-                        {% endfor %}
-                    {% endif %}
+                {% if giftsWithoutSection|length > 0 %}
+                    <twig:molecule:Section
+                        title="Cadeaux sans section"
+                        description="Les cadeaux qui n'ont pas encore été rangés dans une section."
+                        anchor="section-sans-section"
+                        :giftCount="giftsWithoutSection|length">
+                        <twig:block name="gifts">
+                            {% for gift in giftsWithoutSection %}
+                                <twig:CardGift :gift="gift" />
+                            {% endfor %}
+                        </twig:block>
+                    </twig:molecule:Section>
                 {% endif %}
             </div>
         </div>
