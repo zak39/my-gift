@@ -378,6 +378,16 @@ class Gift
         return max(0, $this->getRemainingAmount());
     }
 
+    /**
+     * Several people chipping in, as opposed to a single reservation with no money.
+     */
+    public function isPooled(): bool
+    {
+        return $this->getTotalContributed() > 0
+            || $this->status?->isPoolOpen()
+        ;
+    }
+
     public function isPoolComplete(): bool
     {
         return $this->price > 0 && $this->getRemainingAmount() <= 0;

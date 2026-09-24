@@ -29,8 +29,6 @@ final class ContributionBar
             return false;
         }
 
-        return $this->gift->getStatus()?->isPoolOpen()
-            || $this->gift->getTotalContributed() > 0
-        ;
+        return $this->gift->isPooled();
     }
 }

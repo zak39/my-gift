@@ -1,11 +1,20 @@
-<div{{ attributes }} class="contents">
-    <twig:Molecule:Gift:StatusButtons :gift="gift" />
-    <twig:Molecule:Gift:ShareLinkButton :gift="gift" color="secondary" />
-    {% if gift.link %}
-        <twig:Molecule:Gift:LinkButton :gift="gift" color="secondary" />
-    {% endif %}
-    {% if is_granted('gift.is_creator', gift) %}
-        <twig:Molecule:Gift:EditButton :gift="gift" color="secondary" />
-        <twig:Molecule:Gift:DeleteButton :gift="gift" color="secondary" />
-    {% endif %}
-</div>
+<section {{ attributes.defaults({ class: 'flex flex-col gap-4' }) }} aria-label="Actions sur le cadeau">
+    <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+        <twig:Molecule:Gift:StatusButtons :gift="gift" />
+    </div>
+
+    <twig:Molecule:Gift:ContributionBar :gift="gift" />
+
+    <div class="flex flex-wrap items-center gap-2 border-t border-base-300 pt-4">
+        <twig:Molecule:Gift:ShareLinkButton :gift="gift" style="ghost" />
+        {% if gift.link %}
+            <twig:Molecule:Gift:LinkButton :gift="gift" style="ghost" />
+        {% endif %}
+        {% if is_granted('gift.is_creator', gift) %}
+            <div class="ml-auto flex gap-1">
+                <twig:Molecule:Gift:EditButton :gift="gift" style="ghost" :iconOnly="true" />
+                <twig:Molecule:Gift:DeleteButton :gift="gift" style="ghost" :iconOnly="true" />
+            </div>
+        {% endif %}
+    </div>
+</section>
