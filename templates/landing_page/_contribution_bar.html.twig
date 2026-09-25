@@ -1,0 +1,26 @@
+{#
+    Static copy of Molecule:Gift:ContributionBar for an open pool, which needs a persisted Gift
+    and a viewer allowed to see the amounts.
+
+    Variables: title (for the progress label), price and total (numbers, in euros).
+#}
+{% set percent = (total / price * 100)|round %}
+
+<div class="mt-4 rounded-box border border-base-300 bg-base-200/60 p-3">
+    <div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+        <p class="text-sm">
+            <span class="font-semibold tabular-nums">{{ total|format_currency('EUR') }}</span>
+            <span class="text-base-content/70">réunis sur</span>
+            <span class="font-semibold tabular-nums">{{ price|format_currency('EUR') }}</span>
+        </p>
+        <p class="text-sm font-semibold tabular-nums">{{ percent }} %</p>
+    </div>
+
+    <progress class="progress progress-accent mt-2 w-full" value="{{ percent }}" max="100"
+        aria-label="Cagnotte réunie pour {{ title }}"></progress>
+
+    <p class="mt-1 flex items-center gap-1.5 text-xs text-base-content/70">
+        <twig:ux:icon name="lucide:hand-coins" class="size-3.5 shrink-0" />
+        Il reste {{ (price - total)|format_currency('EUR') }} à réunir
+    </p>
+</div>

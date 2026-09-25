@@ -1,4 +1,4 @@
-<span {{ attributes.defaults({ class: 'badge badge-lg gap-1.5 ' ~ this.colorClass }) }}>
+<span {{ attributes.defaults({ class: 'badge gap-1.5 ' ~ size ~ ' ' ~ this.colorClass }) }}>
     <twig:ux:icon :name="this.icon" />
     {{ this.label }}
 </span>

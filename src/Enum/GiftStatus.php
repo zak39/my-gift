@@ -43,4 +43,42 @@ enum GiftStatus: string
             default => false,
         };
     }
+
+    public function label(): string
+    {
+        return match ($this) {
+            self::CREATED => 'Disponible',
+            self::RESERVED => 'Réservé',
+            self::CONTRIBUTING => 'Cagnotte en cours',
+            self::READY => 'Prêt à offrir',
+            self::GIVEN => 'Offert',
+            self::ARCHIVED => 'Archivé',
+        };
+    }
+
+    public function badgeClass(): string
+    {
+        // Filled badges: `badge-soft` paints the raw colour as text over an 8% tint,
+        // which is unreadable for the light hues of the theme.
+        return match ($this) {
+            self::CREATED => 'badge-neutral',
+            self::RESERVED => 'badge-info',
+            self::CONTRIBUTING => 'badge-accent',
+            self::READY => 'badge-warning',
+            self::GIVEN => 'badge-success',
+            self::ARCHIVED => 'badge-neutral badge-soft',
+        };
+    }
+
+    public function icon(): string
+    {
+        return match ($this) {
+            self::CREATED => 'lucide:gift',
+            self::RESERVED => 'lucide:bookmark-check',
+            self::CONTRIBUTING => 'lucide:piggy-bank',
+            self::READY => 'lucide:package-check',
+            self::GIVEN => 'lucide:party-popper',
+            self::ARCHIVED => 'lucide:archive',
+        };
+    }
 }
