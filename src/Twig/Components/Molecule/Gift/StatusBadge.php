@@ -6,47 +6,34 @@ use App\Entity\Gift;
 use App\Enum\GiftStatus;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
+/**
+ * Takes either a gift or a bare status, so pages without a persisted Gift
+ * (such as the landing page) can show the same badge.
+ */
 #[AsTwigComponent]
 final class StatusBadge
 {
     public ?Gift $gift = null;
+    public ?GiftStatus $status = null;
+    public string $size = 'badge-lg';
+
+    public function getStatus(): ?GiftStatus
+    {
+        return $this->status ?? $this->gift?->getStatus();
+    }
 
     public function getLabel(): string
     {
-        return match ($this->gift?->getStatus()) {
-            GiftStatus::CREATED => 'Disponible',
-            GiftStatus::RESERVED => 'Réservé',
-            GiftStatus::CONTRIBUTING => 'Cagnotte en cours',
-            GiftStatus::READY => 'Prêt à offrir',
-            GiftStatus::GIVEN => 'Offert',
-            GiftStatus::ARCHIVED => 'Archivé',
-            default => 'Statut inconnu',
-        };
+        return $this->getStatus()?->label() ?? 'Statut inconnu';
     }
 
     public function getColorClass(): string
     {
-        // Filled badges: `badge-soft` paints the raw colour as text over an 8% tint,
-        // which is unreadable for the light hues of the theme.
-        return match ($this->gift?->getStatus()) {
-            GiftStatus::RESERVED => 'badge-info',
-            GiftStatus::CONTRIBUTING => 'badge-accent',
-            GiftStatus::READY => 'badge-warning',
-            GiftStatus::GIVEN => 'badge-success',
-            GiftStatus::ARCHIVED => 'badge-neutral badge-soft',
-            default => 'badge-neutral',
-        };
+        return $this->getStatus()?->badgeClass() ?? 'badge-neutral';
     }
 
     public function getIcon(): string
     {
-        return match ($this->gift?->getStatus()) {
-            GiftStatus::RESERVED => 'lucide:bookmark-check',
-            GiftStatus::CONTRIBUTING => 'lucide:piggy-bank',
-            GiftStatus::READY => 'lucide:package-check',
-            GiftStatus::GIVEN => 'lucide:party-popper',
-            GiftStatus::ARCHIVED => 'lucide:archive',
-            default => 'lucide:gift',
-        };
+        return $this->getStatus()?->icon() ?? 'lucide:gift';
     }
 }
