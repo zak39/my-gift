@@ -1,7 +1,5 @@
 <section {{ attributes.defaults({ class: 'relative overflow-hidden rounded-box border border-base-300 bg-base-100 shadow-sm' }) }}>
-    {# Gift-wrap ribbon: the page's signature element, repeated on every list. #}
-    <div aria-hidden="true"
-        class="h-2.5 w-full bg-[repeating-linear-gradient(135deg,var(--color-primary)_0_0.75rem,var(--color-secondary)_0.75rem_1.5rem)]"></div>
+    <twig:atomic:GiftRibbon />
 
     <div class="flex flex-col gap-5 p-5 sm:p-7 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
         <div class="flex items-center gap-4 sm:gap-6">

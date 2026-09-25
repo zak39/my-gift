@@ -1,89 +1,62 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}My Gift | Créer son cadeau{% endblock %}
+{% block title %}My Gift | Modifier un cadeau{% endblock %}
 
 {% block body %}
-<div class="flex justify-center my-16">
-    <div class="flex flex-col items-center md:w-4xl w-full">
-        <div class="card bg-base-100 w-full">
-            <div class="card-body">
-                <div class="card-title">
-                    <h1>Créer un cadeau</h1>
+{% form_theme form 'form/daisyui_layout.html.twig' %}
+
+<div class="mx-auto w-full max-w-4xl pb-12">
+    <twig:Molecule:Breadcrumbs :items="breadcrumbs" />
+
+    <twig:Organism:Form:Card
+        icon="lucide:gift"
+        title="Modifier le cadeau">
+        <twig:block name="meta">
+            <twig:Molecule:Gift:StatusBadge :gift="gift" class="self-start" />
+        </twig:block>
+
+        {{ form_start(form) }}
+            {% if form.vars.errors|length > 0 %}
+                <div class="border-t border-base-300 p-5 sm:px-7">{{ form_errors(form) }}</div>
+            {% endif %}
+
+            <twig:Molecule:Form:FieldGroup
+                title="Le cadeau"
+                description="Ce que vos amis verront en premier dans votre liste.">
+                <div class="grid gap-4 sm:grid-cols-[minmax(0,1fr)_11rem]">
+                    {{ form_row(form.title) }}
+                    {{ form_row(form.price) }}
                 </div>
-                {{ form_start(form, { "attr": { "class": "w-full", "enctype": "multipart/form-data" } }) }}
-                    <div class="flex flex-col gap-8 w-full">
-                        <div class="flex flex-col">
-                            {{ form_label(form.title) }}
-                            <label class="input md:input-md input-xl w-full">
-                                {{ form_widget(form.title) }}
-                                {% if form.title.vars.required %}
-                                    <span class="badge badge-accent badge-xs">Requis</span>
-                                {% endif %}
-                            </label>
-                            {% if form.title.vars.errors|length > 0 %}
-                                <div class="alert alert-error alert-soft my-2">{{ form_errors(form.title) }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="flex flex-col">
-                            {{ form_row(form.description) }}
-                            {% if form.description.vars.errors|length > 0 %}
-                                <div class="alert alert-error alert-soft my-2">{{ form_errors(form.description) }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="flex flex-col">
-                            {{ form_label(form.link) }}
-                            <label class="input md:input-md input-xl w-full">
-                                https://
-                                {{ form_widget(form.link) }}
-                                {% if form.link.vars.required %}
-                                    <span class="badge badge-accent badge-xs">Requis</span>
-                                {% endif %}
-                            </label>
-                            {% if form.link.vars.errors|length > 0 %}
-                                <div role="alert" class="alert alert-error alert-soft my-2">{{ form_errors(form.link) }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="flex flex-col">
-                            {{ form_row(form.imageFile) }}
-                            {% if form.imageFile.vars.errors|length > 0 %}
-                                <div class="alert alert-error alert-soft my-2">{{ form_errors(form.imageFile) }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="flex flex-col">
-                            {{ form_label(form.price) }}
-                            <label class="input md:input-md input-xl w-full">
-                                {{ form_widget(form.price) }}
-                                {% if form.price.vars.required %}
-                                    <span class="badge badge-accent badge-xs">Requis</span>
-                                {% endif %}
-                            </label>
-                            {% if form.price.vars.errors|length > 0 %}
-                                <div class="alert alert-error alert-soft my-2">{{ form_errors(form.price) }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="flex flex-col">
-                            {{ form_label(form.section) }}
-                            {{ form_widget(form.section) }}
-                        </div>
-                        <div class="flex flex-col">
-                            <fieldset class="fieldset bg-base-100 border-base-300 rounded-box w-xs border p-4">
-                                <legend class="fieldset-legend">{{ form.isPublic.vars.label }}</legend>
-                                {{ form_widget(form.isPublic) }}
-                                <p class="label">Rendre votre cadeau lisible aux autres utilisateurs.</p>
-                            </fieldset>
-                        </div>
-                    </div>
-                    <div class="card-actions flex md:flex-row flex-col-reverse md:justify-end justify-center md:gap-4 gap-2 my-6">
-                        <button type="submit" class="btn btn-accent md:btn-md btn-lg md:w-48 w-full">Editer le cadeau</button>
-                        <button class="btn btn-soft md:btn-md btn-lg md:w-48 w-full">
-                            <a href={{ path('app_gift') }}>
-                                Retour
-                            </a>
-                        </button>
-                    </div>
-                {{ form_end(form) }}
-            </div>
-        </div>
-    </div>
+                {{ form_row(form.description) }}
+            </twig:Molecule:Form:FieldGroup>
+
+            <twig:Molecule:Form:FieldGroup
+                title="Le lien"
+                description="La page où vos amis pourront l'acheter.">
+                {{ form_row(form.link) }}
+            </twig:Molecule:Form:FieldGroup>
+
+            <twig:Molecule:Form:FieldGroup
+                title="L'image"
+                description="Elle illustre le cadeau sur sa fiche et dans votre liste.">
+                <twig:Molecule:Gift:ImageField
+                    :field="form.imageFile"
+                    :fallbackUrl="gift.image ? vich_uploader_asset(gift, 'imageFile') : ''"
+                    fallbackCaption="Image actuelle."
+                    help="Choisissez un fichier pour remplacer l'image actuelle. JPEG, PNG ou WebP, au format carré ou portrait." />
+            </twig:Molecule:Form:FieldGroup>
+
+            <twig:Molecule:Form:FieldGroup
+                title="Rangement et visibilité"
+                description="Où le cadeau apparaît dans votre liste, et qui peut le voir.">
+                {{ form_row(form.section) }}
+                {{ form_row(form.isPublic) }}
+            </twig:Molecule:Form:FieldGroup>
+
+            <twig:Molecule:Form:Actions
+                :cancelUrl="path('app_gift_show', { id: gift.id })"
+                submitLabel="Enregistrer les modifications" />
+        {{ form_end(form) }}
+    </twig:Organism:Form:Card>
 </div>
 {% endblock %}

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Twig\Components;
+namespace App\Twig\Components\Organism\Gift;
 
 use App\Entity\Gift;
 use App\Form\GiftType;
@@ -15,7 +15,7 @@ use Symfony\UX\LiveComponent\DefaultActionTrait;
 use Symfony\UX\TwigComponent\Attribute\PostMount;
 
 #[AsLiveComponent]
-final class GiftForm
+final class Form
 {
     use DefaultActionTrait;
     use ComponentWithFormTrait;

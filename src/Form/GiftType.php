@@ -21,54 +21,29 @@ class GiftType extends AbstractType
         $builder
             ->add('title', TextType::class, [
                 'label' => 'Titre du cadeau',
-                'label_attr' => [
-                    'class' => 'label md:text-base text-xl',
-                ],
             ])
             ->add('description', TextareaType::class, [
-                'attr' => [
-                    'class' => 'textarea md:textarea-md textarea-lg w-full',
-                ],
                 'label' => 'Description du cadeau',
-                'label_attr' => [
-                    'class' => 'label md:text-base text-xl',
-                ],
+                'help' => '255 caractères maximum.',
                 'required' => false,
             ])
             ->add('link', UrlType::class, [
                 'attr' => [
-                    'placeholder' => 'URL',
+                    'placeholder' => 'https://www.exemple.fr/produit',
                 ],
                 'label' => 'Lien',
-                'label_attr' => [
-                    'class' => 'label md:text-base text-xl',
-                ],
                 'required' => false,
             ])
             ->add('imageFile', FileType::class, [
-                'attr' => [
-                    'class' => 'file-input md:input-md input-xl w-full',
-                ],
                 'label' => 'Image',
-                'label_attr' => [
-                    'class' => 'label md:text-base text-xl',
-                ],
                 'required' => false,
             ])
             ->add('price', MoneyType::class, [
                 'label' => 'Prix du cadeau',
-                'label_attr' => [
-                    'class' => 'label md:text-base text-xl',
-                ],
             ])
             ->add('isPublic', CheckboxType::class, [
-                'attr' => [
-                    'class' => 'toggle toggle-accent mb-8 md:toggle-md toggle-lg',
-                ],
                 'label' => 'Afficher publiquement le cadeau',
-                'label_attr' => [
-                    'class' => 'label md:text-base text-xl mb-2',
-                ],
+                'help' => 'Sinon, le cadeau reste un brouillon : vous seul le voyez.',
                 'required' => false,
             ])
             ->add('openGraphImageUrl', HiddenType::class, [
