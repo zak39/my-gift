@@ -17,7 +17,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 #[IsGranted('IS_AUTHENTICATED')]
 final class GiftController extends AbstractController
@@ -34,7 +33,7 @@ final class GiftController extends AbstractController
     }
 
     #[Route('/gift/create', name: 'app_gift_create')]
-    public function create(Request $request, EntityManagerInterface $entityManager, ImageDownloader $imageDownloader): Response
+    public function create(Request $request, EntityManagerInterface $entityManager, ImageDownloader $imageDownloader, BreadcrumbBuilder $breadcrumbBuilder): Response
     {
         $gift = new Gift();
 
@@ -71,11 +70,12 @@ final class GiftController extends AbstractController
         return $this->render('gift/create.html.twig', [
             'form' => $form,
             'gift' => $gift,
+            'breadcrumbs' => $breadcrumbBuilder->newGift(),
         ]);
     }
 
     #[Route('/gift/{id}/edit', name: 'app_gift_edit')]
-    public function edit(Request $request, Gift $gift, EntityManagerInterface $entityManager, UploaderHelper $helper): Response
+    public function edit(Request $request, Gift $gift, EntityManagerInterface $entityManager, BreadcrumbBuilder $breadcrumbBuilder): Response
     {
         $this->denyAccessUnlessGranted('gift.is_creator', $gift);
 
@@ -85,8 +85,6 @@ final class GiftController extends AbstractController
         $form = $this->createForm(GiftEditType::class, $gift, ['sections' => $user->getSections()]);
         $form->handleRequest($request);
 
-        $imagePath = $helper->asset($gift, 'imageFile');
-
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($gift);
             $entityManager->flush();
@@ -94,8 +92,16 @@ final class GiftController extends AbstractController
             return $this->redirectToRoute('app_section', ['id' => $user->getId()]);
         }
 
+        if ($form->isSubmitted()) {
+            // handleRequest() wrote the rejected values into $gift: reload the saved ones for the
+            // page. The form still shows what was typed, since it keeps its own submitted data.
+            $entityManager->refresh($gift);
+        }
+
         return $this->render('gift/edit.html.twig', [
             'form' => $form,
+            'gift' => $gift,
+            'breadcrumbs' => $breadcrumbBuilder->editGift($gift),
         ]);
     }
 

@@ -1,0 +1,62 @@
+{% form_theme form 'form/daisyui_layout.html.twig' %}
+
+<div{{ attributes }}>
+    {{ form_start(form) }}
+        {% if form.vars.errors|length > 0 %}
+            <div class="border-t border-base-300 p-5 sm:px-7">{{ form_errors(form) }}</div>
+        {% endif %}
+
+        <twig:Molecule:Form:FieldGroup
+            title="Le lien"
+            description="Le plus rapide : on récupère le titre, la description et l'image pour vous.">
+            {% set fetchingIndicator %}
+                <span class="loading loading-spinner loading-sm" data-loading="show" data-loading-delay="200" aria-hidden="true"></span>
+            {% endset %}
+            {# `link` is a LiveProp, not only a form value: updating it runs fetchOpenGraphData(). #}
+            {{ form_row(form.link, {
+                attr: { 'data-model': 'on(change)|link' },
+                suffix: fetchingIndicator,
+                help: 'Collez l’adresse de la page du produit : les champs se remplissent dès que vous quittez celui-ci.',
+            }) }}
+
+            {% if openGraphFailed %}
+                <div role="alert" class="alert alert-warning alert-soft">
+                    <twig:ux:icon name="lucide:triangle-alert" class="size-5 shrink-0" />
+                    <span>Impossible de lire cette page automatiquement. Complétez les champs ci-dessous : le lien sera quand même enregistré.</span>
+                </div>
+            {% endif %}
+        </twig:Molecule:Form:FieldGroup>
+
+        <twig:Molecule:Form:FieldGroup
+            title="Le cadeau"
+            description="Ce que vos amis verront en premier dans votre liste.">
+            <div class="grid gap-4 sm:grid-cols-[minmax(0,1fr)_11rem]">
+                {{ form_row(form.title, { attr: { 'data-loading': 'addAttribute(disabled)' } }) }}
+                {{ form_row(form.price) }}
+            </div>
+            {{ form_row(form.description, { attr: { 'data-loading': 'addAttribute(disabled)' } }) }}
+        </twig:Molecule:Form:FieldGroup>
+
+        <twig:Molecule:Form:FieldGroup
+            title="L'image"
+            description="Elle illustre le cadeau sur sa fiche et dans votre liste.">
+            <twig:Molecule:Gift:ImageField
+                :field="form.imageFile"
+                :fallbackUrl="form.openGraphImageUrl.vars.value ?? ''"
+                help="JPEG, PNG ou WebP, au format carré ou portrait."
+                :widgetAttr="{ 'data-loading': 'addAttribute(disabled)' }" />
+            {{ form_widget(form.openGraphImageUrl) }}
+        </twig:Molecule:Form:FieldGroup>
+
+        <twig:Molecule:Form:FieldGroup
+            title="Visibilité"
+            description="Vous pourrez changer d'avis à tout moment.">
+            {{ form_row(form.isPublic) }}
+        </twig:Molecule:Form:FieldGroup>
+
+        <twig:Molecule:Form:Actions
+            :cancelUrl="path('app_gift')"
+            submitLabel="Ajouter le cadeau"
+            submitIcon="lucide:plus" />
+    {{ form_end(form) }}
+</div>

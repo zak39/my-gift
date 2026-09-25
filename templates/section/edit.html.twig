@@ -1,32 +1,40 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}My Gift | Editer la section{% endblock %}
+{% block title %}My Gift | Modifier une section{% endblock %}
 
 {% block body %}
-<div class="flex justify-center my-16">
-    <div class="flex flex-col items-center md:w-4xl w-full">
-        <h1 class="text-xl self-baseline mb-4">Editer la Section</h1>
-        {{ form_start(form, { "attr": { "class": "w-full" } }) }}
-            <div class="flex flex-col gap-8 w-full">
-                <div class="flex flex-col">
-                    {{ form_label(form.title) }}
-                    {{ form_widget(form.title) }}
-                </div>
-                <div class="flex flex-col">
-                    {{ form_label(form.description) }}
-                    {{ form_widget(form.description) }}
-                </div>
+{% form_theme form 'form/daisyui_layout.html.twig' %}
+
+{% set giftCount = section.gifts|length %}
+
+<div class="mx-auto w-full max-w-2xl pb-12">
+    <twig:Molecule:Breadcrumbs :items="breadcrumbs" />
+
+    <twig:Organism:Form:Card icon="lucide:folder-pen" title="Modifier la section">
+        <twig:block name="meta">
+            <p class="flex items-center gap-2 text-sm text-base-content/70">
+                <twig:ux:icon name="lucide:gift" class="size-4 shrink-0" />
+                <span class="tabular-nums">
+                    {% if giftCount > 0 %}
+                        {{ giftCount }} cadeau{{ giftCount > 1 ? 'x' }} rangé{{ giftCount > 1 ? 's' }} dedans
+                    {% else %}
+                        Aucun cadeau rangé dedans pour l’instant
+                    {% endif %}
+                </span>
+            </p>
+        </twig:block>
+
+        {{ form_start(form) }}
+            <div class="flex flex-col gap-4 border-t border-base-300 p-5 sm:p-7">
                 {{ form_errors(form) }}
-                <div class="flex md:flex-row flex-col-reverse md:justify-between md:gap-0 gap-2 my-6">
-                    <button type="submit" class="btn btn-primary md:w-3xs md:btn-md btn-lg w-full">Editer la section</button>
-                    <button class="btn btn-soft md:w-3xs md:btn-md btn-lg w-full">
-                        <a href={{ path('app_section', { 'id': user.id }) }}>
-                            Retour
-                        </a>
-                    </button>
-                </div>
+                {{ form_row(form.title) }}
+                {{ form_row(form.description) }}
             </div>
+
+            <twig:Molecule:Form:Actions
+                :cancelUrl="path('app_section', { id: app.user.id })"
+                submitLabel="Enregistrer les modifications" />
         {{ form_end(form) }}
-    </div>
+    </twig:Organism:Form:Card>
 </div>
 {% endblock %}

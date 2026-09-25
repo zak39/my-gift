@@ -1,18 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}My Gift | Créer son cadeau{% endblock %}
+{% block title %}My Gift | Ajouter un cadeau{% endblock %}
 
 {% block body %}
-<div class="flex justify-center my-16">
-    <div class="flex flex-col items-center md:w-4xl w-full">
-        <div class="card bg-base-100 w-full">
-            <div class="card-body">
-                <div class="card-title mb-4">
-                    <h1>Créer un cadeau</h1>
-                </div>
-                <twig:GiftForm :form="form" :initialFormData="gift" />
-            </div>
-        </div>
-    </div>
+<div class="mx-auto w-full max-w-4xl pb-12">
+    <twig:Molecule:Breadcrumbs :items="breadcrumbs" />
+
+    <twig:Organism:Form:Card
+        icon="lucide:gift"
+        title="Ajouter un cadeau"
+        description="Collez le lien du produit pour remplir la fiche automatiquement, ou complétez-la à la main.">
+        <twig:Organism:Gift:Form :form="form" :initialFormData="gift" />
+    </twig:Organism:Form:Card>
 </div>
 {% endblock %}

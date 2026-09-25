@@ -1,0 +1,27 @@
+{% set hasFallback = fallbackUrl is not empty %}
+
+<div {{ attributes.defaults({ class: 'flex flex-col gap-4 sm:flex-row sm:items-start' }) }}
+    {{ stimulus_controller('file-preview', { fallbackUrl: fallbackUrl, fallbackCaption: fallbackCaption }) }}>
+    <div class="relative grid size-28 shrink-0 place-items-center overflow-hidden rounded-box border border-dashed border-base-300 bg-base-200">
+        <twig:ux:icon name="lucide:image" class="size-8 opacity-40" aria-hidden="true" />
+        {# data-live-ignore: the server renders the first state, then only file_preview_controller changes it. #}
+        <img class="absolute inset-0 size-full object-cover object-center {{ hasFallback ? '' : 'hidden' }}"
+            {% if hasFallback %}src="{{ fallbackUrl }}"{% endif %}
+            data-file-preview-target="preview"
+            data-live-ignore
+            alt="Aperçu de l'image du cadeau"
+            width="112"
+            height="112">
+    </div>
+
+    <div class="flex min-w-0 grow flex-col gap-1">
+        {{ form_row(field, {
+            attr: widgetAttr|merge({
+                'data-file-preview-target': 'input',
+                'data-action': 'change->file-preview#show',
+            }),
+            help: help,
+        }) }}
+        <p class="text-sm text-base-content/70 empty:hidden" data-file-preview-target="caption" data-live-ignore>{{ hasFallback ? fallbackCaption : '' }}</p>
+    </div>
+</div>

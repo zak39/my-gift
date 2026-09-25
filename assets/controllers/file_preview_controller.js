@@ -2,7 +2,9 @@ import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
     static targets = ['input', 'preview', 'caption'];
-    static values = { openGraphUrl: String };
+    // L'image affichée tant qu'aucun fichier n'est choisi : celle trouvée via
+    // OpenGraph à la création, l'image actuelle à l'édition
+    static values = { fallbackUrl: String, fallbackCaption: String };
 
     currentBlobUrl = null;
 
@@ -16,28 +18,28 @@ export default class extends Controller {
 
         this.revokeCurrentBlobUrl();
         this.currentBlobUrl = URL.createObjectURL(file);
-        this.previewTarget.setAttribute('data-live-ignore', '');
         this.applyPreview(this.currentBlobUrl, 'Image sélectionnée.');
     }
 
     clearLocalFile() {
         this.revokeCurrentBlobUrl();
-        this.previewTarget.removeAttribute('data-live-ignore');
-        this.applyFromOpenGraph();
+        this.applyFallback();
     }
 
     // Callback Stimulus automatique : se déclenche à la connexion ET
-    // à chaque fois que le serveur met à jour openGraphUrl via un re-rendu
-    openGraphUrlValueChanged() {
-        if (this.previewTarget.hasAttribute('data-live-ignore')) {
+    // à chaque fois que le serveur met à jour fallbackUrl via un re-rendu.
+    // L'aperçu et la légende portent data-live-ignore : après le premier rendu,
+    // seul ce contrôleur les modifie, et un fichier local choisi reste prioritaire
+    fallbackUrlValueChanged() {
+        if (this.currentBlobUrl) {
             return;
         }
-        this.applyFromOpenGraph();
+        this.applyFallback();
     }
 
-    applyFromOpenGraph() {
-        if (this.openGraphUrlValue) {
-            this.applyPreview(this.openGraphUrlValue, 'Image trouvée automatiquement.');
+    applyFallback() {
+        if (this.fallbackUrlValue) {
+            this.applyPreview(this.fallbackUrlValue, this.fallbackCaptionValue);
         } else {
             this.previewTarget.removeAttribute('src');
             this.previewTarget.classList.add('hidden');

@@ -15,20 +15,17 @@ class SectionType extends AbstractType
     {
         $builder
             ->add('title', TextType::class, [
-                'label' => 'Titre',
-                'label_attr' => [
-                    'class' => 'label md:text-base text-xl',
+                'attr' => [
+                    'placeholder' => 'Geek, Sport, Maison…',
                 ],
+                'label' => 'Titre',
             ])
             ->add('description', TextareaType::class, [
                 'attr' => [
-                    'class' => 'textarea md:textarea-md textarea-lg w-full',
-                    'placeholder' => 'Description',
+                    'placeholder' => 'Tout ce qui touche aux jeux vidéo et aux gadgets.',
                 ],
                 'label' => 'Description',
-                'label_attr' => [
-                    'class' => 'label md:text-base text-xl',
-                ],
+                'help' => 'Une phrase pour guider vos amis. 255 caractères maximum.',
                 'required' => false,
             ])
             /*

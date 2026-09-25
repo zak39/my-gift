@@ -34,7 +34,7 @@ final class SectionController extends AbstractController
     }
 
     #[Route('/section/new', name: 'app_section_new')]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, BreadcrumbBuilder $breadcrumbBuilder): Response
     {
         $section = new Section();
         /** @var User */
@@ -61,11 +61,12 @@ final class SectionController extends AbstractController
 
         return $this->render('section/new.html.twig', [
             'form' => $form,
+            'breadcrumbs' => $breadcrumbBuilder->newSection($user),
         ]);
     }
 
     #[Route('/section/{id}/edit', name: 'app_section_edit')]
-    public function edit(Request $request, Section $section, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Section $section, EntityManagerInterface $entityManager, BreadcrumbBuilder $breadcrumbBuilder): Response
     {
         $this->denyAccessUnlessGranted('section.is_creator', $section);
 
@@ -82,9 +83,16 @@ final class SectionController extends AbstractController
             return $this->redirectToRoute('app_section', ['id' => $user->getId()]);
         }
 
+        if ($form->isSubmitted()) {
+            // handleRequest() wrote the rejected values into $section: reload the saved ones for the
+            // page. The form still shows what was typed, since it keeps its own submitted data.
+            $entityManager->refresh($section);
+        }
+
         return $this->render('section/edit.html.twig', [
             'form' => $form,
-            'user' => $this->getUser(),
+            'section' => $section,
+            'breadcrumbs' => $breadcrumbBuilder->editSection($section),
         ]);
     }
 

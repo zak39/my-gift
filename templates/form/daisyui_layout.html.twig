@@ -1,0 +1,129 @@
+{# daisyUI rendering for Symfony forms. Opt in per form with
+   {% form_theme form 'form/daisyui_layout.html.twig' %}.
+
+   Extra variables understood by form_row() on text-like fields:
+   - prefix_icon: an icon name drawn inside the field, before the value (URL fields get 'lucide:link')
+   - suffix: text or markup drawn inside the field, after the value (money fields get their currency) #}
+{% use 'form_div_layout.html.twig' %}
+
+{# Rows #}
+
+{# Only the layout is overridden: form_row keeps Symfony's aria-describedby / aria-invalid wiring. #}
+{%- block form_row_render -%}
+    <div{% with { attr: row_attr|merge({ class: ('fieldset ' ~ row_attr.class|default(''))|trim }) } %}{{ block('attributes') }}{% endwith %}>
+        {%- if 'checkbox' in block_prefixes -%}
+            {# A switch reads best with its label beside it rather than above. #}
+            <div class="flex items-center gap-3">
+                {{- form_widget(form, widget_attr) -}}
+                {{- form_label(form, null, { label_attr: { class: 'cursor-pointer text-sm font-medium' } }) -}}
+            </div>
+        {%- else -%}
+            {{- form_label(form) -}}
+            {{- form_widget(form, widget_attr) -}}
+        {%- endif -%}
+        {{- form_help(form) -}}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock form_row_render -%}
+
+{# Labels, help and errors #}
+
+{%- block form_label -%}
+    {%- set label_attr = label_attr|merge({ class: label_attr.class|default('label text-sm font-medium text-base-content') }) -%}
+    {{- parent() -}}
+{%- endblock form_label -%}
+
+{%- block form_label_content -%}
+    {{- parent() -}}
+    {%- if required -%}
+        <span aria-hidden="true" class="badge badge-ghost badge-xs">Requis</span>
+    {%- endif -%}
+{%- endblock form_label_content -%}
+
+{%- block form_help -%}
+    {%- set help_attr = help_attr|merge({ class: ('label whitespace-normal ' ~ help_attr.class|default(''))|trim }) -%}
+    {%- set element = 'p' -%}
+    {{- parent() -}}
+{%- endblock form_help -%}
+
+{# The error ids match the ones form_row puts in the widget's aria-describedby. #}
+{%- block form_errors -%}
+    {%- if errors|length > 0 -%}
+        {%- if compound -%}
+            {# Errors that belong to no single field, such as an expired CSRF token. #}
+            <div role="alert" class="alert alert-error alert-soft">
+                {{ ux_icon('lucide:circle-alert', { class: 'size-5 shrink-0', 'aria-hidden': 'true' }) }}
+                <ul>
+                    {%- for error in errors -%}
+                        <li id="{{ id ~ '_error' ~ loop.index }}">{{ error.message }}</li>
+                    {%- endfor -%}
+                </ul>
+            </div>
+        {%- else -%}
+            <ul class="flex flex-col gap-1 text-sm text-error">
+                {%- for error in errors -%}
+                    <li id="{{ id ~ '_error' ~ loop.index }}" class="flex items-start gap-1.5">
+                        {{ ux_icon('lucide:circle-alert', { class: 'mt-0.5 size-4 shrink-0', 'aria-hidden': 'true' }) }}
+                        <span>{{ error.message }}</span>
+                    </li>
+                {%- endfor -%}
+            </ul>
+        {%- endif -%}
+    {%- endif -%}
+{%- endblock form_errors -%}
+
+{# Widgets #}
+
+{%- block form_widget_simple -%}
+    {%- set type = type|default('text') -%}
+    {%- if type == 'hidden' -%}
+        {{- parent() -}}
+    {%- elseif type == 'file' -%}
+        {%- set attr = attr|merge({ class: ('file-input w-full ' ~ (errors|length > 0 ? 'file-input-error ') ~ attr.class|default(''))|trim }) -%}
+        {{- parent() -}}
+    {%- elseif prefix_icon is defined or suffix is defined -%}
+        {# The daisyUI `input` class moves to a wrapper so an icon or a unit can sit inside the field. #}
+        {%- set wrapper_class = errors|length > 0 ? 'input input-error w-full' : 'input w-full' -%}
+        <label class="{{ wrapper_class }}">
+            {%- if prefix_icon is defined -%}
+                {{ ux_icon(prefix_icon, { class: 'size-4 shrink-0 opacity-60', 'aria-hidden': 'true' }) }}
+            {%- endif -%}
+            {%- set attr = attr|merge({ class: ('grow ' ~ attr.class|default(''))|trim }) -%}
+            {{- parent() -}}
+            {{- suffix|default('') -}}
+        </label>
+    {%- else -%}
+        {%- set attr = attr|merge({ class: ('input w-full ' ~ (errors|length > 0 ? 'input-error ') ~ attr.class|default(''))|trim }) -%}
+        {{- parent() -}}
+    {%- endif -%}
+{%- endblock form_widget_simple -%}
+
+{%- block url_widget -%}
+    {%- set prefix_icon = prefix_icon|default('lucide:link') -%}
+    {{- parent() -}}
+{%- endblock url_widget -%}
+
+{%- block money_widget -%}
+    {# money_pattern is "{{ widget }} €" in French: keep the symbol, drawn inside the field. #}
+    {%- set suffix = suffix|default(money_pattern|replace({ '{{ widget }}': '' })|trim) -%}
+    {{- block('form_widget_simple') -}}
+{%- endblock money_widget -%}
+
+{%- block textarea_widget -%}
+    {%- set attr = attr|merge({
+        class: ('textarea w-full ' ~ (errors|length > 0 ? 'textarea-error ') ~ attr.class|default(''))|trim,
+        rows: attr.rows|default(3),
+    }) -%}
+    {{- parent() -}}
+{%- endblock textarea_widget -%}
+
+{%- block choice_widget_collapsed -%}
+    {%- set attr = attr|merge({ class: ('select w-full ' ~ (errors|length > 0 ? 'select-error ') ~ attr.class|default(''))|trim }) -%}
+    {{- parent() -}}
+{%- endblock choice_widget_collapsed -%}
+
+{# A switch by default, matching the label-beside layout of form_row_render. #}
+{%- block checkbox_widget -%}
+    {%- set attr = attr|merge({ class: attr.class|default('toggle') }) -%}
+    {{- parent() -}}
+{%- endblock checkbox_widget -%}
