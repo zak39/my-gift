@@ -23,13 +23,13 @@
         {% if participant %}
             <div class="flex items-center gap-3 md:my-2 my-3 text-sm">
                 {% if participant.isAnonymous %}
-                    <div class="leading-tight">
+                    <div class="min-w-0 leading-tight wrap-anywhere">
                         <span class="md:font-medium md:text-base text-lg">{{ participant.pseudoAnonyme }}</span>
                         <span class="text-base-content/80 md:text-base text-lg">a réservé ce cadeau</span>
                     </div>
                 {% else %}
-                    <twig:Molecule:UserAvatar :user="participant.participantUser" sizeClass="size-8" />
-                    <div class="leading-tight">
+                    <twig:Molecule:UserAvatar :user="participant.participantUser" sizeClass="size-8 shrink-0" />
+                    <div class="min-w-0 leading-tight wrap-anywhere">
                         <span class="font-bold md:text-base text-sm">
                             {{ this.isCurrentUser(participant.participantUser) ? 'Vous' : participant.participantUser.fullname }}
                         </span>

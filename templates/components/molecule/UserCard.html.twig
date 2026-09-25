@@ -5,7 +5,7 @@
             <twig:Molecule:UserAvatar
                 :user="user"
                 sizeClass="h-14 w-14 shrink-0 rounded-full ring-2 ring-base-300 ring-offset-2 ring-offset-base-100" />
-            <h2 class="card-title min-w-0 break-words">{{ user.fullname }}</h2>
+            <h2 class="card-title min-w-0 line-clamp-2 wrap-anywhere" title="{{ user.fullname }}">{{ user.fullname }}</h2>
         </div>
 
         <div class="card-actions mt-auto justify-end">
