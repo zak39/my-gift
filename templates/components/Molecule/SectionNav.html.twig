@@ -8,7 +8,7 @@
                     class="whitespace-nowrap lg:whitespace-normal"
                     onclick="document.getElementById('section-{{ section.id }}-toggle').checked = true">
                     <twig:ux:icon name="lucide:tag" class="size-4 shrink-0" />
-                    <span class="lg:break-words">{{ section.title }}</span>
+                    <span class="min-w-0 lg:wrap-anywhere">{{ section.title }}</span>
                     <span class="badge badge-sm badge-ghost tabular-nums">{{ this.giftCount(section.gifts) }}</span>
                 </a>
             </li>
@@ -20,7 +20,7 @@
                     class="whitespace-nowrap lg:whitespace-normal"
                     onclick="document.getElementById('section-sans-section-toggle').checked = true">
                     <twig:ux:icon name="lucide:package-open" class="size-4 shrink-0" />
-                    <span class="lg:break-words">Cadeaux sans section</span>
+                    <span class="min-w-0 lg:wrap-anywhere">Cadeaux sans section</span>
                     <span class="badge badge-sm badge-ghost tabular-nums">{{ this.giftCount(giftsWithoutSection) }}</span>
                 </a>
             </li>

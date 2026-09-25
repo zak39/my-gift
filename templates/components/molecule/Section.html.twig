@@ -11,7 +11,7 @@
 
         <div class="collapse-title ps-6">
             <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-                <h2 class="text-base font-semibold break-words sm:text-lg">{{ title }}</h2>
+                <h2 class="min-w-0 text-base font-semibold wrap-anywhere sm:text-lg">{{ title }}</h2>
                 {% if giftCount is not null %}
                     <span class="badge badge-sm badge-ghost tabular-nums">
                         {{ giftCount }} cadeau{{ giftCount > 1 ? 'x' }}
@@ -19,7 +19,7 @@
                 {% endif %}
             </div>
             {% if description %}
-                <p class="mt-1 text-sm text-base-content/70">{{ description }}</p>
+                <p class="mt-1 text-sm text-base-content/70 wrap-anywhere">{{ description }}</p>
             {% endif %}
         </div>
 
