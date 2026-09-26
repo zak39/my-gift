@@ -173,9 +173,9 @@
                 Pour les gros cadeaux, chacun met sa part
             </h2>
             <p class="text-base-content/70 mt-8 text-lg leading-relaxed">
-                MyGift additionne les montants, affiche le reste à couvrir et fait passer le cadeau
-                en « prêt » dès que le prix est atteint. Les comptes sont recalculés à chaque
-                contribution, et aussi en cas de désistement.
+                MyGift additionne les montants et affiche le reste à couvrir. Le prix sert
+                d'objectif : s'il change, les contributeurs sont prévenus par email et revoient
+                leur part. Une fois le cadeau acheté, l'un d'eux le passe en « prêt à offrir ».
             </p>
             <p class="text-base-content/60 mt-8 text-sm">
                 Aucun paiement ne transite par l'application : vous vous arrangez entre vous.
@@ -412,7 +412,7 @@
     {
         card: 'bg-warning/10', icon: 'bg-warning text-warning-content',
         iconName: 'lucide:package-check', statuses: ['READY'],
-        text: "Le prix est couvert, il ne reste plus qu'à acheter le cadeau.",
+        text: "Le cadeau est acheté : celui qui l'a réservé, ou l'un des contributeurs, le déclare prêt.",
     },
     {
         card: 'bg-success/10', icon: 'bg-success text-success-content',
@@ -469,8 +469,12 @@
         answer: "Non. MyGift tient les comptes — qui met combien, ce qu'il reste à couvrir — mais aucun paiement ne transite par l'application. Vous vous arrangez entre vous pour le versement.",
     },
     {
+        question: 'Et si le prix du cadeau change en cours de cagnotte ?',
+        answer: "Le prix d'une cagnotte est un objectif : il peut monter ou baisser. Chaque contributeur est prévenu par email pour revoir sa part. Si le cadeau était déjà prêt à offrir, la cagnotte se rouvre le temps de rééquilibrer les comptes.",
+    },
+    {
         question: 'Puis-je annuler une réservation ou une contribution ?',
-        answer: "Oui. Le désengagement ramène le cadeau à l'état « créé » et libère la place pour quelqu'un d'autre. Pour une cagnotte, le total réuni est recalculé sans votre part.",
+        answer: "Oui. Une réservation annulée rend le cadeau disponible pour quelqu'un d'autre. Pour une cagnotte, le total réuni est recalculé sans votre part, et le cadeau redevient disponible quand plus personne n'y participe.",
     },
     {
         question: "Qu'est-ce que MyGift, exactement ?",

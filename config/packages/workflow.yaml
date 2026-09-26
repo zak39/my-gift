@@ -29,6 +29,9 @@ framework:
                         - !php/enum App\Enum\GiftStatus::RESERVED
                         - !php/enum App\Enum\GiftStatus::CONTRIBUTING
                     to: !php/enum App\Enum\GiftStatus::READY
+                reopen:
+                    from: !php/enum App\Enum\GiftStatus::READY
+                    to: !php/enum App\Enum\GiftStatus::CONTRIBUTING
                 give:
                     from: !php/enum App\Enum\GiftStatus::READY
                     to: !php/enum App\Enum\GiftStatus::GIVEN

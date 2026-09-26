@@ -7,6 +7,7 @@ use App\Entity\Participant;
 use App\Entity\User;
 use App\Enum\GiftStatus;
 use App\Enum\ParticipantStatus;
+use App\Event\GiftPriceChangedEvent;
 use App\Event\GiftReadyEvent;
 use App\Event\ParticipantJoinedEvent;
 use App\Event\ParticipantLeftEvent;
@@ -92,6 +93,32 @@ class GiftLifecycle
 
         $this->giftRequestWorkflow->apply($gift, 'finalize');
         $this->entityManager->flush();
+
+        // A reservation has a single participant: the one who just clicked, nobody to tell.
+        if ($gift->isPooled()) {
+            $this->eventDispatcher->dispatch(new GiftReadyEvent($gift));
+        }
+    }
+
+    /**
+     * The price of a pool is a target, not a threshold: when it moves, the contributors
+     * have to review their share. A gift declared ready was bought, so a new price on a
+     * pool reopens it; on a reservation it only updates the information.
+     */
+    public function priceChanged(Gift $gift, float $previousPrice): void
+    {
+        if (!$gift->isPooled()) {
+            return;
+        }
+
+        if ($this->giftRequestWorkflow->can($gift, 'reopen')) {
+            $this->giftRequestWorkflow->apply($gift, 'reopen');
+            $this->entityManager->flush();
+        }
+
+        if ($gift->getStatus()?->isPoolOpen()) {
+            $this->eventDispatcher->dispatch(new GiftPriceChangedEvent($gift, $previousPrice));
+        }
     }
 
     public function given(Gift $gift): void
@@ -138,20 +165,6 @@ class GiftLifecycle
 
         $this->entityManager->persist($newParticipant);
         $this->entityManager->flush();
-
-        $participants = $this->participantRepository->findBy([
-            'gift' => $gift,
-        ]);
-
-        $total = 0;
-        foreach ($participants as $participant) {
-            $total += $participant->getAmount();
-        }
-
-        if ($total >= $gift->getPrice()) {
-            $this->ready($gift, $user);
-            $this->eventDispatcher->dispatch(new GiftReadyEvent($gift));
-        }
     }
 
     public function cancelledContribution(Gift $gift, User $user): void

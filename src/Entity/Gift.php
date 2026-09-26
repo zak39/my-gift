@@ -365,17 +365,25 @@ class Gift
 
     public function getRemainingAmount(): float
     {
-        return $this->price - $this->getTotalContributed();
+        return $this->getRemainingAmountExcluding();
     }
 
     /**
      * Clamped for display: a price lowered below what is already collected makes
-     * getRemainingAmount() negative, and "il reste -160,00 € à réunir" is not
-     * something to put on screen. See GitHub issue #39 for the root cause.
+     * getRemainingAmount() negative, which getExceededAmount() reports instead.
      */
     public function getRemainingToCollect(): float
     {
         return max(0, $this->getRemainingAmount());
+    }
+
+    /**
+     * The price is a target the creator may lower after people chipped in: what the
+     * pool collected beyond it, for the contributors to settle between themselves.
+     */
+    public function getExceededAmount(): float
+    {
+        return max(0, -$this->getRemainingAmount());
     }
 
     /**
@@ -402,7 +410,14 @@ class Gift
         return (int) min(100, round($this->getTotalContributed() / $this->price * 100));
     }
 
-    public function getRemainingAmountExcluding(Participant $excluded): float
+    /**
+     * Rounded to the cent: amounts are floats, so 60.30 - (20.10 + 40.20) gives
+     * -7.1e-15 instead of 0, which reads as a pool that exceeds its target.
+     *
+     * The excluded participant is skipped rather than subtracted: a new one being
+     * validated is not in the collection yet.
+     */
+    public function getRemainingAmountExcluding(?Participant $excluded = null): float
     {
         $total = 0;
         foreach ($this->participants as $participant) {
@@ -413,6 +428,6 @@ class Gift
             $total += $participant->getAmount();
         }
 
-        return $this->price - $total;
+        return round($this->price - $total, 2);
     }
 }

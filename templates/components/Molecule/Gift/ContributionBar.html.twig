@@ -9,13 +9,16 @@
             <p class="text-sm font-semibold tabular-nums">{{ gift.contributionPercent }} %</p>
         </div>
 
-        <progress class="progress mt-2 w-full {{ gift.poolComplete ? 'progress-success' : 'progress-accent' }}"
+        <progress class="progress mt-2 w-full {{ computed.progressColor }}"
             value="{{ gift.contributionPercent }}"
             max="100"
             aria-label="Cagnotte réunie pour {{ gift.title }}"></progress>
 
         <p class="mt-1 flex items-center gap-1.5 text-xs text-base-content/70">
-            {% if gift.poolComplete %}
+            {% if gift.exceededAmount > 0 %}
+                <twig:ux:icon name="lucide:circle-alert" class="size-3.5 shrink-0 text-warning" />
+                Objectif dépassé de {{ gift.exceededAmount|format_currency('EUR') }}
+            {% elseif gift.poolComplete %}
                 <twig:ux:icon name="lucide:circle-check" class="size-3.5 shrink-0 text-success" />
                 Cagnotte complète, le cadeau peut être offert
             {% else %}

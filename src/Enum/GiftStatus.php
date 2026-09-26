@@ -25,8 +25,8 @@ enum GiftStatus: string
     }
 
     /**
-     * The pool is still filling up: GiftLifecycle moves a gift to READY as soon as
-     * the collected amount reaches the price, so CONTRIBUTING means "not funded yet".
+     * The pool is still open: a contributor has not declared the gift ready yet, whatever
+     * the collected amount. The price is only a target, so reaching it moves nothing.
      */
     public function isPoolOpen(): bool
     {
