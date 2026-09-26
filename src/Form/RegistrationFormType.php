@@ -50,7 +50,7 @@ class RegistrationFormType extends AbstractType
             ])
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
-                'invalid_message' => 'Les champs de mot de passes doivent correspondre.',
+                'invalid_message' => 'Les mots de passe doivent correspondre.',
                 'required' => true,
                 // instead of being set onto the object directly,
                 // this is read and encoded in the controller
