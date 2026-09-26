@@ -39,7 +39,7 @@ final class GiftPoolVoter extends Voter
 
         $vote?->addReason('The creator of a gift does not get to see its pool.');
 
-        // A reservation, or a pool that is already complete, holds no surprise left.
+        // A reservation, or a pool a contributor declared ready, holds no surprise left.
         return 'gift.can_see_contributors' === $attribute
             && !$subject->getStatus()?->isPoolOpen()
         ;

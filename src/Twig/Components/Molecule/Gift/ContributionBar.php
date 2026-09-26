@@ -31,4 +31,13 @@ final class ContributionBar
 
         return $this->gift->isPooled();
     }
+
+    public function getProgressColor(): string
+    {
+        return match (true) {
+            $this->gift->getExceededAmount() > 0 => 'progress-warning',
+            $this->gift->isPoolComplete() => 'progress-success',
+            default => 'progress-accent',
+        };
+    }
 }

@@ -15,7 +15,7 @@
                             Modifier ma participation
                         </twig:block>
                     </twig:atomic:ButtonLink> 
-                {% else %}
+                {% elseif not gift.poolComplete %}
                     <twig:atomic:ButtonLink
                         class="md:w-60 w-full"
                         color="accent"
@@ -77,15 +77,14 @@
                 </twig:Modal>
             {% endif %}
 
-            {% if false == workflow_has_marked_place(gift, 'contributing') %}
-                {% if workflow_can(gift, 'finalize') %}
+            {# Only whoever reserved or chipped in may declare the gift bought. #}
+            {% if workflow_can(gift, 'finalize') and gift.getParticipant(app.user) %}
                 <form method="post" action="{{ path('app_gift_ready', { id: gift.id}) }}" class="contents">
                     <button type="submit" class="btn btn-accent md:w-52 w-full">
                         <twig:ux:icon name="famicons:gift" />
                         Prêt à donner le cadeau
                     </button>
                 </form>
-                {% endif %}
             {% endif %}
 
             {% if workflow_can(gift, 'disengage') %}

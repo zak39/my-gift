@@ -2,12 +2,13 @@
 
 namespace App\EventSubscriber;
 
+use App\Event\GiftReadyEvent;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Workflow\Event\CompletedEvent;
 use Symfony\Component\Workflow\Event\EnteredEvent;
-use Symfony\Component\Workflow\Event\LeaveEvent;
 use Symfony\Component\Workflow\Event\TransitionEvent;
 
 class WorkflowGiftSubscriber implements EventSubscriberInterface
@@ -68,7 +69,7 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
         $this->mailer->send($email);
     }
 
-    public function giftContributing(EnteredEvent $event): void
+    public function giftContributing(CompletedEvent $event): void
     {
         /** @var \App\Entity\Gift $gift */
         $gift = $event->getSubject();
@@ -120,10 +121,9 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
         $this->mailer->send($email);
     }
 
-    public function giftReady(LeaveEvent $event): void
+    public function giftReady(GiftReadyEvent $event): void
     {
-        /** @var \App\Entity\Gift $gift */
-        $gift = $event->getSubject();
+        $gift = $event->getGift();
 
         $email = (new TemplatedEmail())
             ->from(self::FROM_EMAIL)
@@ -144,9 +144,11 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
         return [
             'workflow.gift_request.entered.reserved' => 'giftReserved',
             'workflow.gift_request.transition.disengage' => 'giftDisengaged',
-            'workflow.gift_request.entered.contributing' => 'giftContributing',
+            // Not `entered.contributing`: `reopen` enters that place too, without a participant.
+            'workflow.gift_request.completed.contribute' => 'giftContributing',
             'workflow.gift_request.transition.cancelled_contribution' => 'giftCancelContribution',
-            'workflow.gift_request.leave.contributing' => 'giftReady',
+            // Only a pool declared ready, which `leave.contributing` cannot tell from a cancelled one.
+            GiftReadyEvent::class => 'giftReady',
         ];
     }
 }

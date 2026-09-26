@@ -9,6 +9,7 @@ use App\Form\GiftType;
 use App\Repository\GiftRepository;
 use App\Services\BreadcrumbBuilder;
 use App\Services\FavoriteGiftGrouper;
+use App\Services\GiftLifecycle;
 use App\Services\ImageDownloader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -75,12 +76,15 @@ final class GiftController extends AbstractController
     }
 
     #[Route('/gift/{id}/edit', name: 'app_gift_edit')]
-    public function edit(Request $request, Gift $gift, EntityManagerInterface $entityManager, BreadcrumbBuilder $breadcrumbBuilder): Response
+    public function edit(Request $request, Gift $gift, EntityManagerInterface $entityManager, BreadcrumbBuilder $breadcrumbBuilder, GiftLifecycle $giftLifecycle): Response
     {
         $this->denyAccessUnlessGranted('gift.is_creator', $gift);
 
         /** @var App\Entity\User */
         $user = $this->getUser();
+
+        // Read before handleRequest(), which writes the submitted price into $gift.
+        $previousPrice = $gift->getPrice();
 
         $form = $this->createForm(GiftEditType::class, $gift, ['sections' => $user->getSections()]);
         $form->handleRequest($request);
@@ -88,6 +92,10 @@ final class GiftController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($gift);
             $entityManager->flush();
+
+            if ($previousPrice !== $gift->getPrice()) {
+                $giftLifecycle->priceChanged($gift, $previousPrice);
+            }
 
             return $this->redirectToRoute('app_section', ['id' => $user->getId()]);
         }
