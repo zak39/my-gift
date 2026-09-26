@@ -23,6 +23,10 @@ security:
                 login_path: app_login
                 check_path: app_login
                 enable_csrf: true
+            remember_me:
+                lifetime: 604800 # 1 week in seconds
+                secure: auto
+                samesite: lax
             logout:
                 path: app_logout
                 # where to redirect after logout
