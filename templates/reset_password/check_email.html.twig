@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Gift | Vérifiez vos e-mails{% endblock %}
+
+{% block body %}
+<div class="hero bg-base-200 min-h-screen">
+    <div class="hero-content text-center">
+        <div class="max-w-md">
+            <div class="text-6xl mb-4" aria-hidden="true">📬</div>
+            <h1 class="text-5xl font-bold">Vérifiez vos e-mails</h1>
+
+            <p class="py-6">
+                Un e-mail a été envoyé à l'adresse que vous avez indiquée. Il contient un lien sur lequel vous devez cliquer pour réinitialiser votre mot de passe.
+            </p>
+
+            <div class="flex flex-col items-center gap-4">
+                <a class="btn btn-accent" href="{{ path('app_login') }}">Retour à la connexion</a>
+                <a class="link link-hover" href="{{ path('app_forgot_password_request') }}">Mauvaise adresse e-mail ? Refaire une demande</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Gift | Nouveau mot de passe{% endblock %}
+
+{% block body %}
+<div class="hero bg-base-200 min-h-screen">
+    <div class="hero-content flex-col lg:flex-row-reverse gap-16">
+        <div class="text-center lg:text-left">
+            <h1 class="text-5xl font-bold">Nouveau mot de passe</h1>
+            <p class="py-6">
+                Choisissez votre nouveau mot de passe, vous l'utiliserez ensuite pour vous connecter 🔐
+            </p>
+        </div>
+        <div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+            <div class="card-body">
+                {% if resetForm.vars.errors|length > 0 %}
+                    <div class="alert alert-error alert-soft">{{ form_errors(resetForm) }}</div>
+                {% endif %}
+                {{ form_start(resetForm) }}
+                    <fieldset class="fieldset">
+                        <div data-controller="password-toggle">
+                            {{ form_label(resetForm.plainPassword.first) }}
+                            <label class="input md:input-md input-xl w-full">
+                                <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <g
+                                    stroke-linejoin="round"
+                                    stroke-linecap="round"
+                                    stroke-width="2.5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    >
+                                    <path
+                                        d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"
+                                    ></path>
+                                    <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
+                                    </g>
+                                </svg>
+                                {{ form_widget(resetForm.plainPassword.first, {
+                                    attr: {
+                                        'data-password-toggle-target': 'field',
+                                        autofocus: true
+                                    }
+                                }) }}
+                                <button type="button" data-password-toggle-target="button" data-action="password-toggle#toggle" class="btn btn-sm btn-ghost absolute top-1/2 right-2 -translate-y-1/2" aria-label="Afficher le mot de passe"></button>
+                            </label>
+                            {% if resetForm.plainPassword.first.vars.errors|length > 0 %}
+                                <div class="alert alert-error alert-soft my-2">{{ form_errors(resetForm.plainPassword.first) }}</div>
+                            {% endif %}
+                        </div>
+                        <div data-controller="password-toggle">
+                            {{ form_label(resetForm.plainPassword.second) }}
+                            <label class="input md:input-md input-xl w-full">
+                                <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <g
+                                    stroke-linejoin="round"
+                                    stroke-linecap="round"
+                                    stroke-width="2.5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    >
+                                    <path
+                                        d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"
+                                    ></path>
+                                    <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
+                                    </g>
+                                </svg>
+                                {{ form_widget(resetForm.plainPassword.second, {
+                                    attr: {
+                                        'data-password-toggle-target': 'field'
+                                    }
+                                }) }}
+                                <button type="button" data-password-toggle-target="button" data-action="password-toggle#toggle" class="btn btn-sm btn-ghost absolute top-1/2 right-2 -translate-y-1/2" aria-label="Afficher le mot de passe"></button>
+                            </label>
+                        </div>
+                        {# The "passwords must match" error is attached to the RepeatedType itself, not to its children #}
+                        {% if resetForm.plainPassword.vars.errors|length > 0 %}
+                            <div class="alert alert-error alert-soft my-2">{{ form_errors(resetForm.plainPassword) }}</div>
+                        {% endif %}
+                        {{ form_rest(resetForm) }}
+                        <button type="submit" class="btn btn-accent mt-4">Enregistrer le mot de passe</button>
+                    </fieldset>
+                {{ form_end(resetForm) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
