@@ -1,0 +1,22 @@
+{# Inside the blocks, title, class and id are the props of Modal: the props of this
+   component go by other names, so they stay in reach. #}
+<twig:Modal :title="label ~ ' ' ~ user.firstname" :class="'friend_' ~ action" :id="user.id">
+    <twig:block name="handlerButton">
+        <button type="button" class="btn btn-sm btn-ghost" onclick="modal_friend_{{ action }}_{{ user.id }}.showModal()">
+            <twig:ux:icon :name="icon" class="size-4" />
+            {{ label }}
+        </button>
+    </twig:block>
+    <twig:block name="message">
+        <p class="py-4">{{ question }}</p>
+    </twig:block>
+    <twig:block name="actionButtons">
+        <form method="post" action="{{ path('app_friend_action', { id: user.id, action: action }) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('friend-' ~ action ~ '-' ~ user.id) }}">
+            <button type="submit" class="btn btn-error">
+                <twig:ux:icon :name="icon" class="size-4" />
+                Oui, {{ label|lower }}
+            </button>
+        </form>
+    </twig:block>
+</twig:Modal>

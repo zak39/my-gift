@@ -38,3 +38,27 @@ framework:
                 archive:
                     from: !php/enum App\Enum\GiftStatus::GIVEN
                     to: !php/enum App\Enum\GiftStatus::ARCHIVED
+        friend_request:
+            type: 'state_machine'
+            audit_trail:
+                enabled: true
+            marking_store:
+                type: 'method'
+                property: 'status'
+            supports:
+                - App\Entity\FriendRequest
+            initial_marking: !php/enum App\Enum\FriendRequestStatus::PENDING
+            places: !php/enum App\Enum\FriendRequestStatus
+            transitions:
+                accept:
+                    guard: "is_granted('friend_request.answer', subject)"
+                    from: !php/enum App\Enum\FriendRequestStatus::PENDING
+                    to: !php/enum App\Enum\FriendRequestStatus::ACCEPTED
+                refuse:
+                    guard: "is_granted('friend_request.answer', subject)"
+                    from: !php/enum App\Enum\FriendRequestStatus::PENDING
+                    to: !php/enum App\Enum\FriendRequestStatus::ENDED
+                cancel:
+                    guard: "is_granted('friend_request.cancel', subject)"
+                    from: !php/enum App\Enum\FriendRequestStatus::PENDING
+                    to: !php/enum App\Enum\FriendRequestStatus::ENDED

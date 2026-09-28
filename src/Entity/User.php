@@ -111,12 +111,54 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Participant::class, mappedBy: 'participantUser')]
     private Collection $participations;
 
+    /**
+     * Both ways: addFriend() and removeFriend() update the two users together, so
+     * $a->hasFriend($b) and $b->hasFriend($a) always agree.
+     *
+     * @var Collection<int, User>
+     */
+    #[ORM\ManyToMany(targetEntity: self::class)]
+    #[ORM\JoinTable(name: 'user_friend')]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'friend_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\OrderBy(['firstname' => 'ASC'])]
+    private Collection $friends;
+
+    /**
+     * The users this user blocked. One way only: the blocked user keeps no trace of it.
+     *
+     * @var Collection<int, User>
+     */
+    #[ORM\ManyToMany(targetEntity: self::class)]
+    #[ORM\JoinTable(name: 'user_blocked')]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'blocked_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    private Collection $blockedUsers;
+
+    /**
+     * @var Collection<int, FriendRequest>
+     */
+    #[ORM\OneToMany(targetEntity: FriendRequest::class, mappedBy: 'sender')]
+    private Collection $sentFriendRequests;
+
+    /**
+     * @var Collection<int, FriendRequest>
+     */
+    #[ORM\OneToMany(targetEntity: FriendRequest::class, mappedBy: 'recipient')]
+    #[ORM\OrderBy(['createdAt' => 'DESC'])]
+    private Collection $receivedFriendRequests;
+
     public function __construct()
     {
         $this->gifts = new ArrayCollection();
         $this->sections = new ArrayCollection();
         $this->favoriteGifts = new ArrayCollection();
         $this->participations = new ArrayCollection();
+        // @todo #54 Move the friendship collection into a FriendBook entity
+        $this->friends = new ArrayCollection();
+        $this->blockedUsers = new ArrayCollection();
+        $this->sentFriendRequests = new ArrayCollection();
+        $this->receivedFriendRequests = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -439,5 +481,105 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getFriends(): Collection
+    {
+        return $this->friends;
+    }
+
+    public function hasFriend(self $user): bool
+    {
+        return $this->friends->contains($user);
+    }
+
+    public function addFriend(self $friend): static
+    {
+        if (!$this->friends->contains($friend)) {
+            $this->friends->add($friend);
+            // The other side too: that call finds $this already there and stops.
+            $friend->addFriend($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFriend(self $friend): static
+    {
+        if ($this->friends->removeElement($friend)) {
+            $friend->removeFriend($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getBlockedUsers(): Collection
+    {
+        return $this->blockedUsers;
+    }
+
+    public function hasBlockedUser(self $user): bool
+    {
+        return $this->blockedUsers->contains($user);
+    }
+
+    public function addBlockedUser(self $user): static
+    {
+        if (!$this->blockedUsers->contains($user)) {
+            $this->blockedUsers->add($user);
+        }
+
+        return $this;
+    }
+
+    public function removeBlockedUser(self $user): static
+    {
+        $this->blockedUsers->removeElement($user);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, FriendRequest>
+     */
+    public function getSentFriendRequests(): Collection
+    {
+        return $this->sentFriendRequests;
+    }
+
+    /**
+     * @return Collection<int, FriendRequest>
+     */
+    public function getReceivedFriendRequests(): Collection
+    {
+        return $this->receivedFriendRequests;
+    }
+
+    public function getFriendRequestSentTo(self $user): ?FriendRequest
+    {
+        foreach ($this->sentFriendRequests as $friendRequest) {
+            if ($friendRequest->getRecipient() === $user) {
+                return $friendRequest;
+            }
+        }
+
+        return null;
+    }
+
+    public function getFriendRequestReceivedFrom(self $user): ?FriendRequest
+    {
+        foreach ($this->receivedFriendRequests as $friendRequest) {
+            if ($friendRequest->getSender() === $user) {
+                return $friendRequest;
+            }
+        }
+
+        return null;
     }
 }

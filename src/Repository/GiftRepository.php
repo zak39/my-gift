@@ -29,7 +29,11 @@ class GiftRepository extends ServiceEntityRepository
             ->addSelect('c', 's')
             ->where('u.id = :userId')
             ->andWhere('g.isPublic = true')
+            // The friendship rule of GiftVisibilityVoter: a favourite whose creator is no
+            // longer a friend drops out of the list.
+            ->andWhere(':currentUser MEMBER OF c.friends')
             ->setParameter('userId', $user->getId())
+            ->setParameter('currentUser', $user)
             ->orderBy('g.createdAt', 'DESC')
         ;
 
