@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Lifecycle;
 
 use App\Entity\Gift;
 use App\Entity\Participant;
