@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\FriendRequest;
 use App\Entity\User;
+use App\Repository\FriendBookRepository;
 use App\Services\Lifecycle\FriendRequestLifecycle;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,17 +15,19 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('IS_AUTHENTICATED')]
 final class FriendController extends AbstractController
 {
-    /**
-     * Nothing to prepare: the template reads everything from the collections of app.user.
-     */
     #[Route('/friends', name: 'app_friend')]
-    public function index(): Response
+    public function index(FriendBookRepository $friendBookRepository): Response
     {
-        return $this->render('friend/index.html.twig');
+        /** @var User $user */
+        $user = $this->getUser();
+
+        return $this->render('friend/index.html.twig', [
+            'book' => $friendBookRepository->of($user),
+        ]);
     }
 
     #[Route('/users/{id}/friend/{action}', name: 'app_friend_action', requirements: ['id' => '\d+', 'action' => 'send|remove|block|unblock'], methods: ['POST'])]
-    public function userAction(User $other, string $action, Request $request, FriendRequestLifecycle $friendRequestLifecycle): Response
+    public function userAction(User $other, string $action, Request $request, FriendRequestLifecycle $friendRequestLifecycle, FriendBookRepository $friendBookRepository): Response
     {
         if (!$this->isCsrfTokenValid("friend-$action-{$other->getId()}", $request->request->get('_token'))) {
             throw $this->createAccessDeniedException();
@@ -43,7 +46,7 @@ final class FriendController extends AbstractController
             };
 
             $message = match ($action) {
-                'send' => $user->hasFriend($other) ? "Vous êtes maintenant ami·es avec $name !" : "Votre demande a été envoyée à $name.",
+                'send' => $friendBookRepository->of($user)->hasFriend($other) ? "Vous êtes maintenant ami·es avec $name !" : "Votre demande a été envoyée à $name.",
                 'remove' => "$name ne fait plus partie de vos ami·es.",
                 'block' => "$name a été bloqué·e.",
                 'unblock' => "$name a été débloqué·e.",
@@ -68,8 +71,8 @@ final class FriendController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $senderName = $friendRequest->getSender()->getFirstname();
-        $recipientName = $friendRequest->getRecipient()->getFirstname();
+        $senderName = $friendRequest->getSender()->getOwner()->getFirstname();
+        $recipientName = $friendRequest->getRecipient()->getOwner()->getFirstname();
 
         try {
             match ($transition) {

@@ -33,8 +33,8 @@ final class FriendRequestVoter extends Voter
         /* @var FriendRequest $subject */
         return match ($attribute) {
             // Accept or refuse.
-            'friend_request.answer' => $user === $subject->getRecipient(),
-            'friend_request.cancel' => $user === $subject->getSender(),
+            'friend_request.answer' => $user === $subject->getRecipient()->getOwner(),
+            'friend_request.cancel' => $user === $subject->getSender()->getOwner(),
         };
     }
 }

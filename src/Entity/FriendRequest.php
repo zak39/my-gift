@@ -9,7 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * A request waiting for an answer, and nothing more: once accepted, refused or
  * cancelled, FriendRequestLifecycle deletes it. The friendship itself lives in
- * User::$friends.
+ * FriendBook::$friends. It links two books, not two users, so the pending requests
+ * live in the books too.
  */
 #[ORM\Entity(repositoryClass: FriendRequestRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_FRIEND_REQUEST', columns: ['sender_id', 'recipient_id'])]
@@ -20,13 +21,13 @@ class FriendRequest
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'sentFriendRequests')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $sender = null;
+    #[ORM\ManyToOne(inversedBy: 'sentRequests')]
+    #[ORM\JoinColumn(name: 'sender_id', referencedColumnName: 'owner_id', nullable: false)]
+    private ?FriendBook $sender = null;
 
-    #[ORM\ManyToOne(inversedBy: 'receivedFriendRequests')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $recipient = null;
+    #[ORM\ManyToOne(inversedBy: 'receivedRequests')]
+    #[ORM\JoinColumn(name: 'recipient_id', referencedColumnName: 'owner_id', nullable: false)]
+    private ?FriendBook $recipient = null;
 
     #[ORM\Column(enumType: FriendRequestStatus::class)]
     private FriendRequestStatus $status = FriendRequestStatus::PENDING;
@@ -44,24 +45,24 @@ class FriendRequest
         return $this->id;
     }
 
-    public function getSender(): ?User
+    public function getSender(): ?FriendBook
     {
         return $this->sender;
     }
 
-    public function setSender(?User $sender): static
+    public function setSender(?FriendBook $sender): static
     {
         $this->sender = $sender;
 
         return $this;
     }
 
-    public function getRecipient(): ?User
+    public function getRecipient(): ?FriendBook
     {
         return $this->recipient;
     }
 
-    public function setRecipient(?User $recipient): static
+    public function setRecipient(?FriendBook $recipient): static
     {
         $this->recipient = $recipient;
 

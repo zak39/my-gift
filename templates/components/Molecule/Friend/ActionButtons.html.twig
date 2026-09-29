@@ -1,13 +1,11 @@
-{# Everything is read on app.user: each collection loads once per request, whatever the
-   number of cards. Someone who blocked the current user shows as a stranger, so nothing
-   reveals the block. #}
-{% set currentUser = app.user %}
-{% set receivedRequest = currentUser.friendRequestReceivedFrom(user) %}
-{% set sentRequest = currentUser.friendRequestSentTo(user) %}
+{# One branch per FriendRelation case, worked out once by the component class. #}
+{% set Relation = enum('App\\Enum\\FriendRelation') %}
+{% set relation = this.relation %}
+{% set pendingRequest = this.pendingRequest %}
 {% set blockQuestion = 'Bloquer ' ~ user.firstname ~ ' ? Tout lien entre vous sera supprimé, et ' ~ user.firstname ~ ' ne pourra plus vous envoyer de demande.' %}
 
 <div {{ attributes.defaults({ class: 'flex flex-wrap items-center gap-2' }) }}>
-    {% if currentUser.hasFriend(user) %}
+    {% if relation is same as(Relation.FRIEND) %}
         <span class="badge badge-success gap-1.5">
             <twig:ux:icon name="lucide:user-check" />
             Ami·e
@@ -16,7 +14,7 @@
             question="Retirer {{ user.firstname }} de vos ami·es ? Vous ne verrez plus vos listes respectives." />
         <twig:Molecule:Friend:UnlinkButton :user="user" action="block" label="Bloquer" icon="lucide:ban" :question="blockQuestion" />
 
-    {% elseif currentUser.hasBlockedUser(user) %}
+    {% elseif relation is same as(Relation.BLOCKED) %}
         <span class="badge badge-error gap-1.5">
             <twig:ux:icon name="lucide:ban" />
             Bloqué·e
@@ -29,16 +27,16 @@
             </button>
         </form>
 
-    {% elseif receivedRequest %}
-        <form method="post" action="{{ path('app_friend_request', { id: receivedRequest.id, transition: 'accept' }) }}">
-            <input type="hidden" name="_token" value="{{ csrf_token('friend-request-accept-' ~ receivedRequest.id) }}">
+    {% elseif relation is same as(Relation.REQUEST_RECEIVED) %}
+        <form method="post" action="{{ path('app_friend_request', { id: pendingRequest.id, transition: 'accept' }) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('friend-request-accept-' ~ pendingRequest.id) }}">
             <button type="submit" class="btn btn-sm btn-primary">
                 <twig:ux:icon name="lucide:check" class="size-4" />
                 Accepter
             </button>
         </form>
-        <form method="post" action="{{ path('app_friend_request', { id: receivedRequest.id, transition: 'refuse' }) }}">
-            <input type="hidden" name="_token" value="{{ csrf_token('friend-request-refuse-' ~ receivedRequest.id) }}">
+        <form method="post" action="{{ path('app_friend_request', { id: pendingRequest.id, transition: 'refuse' }) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('friend-request-refuse-' ~ pendingRequest.id) }}">
             <button type="submit" class="btn btn-sm btn-ghost">
                 <twig:ux:icon name="lucide:x" class="size-4" />
                 Refuser
@@ -46,13 +44,13 @@
         </form>
         <twig:Molecule:Friend:UnlinkButton :user="user" action="block" label="Bloquer" icon="lucide:ban" :question="blockQuestion" />
 
-    {% elseif sentRequest %}
+    {% elseif relation is same as(Relation.REQUEST_SENT) %}
         <span class="badge badge-info gap-1.5">
             <twig:ux:icon name="lucide:clock" />
             En attente
         </span>
-        <form method="post" action="{{ path('app_friend_request', { id: sentRequest.id, transition: 'cancel' }) }}">
-            <input type="hidden" name="_token" value="{{ csrf_token('friend-request-cancel-' ~ sentRequest.id) }}">
+        <form method="post" action="{{ path('app_friend_request', { id: pendingRequest.id, transition: 'cancel' }) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('friend-request-cancel-' ~ pendingRequest.id) }}">
             <button type="submit" class="btn btn-sm btn-ghost">
                 <twig:ux:icon name="lucide:undo-2" class="size-4" />
                 Annuler la demande

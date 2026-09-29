@@ -4,6 +4,8 @@ namespace App\Services\Lifecycle;
 
 use App\Entity\FriendRequest;
 use App\Entity\User;
+use App\Enum\FriendRelation;
+use App\Repository\FriendBookRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -19,19 +21,29 @@ class FriendRequestLifecycle
         #[Target('friend_request')]
         private WorkflowInterface $friendRequestWorkflow,
         private EntityManagerInterface $entityManager,
+        private FriendBookRepository $friendBookRepository,
     ) {
     }
 
     public function send(User $sender, User $recipient): void
     {
-        $error = match (true) {
-            $sender === $recipient => 'Vous ne pouvez pas vous envoyer une demande à vous-même.',
-            $sender->hasFriend($recipient) => 'Vous êtes déjà ami·e avec cette personne.',
-            $sender->hasBlockedUser($recipient) => 'Vous avez bloqué cette personne. Débloquez-la pour lui envoyer une demande.',
-            $recipient->hasBlockedUser($sender) => 'Impossible d\'envoyer une demande à cette personne.',
-            null !== $sender->getFriendRequestReceivedFrom($recipient) => 'Cette personne vous a déjà envoyé une demande. Acceptez-la ou refusez-la.',
-            null !== $sender->getFriendRequestSentTo($recipient) => 'Vous avez déjà envoyé une demande à cette personne.',
-            default => null,
+        $senderBook = $this->friendBookRepository->of($sender);
+        $recipientBook = $this->friendBookRepository->of($recipient);
+
+        if ($sender === $recipient) {
+            throw new \LogicException('Vous ne pouvez pas vous envoyer une demande à vous-même.');
+        }
+
+        if ($recipientBook->hasBlocked($sender)) {
+            throw new \LogicException('Vous ne pouvez pas envoyer de demande à cette personne.');
+        }
+
+        $error = match ($senderBook->relationWith($recipient)) {
+            FriendRelation::FRIEND => 'Vous êtes déjà ami·e avec cette personne.',
+            FriendRelation::BLOCKED => 'Vous avez bloqué cette personne. Débloquez-la pour lui envoyer une demande.',
+            FriendRelation::REQUEST_SENT => 'Vous avez déjà envoyé une demande à cette personne.',
+            FriendRelation::REQUEST_RECEIVED => 'Cette personne vous a déjà envoyé une demande.',
+            FriendRelation::NONE => null,
         };
 
         if (null !== $error) {
@@ -39,8 +51,8 @@ class FriendRequestLifecycle
         }
 
         $friendRequest = (new FriendRequest())
-            ->setSender($sender)
-            ->setRecipient($recipient)
+            ->setSender($senderBook)
+            ->setRecipient($recipientBook)
         ;
 
         $this->entityManager->persist($friendRequest);
@@ -51,10 +63,10 @@ class FriendRequestLifecycle
     {
         $this->applyTransition($friendRequest, 'accept', 'Cette demande ne peut pas être acceptée.');
 
-        // Both sides at once: each user now has the other in getFriends().
-        $friendRequest->getSender()->addFriend($friendRequest->getRecipient());
+        // Both books at once: each user now has the other in getFriends().
+        $friendRequest->getSender()->befriend($friendRequest->getRecipient());
 
-        // The friendship lives in User::$friends from now on: the request has done its job.
+        // The friendship lives in FriendBook::$friends from now on: the request has done its job.
         $this->entityManager->remove($friendRequest);
         $this->entityManager->flush();
     }
@@ -75,40 +87,46 @@ class FriendRequestLifecycle
 
     public function removeFriend(User $user, User $friend): void
     {
-        if (!$user->hasFriend($friend)) {
+        $book = $this->friendBookRepository->of($user);
+
+        if (!$book->hasFriend($friend)) {
             throw new \LogicException('Cette personne ne fait pas partie de vos ami·es.');
         }
 
-        $user->removeFriend($friend);
+        $book->unfriend($this->friendBookRepository->of($friend));
         $this->entityManager->flush();
     }
 
     public function block(User $blocker, User $blocked): void
     {
-        if ($blocker === $blocked || $blocker->hasBlockedUser($blocked)) {
+        $book = $this->friendBookRepository->of($blocker);
+
+        if ($blocker === $blocked || $book->hasBlocked($blocked)) {
             throw new \LogicException('Cette personne ne peut pas être bloquée.');
         }
 
         // Blocking ends everything between the two: the friendship and any pending request.
-        $blocker->removeFriend($blocked);
+        $book->unfriend($this->friendBookRepository->of($blocked));
 
-        foreach ([$blocker->getFriendRequestSentTo($blocked), $blocker->getFriendRequestReceivedFrom($blocked)] as $friendRequest) {
+        foreach ([$book->getRequestSentTo($blocked), $book->getRequestReceivedFrom($blocked)] as $friendRequest) {
             if (null !== $friendRequest) {
                 $this->entityManager->remove($friendRequest);
             }
         }
 
-        $blocker->addBlockedUser($blocked);
+        $book->block($blocked);
         $this->entityManager->flush();
     }
 
     public function unblock(User $blocker, User $blocked): void
     {
-        if (!$blocker->hasBlockedUser($blocked)) {
+        $book = $this->friendBookRepository->of($blocker);
+
+        if (!$book->hasBlocked($blocked)) {
             throw new \LogicException("Cette personne n'est pas bloquée.");
         }
 
-        $blocker->removeBlockedUser($blocked);
+        $book->unblock($blocked);
         $this->entityManager->flush();
     }
 

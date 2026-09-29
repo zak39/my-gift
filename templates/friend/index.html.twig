@@ -3,9 +3,8 @@
 {% block title %}My Gift | Mes ami·es{% endblock %}
 
 {% block body %}
-{% set currentUser = app.user %}
 {# Pending requests first when there are some: that is what the avatar dot points to. #}
-{% set openTab = currentUser.receivedFriendRequests is empty ? 'friends' : 'received' %}
+{% set openTab = book.receivedRequests is empty ? 'friends' : 'received' %}
 
 <div class="mx-auto w-full max-w-6xl py-6 pb-12">
     <header>
@@ -24,10 +23,10 @@
 
     <div class="tabs tabs-box mt-6">
         {% for key, tab in {
-            friends: { label: 'Ami·es', users: currentUser.friends, empty: "Vous n'avez pas encore d'ami·e." },
-            received: { label: 'Demandes reçues', users: currentUser.receivedFriendRequests|map(request => request.sender), empty: 'Aucune demande en attente.' },
-            sent: { label: 'Demandes envoyées', users: currentUser.sentFriendRequests|map(request => request.recipient), empty: 'Aucune demande envoyée.' },
-            blocked: { label: 'Bloqué·es', users: currentUser.blockedUsers, empty: "Vous n'avez bloqué personne." },
+            friends: { label: 'Ami·es', users: book.friends, empty: "Vous n'avez pas encore d'ami·e." },
+            received: { label: 'Demandes reçues', users: book.receivedRequests|map(request => request.sender.owner), empty: 'Aucune demande en attente.' },
+            sent: { label: 'Demandes envoyées', users: book.sentRequests|map(request => request.recipient.owner), empty: 'Aucune demande envoyée.' },
+            blocked: { label: 'Bloqué·es', users: book.blockedUsers, empty: "Vous n'avez bloqué personne." },
         } %}
             <input type="radio" name="friend_tabs" class="tab" aria-label="{{ tab.label }} ({{ tab.users|length }})" {{ key == openTab ? 'checked' }} />
             <div class="tab-content border-base-300 bg-base-100 p-4">
