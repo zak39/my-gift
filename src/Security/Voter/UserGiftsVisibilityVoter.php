@@ -3,6 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Entity\User;
+use App\Repository\FriendBookRepository;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -14,6 +15,11 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 final class UserGiftsVisibilityVoter extends Voter
 {
+    public function __construct(
+        private FriendBookRepository $friendBookRepository,
+    ) {
+    }
+
     protected function supports(string $attribute, mixed $subject): bool
     {
         return 'user.can_see_gifts' === $attribute
@@ -33,7 +39,7 @@ final class UserGiftsVisibilityVoter extends Voter
 
         /** @var User $subject */
         // Ids for the owner, as UserOwnerVoter does.
-        if ($user->getId() === $subject->getId() || $user->hasFriend($subject)) {
+        if ($user->getId() === $subject->getId() || $this->friendBookRepository->of($user)->hasFriend($subject)) {
             return true;
         }
 

@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\FriendBook;
 use App\Entity\Gift;
 use App\Entity\User;
 use App\Enum\ParticipantStatus;
@@ -30,8 +31,10 @@ class GiftRepository extends ServiceEntityRepository
             ->where('u.id = :userId')
             ->andWhere('g.isPublic = true')
             // The friendship rule of GiftVisibilityVoter: a favourite whose creator is no
-            // longer a friend drops out of the list.
-            ->andWhere(':currentUser MEMBER OF c.friends')
+            // longer a friend drops out of the list. A join rather than MEMBER OF, which
+            // Doctrine cannot translate on a book whose id is its owner (derived identity).
+            ->innerJoin(FriendBook::class, 'creatorBook', 'WITH', 'creatorBook.owner = c')
+            ->innerJoin('creatorBook.friends', 'creatorFriend', 'WITH', 'creatorFriend = :currentUser')
             ->setParameter('userId', $user->getId())
             ->setParameter('currentUser', $user)
             ->orderBy('g.createdAt', 'DESC')
