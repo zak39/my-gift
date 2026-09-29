@@ -1,5 +1,9 @@
 <div {{ attributes }} class="dropdown dropdown-end md:flex hidden">
-    <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+    {# The dot tells from any page that requests wait, without opening the menu. #}
+    <div tabindex="0" role="button" class="indicator btn btn-ghost btn-circle avatar">
+        {% if computed.pendingFriendRequestCount > 0 %}
+            <span class="indicator-item badge badge-secondary badge-xs" aria-hidden="true"></span>
+        {% endif %}
         <twig:Molecule:UserAvatar :user="app.user" id="user_avatar_header" />
     </div>
     <ul
@@ -10,6 +14,17 @@
             <li><twig:atomic:Router:Link link="{{ path('app_gift') }}" name="Mes cadeaux" /></li>
             <li><twig:atomic:Router:Link link="{{ path('app_section', {id: app.user.id }) }}" name="Mes listes" /></li>
             <li><twig:atomic:Router:Link link="{{ path('app_gift_user_favorites') }}" name="Mes Favoris" /></li>
+            <li>
+                <a href="{{ path('app_friend') }}">
+                    Mes ami·es
+                    {% if computed.pendingFriendRequestCount > 0 %}
+                        <span class="badge badge-sm badge-secondary">
+                            {{ computed.pendingFriendRequestCount }}
+                            <span class="sr-only">demande{{ computed.pendingFriendRequestCount > 1 ? 's' }} reçue{{ computed.pendingFriendRequestCount > 1 ? 's' }}</span>
+                        </span>
+                    {% endif %}
+                </a>
+            </li>
             <li><twig:atomic:Router:Link link="{{ path('app_logout') }}" name="Se déconnecter" /></li>
     </ul>
 </div>

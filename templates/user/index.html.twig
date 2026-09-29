@@ -12,6 +12,13 @@
         </p>
     </header>
 
+    {# The friendship buttons of the cards come back here. #}
+    {% for type in ['success', 'error'] %}
+        {% for message in app.flashes(type) %}
+            <twig:Alert :type="type" :message="message" class="mt-4" />
+        {% endfor %}
+    {% endfor %}
+
     <twig:SearchUsers class="mt-6" />
 </div>
 {% endblock %}

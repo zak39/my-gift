@@ -57,7 +57,7 @@ workflow name `gift_request`), with places/transitions defined via the `GiftStat
 (`CREATED → RESERVED|CONTRIBUTING → READY → GIVEN → ARCHIVED`, plus `disengage`/
 `cancelled_contribution` transitions back to `CREATED`). All transition logic and business
 rules (checking `$workflow->can()`, applying transitions, recomputing whether contributions
-cover the price) are centralized in `src/Services/GiftLifecycle.php` — controllers should call
+cover the price) are centralized in `src/Services/Lifecycle/GiftLifecycle.php` — controllers should call
 into this service rather than mutating `Gift`/`Participant` status directly.
 
 Domain events (`src/Event`) are dispatched for cross-cutting side effects and handled by

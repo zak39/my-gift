@@ -6,7 +6,7 @@ use App\Entity\Gift;
 use App\Entity\Participant;
 use App\Form\ParticipantContributingType;
 use App\Form\ParticipantReserveType;
-use App\Services\GiftLifecycle;
+use App\Services\Lifecycle\GiftLifecycle;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

@@ -5,14 +5,14 @@
     <div class="navbar-end">
         {% if not is_granted('IS_AUTHENTICATED') %}
             {# Navbar content for unauthenticated users #}
-            <twig:molecule:Navbar:Visitor />
+            <twig:Molecule:Navbar:Visitor />
         {% else %}
             {# Navbar for mobile view #}
-            <twig:molecule:Navbar:Mobile />
+            <twig:Molecule:Navbar:Mobile />
             {# Navbar for browser view #}
-            <twig:molecule:Navbar:Web />
+            <twig:Molecule:Navbar:Web />
             {# Navbar Avatar menu #}
-            <twig:molecule:Navbar:Avatar />
+            <twig:Molecule:Navbar:Avatar />
         {% endif %}
     </div>
 </div>

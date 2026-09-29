@@ -8,7 +8,9 @@
             <h2 class="card-title min-w-0 line-clamp-2 wrap-anywhere" title="{{ user.fullname }}">{{ user.fullname }}</h2>
         </div>
 
-        <div class="card-actions mt-auto justify-end">
+        {# "Voir sa liste" stays for everyone: for a non-friend, it leads to the private list page. #}
+        <div class="card-actions mt-auto items-center justify-end">
+            <twig:Molecule:Friend:ActionButtons class="justify-end" :user="user" />
             <twig:atomic:ButtonLink
                 class="btn-sm"
                 color="neutral"

@@ -119,6 +119,14 @@ final class SectionController extends AbstractController
     #[Route('/users/{id}/sections', requirements: ['id' => '\d+'], name: 'app_section_user_page')]
     public function userPage(GiftRepository $giftRepository, User $user, BreadcrumbBuilder $breadcrumbBuilder, Request $request): Response
     {
+        if (!$this->isGranted('user.can_see_gifts', $user)) {
+            // Neither sections nor gifts: what the template does not receive, it cannot show.
+            return $this->render('section/user_page_locked.html.twig', [
+                'user' => $user,
+                'breadcrumbs' => $breadcrumbBuilder->giftFromUserSection($user),
+            ]);
+        }
+
         $giftsWithoutSection = [];
         if ($this->isGranted('user.is_owner', $user)) {
             $giftsWithoutSection = $giftRepository->findBy([
