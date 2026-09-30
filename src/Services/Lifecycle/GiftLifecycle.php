@@ -48,7 +48,6 @@ class GiftLifecycle
 
         $participant
             ->setParticipantUser($user)
-            ->setGift($gift)
             ->setStatus(ParticipantStatus::RESERVED)
         ;
 
@@ -151,9 +150,11 @@ class GiftLifecycle
 
         $newParticipant
             ->setParticipantUser($user)
-            ->setGift($gift)
             ->setStatus(ParticipantStatus::PARTICIPATING)
         ;
+
+        // Not setGift() alone: the event's listeners read the gift's collection.
+        $gift->addParticipant($newParticipant);
 
         if (GiftStatus::CREATED === $gift->getStatus()) {
             $this->giftRequestWorkflow->apply($gift, 'contribute', [

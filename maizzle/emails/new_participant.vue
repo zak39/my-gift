@@ -3,6 +3,8 @@ import AccentButtonStyle from '../components/styles/AccentButtonStyle.vue'
 import BodyStyle from '../components/styles/BodyStyle.vue'
 import CardStyle from '../components/styles/CardStyle.vue'
 import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
+import GiftCardStyle from '../components/styles/GiftCardStyle.vue'
+import UserCardStyle from '../components/styles/UserCardStyle.vue'
 </script>
 
 <template>
@@ -13,6 +15,8 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
         <CardStyle />
         <AccentButtonStyle />
         <AccentLinkStyle />
+        <GiftCardStyle />
+        <UserCardStyle />
 
         <Body class="email-bg">
             <Container class="max-w-xl p-0 py-10 sm:p-6">
@@ -39,6 +43,14 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
                     <p>
                       Certe personne a contribué au cadeau pour <b><Raw>{{ participant.amount|format_currency('EUR') }}</Raw></b>.
                     </p>
+
+                    <div class="my-6">
+                        <ParticipantUserCard />
+                    </div>
+
+                    <div class="my-6">
+                        <GiftCard show-pool show-contributors />
+                    </div>
 
                     <p>
                       Vous pouvez consulter les détails du cadeau de <Raw>{{ gift.createdBy.firstname|title }}</Raw> en cliquant sur le bouton ci-dessous.
