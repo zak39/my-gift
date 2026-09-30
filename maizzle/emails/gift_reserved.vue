@@ -3,6 +3,8 @@ import AccentButtonStyle from '../components/styles/AccentButtonStyle.vue'
 import BodyStyle from '../components/styles/BodyStyle.vue'
 import CardStyle from '../components/styles/CardStyle.vue'
 import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
+import GiftCardStyle from '../components/styles/GiftCardStyle.vue'
+import UserCardStyle from '../components/styles/UserCardStyle.vue'
 </script>
 
 <template>
@@ -13,6 +15,8 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
         <CardStyle />
         <AccentButtonStyle />
         <AccentLinkStyle />
+        <GiftCardStyle />
+        <UserCardStyle />
 
         <Body class="email-bg">
             <Container class="max-w-xl p-0 py-10 sm:p-6">
@@ -35,6 +39,14 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
                             Nous avons le plaisir de vous informer que votre cadeau <b><Raw>{{ gift.title }}</Raw></b> a été réservé par <b><Raw>{{ participant.participantUser.fullName|title }}</Raw></b>.
                         </p>
                     <Raw>{% endif %}</Raw>
+
+                    <div class="my-6">
+                        <ParticipantUserCard />
+                    </div>
+
+                    <div class="my-6">
+                        <GiftCard />
+                    </div>
 
                     <p>
                       Vous pouvez consulter les détails de votre demande en cliquant sur le bouton ci-dessous.
