@@ -3,6 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Gift;
+use App\Entity\Participant;
 use App\Enum\GiftStatus;
 use App\Event\GiftPriceChangedEvent;
 use App\Event\GiftReadyEvent;
@@ -24,6 +25,7 @@ class ParticipantJoinedSubscriber implements EventSubscriberInterface
     public function newParticipant(ParticipantJoinedEvent $event): void
     {
         $gift = $event->getGift();
+        $participant = $event->getParticipant();
 
         if (GiftStatus::CONTRIBUTING !== $gift->getStatus()) {
             // The gift is not in the CONTRIBUTING state, so we don't need to do anything.
@@ -34,7 +36,8 @@ class ParticipantJoinedSubscriber implements EventSubscriberInterface
             $gift,
             'Un nouveau participant a rejoint pour le cadeau de %s',
             'emails/new_participant.html.twig',
-            ['participant' => $event->getParticipant()],
+            ['participant' => $participant],
+            $participant,
         );
     }
 
@@ -76,11 +79,22 @@ class ParticipantJoinedSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param string $subject a sprintf() pattern receiving the gift owner's first name
+     * @param string       $subject  a sprintf() pattern receiving the gift owner's first name
+     * @param ?Participant $excluded left out of the recipients, such as the newcomer being announced
      */
-    private function sendEmailToParticipants(Gift $gift, string $subject, string $template, array $context = []): void
+    private function sendEmailToParticipants(Gift $gift, string $subject, string $template, array $context = [], ?Participant $excluded = null): void
     {
-        $participantsMail = array_map(fn ($participant) => $participant->getParticipantUser()->getEmail(), $gift->getParticipants()->toArray());
+        $recipients = array_filter(
+            $gift->getParticipants()->toArray(),
+            fn (Participant $participant) => $participant !== $excluded,
+        );
+
+        // Nobody else in the pool: its first contributor joining, or its last one leaving.
+        if (!$recipients) {
+            return;
+        }
+
+        $participantsMail = array_map(fn ($participant) => $participant->getParticipantUser()->getEmail(), $recipients);
 
         $email = (new TemplatedEmail())
             ->from(WorkflowGiftSubscriber::FROM_EMAIL)
