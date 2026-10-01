@@ -291,6 +291,30 @@ class Gift
         return $this;
     }
 
+    /**
+     * The crew whose list the gift is filed in, if any.
+     */
+    public function getCrew(): ?Crew
+    {
+        return $this->section?->getCrew();
+    }
+
+    /**
+     * The owners manage the gift and stand on the receiving side: they may not offer it,
+     * and its pool keeps its surprise for them. Filed in a crew's list, the gift belongs
+     * to the crew's members, whoever added it; anywhere else, to its creator.
+     */
+    public function isOwnedBy(User $user): bool
+    {
+        $crew = $this->getCrew();
+
+        if (null !== $crew) {
+            return $crew->hasMember($user);
+        }
+
+        return $this->createdBy === $user;
+    }
+
     public function getUpdateAt(): ?\DateTimeImmutable
     {
         return $this->updateAt;

@@ -1,178 +1,176 @@
+{# One question per button, answered by the component class: who may offer the gift,
+   who already takes part in it (owners included), who owns it. #}
 <div{{ attributes }} class="contents">
-    {% if workflow_transitions(gift)|length > 0 %}
-        {% if is_granted('gift.is_creator', gift) == false %}
-            {% if workflow_has_marked_place(gift, 'contributing') %}
-                {% if gift.getParticipant(app.user) %}
-                    <twig:atomic:ButtonLink
-                        class="md:w-60 w-full"
-                        color="accent"
-                        style="block"
-                        :to="path('app_gift_participated', { id: gift.id })">
-                        <twig:block name="icon">
-                            <twig:ux:icon name="ri:hand-coin-fill" />
-                        </twig:block>
-                        <twig:block name="name">
-                            Modifier ma participation
-                        </twig:block>
-                    </twig:atomic:ButtonLink> 
-                {% elseif not gift.poolComplete %}
-                    <twig:atomic:ButtonLink
-                        class="md:w-60 w-full"
-                        color="accent"
-                        style="block"
-                        :to="path('app_gift_participated', { id: gift.id })">
-                        <twig:block name="icon">
-                            <twig:ux:icon name="ri:hand-coin-fill" />
-                        </twig:block>
-                        <twig:block name="name">
-                            Participer au cadeau
-                        </twig:block>
-                    </twig:atomic:ButtonLink>                 
-                {% endif %}
-            {% endif %}
+    {% if computed.canEditContribution %}
+        <twig:atomic:ButtonLink
+            class="md:w-60 w-full"
+            color="accent"
+            style="block"
+            :to="path('app_gift_participated', { id: gift.id })">
+            <twig:block name="icon">
+                <twig:ux:icon name="ri:hand-coin-fill" />
+            </twig:block>
+            <twig:block name="name">
+                Modifier ma participation
+            </twig:block>
+        </twig:atomic:ButtonLink>
+    {% endif %}
 
-            {% if workflow_can(gift, 'reserve') or workflow_can(gift, 'contribute') %}
-                <twig:Modal title="Offrir le cadeau"
-                    class="offer_gift"
-                    :id="gift.id">
-                <twig:block name="handlerButton">
-                    <twig:atomic:Button class="md:w-52 w-full"
-                        color="accent"
-                        style="block"
-                        onclick="modal_offer_gift_{{ gift.id }}.showModal()">
-                        <twig:block name="icon">
-                            <twig:ux:icon name="famicons:gift" />
-                        </twig:block>
-                        <twig:block name="name">
-                            <span>Offrir le cadeau</span>
-                        </twig:block>
-                    </twig:atomic:Button>
-                </twig:block>
-                <twig:block name="message">
-                </twig:block>
-                <twig:block name="actionButtons">
-                    <twig:atomic:ButtonLink class="sm:flex-1"
-                        color="accent"
-                        style="block"
-                        :to="path('app_gift_reserved', { id: gift.id })">
-                        <twig:block name="icon">
-                            <twig:ux:icon name="famicons:gift" />
-                        </twig:block>
-                        <twig:block name="name">
-                            <span>Réserver le cadeau</span>
-                        </twig:block>
-                    </twig:atomic:ButtonLink>
-                    <twig:atomic:ButtonLink class="sm:flex-1"
-                        color="neutral"
-                        style="outline"
-                        :to="path('app_gift_participated', { id: gift.id })">
-                        <twig:block name="icon">
-                            <twig:ux:icon name="ri:hand-coin-fill" />
-                        </twig:block>
-                        <twig:block name="name">
-                            Participer au cadeau
-                        </twig:block>
-                    </twig:atomic:ButtonLink>
-                </twig:block>
-                </twig:Modal>
-            {% endif %}
+    {% if computed.canJoinPool %}
+        <twig:atomic:ButtonLink
+            class="md:w-60 w-full"
+            color="accent"
+            style="block"
+            :to="path('app_gift_participated', { id: gift.id })">
+            <twig:block name="icon">
+                <twig:ux:icon name="ri:hand-coin-fill" />
+            </twig:block>
+            <twig:block name="name">
+                Participer au cadeau
+            </twig:block>
+        </twig:atomic:ButtonLink>
+    {% endif %}
 
-            {# Only whoever reserved or chipped in may declare the gift bought. #}
-            {% if workflow_can(gift, 'finalize') and gift.getParticipant(app.user) %}
-                <form method="post" action="{{ path('app_gift_ready', { id: gift.id}) }}" class="contents">
-                    <button type="submit" class="btn btn-accent md:w-52 w-full">
-                        <twig:ux:icon name="famicons:gift" />
-                        Prêt à donner le cadeau
-                    </button>
-                </form>
-            {% endif %}
+    {% if computed.canStartOffer %}
+        <twig:Modal title="Offrir le cadeau"
+            class="offer_gift"
+            :id="gift.id">
+        <twig:block name="handlerButton">
+            <twig:atomic:Button class="md:w-52 w-full"
+                color="accent"
+                style="block"
+                onclick="modal_offer_gift_{{ gift.id }}.showModal()">
+                <twig:block name="icon">
+                    <twig:ux:icon name="famicons:gift" />
+                </twig:block>
+                <twig:block name="name">
+                    <span>Offrir le cadeau</span>
+                </twig:block>
+            </twig:atomic:Button>
+        </twig:block>
+        <twig:block name="message">
+        </twig:block>
+        <twig:block name="actionButtons">
+            <twig:atomic:ButtonLink class="sm:flex-1"
+                color="accent"
+                style="block"
+                :to="path('app_gift_reserved', { id: gift.id })">
+                <twig:block name="icon">
+                    <twig:ux:icon name="famicons:gift" />
+                </twig:block>
+                <twig:block name="name">
+                    <span>Réserver le cadeau</span>
+                </twig:block>
+            </twig:atomic:ButtonLink>
+            <twig:atomic:ButtonLink class="sm:flex-1"
+                color="neutral"
+                style="outline"
+                :to="path('app_gift_participated', { id: gift.id })">
+                <twig:block name="icon">
+                    <twig:ux:icon name="ri:hand-coin-fill" />
+                </twig:block>
+                <twig:block name="name">
+                    Participer au cadeau
+                </twig:block>
+            </twig:atomic:ButtonLink>
+        </twig:block>
+        </twig:Modal>
+    {% endif %}
 
-            {% if workflow_can(gift, 'disengage') %}
-                <twig:Modal title="Se retirer du cadeau"
-                    class="disengage_gift"
-                    :id="gift.id">
-                    <twig:block name="handlerButton">
-                        <twig:atomic:Button:Outline class="md:w-52 w-full"
-                            onclick="modal_disengage_gift_{{ gift.id }}.showModal()"
-                            color="neutral">
-                        <twig:block name="icon">
+    {% if computed.canDeclareReady %}
+        <form method="post" action="{{ path('app_gift_ready', { id: gift.id}) }}" class="contents">
+            <button type="submit" class="btn btn-accent md:w-52 w-full">
+                <twig:ux:icon name="famicons:gift" />
+                Prêt à donner le cadeau
+            </button>
+        </form>
+    {% endif %}
+
+    {% if computed.canDisengage %}
+        <twig:Modal title="Se retirer du cadeau"
+            class="disengage_gift"
+            :id="gift.id">
+            <twig:block name="handlerButton">
+                <twig:atomic:Button:Outline class="md:w-52 w-full"
+                    onclick="modal_disengage_gift_{{ gift.id }}.showModal()"
+                    color="neutral">
+                <twig:block name="icon">
+                    <twig:ux:icon name="mdi:gift-off" />
+                </twig:block>
+                <twig:block name="name">
+                    <span>Se retirer du cadeau</span>
+                </twig:block>
+                </twig:atomic:Button:Outline>
+            </twig:block>
+            <twig:block name="message">
+                <p class="text-base">Êtes vous sûr de vouloir vous retirer de la réservation du cadeau <b>{{ gift.title }}</b> ?</p>
+            </twig:block>
+            <twig:block name="actionButtons">
+                <div class="flex md:flex-row justify-start gap-2 w-full">
+                    <form method="post" action="{{ path('app_gift_disengage', { id: gift.id }) }}">
+                        <input type="hidden"
+                            name="_token"
+                            value="{{ csrf_token('disengage-gift-' ~ gift.id) }}">
+                        <button type="submit" class="btn btn-accent">
                             <twig:ux:icon name="mdi:gift-off" />
-                        </twig:block>
-                        <twig:block name="name">
-                            <span>Se retirer du cadeau</span>
-                        </twig:block>
-                        </twig:atomic:Button:Outline>
-                    </twig:block>
-                    <twig:block name="message">
-                        <p class="text-base">Êtes vous sûr de vouloir vous retirer de la réservation du cadeau <b>{{ gift.title }}</b> ?</p>
-                    </twig:block>
-                    <twig:block name="actionButtons">
-                        <div class="flex md:flex-row justify-start gap-2 w-full">
-                            <form method="post" action="{{ path('app_gift_disengage', { id: gift.id }) }}">
-                                <input type="hidden"
-                                    name="_token"
-                                    value="{{ csrf_token('disengage-gift-' ~ gift.id) }}">
-                                <button type="submit" class="btn btn-accent">
-                                    <twig:ux:icon name="mdi:gift-off" />
-                                    Oui, ne plus réserver le cadeau
-                                </button>
-                            </form>
-                        </div>
-                    </twig:block>
-                </twig:Modal>
-            {% endif %}
+                            Oui, ne plus réserver le cadeau
+                        </button>
+                    </form>
+                </div>
+            </twig:block>
+        </twig:Modal>
+    {% endif %}
 
-            {% if workflow_can(gift, 'cancelled_contribution') and gift.getParticipant(app.user) %}
-                <twig:Modal title="Annuler ma contribution"
-                    class="cancelled_contribution_gift"
-                    :id="gift.id">
-                    <twig:block name="handlerButton">
-                        <twig:atomic:Button:Outline class="md:w-56 w-full"
-                            onclick="modal_cancelled_contribution_gift_{{ gift.id }}.showModal()"
-                            color="neutral">
-                        <twig:block name="icon">
+    {% if computed.canCancelContribution %}
+        <twig:Modal title="Annuler ma contribution"
+            class="cancelled_contribution_gift"
+            :id="gift.id">
+            <twig:block name="handlerButton">
+                <twig:atomic:Button:Outline class="md:w-56 w-full"
+                    onclick="modal_cancelled_contribution_gift_{{ gift.id }}.showModal()"
+                    color="neutral">
+                <twig:block name="icon">
+                    <twig:ux:icon name="mdi:gift-off" />
+                </twig:block>
+                <twig:block name="name">
+                    <span>Annuler les contributions</span>
+                </twig:block>
+                </twig:atomic:Button:Outline>
+            </twig:block>
+            <twig:block name="message">
+                <p class="text-base">Êtes vous sûr de vouloir vous retirer de la contribution du cadeau <b>{{ gift.title }}</b> ?</p>
+            </twig:block>
+            <twig:block name="actionButtons">
+                <div class="flex md:flex-row justify-start gap-2 w-full">
+                    <form method="post" action="{{ path('app_gift_cancelled_contribution', { id: gift.id }) }}" class="contents">
+                        <input type="hidden"
+                            name="_token"
+                            value="{{ csrf_token('cancelled-contribution-gift-' ~ gift.id) }}">
+                        <button type="submit" class="btn btn-wide btn-accent md:w-64 w-full">
                             <twig:ux:icon name="mdi:gift-off" />
-                        </twig:block>
-                        <twig:block name="name">
-                            <span>Annuler les contributions</span>
-                        </twig:block>
-                        </twig:atomic:Button:Outline>
-                    </twig:block>
-                    <twig:block name="message">
-                        <p class="text-base">Êtes vous sûr de vouloir vous retirer de la contribution du cadeau <b>{{ gift.title }}</b> ?</p>
-                    </twig:block>
-                    <twig:block name="actionButtons">
-                        <div class="flex md:flex-row justify-start gap-2 w-full">
-                            <form method="post" action="{{ path('app_gift_cancelled_contribution', { id: gift.id }) }}" class="contents">
-                                <input type="hidden"
-                                    name="_token"
-                                    value="{{ csrf_token('cancelled-contribution-gift-' ~ gift.id) }}">
-                                <button type="submit" class="btn btn-wide btn-accent md:w-64 w-full">
-                                    <twig:ux:icon name="mdi:gift-off" />
-                                    Oui, annuler ma contribution
-                                </button>
-                            </form>
-                        </div>
-                    </twig:block>
-                </twig:Modal>
-            {% endif %}
-        {% else %}
-            {% if workflow_can(gift, 'give') %}
-                <form method="post" action="{{ path('app_gift_given', { id: gift.id}) }}" class="contents">
-                    <button type="submit" class="btn btn-accent md:w-52 w-full">
-                        <twig:ux:icon name="mdi:gift-open" />
-                        Cadeau donné
-                    </button>
-                </form>
-            {% endif %}
-            {% if workflow_can(gift, 'archive') %}
-                <form method="post" action="{{ path('app_gift_archived', { id: gift.id}) }}" class="contents">
-                    <button type="submit" class="btn btn-accent md:w-52 w-full">
-                        <twig:ux:icon name="boxicons:archive-alt-filled" />
-                        Archiver le cadeau
-                    </button>
-                </form>
-            {% endif %}
-        {% endif %}
+                            Oui, annuler ma contribution
+                        </button>
+                    </form>
+                </div>
+            </twig:block>
+        </twig:Modal>
+    {% endif %}
+
+    {% if computed.canGive %}
+        <form method="post" action="{{ path('app_gift_given', { id: gift.id}) }}" class="contents">
+            <button type="submit" class="btn btn-accent md:w-52 w-full">
+                <twig:ux:icon name="mdi:gift-open" />
+                Cadeau donné
+            </button>
+        </form>
+    {% endif %}
+
+    {% if computed.canArchive %}
+        <form method="post" action="{{ path('app_gift_archived', { id: gift.id}) }}" class="contents">
+            <button type="submit" class="btn btn-accent md:w-52 w-full">
+                <twig:ux:icon name="boxicons:archive-alt-filled" />
+                Archiver le cadeau
+            </button>
+        </form>
     {% endif %}
 </div>

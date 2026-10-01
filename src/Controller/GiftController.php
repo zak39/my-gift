@@ -3,10 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Gift;
+use App\Entity\Section;
 use App\Enum\GiftStatus;
 use App\Form\GiftEditType;
 use App\Form\GiftType;
 use App\Repository\GiftRepository;
+use App\Repository\SectionRepository;
 use App\Services\BreadcrumbBuilder;
 use App\Services\FavoriteGiftGrouper;
 use App\Services\ImageDownloader;
@@ -23,20 +25,28 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class GiftController extends AbstractController
 {
     #[Route('/gift', name: 'app_gift')]
-    public function index(): Response
+    public function index(GiftRepository $giftRepository): Response
     {
-        /** @var App\Entity\User */
+        /** @var \App\Entity\User */
         $user = $this->getUser();
 
         return $this->render('gift/index.html.twig', [
-            'gifts' => $user->getGifts(),
+            // Not User::getGifts(): the gifts they added to a crew's list belong to the crew.
+            'gifts' => $giftRepository->findPersonalOf($user),
         ]);
     }
 
     #[Route('/gift/create', name: 'app_gift_create')]
-    public function create(Request $request, EntityManagerInterface $entityManager, ImageDownloader $imageDownloader, BreadcrumbBuilder $breadcrumbBuilder): Response
+    public function create(Request $request, EntityManagerInterface $entityManager, ImageDownloader $imageDownloader, BreadcrumbBuilder $breadcrumbBuilder, SectionRepository $sectionRepository): Response
     {
         $gift = new Gift();
+
+        // "Ajouter un cadeau" on a section files the gift straight into it. The submitted
+        // form posts back to the same URL, so the section is set again before saving.
+        $section = $sectionRepository->find($request->query->getInt('section'));
+        if (null !== $section && $this->isGranted('section.is_owner', $section)) {
+            $gift->setSection($section);
+        }
 
         $form = $this->createForm(GiftType::class, $gift);
         $form->handleRequest($request);
@@ -65,28 +75,44 @@ final class GiftController extends AbstractController
             $entityManager->persist($gift);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_gift');
+            $crew = $gift->getCrew();
+
+            return null !== $crew
+                ? $this->redirectToRoute('app_crew_show', ['id' => $crew->getId()])
+                : $this->redirectToRoute('app_gift')
+            ;
         }
 
         return $this->render('gift/create.html.twig', [
             'form' => $form,
             'gift' => $gift,
-            'breadcrumbs' => $breadcrumbBuilder->newGift(),
+            'breadcrumbs' => $breadcrumbBuilder->newGift($gift),
         ]);
     }
 
     #[Route('/gift/{id}/edit', name: 'app_gift_edit')]
-    public function edit(Request $request, Gift $gift, EntityManagerInterface $entityManager, BreadcrumbBuilder $breadcrumbBuilder, GiftLifecycle $giftLifecycle): Response
+    public function edit(Request $request, Gift $gift, EntityManagerInterface $entityManager, BreadcrumbBuilder $breadcrumbBuilder, GiftLifecycle $giftLifecycle, SectionRepository $sectionRepository): Response
     {
-        $this->denyAccessUnlessGranted('gift.is_creator', $gift);
+        $this->denyAccessUnlessGranted('gift.is_owner', $gift);
 
-        /** @var App\Entity\User */
+        /** @var \App\Entity\User */
         $user = $this->getUser();
 
         // Read before handleRequest(), which writes the submitted price into $gift.
         $previousPrice = $gift->getPrice();
 
-        $form = $this->createForm(GiftEditType::class, $gift, ['sections' => $user->getSections()]);
+        // Its author files the gift in any list they run, or in none. Another member of its
+        // crew only moves it within the crew's list: out of it, it would land in the author's.
+        $isAuthor = $gift->getCreatedBy() === $user;
+        $sections = array_filter(
+            $sectionRepository->findManagedBy($user),
+            fn (Section $section) => $isAuthor || $section->getCrew() === $gift->getCrew(),
+        );
+
+        $form = $this->createForm(GiftEditType::class, $gift, [
+            'sections' => $sections,
+            'allow_unfiled' => $isAuthor,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -97,7 +123,7 @@ final class GiftController extends AbstractController
                 $giftLifecycle->priceChanged($gift, $previousPrice);
             }
 
-            return $this->redirectToRoute('app_section', ['id' => $user->getId()]);
+            return $this->redirectToList($gift);
         }
 
         if ($form->isSubmitted()) {
@@ -119,11 +145,11 @@ final class GiftController extends AbstractController
     {
         $user = $this->getUser();
 
-        $isOwnGift = $gift->getCreatedBy() === $user;
-        $breadcrumbs = $isOwnGift
-            ? $breadcrumbBuilder->giftFromMySections($gift)
-            : $breadcrumbBuilder->giftFromUserPage($gift)
-        ;
+        $breadcrumbs = match (true) {
+            null !== $gift->getCrew() => $breadcrumbBuilder->giftFromCrew($gift),
+            $gift->getCreatedBy() === $user => $breadcrumbBuilder->giftFromMySections($gift),
+            default => $breadcrumbBuilder->giftFromUserPage($gift),
+        };
 
         return $this->render('gift/show.html.twig', [
             'gift' => $gift,
@@ -135,17 +161,14 @@ final class GiftController extends AbstractController
     #[Route('/gift/{id}/delete', name: 'app_gift_delete', methods: ['DELETE'])]
     public function delete(Gift $gift, EntityManagerInterface $entityManager): Response
     {
-        $this->denyAccessUnlessGranted('gift.is_creator', $gift);
+        $this->denyAccessUnlessGranted('gift.is_owner', $gift);
 
         $entityManager->remove($gift);
         $entityManager->flush();
 
         $this->addFlash('success', "Le cadeau \"{$gift->getTitle()}\" a bien été supprimé.");
 
-        /** @var \App\Entity\User */
-        $user = $this->getUser();
-
-        return $this->redirectToRoute('app_section', ['id' => $user->getId()]);
+        return $this->redirectToList($gift);
     }
 
     #[IsGranted('gift.can_see', subject: 'gift')]
@@ -189,5 +212,22 @@ final class GiftController extends AbstractController
             'giftCount' => \count($gifts),
             'favoriteGiftsByUsers' => $favoriteGiftGrouper->groupedByCreator($gifts),
         ]);
+    }
+
+    /**
+     * Back to the list the gift belongs to: its crew's page, or the owner's own list.
+     */
+    private function redirectToList(Gift $gift): Response
+    {
+        $crew = $gift->getCrew();
+
+        if (null !== $crew) {
+            return $this->redirectToRoute('app_crew_show', ['id' => $crew->getId()]);
+        }
+
+        /** @var \App\Entity\User */
+        $user = $this->getUser();
+
+        return $this->redirectToRoute('app_section', ['id' => $user->getId()]);
     }
 }

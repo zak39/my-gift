@@ -2,7 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\Crew;
 use App\Entity\Section;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -36,12 +38,28 @@ class SectionType extends AbstractType
             ])
             */
         ;
+
+        if ($options['crews']) {
+            $builder->add('crew', EntityType::class, [
+                'class' => Crew::class,
+                'choices' => $options['crews'],
+                'choice_label' => 'name',
+                'label' => 'Liste',
+                'help' => 'Dans la liste d\'un groupe, la section est partagée : chaque membre peut y ranger des cadeaux.',
+                'placeholder' => 'Ma liste',
+                'required' => false,
+            ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Section::class,
+            // The crews the section may be created in. The edit page passes none: a
+            // section never moves from a list to another.
+            'crews' => [],
         ]);
+        $resolver->setAllowedTypes('crews', Crew::class.'[]');
     }
 }

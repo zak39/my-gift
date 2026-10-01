@@ -2,11 +2,11 @@
 
 namespace App\Repository;
 
-use App\Entity\FriendBook;
 use App\Entity\Gift;
 use App\Entity\User;
 use App\Enum\ParticipantStatus;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,6 +19,43 @@ class GiftRepository extends ServiceEntityRepository
         parent::__construct($registry, Gift::class);
     }
 
+    /**
+     * The gifts of the user's own list, filed or not. A gift filed in a crew's list
+     * belongs to the crew, whoever added it: the crew's page shows it.
+     *
+     * @return list<Gift>
+     */
+    public function findPersonalOf(User $user, ?int $limit = null): array
+    {
+        return $this->createPersonalQueryBuilder($user)
+            ->orderBy('g.createdAt', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function countPersonalOf(User $user): int
+    {
+        return (int) $this->createPersonalQueryBuilder($user)
+            ->select('COUNT(g.id)')
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+    }
+
+    private function createPersonalQueryBuilder(User $user): QueryBuilder
+    {
+        return $this->createQueryBuilder('g')
+            // A gift outside any section has no crew either. Selected for isOwnedBy().
+            ->leftJoin('g.section', 's')
+            ->addSelect('s')
+            ->where('g.createdBy = :user')
+            ->andWhere('s.crew IS NULL')
+            ->setParameter('user', $user)
+        ;
+    }
+
     public function findFavoritesGifts(User $user, ?int $limit = null)
     {
         $queryBuilder = $this->createQueryBuilder('g')
@@ -28,13 +65,23 @@ class GiftRepository extends ServiceEntityRepository
             ->innerJoin('g.createdBy', 'c')
             ->innerJoin('g.section', 's')
             ->addSelect('c', 's')
+            ->leftJoin('s.crew', 'crew')
             ->where('u.id = :userId')
             ->andWhere('g.isPublic = true')
-            // The friendship rule of GiftVisibilityVoter: a favourite whose creator is no
-            // longer a friend drops out of the list. A join rather than MEMBER OF, which
+            // The friendship rule of GiftVisibilityVoter, read from the user's own book as
+            // CrewVoter does: a favourite drops out of the list once the user is no friend
+            // anymore of its list's owners, the creator of a personal list or a member of a
+            // crew's. MEMBER OF works on a crew's members, not on the book's friends, which
             // Doctrine cannot translate on a book whose id is its owner (derived identity).
-            ->innerJoin(FriendBook::class, 'creatorBook', 'WITH', 'creatorBook.owner = c')
-            ->innerJoin('creatorBook.friends', 'creatorFriend', 'WITH', 'creatorFriend = :currentUser')
+            ->andWhere(<<<'DQL'
+                EXISTS (
+                    SELECT viewerFriend.id
+                    FROM App\Entity\FriendBook viewerBook
+                    JOIN viewerBook.friends viewerFriend
+                    WHERE viewerBook.owner = :currentUser
+                    AND ((crew.id IS NULL AND viewerFriend = c) OR viewerFriend MEMBER OF crew.members)
+                )
+                DQL)
             ->setParameter('userId', $user->getId())
             ->setParameter('currentUser', $user)
             ->orderBy('g.createdAt', 'DESC')

@@ -15,7 +15,7 @@
             {% endfor %}
         </ul>
     </section>
-{% elseif computed.isCreator %}
+{% elseif computed.isOwner %}
     <div {{ attributes.defaults({ class: 'alert alert-soft' }) }} role="status">
         <twig:ux:icon name="{{ computed.waitingOnPool ? 'lucide:piggy-bank' : 'lucide:hourglass' }}" class="size-5" />
         <span>

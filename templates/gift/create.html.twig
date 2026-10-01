@@ -10,6 +10,18 @@
         icon="lucide:gift"
         title="Ajouter un cadeau"
         description="Collez le lien du produit pour remplir la fiche automatiquement, ou complétez-la à la main.">
+        {# Set from ?section=: the form has no field for it. #}
+        <twig:block name="meta">
+            {% if gift.section %}
+                <p class="flex items-center gap-2 text-sm text-base-content/70">
+                    <twig:ux:icon name="lucide:folder" class="size-4 shrink-0" />
+                    <span class="wrap-anywhere">
+                        Rangé dans « {{ gift.section.title }} »{% if gift.crew %}, dans la liste du groupe « {{ gift.crew.name }} »{% endif %}
+                    </span>
+                </p>
+            {% endif %}
+        </twig:block>
+
         <twig:Organism:Gift:Form :form="form" :initialFormData="gift" />
     </twig:Organism:Form:Card>
 </div>

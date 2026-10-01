@@ -62,7 +62,7 @@
                     <div class="card-actions flex md:flex-row flex-col-reverse md:justify-end justify-center md:gap-4 gap-2 my-6">
                         <button type="submit" class="btn btn-accent md:btn-md btn-lg md:w-48 w-full">Contribué au cadeau</button>
                         <button class="btn btn-soft md:btn-md btn-lg md:w-48 w-full">
-                            <a href={{ path('app_section_user_page', { id: gift.createdBy.id }) }}>
+                            <a href={{ gift.crew ? path('app_crew_show', { id: gift.crew.id }) : path('app_section_user_page', { id: gift.createdBy.id }) }}>
                                 Retour
                             </a>
                         </button>
