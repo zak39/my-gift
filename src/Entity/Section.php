@@ -49,6 +49,12 @@ class Section
     #[ORM\JoinColumn(nullable: false)]
     private ?User $createdBy = null;
 
+    /**
+     * Set when the section is part of a crew's list rather than of its creator's.
+     */
+    #[ORM\ManyToOne(inversedBy: 'sections')]
+    private ?Crew $crew = null;
+
     public function __construct()
     {
         $this->gifts = new ArrayCollection();
@@ -113,6 +119,19 @@ class Section
         return $this;
     }
 
+    /**
+     * Before the section is deleted: each gift goes back to its author, among their gifts
+     * without a section.
+     */
+    public function releaseGifts(): static
+    {
+        foreach ($this->gifts as $gift) {
+            $this->removeGift($gift);
+        }
+
+        return $this;
+    }
+
     public function getSlug(): ?string
     {
         return $this->slug;
@@ -135,5 +154,29 @@ class Section
         $this->createdBy = $createdBy;
 
         return $this;
+    }
+
+    public function getCrew(): ?Crew
+    {
+        return $this->crew;
+    }
+
+    public function setCrew(?Crew $crew): static
+    {
+        $this->crew = $crew;
+
+        return $this;
+    }
+
+    /**
+     * Who manages the section: the members of its crew, or else the user who created it.
+     */
+    public function isOwnedBy(User $user): bool
+    {
+        if (null !== $this->crew) {
+            return $this->crew->hasMember($user);
+        }
+
+        return $this->createdBy === $user;
     }
 }
