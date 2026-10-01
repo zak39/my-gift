@@ -1,0 +1,24 @@
+{% set invitee = invitation.invitee %}
+
+<li {{ attributes.defaults({ class: 'list-row items-center' }) }}>
+    <twig:Molecule:UserAvatar :user="invitee" sizeClass="w-10" />
+
+    <div class="min-w-0">
+        <p class="font-medium wrap-anywhere">{{ invitee.fullname }}</p>
+        <p class="text-xs text-base-content/60">
+            Invité·e par {{ invitation.invitedBy is same as(app.user) ? 'vous' : invitation.invitedBy.firstname }}
+            le {{ invitation.createdAt|date('d/m/Y') }}
+        </p>
+    </div>
+
+    {# The workflow guard's own question, so the button shows only when cancelling works. #}
+    {% if is_granted('crew_invitation.cancel', invitation) %}
+        <form method="post" action="{{ path('app_crew_invitation', { id: invitation.id, transition: 'cancel' }) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('crew-invitation-cancel-' ~ invitation.id) }}">
+            <button type="submit" class="btn btn-sm btn-ghost">
+                <twig:ux:icon name="lucide:undo-2" class="size-4" />
+                Annuler
+            </button>
+        </form>
+    {% endif %}
+</li>

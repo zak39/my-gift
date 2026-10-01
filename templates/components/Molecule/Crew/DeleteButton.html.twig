@@ -1,0 +1,26 @@
+{# Inside the Modal blocks, id, title, class and even attributes are those of Modal: crew
+   stays in reach, under a name Modal does not use. #}
+<twig:Modal :id="crew.id" title="Supprimer le groupe" class="crew_delete">
+    <twig:block name="handlerButton">
+        <button type="button" class="btn btn-ghost text-error" onclick="modal_crew_delete_{{ crew.id }}.showModal()">
+            <twig:ux:icon name="lucide:trash-2" class="size-4" />
+            Supprimer le groupe
+        </button>
+    </twig:block>
+    <twig:block name="message">
+        <p class="py-4">
+            Le groupe « {{ crew.name }} » et sa liste disparaîtront pour tous ses membres.
+            Chaque cadeau retournera dans les « Cadeaux sans section » de la personne qui l'a ajouté,
+            avec ses réservations et ses cagnottes.
+        </p>
+    </twig:block>
+    <twig:block name="actionButtons">
+        <form method="post" action="{{ path('app_crew_delete', { id: crew.id }) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('crew-delete-' ~ crew.id) }}">
+            <button type="submit" class="btn btn-error">
+                <twig:ux:icon name="lucide:trash-2" class="size-4" />
+                Oui, supprimer le groupe
+            </button>
+        </form>
+    </twig:block>
+</twig:Modal>

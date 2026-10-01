@@ -1,0 +1,42 @@
+{% form_theme form 'form/daisyui_layout.html.twig' %}
+
+<section {{ attributes.defaults({ class: 'card border border-base-300 bg-base-100 shadow-sm' }) }} aria-labelledby="crew-invite-title">
+    <div class="card-body gap-4 p-5 sm:p-7">
+        <div>
+            <h2 id="crew-invite-title" class="card-title">
+                <twig:ux:icon name="lucide:user-plus" class="size-5" />
+                Inviter des ami·es
+            </h2>
+            <p class="mt-1 text-sm text-base-content/70">
+                Chaque membre invite ses propres ami·es. Leurs ami·es verront aussi la liste.
+            </p>
+        </div>
+
+        {% if form.invitee.vars.choices is empty %}
+            <p class="text-sm text-base-content/70">
+                Toutes vos ami·es font déjà partie du groupe ou ont déjà été invité·es.
+                <a href="{{ path('app_user') }}" class="link">Trouver d'autres ami·es</a>
+            </p>
+        {% else %}
+            {{ form_start(form, { attr: { class: 'flex flex-col gap-3 sm:flex-row sm:items-end' } }) }}
+                {{ form_row(form.invitee, { row_attr: { class: 'min-w-0 grow' } }) }}
+                <button type="submit" class="btn btn-primary sm:mb-1">
+                    <twig:ux:icon name="lucide:send" class="size-4" />
+                    Inviter
+                </button>
+            {{ form_end(form) }}
+        {% endif %}
+
+        {% set pendingInvitations = crew.invitations %}
+        {% if pendingInvitations is not empty %}
+            <div>
+                <h3 class="text-sm font-semibold">En attente de réponse</h3>
+                <ul class="list -mx-4">
+                    {% for invitation in pendingInvitations %}
+                        <twig:Molecule:Crew:SentInvitation :invitation="invitation" />
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+</section>

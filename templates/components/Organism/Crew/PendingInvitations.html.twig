@@ -1,0 +1,17 @@
+{% if invitations is not empty %}
+    <section {{ attributes.defaults({ class: 'card border border-base-300 bg-base-100 shadow-sm' }) }} aria-labelledby="crew-received-invitations-title">
+        <div class="card-body gap-2 p-5 sm:p-7">
+            <h2 id="crew-received-invitations-title" class="card-title">
+                <twig:ux:icon name="lucide:mail" class="size-5" />
+                Invitations reçues
+                <span class="badge badge-sm badge-secondary tabular-nums">{{ invitations|length }}</span>
+            </h2>
+
+            <ul class="list -mx-4">
+                {% for invitation in invitations %}
+                    <twig:Molecule:Crew:ReceivedInvitation :invitation="invitation" />
+                {% endfor %}
+            </ul>
+        </div>
+    </section>
+{% endif %}

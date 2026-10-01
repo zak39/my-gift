@@ -52,6 +52,13 @@ Core entities (`src/Entity`): `User`, `Section` (owned by a user, groups gifts),
 `Gift` (belongs to a section, has a `GiftStatus`), `Participant` (links a `User` to a `Gift`
 with a `ParticipantStatus` and, for contributions, an amount).
 
+A `Crew` (a ManyToMany `Crew::$members` with the same rights; its creator `Crew::$createdBy`
+cannot leave it and alone deletes it) shares a gift list: a `Section` with a crew belongs to the crew's list, not to its creator's. Ownership is
+`Gift::isOwnedBy()` / `Section::isOwnedBy()` (crew members, or else the creator), never a bare
+`getCreatedBy()` comparison. Invitations (`CrewInvitation`) run through the `crew_invitation`
+workflow and `src/Services/Lifecycle/CrewLifecycle.php`, as friend requests do through
+`FriendRequestLifecycle`.
+
 `Gift` status is driven by a Symfony Workflow **state machine** (`config/packages/workflow.yaml`,
 workflow name `gift_request`), with places/transitions defined via the `GiftStatus` enum
 (`CREATED → RESERVED|CONTRIBUTING → READY → GIVEN → ARCHIVED`, plus `disengage`/
@@ -63,7 +70,7 @@ into this service rather than mutating `Gift`/`Participant` status directly.
 Domain events (`src/Event`) are dispatched for cross-cutting side effects and handled by
 listeners in `src/EventListener` using `#[AsEventListener]` (e.g. generating a default Dicebear
 avatar when a `User` is created). Authorization for gift/section ownership is implemented as
-Symfony Security Voters in `src/Security/Voter` (e.g. `gift.is_creator` attribute).
+Symfony Security Voters in `src/Security/Voter` (e.g. `gift.is_owner` attribute).
 
 ### Twig components (UX)
 

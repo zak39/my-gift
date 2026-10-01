@@ -1,0 +1,31 @@
+{% set inviter = invitation.invitedBy %}
+
+<li {{ attributes.defaults({ class: 'list-row items-center' }) }}>
+    <twig:Molecule:UserAvatar :user="inviter" sizeClass="w-10" />
+
+    <div class="min-w-0">
+        <p class="wrap-anywhere">
+            <span class="font-medium">{{ inviter.fullname }}</span>
+            vous invite à rejoindre le groupe
+            <span class="font-medium">« {{ invitation.crew.name }} »</span>
+        </p>
+        <p class="text-xs text-base-content/60">Le {{ invitation.createdAt|date('d/m/Y') }}</p>
+    </div>
+
+    <div class="flex flex-wrap justify-end gap-2">
+        <form method="post" action="{{ path('app_crew_invitation', { id: invitation.id, transition: 'refuse' }) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('crew-invitation-refuse-' ~ invitation.id) }}">
+            <button type="submit" class="btn btn-sm btn-ghost">
+                <twig:ux:icon name="lucide:x" class="size-4" />
+                Refuser
+            </button>
+        </form>
+        <form method="post" action="{{ path('app_crew_invitation', { id: invitation.id, transition: 'accept' }) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('crew-invitation-accept-' ~ invitation.id) }}">
+            <button type="submit" class="btn btn-sm btn-primary">
+                <twig:ux:icon name="lucide:check" class="size-4" />
+                Rejoindre
+            </button>
+        </form>
+    </div>
+</li>

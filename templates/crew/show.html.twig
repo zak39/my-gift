@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Gift | {{ crew.name }}{% endblock %}
+
+{% block body %}
+{# Two views of one list, as section/index and section/user_page for a personal one: the
+   members run it, drafts included; the friends of a member see what is published. #}
+{% set sections = crew.sections %}
+
+<div class="mx-auto w-full max-w-6xl pb-12 {{ ownerView ? '' : 'py-6' }}">
+    {% if breadcrumbs is defined %}
+        <twig:Molecule:Breadcrumbs :items="breadcrumbs" />
+    {% endif %}
+
+    {% for type in ['success', 'error'] %}
+        {% for message in app.flashes(type) %}
+            <twig:Alert :type="type" :message="message" class="mb-4" />
+        {% endfor %}
+    {% endfor %}
+
+    <twig:Organism:Crew:Header :crew="crew" :ownerView="ownerView" />
+
+    {# Members only, right under the header: running the crew should not take a scroll. #}
+    {% if ownerView %}
+        <div class="mt-6 grid items-start gap-6 lg:grid-cols-2">
+            <twig:Organism:Crew:MemberList :crew="crew" />
+            <twig:Organism:Crew:InvitePanel :crew="crew" :form="inviteForm" id="invite" />
+        </div>
+    {% endif %}
+
+    {% if sections is not empty %}
+        <div class="mt-6 grid items-start gap-6 lg:grid-cols-[15rem_minmax(0,1fr)]">
+            <twig:Molecule:SectionNav
+                class="lg:sticky lg:top-6"
+                :sections="sections"
+                :includeDrafts="ownerView" />
+
+            <div class="flex min-w-0 flex-col gap-5">
+                {% for section in sections %}
+                    {% set gifts = ownerView ? section.gifts : section.gifts|filter(gift => gift.isPublic) %}
+                    <twig:molecule:Section
+                        :title="section.title"
+                        :description="section.description"
+                        :checked="loop.first"
+                        :anchor="'section-' ~ section.id"
+                        :giftCount="gifts|length">
+                        <twig:block name="gifts">
+                            {% for gift in gifts %}
+                                <twig:CardGift :gift="gift" />
+                            {% else %}
+                                <p class="py-4 text-sm text-base-content/70">
+                                    {{ ownerView
+                                        ? 'Cette section est vide. Ajoutez-y un cadeau depuis « Ajouter un cadeau ».'
+                                        : 'Aucun cadeau publié dans cette section pour le moment.' }}
+                                </p>
+                            {% endfor %}
+                        </twig:block>
+                        <twig:block name="actionButtons">
+                            <twig:Organism:Section:Actions :section="section" />
+                        </twig:block>
+                    </twig:molecule:Section>
+                {% endfor %}
+            </div>
+        </div>
+    {% elseif ownerView %}
+        <twig:molecule:EmptyContent class="mt-6"
+            title="La liste du groupe est encore vide"
+            description="Créez une première section, « Jouets » ou « Livres » par exemple, puis ajoutez-y des cadeaux : chaque membre peut le faire.">
+            <twig:block name="action_buttons">
+                <a href="{{ path('app_section_new', { crew: crew.id }) }}" class="btn btn-primary mt-6">
+                    <twig:ux:icon name="lucide:folder-plus" class="size-4" />
+                    Créer une section
+                </a>
+            </twig:block>
+        </twig:molecule:EmptyContent>
+    {% else %}
+        <twig:molecule:EmptyContent class="mt-6"
+            title="Pas encore de cadeau dans « {{ crew.name }} » 😥"
+            description="Revenez plus tard pour leur faire plaisir 😉" />
+    {% endif %}
+</div>
+{% endblock %}

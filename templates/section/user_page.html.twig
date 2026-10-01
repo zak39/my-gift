@@ -23,7 +23,8 @@
             <twig:Molecule:SectionNav
                 class="lg:sticky lg:top-6"
                 :sections="sections"
-                :giftsWithoutSection="giftsWithoutSection" />
+                :giftsWithoutSection="giftsWithoutSection"
+                :crews="crews" />
 
             <div class="flex min-w-0 flex-col gap-5">
                 {% for section in sections %}
@@ -61,12 +62,16 @@
                         </twig:block>
                     </twig:molecule:Section>
                 {% endif %}
+
+                <twig:Organism:Crew:SharedLists class="mt-5" :crews="crews" :user="user" />
             </div>
         </div>
     {% else %}
         <twig:molecule:EmptyContent class="mt-6"
             title="Mince ! {{ user.firstname }} n'a pas encore de cadeau à offrir 😥"
             description="Revenez plus tard pour lui offrir un joli cadeau 😉" />
+
+        <twig:Organism:Crew:SharedLists class="mt-10" :crews="crews" :user="user" />
     {% endif %}
 
     <div class="mt-8 flex justify-start">
