@@ -5,10 +5,15 @@ namespace App\Services\Lifecycle;
 use App\Entity\Crew;
 use App\Entity\CrewInvitation;
 use App\Entity\User;
+use App\Event\CrewDeletedEvent;
+use App\Event\CrewInvitationSentEvent;
+use App\Event\CrewMemberJoinedEvent;
+use App\Event\CrewMemberLeftEvent;
 use App\Repository\FriendBookRepository;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 /**
@@ -23,6 +28,7 @@ class CrewLifecycle
         private WorkflowInterface $crewInvitationWorkflow,
         private EntityManagerInterface $entityManager,
         private FriendBookRepository $friendBookRepository,
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -33,7 +39,8 @@ class CrewLifecycle
             throw new \LogicException('Vous ne pouvez inviter que vos ami·es.');
         }
 
-        $this->entityManager->persist($crew->invite($invitedBy, $invitee));
+        $invitation = $crew->invite($invitedBy, $invitee);
+        $this->entityManager->persist($invitation);
 
         try {
             $this->entityManager->flush();
@@ -41,6 +48,8 @@ class CrewLifecycle
             // Another member invited them in the meantime: Crew::invite() could not see it.
             throw new \LogicException(\sprintf('%s a déjà été invité·e dans le groupe.', $invitee->getFirstname()));
         }
+
+        $this->eventDispatcher->dispatch(new CrewInvitationSentEvent($invitation));
     }
 
     public function accept(CrewInvitation $invitation): void
@@ -52,6 +61,8 @@ class CrewLifecycle
         // The invitee is a member from now on: the invitation has done its job.
         $this->entityManager->remove($invitation);
         $this->entityManager->flush();
+
+        $this->eventDispatcher->dispatch(new CrewMemberJoinedEvent($invitation->getCrew(), $invitation->getInvitee()));
     }
 
     public function refuse(CrewInvitation $invitation): void
@@ -76,6 +87,8 @@ class CrewLifecycle
     {
         $crew->removeMember($user);
         $this->entityManager->flush();
+
+        $this->eventDispatcher->dispatch(new CrewMemberLeftEvent($crew, $user));
     }
 
     /**
@@ -85,6 +98,9 @@ class CrewLifecycle
      */
     public function delete(Crew $crew): void
     {
+        // Read before the crew goes, for whoever listens to its deletion.
+        $members = $crew->getMembers()->getValues();
+
         foreach ($crew->getSections() as $section) {
             $section->releaseGifts();
             $this->entityManager->remove($section);
@@ -93,6 +109,8 @@ class CrewLifecycle
         // Its pending invitations go with it: ON DELETE CASCADE.
         $this->entityManager->remove($crew);
         $this->entityManager->flush();
+
+        $this->eventDispatcher->dispatch(new CrewDeletedEvent($crew->getName(), $crew->getCreatedBy(), $members));
     }
 
     private function applyTransition(CrewInvitation $invitation, string $transition, string $error): void

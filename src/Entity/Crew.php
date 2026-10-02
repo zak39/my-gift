@@ -115,6 +115,14 @@ class Crew
         return $this->members;
     }
 
+    /**
+     * @return list<User>
+     */
+    public function getMembersExcept(User $user): array
+    {
+        return $this->members->filter(fn (User $member) => $member !== $user)->getValues();
+    }
+
     public function hasMember(User $user): bool
     {
         return $this->members->contains($user);
