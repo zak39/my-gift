@@ -1,0 +1,34 @@
+{# A friend's page without crews shows nothing; the owner's own page invites to create one. #}
+{% if crews is not empty or ownerView %}
+<section {{ attributes.defaults({ class: 'flex flex-col gap-4' }) }} aria-labelledby="shared-lists-title">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+            <h2 id="shared-lists-title" class="text-xl font-bold">
+                {{ ownerView ? 'Mes groupes' : 'Les groupes de ' ~ user.firstname }}
+            </h2>
+            <p class="mt-1 text-sm text-base-content/70">
+                {{ ownerView ? 'Les listes de cadeaux que vous tenez à plusieurs.' : 'Les listes de cadeaux que ' ~ user.firstname ~ ' tient à plusieurs.' }}
+            </p>
+        </div>
+        {% if ownerView %}
+            <a href="{{ path('app_crew_new') }}" class="btn btn-outline btn-neutral">
+                <twig:ux:icon name="lucide:users" class="size-4" />
+                Créer un groupe
+            </a>
+        {% endif %}
+    </div>
+
+    {% if crews is empty %}
+        <p class="text-sm text-base-content/70">
+            Pas encore de groupe : créez-en un pour tenir une liste avec vos proches, celle de votre enfant par exemple.
+        </p>
+    {% else %}
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            {% for crew in crews %}
+                {# The anchor of the crew's entry in Molecule:SectionNav. #}
+                <twig:Molecule:Crew:Card :crew="crew" id="crew-{{ crew.id }}" class="scroll-mt-6" />
+            {% endfor %}
+        </div>
+    {% endif %}
+</section>
+{% endif %}

@@ -1,0 +1,12 @@
+<div {{ attributes.defaults({ class: 'avatar-group -space-x-4' }) }}>
+    {% for user in users|slice(0, max) %}
+        <twig:Molecule:UserAvatar :user="user" :sizeClass="sizeClass" />
+    {% endfor %}
+    {% if users|length > max %}
+        <div class="avatar avatar-placeholder">
+            <div class="{{ sizeClass }} bg-neutral text-neutral-content">
+                <span class="text-sm">+{{ users|length - max }}</span>
+            </div>
+        </div>
+    {% endif %}
+</div>

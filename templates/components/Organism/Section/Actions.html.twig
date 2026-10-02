@@ -1,6 +1,19 @@
 {# Guarded with the attribute the routes themselves enforce, so the buttons cannot
-   offer something app_section_edit / app_section_delete would refuse. #}
-{% if is_granted('section.is_creator', section) %}
+   offer something app_gift_create / app_section_edit / app_section_delete would refuse. #}
+{% if is_granted('section.is_owner', section) %}
+    <twig:atomic:ButtonLink
+        class="btn-sm"
+        color="neutral"
+        style="ghost"
+        :to="path('app_gift_create', { section: section.id })">
+        <twig:block name="icon">
+            <twig:ux:icon name="lucide:plus" class="size-4" />
+        </twig:block>
+        <twig:block name="name">
+            <span>Ajouter un cadeau</span>
+        </twig:block>
+    </twig:atomic:ButtonLink>
+
     <twig:atomic:ButtonLink
         class="btn-sm"
         color="neutral"
@@ -33,7 +46,11 @@
         </twig:block>
         <twig:block name="message">
             <p class="py-4">Est-ce que vous êtes sûr de supprimer la section <b>{{ section.title }}</b> ?</p>
-            <p class="py-4">La suppression de la section ne supprimera pas les cadeaux. Ils seront déplacer dans la section <b>Cadeaux sans Section</b></p>
+            {% if section.crew %}
+                <p class="py-4">La suppression de la section ne supprimera pas les cadeaux. Ils quitteront la liste du groupe et retourneront dans les <b>Cadeaux sans section</b> de celles et ceux qui les ont ajoutés.</p>
+            {% else %}
+                <p class="py-4">La suppression de la section ne supprimera pas les cadeaux. Ils seront déplacer dans la section <b>Cadeaux sans Section</b></p>
+            {% endif %}
         </twig:block>
         <twig:block name="actionButtons">
             <form method="post" action="{{ path('app_section_delete', { id: section.id }) }}">

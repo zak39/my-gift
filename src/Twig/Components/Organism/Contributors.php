@@ -33,7 +33,7 @@ final class Contributors
     }
 
     /**
-     * The creator is told a pool exists without learning anything about it.
+     * The owners are told a pool exists without learning anything about it.
      */
     public function isWaitingOnPool(): bool
     {
@@ -42,8 +42,8 @@ final class Contributors
         ;
     }
 
-    public function isCreator(): bool
+    public function isOwner(): bool
     {
-        return $this->security->isGranted('gift.is_creator', $this->gift);
+        return $this->security->isGranted('gift.is_owner', $this->gift);
     }
 }

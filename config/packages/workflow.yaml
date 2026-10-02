@@ -62,3 +62,27 @@ framework:
                     guard: "is_granted('friend_request.cancel', subject)"
                     from: !php/enum App\Enum\FriendRequestStatus::PENDING
                     to: !php/enum App\Enum\FriendRequestStatus::ENDED
+        crew_invitation:
+            type: 'state_machine'
+            audit_trail:
+                enabled: true
+            marking_store:
+                type: 'method'
+                property: 'status'
+            supports:
+                - App\Entity\CrewInvitation
+            initial_marking: !php/enum App\Enum\CrewInvitationStatus::PENDING
+            places: !php/enum App\Enum\CrewInvitationStatus
+            transitions:
+                accept:
+                    guard: "is_granted('crew_invitation.answer', subject)"
+                    from: !php/enum App\Enum\CrewInvitationStatus::PENDING
+                    to: !php/enum App\Enum\CrewInvitationStatus::ACCEPTED
+                refuse:
+                    guard: "is_granted('crew_invitation.answer', subject)"
+                    from: !php/enum App\Enum\CrewInvitationStatus::PENDING
+                    to: !php/enum App\Enum\CrewInvitationStatus::ENDED
+                cancel:
+                    guard: "is_granted('crew_invitation.cancel', subject)"
+                    from: !php/enum App\Enum\CrewInvitationStatus::PENDING
+                    to: !php/enum App\Enum\CrewInvitationStatus::ENDED

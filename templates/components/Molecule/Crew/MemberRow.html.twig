@@ -1,0 +1,29 @@
+<li {{ attributes.defaults({ class: 'list-row items-center' }) }}>
+    <twig:Molecule:UserAvatar :user="member" sizeClass="w-10" />
+
+    <p class="min-w-0 font-medium">
+        <span class="wrap-anywhere">{{ member.fullname }}</span>
+        {% if member is same as(app.user) %}
+            <span class="text-sm font-normal text-base-content/60">(vous)</span>
+        {% endif %}
+        {% if creator %}
+            <span class="badge badge-sm badge-ghost">Créateur·rice</span>
+        {% endif %}
+    </p>
+
+    {# For a member who is not a friend yet, the locked page offers to send a request. #}
+    {% if member is not same as(app.user) %}
+        <twig:atomic:ButtonLink
+            class="btn-sm"
+            color="neutral"
+            style="ghost"
+            :to="path('app_section_user_page', { id: member.id })">
+            <twig:block name="name">
+                <span>Voir sa liste</span>
+            </twig:block>
+            <twig:block name="icon">
+                <twig:ux:icon name="lucide:arrow-right" class="size-4" />
+            </twig:block>
+        </twig:atomic:ButtonLink>
+    {% endif %}
+</li>

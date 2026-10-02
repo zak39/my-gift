@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Entity\Crew;
 use App\Entity\Gift;
 use App\Entity\Section;
 use App\Entity\User;
@@ -41,10 +42,26 @@ final class BreadcrumbBuilder
         ];
     }
 
-    public function newGift(): array
+    /**
+     * The same for every viewer, member or friend: the crew's page is the list for both.
+     */
+    public function giftFromCrew(Gift $gift): array
     {
         return [
-            $this->item('Mes cadeaux', 'app_gift'),
+            $this->crewItem($gift->getCrew()),
+            $this->currentItem($gift->getTitle()),
+        ];
+    }
+
+    /**
+     * A gift added from a section of a crew's list goes straight into it.
+     */
+    public function newGift(Gift $gift): array
+    {
+        $crew = $gift->getCrew();
+
+        return [
+            null !== $crew ? $this->crewItem($crew) : $this->item('Mes cadeaux', 'app_gift'),
             $this->currentItem('Nouveau cadeau'),
         ];
     }
@@ -52,16 +69,16 @@ final class BreadcrumbBuilder
     public function editGift(Gift $gift): array
     {
         return [
-            $this->mySections($gift->getCreatedBy()),
+            $this->listOf($gift->getCrew(), $gift->getCreatedBy()),
             $this->item($gift->getTitle(), 'app_gift_show', ['id' => $gift->getId()]),
             $this->currentItem('Modifier'),
         ];
     }
 
-    public function newSection(User $user): array
+    public function newSection(Section $section): array
     {
         return [
-            $this->mySections($user),
+            $this->listOf($section->getCrew(), $section->getCreatedBy()),
             $this->currentItem('Nouvelle section'),
         ];
     }
@@ -69,14 +86,53 @@ final class BreadcrumbBuilder
     public function editSection(Section $section): array
     {
         return [
-            $this->mySections($section->getCreatedBy()),
+            $this->listOf($section->getCrew(), $section->getCreatedBy()),
             $this->currentItem('Modifier « '.$section->getTitle().' »'),
+        ];
+    }
+
+    public function crew(Crew $crew): array
+    {
+        return [
+            $this->item('Mes groupes', 'app_crew'),
+            $this->currentItem($crew->getName()),
+        ];
+    }
+
+    public function newCrew(): array
+    {
+        return [
+            $this->item('Mes groupes', 'app_crew'),
+            $this->currentItem('Nouveau groupe'),
+        ];
+    }
+
+    public function editCrew(Crew $crew): array
+    {
+        return [
+            $this->item('Mes groupes', 'app_crew'),
+            $this->crewItem($crew),
+            $this->currentItem('Modifier'),
         ];
     }
 
     private function mySections(User $user): array
     {
         return $this->item('Mes sections', 'app_section', ['id' => $user->getId()]);
+    }
+
+    /**
+     * The list a gift or a section belongs to: its crew's, or else its creator's own.
+     * Never the creator's for a crew, whose page the other members may not open.
+     */
+    private function listOf(?Crew $crew, User $creator): array
+    {
+        return null !== $crew ? $this->crewItem($crew) : $this->mySections($creator);
+    }
+
+    private function crewItem(Crew $crew): array
+    {
+        return $this->item($crew->getName(), 'app_crew_show', ['id' => $crew->getId()]);
     }
 
     private function item(string $label, string $route, array $params = []): array

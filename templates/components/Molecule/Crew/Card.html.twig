@@ -1,0 +1,35 @@
+{# Same surface as molecule:UserCard: a crew's card reads as part of the friends' family. #}
+{% set members = crew.members %}
+{% set giftCount = crew.giftCount %}
+
+<article {{ attributes.defaults({ class: 'card h-full border border-base-300 bg-base-100 shadow-sm transition-shadow duration-200 hover:shadow-md' }) }}>
+    <div class="card-body gap-4 p-5">
+        <twig:Molecule:UserAvatarGroup :users="members" sizeClass="w-11" />
+
+        <div class="min-w-0">
+            <h2 class="card-title line-clamp-2 wrap-anywhere" title="{{ crew.name }}">{{ crew.name }}</h2>
+            <p class="mt-1 text-sm text-base-content/70">
+                {{ members|map(member => member.firstname)|join(', ', ' et ') }}
+            </p>
+        </div>
+
+        <div class="card-actions mt-auto items-center justify-between">
+            <span class="flex items-center gap-1.5 text-sm text-base-content/70">
+                <twig:ux:icon name="lucide:gift" class="size-4 shrink-0" />
+                <span class="tabular-nums">{{ giftCount }} cadeau{{ giftCount > 1 ? 'x' }}</span>
+            </span>
+            <twig:atomic:ButtonLink
+                class="btn-sm"
+                color="neutral"
+                style="ghost"
+                :to="path('app_crew_show', { id: crew.id })">
+                <twig:block name="name">
+                    <span>Voir la liste</span>
+                </twig:block>
+                <twig:block name="icon">
+                    <twig:ux:icon name="lucide:arrow-right" class="size-4" />
+                </twig:block>
+            </twig:atomic:ButtonLink>
+        </div>
+    </div>
+</article>

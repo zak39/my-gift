@@ -1,0 +1,24 @@
+{# Inside the Modal blocks, id, title, class and even attributes are those of Modal: crew
+   stays in reach, under a name Modal does not use. #}
+<twig:Modal :id="crew.id" title="Quitter le groupe" class="crew_leave">
+    <twig:block name="handlerButton">
+        <button type="button" class="btn btn-ghost" onclick="modal_crew_leave_{{ crew.id }}.showModal()">
+            <twig:ux:icon name="lucide:log-out" class="size-4" />
+            Quitter le groupe
+        </button>
+    </twig:block>
+    <twig:block name="message">
+        <p class="py-4">
+            Vous ne pourrez plus gérer la liste « {{ crew.name }} ». Les cadeaux que vous y avez ajoutés restent dans la liste du groupe.
+        </p>
+    </twig:block>
+    <twig:block name="actionButtons">
+        <form method="post" action="{{ path('app_crew_leave', { id: crew.id }) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('crew-leave-' ~ crew.id) }}">
+            <button type="submit" class="btn btn-error">
+                <twig:ux:icon name="lucide:log-out" class="size-4" />
+                Oui, quitter le groupe
+            </button>
+        </form>
+    </twig:block>
+</twig:Modal>

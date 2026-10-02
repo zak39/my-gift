@@ -1,0 +1,18 @@
+<section {{ attributes.defaults({ class: 'card border border-base-300 bg-base-100 shadow-sm' }) }} aria-labelledby="crew-members-title">
+    <div class="card-body gap-2 p-5 sm:p-7">
+        <h2 id="crew-members-title" class="card-title">
+            <twig:ux:icon name="lucide:users" class="size-5" />
+            Membres
+            <span class="badge badge-sm badge-ghost tabular-nums">{{ crew.members|length }}</span>
+        </h2>
+        <p class="text-sm text-base-content/70">
+            Tous gèrent la liste et invitent leurs ami·es, et chacun peut quitter le groupe. Seule la personne qui l'a créé ne peut pas le quitter : elle seule peut le supprimer.
+        </p>
+
+        <ul class="list -mx-4">
+            {% for member in crew.members %}
+                <twig:Molecule:Crew:MemberRow :member="member" :creator="member is same as crew.createdBy" />
+            {% endfor %}
+        </ul>
+    </div>
+</section>

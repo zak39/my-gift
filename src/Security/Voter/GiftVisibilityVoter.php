@@ -8,13 +8,13 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * Who may see a gift at all. Its creator always does, drafts included. Anyone
- * else only sees the gifts the creator shares with their friends: public, filed
- * under a section, and the viewer passes `user.can_see_gifts` on the creator.
- * The favourites query applies the same friendship rule.
+ * Who may see a gift at all. Its owners always do, drafts included: its creator, or
+ * every member of the crew whose list it is filed in. Anyone else only sees the gifts
+ * shared with friends: public, filed under a section, and the viewer may see that
+ * list, `user.can_see_gifts` on the creator of a personal list, `crew.can_see_list`
+ * on a crew. The favourites query applies the same friendship rule.
  *
  * Guards the routes that open a gift or engage with it by its id, so a hidden
  * gift can't be opened, favourited, reserved or contributed to by guessing its
@@ -40,27 +40,32 @@ final class GiftVisibilityVoter extends Voter
     {
         $user = $token->getUser();
 
-        if (!$user instanceof UserInterface) {
+        if (!$user instanceof User) {
             $vote?->addReason('The user must be logged in to access this resource.');
 
             return false;
         }
 
         /** @var Gift $subject */
-        if ($user === $subject->getCreatedBy()) {
+        if ($subject->isOwnedBy($user)) {
             return true;
         }
 
         // An ended friendship must not trap a participant either: they still open the
         // gift to review or change their share, not only to back out.
-        if ($user instanceof User && null !== $subject->getParticipant($user)) {
+        if (null !== $subject->getParticipant($user)) {
             return true;
         }
 
-        return
-            $subject->isPublic()
-            && null !== $subject->getSection()
-            && $this->accessDecisionManager->decide($token, ['user.can_see_gifts'], $subject->getCreatedBy())
+        if (!$subject->isPublic() || null === $subject->getSection()) {
+            return false;
+        }
+
+        $crew = $subject->getCrew();
+
+        return null !== $crew
+            ? $this->accessDecisionManager->decide($token, ['crew.can_see_list'], $crew)
+            : $this->accessDecisionManager->decide($token, ['user.can_see_gifts'], $subject->getCreatedBy())
         ;
     }
 }

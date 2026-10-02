@@ -23,7 +23,8 @@
                 class="lg:sticky lg:top-6"
                 :sections="sections"
                 :giftsWithoutSection="giftsWithoutSection"
-                :includeDrafts="true" />
+                :includeDrafts="true"
+                :crews="crews" />
 
             <div class="flex min-w-0 flex-col gap-5">
                 {% for section in sections %}
@@ -62,6 +63,8 @@
                         </twig:block>
                     </twig:molecule:Section>
                 {% endif %}
+
+                <twig:Organism:Crew:SharedLists class="mt-5" :crews="crews" :user="user" :ownerView="true" />
             </div>
         </div>
     {% else %}
@@ -97,6 +100,9 @@
             </twig:block>
         </twig:molecule:EmptyContentHero>
         </div>
+
+        <twig:Organism:Crew:SharedLists class="mt-10" :crews="crews" :user="user" :ownerView="true" />
     {% endif %}
+
 </div>
 {% endblock %}

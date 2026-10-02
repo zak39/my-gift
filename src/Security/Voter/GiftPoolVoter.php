@@ -3,15 +3,16 @@
 namespace App\Security\Voter;
 
 use App\Entity\Gift;
+use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * Who may see what about a gift's pool. The rule is the surprise: the person
- * being given to must not learn what has been collected on their own gift, and
- * discovers who is giving only once the pool is complete.
+ * Who may see what about a gift's pool. The rule is the surprise: the people being
+ * given to, the gift's owners (its creator, or every member of its crew), must not
+ * learn what has been collected, and discover who is giving only once the pool is
+ * complete.
  */
 final class GiftPoolVoter extends Voter
 {
@@ -26,18 +27,20 @@ final class GiftPoolVoter extends Voter
     {
         $user = $token->getUser();
         // if the user is anonymous, do not grant access
-        if (!$user instanceof UserInterface) {
+        if (!$user instanceof User) {
             $vote?->addReason('The user must be logged in to access this resource.');
 
             return false;
         }
 
         /** @var Gift $subject */
-        if ($user !== $subject->getCreatedBy()) {
+        // Someone paying into the pool has nothing left to discover, owner or not: a
+        // contributor who joined the gift's crew afterwards.
+        if (!$subject->isOwnedBy($user) || null !== $subject->getParticipant($user)) {
             return true;
         }
 
-        $vote?->addReason('The creator of a gift does not get to see its pool.');
+        $vote?->addReason('The owners of a gift do not get to see its pool.');
 
         // A reservation, or a pool a contributor declared ready, holds no surprise left.
         return 'gift.can_see_contributors' === $attribute

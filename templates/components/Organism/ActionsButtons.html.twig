@@ -10,7 +10,7 @@
         {% if gift.link %}
             <twig:Molecule:Gift:LinkButton :gift="gift" style="ghost" />
         {% endif %}
-        {% if is_granted('gift.is_creator', gift) %}
+        {% if is_granted('gift.is_owner', gift) %}
             <div class="ml-auto flex gap-1">
                 <twig:Molecule:Gift:EditButton :gift="gift" style="ghost" :iconOnly="true" />
                 <twig:Molecule:Gift:DeleteButton :gift="gift" style="ghost" :iconOnly="true" />

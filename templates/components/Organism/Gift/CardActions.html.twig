@@ -9,7 +9,7 @@
         {% if gift.link %}
             <twig:Molecule:Gift:LinkButton :gift="gift" style="ghost" :iconOnly="true" />
         {% endif %}
-        {% if is_granted('gift.is_creator', gift) %}
+        {% if is_granted('gift.is_owner', gift) %}
             <twig:Molecule:Gift:EditButton :gift="gift" style="ghost" :iconOnly="true" />
             <twig:Molecule:Gift:DeleteButton :gift="gift" style="ghost" :iconOnly="true" />
         {% endif %}

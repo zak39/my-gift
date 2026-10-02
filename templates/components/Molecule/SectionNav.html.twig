@@ -25,5 +25,20 @@
                 </a>
             </li>
         {% endif %}
+
+        {# Anchors to the cards of Organism:Crew:SharedLists, below the sections. #}
+        {% if crews is not empty %}
+            <li class="menu-title hidden lg:mt-2 lg:block">Groupes</li>
+
+            {% for crew in crews %}
+                <li>
+                    <a href="#crew-{{ crew.id }}" class="whitespace-nowrap lg:whitespace-normal">
+                        <twig:ux:icon name="lucide:users" class="size-4 shrink-0" />
+                        <span class="min-w-0 lg:wrap-anywhere">{{ crew.name }}</span>
+                        <span class="badge badge-sm badge-ghost tabular-nums">{{ crew.giftCount }}</span>
+                    </a>
+                </li>
+            {% endfor %}
+        {% endif %}
     </ul>
 </nav>

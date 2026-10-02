@@ -34,6 +34,17 @@
                     {% endif %}
                 </a>
             </li>
+            <li>
+                <a href="{{ path('app_crew') }}">
+                    Mes groupes
+                    {% if computed.pendingCrewInvitationCount > 0 %}
+                        <span class="badge badge-sm badge-secondary">
+                            {{ computed.pendingCrewInvitationCount }}
+                            <span class="sr-only">invitation{{ computed.pendingCrewInvitationCount > 1 ? 's' }} reçue{{ computed.pendingCrewInvitationCount > 1 ? 's' }}</span>
+                        </span>
+                    {% endif %}
+                </a>
+            </li>
             <li><twig:atomic:Router:Link link="{{ path('app_logout') }}" name="Se déconnecter" /></li>
         </ul>
 

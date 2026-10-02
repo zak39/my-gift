@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Gift | Renommer un groupe{% endblock %}
+
+{% block body %}
+{% form_theme form 'form/daisyui_layout.html.twig' %}
+
+<div class="mx-auto w-full max-w-2xl pb-12">
+    <twig:Molecule:Breadcrumbs :items="breadcrumbs" />
+
+    <twig:Organism:Form:Card icon="lucide:pencil" title="Renommer le groupe">
+        {{ form_start(form) }}
+            <div class="flex flex-col gap-4 border-t border-base-300 p-5 sm:p-7">
+                {{ form_errors(form) }}
+                {{ form_row(form.name) }}
+            </div>
+
+            <twig:Molecule:Form:Actions
+                :cancelUrl="path('app_crew_show', { id: crew.id })"
+                submitLabel="Enregistrer" />
+        {{ form_end(form) }}
+    </twig:Organism:Form:Card>
+</div>
+{% endblock %}

@@ -8,6 +8,7 @@ use App\Form\ParticipantContributingType;
 use App\Form\ParticipantReserveType;
 use App\Services\Lifecycle\GiftLifecycle;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -17,7 +18,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/gift/{id}/request', requirements: ['id' => '\d+'])]
 final class GiftRequestController extends AbstractController
 {
-    #[IsGranted('gift.can_see', subject: 'gift')]
+    #[IsGranted('gift.can_offer', subject: 'gift')]
     #[Route('/reserved', name: 'app_gift_reserved', methods: ['POST', 'GET'])]
     public function reserved(Gift $gift, Request $request, GiftLifecycle $giftLifecycle): Response
     {
@@ -30,7 +31,7 @@ final class GiftRequestController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $giftLifecycle->reserved($gift, $participant, $this->getUser());
 
-            return $this->redirectToRoute('app_section_user_page', ['id' => $gift->getCreatedBy()->getId()]);
+            return $this->redirectToList($gift);
         }
 
         return $this->render('gift/reserved.html.twig', [
@@ -48,7 +49,7 @@ final class GiftRequestController extends AbstractController
 
         $giftLifecycle->disengage($gift, $this->getUser());
 
-        return $this->redirectToRoute('app_section_user_page', ['id' => $gift->getCreatedBy()->getId()]);
+        return $this->redirectToList($gift);
     }
 
     #[Route('/ready', name: 'app_gift_ready', methods: ['POST'])]
@@ -56,7 +57,7 @@ final class GiftRequestController extends AbstractController
     {
         $giftLifecycle->ready($gift, $this->getUser());
 
-        return $this->redirectToRoute('app_section_user_page', ['id' => $gift->getCreatedBy()->getId()]);
+        return $this->redirectToList($gift);
     }
 
     #[Route('/given', name: 'app_gift_given', methods: ['POST'])]
@@ -64,7 +65,7 @@ final class GiftRequestController extends AbstractController
     {
         $giftLifecycle->given($gift, $this->getUser());
 
-        return $this->redirectToRoute('app_section_user_page', ['id' => $gift->getCreatedBy()->getId()]);
+        return $this->redirectToList($gift);
     }
 
     #[Route('/archived', name: 'app_gift_archived', methods: ['POST'])]
@@ -72,10 +73,11 @@ final class GiftRequestController extends AbstractController
     {
         $giftLifecycle->archived($gift, $this->getUser());
 
-        return $this->redirectToRoute('app_section_user_page', ['id' => $gift->getCreatedBy()->getId()]);
+        return $this->redirectToList($gift);
     }
 
-    #[IsGranted('gift.can_see', subject: 'gift')]
+    // A newcomer to the pool, or a contributor changing their share.
+    #[IsGranted(new Expression('is_granted("gift.can_offer", subject) or subject.getParticipant(user) != null'), subject: 'gift')]
     #[Route('/participated', name: 'app_gift_participated', methods: ['GET', 'POST'])]
     public function participated(Gift $gift, GiftLifecycle $giftLifecycle, Request $request): Response
     {
@@ -90,7 +92,7 @@ final class GiftRequestController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $giftLifecycle->participated($gift, $participant, $this->getUser());
 
-            return $this->redirectToRoute('app_section_user_page', ['id' => $gift->getCreatedBy()->getId()]);
+            return $this->redirectToList($gift);
         }
 
         return $this->render('gift/contributing.html.twig', [
@@ -108,6 +110,22 @@ final class GiftRequestController extends AbstractController
 
         $giftLifecycle->cancelledContribution($gift, $this->getUser());
 
-        return $this->redirectToRoute('app_section_user_page', ['id' => $gift->getCreatedBy()->getId()]);
+        return $this->redirectToList($gift);
+    }
+
+    /**
+     * Back to the list the gift is part of, where the buyer found it: its crew's page, or
+     * its creator's. A participant may no longer see a crew's list (an ended friendship
+     * must not trap them, see GiftVisibilityVoter): the creator's page then tells them
+     * so, where the crew's would answer 403.
+     */
+    private function redirectToList(Gift $gift): Response
+    {
+        $crew = $gift->getCrew();
+
+        return null !== $crew && $this->isGranted('crew.can_see_list', $crew)
+            ? $this->redirectToRoute('app_crew_show', ['id' => $crew->getId()])
+            : $this->redirectToRoute('app_section_user_page', ['id' => $gift->getCreatedBy()->getId()])
+        ;
     }
 }

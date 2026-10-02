@@ -19,14 +19,15 @@ final class DashboardController extends AbstractController
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
-        $myLastGifts = $giftRepository->findBy(['createdBy' => $user], ['createdAt' => 'DESC'], 5);
+        // The user's own list: what they added to a crew's list belongs to the crew.
+        $myLastGifts = $giftRepository->findPersonalOf($user, 5);
         $myLastFavoritesGifts = $giftRepository->findFavoritesGifts($user, 5);
 
         $myLastParticipationGifts = $giftRepository->findGiftByParticipant($user, null);
         $myLastReservedParticipationGifts = $giftRepository->findGiftByParticipant($user, ParticipantStatus::RESERVED);
         $myLastParticipatingParticipationGifts = $giftRepository->findGiftByParticipant($user, ParticipantStatus::PARTICIPATING);
 
-        $myGiftsCount = $giftRepository->count(['createdBy' => $user]);
+        $myGiftsCount = $giftRepository->countPersonalOf($user);
 
         $myParticipationGiftsCount = $participantRepository->count(['participantUser' => $user]);
         $myReservedParticipationGiftsCount = $participantRepository->count(['participantUser' => $user, 'status' => ParticipantStatus::RESERVED]);

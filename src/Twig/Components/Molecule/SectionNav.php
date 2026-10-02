@@ -2,6 +2,7 @@
 
 namespace App\Twig\Components\Molecule;
 
+use App\Entity\Crew;
 use App\Entity\Gift;
 use App\Entity\Section;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
@@ -17,6 +18,14 @@ final class SectionNav
 
     /** Counts unpublished gifts too, so the index matches what the page renders. */
     public bool $includeDrafts = false;
+
+    /**
+     * The crews of the list's owner, listed after the sections so they show without
+     * scrolling: anchors to their cards in Organism:Crew:SharedLists.
+     *
+     * @var iterable<Crew>
+     */
+    public iterable $crews = [];
 
     /**
      * @param iterable<Gift> $gifts
