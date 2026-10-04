@@ -1,0 +1,17 @@
+{% set sections = entity.instance.sections %}
+
+{% if sections is empty %}
+    <span class="text-muted">Aucune section</span>
+{% else %}
+    <div class="d-flex flex-column gap-3">
+        {% for section in sections %}
+            <section>
+                <h6 class="mb-2">
+                    <a href="{{ path('admin_section_detail', { entityId: section.id }) }}">{{ section.title }}</a>
+                    <span class="text-muted fw-normal">({{ section.gifts|length }})</span>
+                </h6>
+                {{ include('admin/field/_gift_list.html.twig', { gifts: section.gifts }) }}
+            </section>
+        {% endfor %}
+    </div>
+{% endif %}
