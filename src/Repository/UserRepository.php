@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -17,6 +18,8 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
+    use CountsCreatedPerDayTrait;
+
     public const MAX_PER_PAGE = 12;
 
     public function __construct(
@@ -46,11 +49,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         /** @var User|null */
         $user = $this->security->getUser();
 
-        $queryBuilder = $this->createQueryBuilder('u')
-            ->where('LOWER(u.firstname) LIKE :query')
-            ->orWhere('LOWER(u.lastname) LIKE :query')
-            ->setParameter('query', '%'.strtolower($query).'%')
-        ;
+        $queryBuilder = $this->createFullNameSearchQueryBuilder((string) $query);
 
         if ($user instanceof User) {
             $queryBuilder
@@ -66,6 +65,55 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 self::MAX_PER_PAGE
             )
         ;
+    }
+
+    /**
+     * Finds users whose full names match the given pattern.
+     *
+     * @param string $pattern The pattern to search for in user full names
+     *
+     * @return User[] An array of User objects matching the pattern
+     */
+    public function findByFullNamePattern(string $pattern): array
+    {
+        return $this->createFullNameSearchQueryBuilder($pattern)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
+     * The users whose first or last name contains $query, case-insensitive: shared by the
+     * front search (paginated, without the current user) and the console search.
+     */
+    private function createFullNameSearchQueryBuilder(string $query): QueryBuilder
+    {
+        return $this->createQueryBuilder('u')
+            ->where('LOWER(u.firstname) LIKE :query')
+            ->orWhere('LOWER(u.lastname) LIKE :query')
+            ->setParameter('query', '%'.strtolower($query).'%')
+        ;
+    }
+
+    /**
+     * The ids of the users having the given role stored in their roles. The roles column
+     * is JSON, which PostgreSQL cannot LIKE nor DQL unfold: native SQL lists its elements.
+     *
+     * @return list<int>
+     */
+    public function findIdsByRole(string $role): array
+    {
+        [$table, $roles] = $this->quotedTableAndColumn('roles');
+
+        return array_map('intval', $this->getEntityManager()->getConnection()
+            ->executeQuery(
+                "SELECT DISTINCT u.id
+                FROM $table u, json_array_elements_text(u.$roles) AS role
+                WHERE role = :role",
+                ['role' => $role],
+            )
+            ->fetchFirstColumn()
+        );
     }
 
     //    /**

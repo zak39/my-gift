@@ -49,6 +49,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?string $password = null;
 
+    /** It stores the plain password before hashing for EasyAdminSubscriber */
+    private ?string $plainPassword = null;
+
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
@@ -183,6 +186,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /** For EasyAdminSubscriber to access the plain password before hashing */
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    /** For EasyAdminSubscriber to set the plain password before hashing */
+    public function setPlainPassword(?string $plainPassword): static
+    {
+        $this->plainPassword = $plainPassword;
+
+        return $this;
+    }
+
     /**
      * Ensure the session doesn't contain actual password hashes by CRC32C-hashing them, as supported since Symfony 7.3.
      */
@@ -245,6 +262,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getAvatar(): ?string
     {
         return $this->avatar;
+    }
+
+    /**
+     * The Vich field of the avatar to show: the one the user uploaded, or else the default
+     * one generated at registration. Passed to vich_uploader_asset() / UploaderHelper::asset().
+     */
+    public function getAvatarField(): string
+    {
+        return $this->avatar ? 'avatarFile' : 'avatarDefaultFile';
     }
 
     public function setAvatar(?string $avatar): static

@@ -1,0 +1,47 @@
+{% extends '@EasyAdmin/layout.html.twig' %}
+
+{% block main %}
+<h1 class="mb-4">Tableau de bord</h1>
+<div>
+    <div class="row g-3">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="text-muted small">Utilisateurs</div>
+                    <div class="fs-2 fw-bold">{{ userCount }}</div>
+                    <a href="{{ path('admin_user_index') }}">Voir la liste</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="text-muted small">Cadeaux</div>
+                    <div class="fs-2 fw-bold">{{ giftCount }}</div>
+                    <a href="{{ path('admin_gift_index') }}">Voir la liste</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="h4 mt-5 mb-3">{{ chartDays }} derniers jours</h2>
+    <div class="row g-3">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="h6 text-muted">Inscriptions</h3>
+                    {{ render_chart(userChart) }}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="h6 text-muted">Cadeaux créés</h3>
+                    {{ render_chart(giftChart) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main %}

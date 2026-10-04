@@ -1,0 +1,16 @@
+{# The list of `gifts` shown on a detail page: thumbnail, link to the gift and its status. #}
+{% if gifts is empty %}
+    <span class="text-muted">Aucun cadeau</span>
+{% else %}
+    <ul class="list-unstyled d-flex flex-column gap-2 mb-0">
+        {% for gift in gifts %}
+            <li class="d-flex align-items-center gap-2">
+                {% if gift.image %}
+                    <img src="{{ vich_uploader_asset(gift, 'imageFile') }}" alt="" width="32" height="32" style="object-fit: cover; border-radius: 4px;">
+                {% endif %}
+                <a href="{{ path('admin_gift_detail', { entityId: gift.id }) }}">{{ gift.title }}</a>
+                <twig:ea:Badge variant="secondary">{{ gift.status.label }}</twig:ea:Badge>
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}

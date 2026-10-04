@@ -1,0 +1,10 @@
+{% set sections = field.value %}
+{% if sections is not empty %}
+    <ul>
+        {% for section in sections %}
+            <li>{{ section.title }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Aucune section</p>
+{% endif %}

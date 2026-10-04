@@ -51,10 +51,8 @@ final class UserAvatar
         // Left empty rather than `class: ''`, which would override the merged `avatar` class.
         $this->frameAttributes = '' === $this->sizeClass ? [] : ['class' => $this->sizeClass];
 
-        $field = $this->user->getAvatar() ? 'avatarFile' : 'avatarDefaultFile';
-
         $this->imageAttributes = [
-            'source' => $this->uploaderHelper->asset($this->user, $field) ?? '',
+            'source' => $this->uploaderHelper->asset($this->user, $this->user->getAvatarField()) ?? '',
             'alt' => 'Photo de profil '.$this->user->getFullname(),
         ];
 

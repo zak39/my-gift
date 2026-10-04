@@ -14,6 +14,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class GiftRepository extends ServiceEntityRepository
 {
+    use CountsCreatedPerDayTrait;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Gift::class);
