@@ -107,6 +107,31 @@ to prefill gift fields from a pasted product URL.
 Routes are defined with `#[Route]` PHP attributes directly on controller methods
 (`src/Controller/`), not YAML route files.
 
+Controllers are filed by the first URL segment, which says whose resource a page is
+about; the class carries that prefix (`#[Route('/me/...')]`), and the segment tells which
+voter guards it:
+
+- `Me/` — `/me/...`, the logged-in user's own space (dashboard, list, profile, friends,
+  favorites, crews, received invitations). No user id in the URL; nested resource ids
+  still get their voter (`section.is_owner`, `gift.is_owner`…)
+- `User/` — `/users/{id}/...`, another user: search, their list (`user.can_see_gifts`),
+  friendship actions
+- `Crew/` — `/crews/{id}/...`, one crew run by its members (`crew.is_member`); a nested
+  section or gift must belong to that crew (checked, else 404)
+- `Gift/` — `/gift/{id}/...`, a gift from the giver's side: its page, favorites,
+  reservation / contribution / completion requests
+- `Security/` — login, registration, password reset; `Admin/` — EasyAdmin
+
+The same resource may have a controller per folder (`Me/SectionController`,
+`User/SectionController`, `Crew/SectionController`), one per point of view. What two of
+them do alike lives in a service, one class per action with a single `__invoke()`
+(`Services/Gift/CreateGift`, `UpdateGift`, `DeleteGift`; `Services/Section/CreateSection`,
+`DeleteSection`), a form's choices live in its FormType (form types are services), and where a gift or a
+section lives is answered by `ListUrlGenerator`, also exposed as Twig functions
+(`gift_list_url()`, `gift_edit_url()`, `section_edit_url()`…). The paths linked from
+emails (`/users/{id}/sections`, `/crews/{id}`, `/gift/{id}/show`, `/me/crews`,
+`/me/sections`) must not move.
+
 <easyadmin-guidelines>
 This project uses EasyAdmin 5.6.1.
 

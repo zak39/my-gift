@@ -28,6 +28,10 @@ final class Form
     #[LiveProp]
     public bool $openGraphFailed = false;
 
+    /** Back to the list the gift is created in: the user's own, or a crew's. */
+    #[LiveProp]
+    public string $cancelUrl = '';
+
     public function __construct(
         private FormFactoryInterface $formFactory,
         private OpenGraphApi $openGraphApi,

@@ -32,7 +32,7 @@
             </div>
 
             <twig:Molecule:Form:Actions
-                :cancelUrl="section.crew ? path('app_crew_show', { id: section.crew.id }) : path('app_section', { id: app.user.id })"
+                :cancelUrl="cancelUrl"
                 submitLabel="Enregistrer les modifications" />
         {{ form_end(form) }}
     </twig:Organism:Form:Card>

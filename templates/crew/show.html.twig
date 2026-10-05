@@ -3,7 +3,7 @@
 {% block title %}My Gift | {{ crew.name }}{% endblock %}
 
 {% block body %}
-{# Two views of one list, as section/index and section/user_page for a personal one: the
+{# Two views of one list, as me/section/index and user/section/index for a personal one: the
    members run it, drafts included; the friends of a member see what is published. #}
 {% set sections = crew.sections %}
 
@@ -67,7 +67,7 @@
             title="La liste du groupe est encore vide"
             description="Créez une première section, « Jouets » ou « Livres » par exemple, puis ajoutez-y des cadeaux : chaque membre peut le faire.">
             <twig:block name="action_buttons">
-                <a href="{{ path('app_section_new', { crew: crew.id }) }}" class="btn btn-primary mt-6">
+                <a href="{{ path('app_crew_section_new', { id: crew.id }) }}" class="btn btn-primary mt-6">
                     <twig:ux:icon name="lucide:folder-plus" class="size-4" />
                     Créer une section
                 </a>

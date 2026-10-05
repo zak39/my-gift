@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Me;
 
 use App\Entity\User;
 use App\Form\UserProfileType;
@@ -11,10 +11,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-final class UserProfileController extends AbstractController
+#[Route('/me')]
+final class ProfileController extends AbstractController
 {
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
-    #[Route('/user/profile', name: 'app_user_profile')]
+    #[Route('/profile', name: 'app_user_profile')]
     public function index(Request $request, UserProfileService $profileService): Response
     {
         /** @var User $user */
@@ -24,7 +25,7 @@ final class UserProfileController extends AbstractController
         $form->handleRequest($request);
 
         if (!$form->isSubmitted()) {
-            return $this->render('user_profile/index.html.twig', [
+            return $this->render('me/profile/index.html.twig', [
                 'profileForm' => $form->createView(),
                 'user' => $user,
             ]);
@@ -52,7 +53,7 @@ final class UserProfileController extends AbstractController
             return $this->redirectToRoute('app_user_profile');
         }
 
-        return $this->render('user_profile/index.html.twig', [
+        return $this->render('me/profile/index.html.twig', [
             'profileForm' => $form->createView(),
             'user' => $user,
         ], new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY));

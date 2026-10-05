@@ -81,7 +81,7 @@ class CrewNotificationSubscriber implements EventSubscriberInterface
                     'crewName' => $event->getCrewName(),
                     'creator' => $creator,
                     'member' => $member,
-                    'url' => $this->urlGenerator->generate('app_section', ['id' => $member->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
+                    'url' => $this->urlGenerator->generate('app_section', [], UrlGeneratorInterface::ABSOLUTE_URL),
                 ])
             ;
 

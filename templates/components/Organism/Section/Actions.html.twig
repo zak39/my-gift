@@ -1,11 +1,11 @@
-{# Guarded with the attribute the routes themselves enforce, so the buttons cannot
-   offer something app_gift_create / app_section_edit / app_section_delete would refuse. #}
+{# Shown on the user's own list and on a crew's: the URLs follow the section's list
+   (ListUrlGenerator). Guarded as the routes are, so no button leads to a refusal. #}
 {% if is_granted('section.is_owner', section) %}
     <twig:atomic:ButtonLink
         class="btn-sm"
         color="neutral"
         style="ghost"
-        :to="path('app_gift_create', { section: section.id })">
+        :to="gift_create_url(section)">
         <twig:block name="icon">
             <twig:ux:icon name="lucide:plus" class="size-4" />
         </twig:block>
@@ -18,7 +18,7 @@
         class="btn-sm"
         color="neutral"
         style="ghost"
-        :to="path('app_section_edit', { id: section.id })">
+        :to="section_edit_url(section)">
         <twig:block name="icon">
             <twig:ux:icon name="ic:baseline-edit" class="size-4" />
         </twig:block>
@@ -53,7 +53,7 @@
             {% endif %}
         </twig:block>
         <twig:block name="actionButtons">
-            <form method="post" action="{{ path('app_section_delete', { id: section.id }) }}">
+            <form method="post" action="{{ section_delete_url(section) }}">
                 <input type="hidden" name="_method" value="DELETE">
                 <button type="submit" class="btn btn-outline btn-secondary">
                     <twig:ux:icon name="heroicons:trash-16-solid" />

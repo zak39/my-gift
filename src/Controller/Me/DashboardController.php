@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Me;
 
 use App\Enum\ParticipantStatus;
 use App\Repository\GiftRepository;
@@ -10,9 +10,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('IS_AUTHENTICATED')]
+#[Route('/me')]
 final class DashboardController extends AbstractController
 {
-    #[IsGranted('IS_AUTHENTICATED')]
     #[Route('/dashboard', name: 'app_dashboard')]
     public function index(GiftRepository $giftRepository, ParticipantRepository $participantRepository): Response
     {
@@ -33,7 +34,7 @@ final class DashboardController extends AbstractController
         $myReservedParticipationGiftsCount = $participantRepository->count(['participantUser' => $user, 'status' => ParticipantStatus::RESERVED]);
         $myContributingParticipationGiftsCount = $participantRepository->count(['participantUser' => $user, 'status' => ParticipantStatus::PARTICIPATING]);
 
-        return $this->render('dashboard/index.html.twig', [
+        return $this->render('me/dashboard/index.html.twig', [
             'myLastGifts' => $myLastGifts,
             'myLastFavoritesGifts' => $myLastFavoritesGifts,
             'myGiftsCount' => $myGiftsCount,

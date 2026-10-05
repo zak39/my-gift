@@ -3,7 +3,7 @@
 {% block title %}My Gift | Les sections de mes cadeaux{% endblock %}
 
 {% block body %}
-{# Only the owner reaches this page: SectionController::index() is guarded by `user.is_owner`. #}
+{# The user's own list (/me/sections): only its owner ever sees this page. #}
 {% set hasContent = sections|length > 0 or giftsWithoutSection|length > 0 %}
 
 <div class="mx-auto w-full max-w-6xl py-6 pb-12">
