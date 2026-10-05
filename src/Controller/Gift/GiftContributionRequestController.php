@@ -7,7 +7,7 @@ use App\Entity\Participant;
 use App\Entity\User;
 use App\Form\ParticipantContributingType;
 use App\Services\Lifecycle\GiftLifecycle;
-use App\Services\ListUrlGenerator;
+use App\Services\Url\ViewerUrlGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +25,7 @@ final class GiftContributionRequestController extends AbstractController
     // A newcomer to the pool, or a contributor changing their share.
     #[IsGranted(new Expression('is_granted("gift.can_offer", subject) or subject.getParticipant(user) != null'), subject: 'gift')]
     #[Route('/participated', name: 'app_gift_participated', methods: ['GET', 'POST'])]
-    public function participate(Gift $gift, GiftLifecycle $giftLifecycle, ListUrlGenerator $listUrlGenerator, Request $request): Response
+    public function participate(Gift $gift, GiftLifecycle $giftLifecycle, ViewerUrlGenerator $viewerUrlGenerator, Request $request): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -39,7 +39,7 @@ final class GiftContributionRequestController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $giftLifecycle->participated($gift, $participant, $user);
 
-            return $this->redirect($listUrlGenerator->giftList($gift));
+            return $this->redirect($viewerUrlGenerator->list($gift));
         }
 
         return $this->render('gift/contributing.html.twig', [
@@ -49,7 +49,7 @@ final class GiftContributionRequestController extends AbstractController
     }
 
     #[Route('/cancelled-contribution', name: 'app_gift_cancelled_contribution', methods: ['POST'])]
-    public function cancelContribution(Gift $gift, GiftLifecycle $giftLifecycle, ListUrlGenerator $listUrlGenerator, Request $request): Response
+    public function cancelContribution(Gift $gift, GiftLifecycle $giftLifecycle, ViewerUrlGenerator $viewerUrlGenerator, Request $request): Response
     {
         if (!$this->isCsrfTokenValid('cancelled-contribution-gift-'.$gift->getId(), $request->request->get('_token'))) {
             throw $this->createAccessDeniedException();
@@ -60,6 +60,6 @@ final class GiftContributionRequestController extends AbstractController
 
         $giftLifecycle->cancelledContribution($gift, $user);
 
-        return $this->redirect($listUrlGenerator->giftList($gift));
+        return $this->redirect($viewerUrlGenerator->list($gift));
     }
 }

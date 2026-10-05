@@ -1,5 +1,5 @@
 {# Shown on the user's own list and on a crew's: the URLs follow the section's list
-   (ListUrlGenerator). Guarded as the routes are, so no button leads to a refusal. #}
+   (SectionUrlGenerator, GiftOwnerUrlGenerator). Guarded as the routes are, so no button leads to a refusal. #}
 {% if is_granted('section.is_owner', section) %}
     <twig:atomic:ButtonLink
         class="btn-sm"

@@ -6,6 +6,7 @@ use App\Entity\Crew;
 use App\Entity\Gift;
 use App\Entity\Section;
 use App\Entity\User;
+use App\Services\Url\ViewerUrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -17,23 +18,40 @@ final class BreadcrumbBuilder
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly ViewerUrlGenerator $viewerUrlGenerator,
     ) {
     }
 
     /**
-     * The gift's page, reached from the list it is part of for this viewer.
+     * The gift's page as a friend who may offer it sees it, reached from the list it is
+     * part of: its crew's, or its creator's once the crew's is out of their sight (an ended
+     * friendship), as ViewerUrlGenerator::listCrew() decides. Its owners have their own pages below.
      */
-    public function gift(Gift $gift, ?User $viewer): array
+    public function gift(Gift $gift): array
     {
-        $crew = $gift->getCrew();
+        $crew = $this->viewerUrlGenerator->listCrew($gift);
 
-        $list = match (true) {
-            null !== $crew => [$this->crewItem($crew)],
-            $gift->getCreatedBy() === $viewer => [$this->myList()],
-            default => [$this->findFriends(), $this->userListItem($gift->getCreatedBy())],
-        };
+        $list = null !== $crew
+            ? [$this->crewItem($crew)]
+            : [$this->findFriends(), $this->userListItem($gift->getCreatedBy())];
 
         return [...$list, $this->currentItem($gift->getTitle())];
+    }
+
+    public function myGift(Gift $gift): array
+    {
+        return [
+            $this->myList(),
+            $this->currentItem($gift->getTitle()),
+        ];
+    }
+
+    public function crewGift(Gift $gift): array
+    {
+        return [
+            $this->crewItem($gift->getCrew()),
+            $this->currentItem($gift->getTitle()),
+        ];
     }
 
     public function userList(User $user): array
@@ -56,7 +74,7 @@ final class BreadcrumbBuilder
     {
         return [
             $this->myList(),
-            $this->item($gift->getTitle(), 'app_gift_show', ['id' => $gift->getId()]),
+            $this->item($gift->getTitle(), 'app_me_gift_show', ['id' => $gift->getId()]),
             $this->currentItem('Modifier'),
         ];
     }
@@ -114,7 +132,7 @@ final class BreadcrumbBuilder
     {
         return [
             $this->crewItem($gift->getCrew()),
-            $this->item($gift->getTitle(), 'app_gift_show', ['id' => $gift->getId()]),
+            $this->item($gift->getTitle(), 'app_crew_gift_show', ['id' => $gift->getCrew()->getId(), 'gift' => $gift->getId()]),
             $this->currentItem('Modifier'),
         ];
     }

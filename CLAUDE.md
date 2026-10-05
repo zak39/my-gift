@@ -57,12 +57,14 @@ cannot leave it and alone deletes it) shares a gift list: a `Section` with a cre
 `$gift->getOwnership()->includes($user)` / `Section::isOwnedBy()` (crew members, or else the
 creator), never a bare `getCreatedBy()` comparison.
 
-`Gift` is composed by concern, never by variant: `getOwnership()` (`App\ValueObject\GiftOwnership`:
+`Gift` is composed of value objects, one per concern: `getOwnership()` (`App\ValueObject\GiftOwnership`:
 `includes()`) and `getPool()` (`App\ValueObject\GiftPool`: what was collected, what
 remains, rounding and overshoot rules) are value objects built on demand, not persisted. In
 Twig, `gift.pool.totalContributed`, `gift.pool.complete`… — the Maizzle email sources use the
-same paths. No `GiftCrew`/`GiftPersonal` classes or Doctrine inheritance: a pool or a crew is
-a state a gift goes through, not a kind of gift. Invitations (`CrewInvitation`) run through the `crew_invitation`
+same paths. No `GiftCrew`/`GiftPersonal` entity classes or Doctrine inheritance: a gift
+enters a crew or opens a pool over its life, and a Doctrine entity cannot change class. That
+is a reason about this entity, not a rule against splitting classes by role elsewhere: the
+yardstick is the most readable code (clean code, SOLID). Invitations (`CrewInvitation`) run through the `crew_invitation`
 workflow and `src/Services/Lifecycle/CrewLifecycle.php`, as friend requests do through
 `FriendRequestLifecycle`.
 
@@ -126,16 +128,24 @@ voter guards it:
 - `Crew/` — `/crews/{id}/...`, one crew run by its members (`crew.is_member`); a nested
   section or gift must belong to that crew (checked, else 404)
 - `Gift/` — `/gift/{id}/...`, a gift from the giver's side: its page, favorites,
-  reservation / contribution / completion requests
+  reservation / contribution / completion requests. Its owners see the same page from
+  their own URL (`/me/gifts/{id}/show`, `/crews/{id}/gifts/{gift}/show`); one opening
+  `/gift/{id}/show` is redirected there. A route `condition` cannot tell them apart: it
+  runs before the firewall knows the user, so each point of view gets its own path
 - `Security/` — login, registration, password reset; `Admin/` — EasyAdmin
 
 The same resource may have a controller per folder (`Me/SectionController`,
 `User/SectionController`, `Crew/SectionController`), one per point of view. What two of
 them do alike lives in a service, one class per action with a single `__invoke()`
 (`Services/Gift/CreateGift`, `UpdateGift`, `DeleteGift`; `Services/Section/CreateSection`,
-`DeleteSection`), a form's choices live in its FormType (form types are services), and where a gift or a
-section lives is answered by `ListUrlGenerator`, also exposed as Twig functions
-(`gift_list_url()`, `gift_edit_url()`, `section_edit_url()`…). The paths linked from
+`DeleteSection`), a form's choices live in its FormType (form types are services), and URLs
+come from `src/Services/Url/`, one generator per point of view, the caller picking the one
+it already knows it is: `GiftOwnerUrlGenerator` (a gift's pages for its owners, in its
+crew's list or its author's own), `SectionUrlGenerator`, `ViewerUrlGenerator` (a giver's:
+`/gift/{id}/show`, the list the gift is part of). Most methods are also Twig functions
+(`gift_owner_show_url()`, `gift_edit_url()`, `section_edit_url()`…); only a component
+shared by owners' and givers' pages (`Molecule:Gift:ShowButton`) chooses, with
+`is_granted('gift.is_owner')`. The paths linked from
 emails (`/users/{id}/sections`, `/crews/{id}`, `/gift/{id}/show`, `/me/crews`,
 `/me/sections`) must not move.
 

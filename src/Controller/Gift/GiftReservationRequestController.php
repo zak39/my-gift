@@ -7,7 +7,7 @@ use App\Entity\Participant;
 use App\Entity\User;
 use App\Form\ParticipantReserveType;
 use App\Services\Lifecycle\GiftLifecycle;
-use App\Services\ListUrlGenerator;
+use App\Services\Url\ViewerUrlGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +23,7 @@ final class GiftReservationRequestController extends AbstractController
 {
     #[IsGranted('gift.can_offer', subject: 'gift')]
     #[Route('/reserved', name: 'app_gift_reserved', methods: ['GET', 'POST'])]
-    public function reserve(Gift $gift, Request $request, GiftLifecycle $giftLifecycle, ListUrlGenerator $listUrlGenerator): Response
+    public function reserve(Gift $gift, Request $request, GiftLifecycle $giftLifecycle, ViewerUrlGenerator $viewerUrlGenerator): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -35,7 +35,7 @@ final class GiftReservationRequestController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $giftLifecycle->reserved($gift, $participant, $user);
 
-            return $this->redirect($listUrlGenerator->giftList($gift));
+            return $this->redirect($viewerUrlGenerator->list($gift));
         }
 
         return $this->render('gift/reserved.html.twig', [
@@ -45,7 +45,7 @@ final class GiftReservationRequestController extends AbstractController
     }
 
     #[Route('/disengage', name: 'app_gift_disengage', methods: ['POST'])]
-    public function disengage(Gift $gift, Request $request, GiftLifecycle $giftLifecycle, ListUrlGenerator $listUrlGenerator): Response
+    public function disengage(Gift $gift, Request $request, GiftLifecycle $giftLifecycle, ViewerUrlGenerator $viewerUrlGenerator): Response
     {
         if (!$this->isCsrfTokenValid('disengage-gift-'.$gift->getId(), $request->request->get('_token'))) {
             throw $this->createAccessDeniedException();
@@ -56,6 +56,6 @@ final class GiftReservationRequestController extends AbstractController
 
         $giftLifecycle->disengage($gift, $user);
 
-        return $this->redirect($listUrlGenerator->giftList($gift));
+        return $this->redirect($viewerUrlGenerator->list($gift));
     }
 }

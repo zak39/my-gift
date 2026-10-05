@@ -54,7 +54,7 @@
             </twig:Molecule:Form:FieldGroup>
 
             <twig:Molecule:Form:Actions
-                :cancelUrl="path('app_gift_show', { id: gift.id })"
+                :cancelUrl="gift_owner_show_url(gift)"
                 submitLabel="Enregistrer les modifications" />
         {{ form_end(form) }}
     </twig:Organism:Form:Card>

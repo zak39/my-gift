@@ -11,7 +11,7 @@ use App\Services\BreadcrumbBuilder;
 use App\Services\Gift\CreateGift;
 use App\Services\Gift\DeleteGift;
 use App\Services\Gift\UpdateGift;
-use App\Services\ListUrlGenerator;
+use App\Services\Url\GiftOwnerUrlGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -60,8 +60,24 @@ final class GiftController extends AbstractController
     }
 
     #[IsGranted('gift.is_owner', subject: 'gift')]
+    #[Route('/{id}/show', name: 'app_me_gift_show', requirements: ['id' => '\d+'])]
+    public function show(Gift $gift, BreadcrumbBuilder $breadcrumbBuilder, Request $request): Response
+    {
+        // A crew's gift is shown from its crew's URL, as the links lead there.
+        if (null !== $gift->getCrew()) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->render('gift/show.html.twig', [
+            'gift' => $gift,
+            'breadcrumbs' => $breadcrumbBuilder->myGift($gift),
+            'btnReturn' => $request->headers->get('referer'),
+        ]);
+    }
+
+    #[IsGranted('gift.is_owner', subject: 'gift')]
     #[Route('/{id}/edit', name: 'app_gift_edit', requirements: ['id' => '\d+'])]
-    public function edit(Gift $gift, Request $request, UpdateGift $updateGift, EntityManagerInterface $entityManager, ListUrlGenerator $listUrlGenerator, BreadcrumbBuilder $breadcrumbBuilder): Response
+    public function edit(Gift $gift, Request $request, UpdateGift $updateGift, EntityManagerInterface $entityManager, GiftOwnerUrlGenerator $giftOwnerUrlGenerator, BreadcrumbBuilder $breadcrumbBuilder): Response
     {
         // A crew's gift is run from its crew's URL, as the links lead there.
         if (null !== $gift->getCrew()) {
@@ -79,7 +95,7 @@ final class GiftController extends AbstractController
             $updateGift($gift, $previousPrice);
 
             // Filed in a crew's section, the gift now lives in the crew's list.
-            return $this->redirect($listUrlGenerator->giftList($gift));
+            return $this->redirect($giftOwnerUrlGenerator->list($gift));
         }
 
         if ($form->isSubmitted()) {
