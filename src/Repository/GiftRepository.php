@@ -49,7 +49,7 @@ class GiftRepository extends ServiceEntityRepository
     private function createPersonalQueryBuilder(User $user): QueryBuilder
     {
         return $this->createQueryBuilder('g')
-            // A gift outside any section has no crew either. Selected for isOwnedBy().
+            // A gift outside any section has no crew either. Selected for getOwnership().
             ->leftJoin('g.section', 's')
             ->addSelect('s')
             ->where('g.createdBy = :user')

@@ -54,8 +54,15 @@ with a `ParticipantStatus` and, for contributions, an amount).
 
 A `Crew` (a ManyToMany `Crew::$members` with the same rights; its creator `Crew::$createdBy`
 cannot leave it and alone deletes it) shares a gift list: a `Section` with a crew belongs to the crew's list, not to its creator's. Ownership is
-`Gift::isOwnedBy()` / `Section::isOwnedBy()` (crew members, or else the creator), never a bare
-`getCreatedBy()` comparison. Invitations (`CrewInvitation`) run through the `crew_invitation`
+`$gift->getOwnership()->includes($user)` / `Section::isOwnedBy()` (crew members, or else the
+creator), never a bare `getCreatedBy()` comparison.
+
+`Gift` is composed by concern, never by variant: `getOwnership()` (`App\ValueObject\GiftOwnership`:
+`includes()`) and `getPool()` (`App\ValueObject\GiftPool`: what was collected, what
+remains, rounding and overshoot rules) are value objects built on demand, not persisted. In
+Twig, `gift.pool.totalContributed`, `gift.pool.complete`… — the Maizzle email sources use the
+same paths. No `GiftCrew`/`GiftPersonal` classes or Doctrine inheritance: a pool or a crew is
+a state a gift goes through, not a kind of gift. Invitations (`CrewInvitation`) run through the `crew_invitation`
 workflow and `src/Services/Lifecycle/CrewLifecycle.php`, as friend requests do through
 `FriendRequestLifecycle`.
 

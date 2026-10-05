@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
  * The owners of a gift manage it and stand on the receiving side: its creator, or every
- * member of the crew whose list it is filed in (Gift::isOwnedBy()).
+ * member of the crew whose list it is filed in (Gift::getOwnership()).
  */
 final class GiftOwnerVoter extends Voter
 {
@@ -32,6 +32,6 @@ final class GiftOwnerVoter extends Voter
         }
 
         /* @var Gift $subject */
-        return $subject->isOwnedBy($user);
+        return $subject->getOwnership()->includes($user);
     }
 }

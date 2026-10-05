@@ -43,7 +43,7 @@ class RemainingAmountValidator extends ConstraintValidator
 
         $remaining = $gift->getPrice() - $otherParticipantsTotal;
         */
-        $remaining = $gift->getRemainingAmountExcluding($participant);
+        $remaining = $gift->getPool()->getRemainingAmountExcluding($participant);
 
         if ($value > $remaining) {
             $this->context

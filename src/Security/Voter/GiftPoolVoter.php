@@ -36,7 +36,7 @@ final class GiftPoolVoter extends Voter
         /** @var Gift $subject */
         // Someone paying into the pool has nothing left to discover, owner or not: a
         // contributor who joined the gift's crew afterwards.
-        if (!$subject->isOwnedBy($user) || null !== $subject->getParticipant($user)) {
+        if (!$subject->getOwnership()->includes($user) || null !== $subject->getParticipant($user)) {
             return true;
         }
 

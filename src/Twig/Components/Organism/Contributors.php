@@ -29,7 +29,7 @@ final class Contributors
 
     public function isPooled(): bool
     {
-        return $this->gift->isPooled();
+        return $this->gift->getPool()->isPooled();
     }
 
     /**

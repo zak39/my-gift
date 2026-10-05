@@ -39,7 +39,7 @@ final class StatusButtons
     {
         return $this->canOffer()
             && $this->isPoolOpen()
-            && !$this->gift->isPoolComplete()
+            && !$this->gift->getPool()->isComplete()
         ;
     }
 

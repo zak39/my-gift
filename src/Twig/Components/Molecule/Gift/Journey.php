@@ -22,7 +22,7 @@ final class Journey
     {
         return [
             ['label' => 'Dans la liste', 'icon' => 'lucide:list-plus'],
-            $this->gift->isPooled()
+            $this->gift->getPool()->isPooled()
                 ? ['label' => 'Cagnotte', 'icon' => 'lucide:piggy-bank']
                 : ['label' => 'Réservé', 'icon' => 'lucide:bookmark-check'],
             ['label' => 'Prêt à offrir', 'icon' => 'lucide:package-check'],

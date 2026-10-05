@@ -94,7 +94,7 @@ class GiftLifecycle
         $this->entityManager->flush();
 
         // A reservation has a single participant: the one who just clicked, nobody to tell.
-        if ($gift->isPooled()) {
+        if ($gift->getPool()->isPooled()) {
             $this->eventDispatcher->dispatch(new GiftReadyEvent($gift));
         }
     }
@@ -106,7 +106,7 @@ class GiftLifecycle
      */
     public function priceChanged(Gift $gift, float $previousPrice): void
     {
-        if (!$gift->isPooled()) {
+        if (!$gift->getPool()->isPooled()) {
             return;
         }
 

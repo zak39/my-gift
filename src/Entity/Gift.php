@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Enum\GiftStatus;
 use App\Repository\GiftRepository;
+use App\ValueObject\GiftOwnership;
+use App\ValueObject\GiftPool;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -304,15 +306,9 @@ class Gift
      * and its pool keeps its surprise for them. Filed in a crew's list, the gift belongs
      * to the crew's members, whoever added it; anywhere else, to its creator.
      */
-    public function isOwnedBy(User $user): bool
+    public function getOwnership(): GiftOwnership
     {
-        $crew = $this->getCrew();
-
-        if (null !== $crew) {
-            return $crew->hasMember($user);
-        }
-
-        return $this->createdBy === $user;
+        return new GiftOwnership($this->createdBy, $this->getCrew());
     }
 
     public function getUpdateAt(): ?\DateTimeImmutable
@@ -377,81 +373,11 @@ class Gift
         return null;
     }
 
-    public function getTotalContributed(): float
-    {
-        $otherParticipantsTotal = 0;
-        foreach ($this->participants as $otherParticipant) {
-            $otherParticipantsTotal += $otherParticipant->getAmount() ?? 0;
-        }
-
-        return $otherParticipantsTotal;
-    }
-
-    public function getRemainingAmount(): float
-    {
-        return $this->getRemainingAmountExcluding();
-    }
-
     /**
-     * Clamped for display: a price lowered below what is already collected makes
-     * getRemainingAmount() negative, which getExceededAmount() reports instead.
+     * The money its friends put together towards it, empty when nobody chipped in.
      */
-    public function getRemainingToCollect(): float
+    public function getPool(): GiftPool
     {
-        return max(0, $this->getRemainingAmount());
-    }
-
-    /**
-     * The price is a target the creator may lower after people chipped in: what the
-     * pool collected beyond it, for the contributors to settle between themselves.
-     */
-    public function getExceededAmount(): float
-    {
-        return max(0, -$this->getRemainingAmount());
-    }
-
-    /**
-     * Several people chipping in, as opposed to a single reservation with no money.
-     */
-    public function isPooled(): bool
-    {
-        return $this->getTotalContributed() > 0
-            || $this->status?->isPoolOpen()
-        ;
-    }
-
-    public function isPoolComplete(): bool
-    {
-        return $this->price > 0 && $this->getRemainingAmount() <= 0;
-    }
-
-    public function getContributionPercent(): int
-    {
-        if (!$this->price) {
-            return 0;
-        }
-
-        return (int) min(100, round($this->getTotalContributed() / $this->price * 100));
-    }
-
-    /**
-     * Rounded to the cent: amounts are floats, so 60.30 - (20.10 + 40.20) gives
-     * -7.1e-15 instead of 0, which reads as a pool that exceeds its target.
-     *
-     * The excluded participant is skipped rather than subtracted: a new one being
-     * validated is not in the collection yet.
-     */
-    public function getRemainingAmountExcluding(?Participant $excluded = null): float
-    {
-        $total = 0;
-        foreach ($this->participants as $participant) {
-            if ($excluded === $participant) {
-                continue;
-            }
-
-            $total += $participant->getAmount();
-        }
-
-        return round($this->price - $total, 2);
+        return new GiftPool($this->price, $this->participants, $this->status);
     }
 }

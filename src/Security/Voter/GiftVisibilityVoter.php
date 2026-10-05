@@ -47,7 +47,7 @@ final class GiftVisibilityVoter extends Voter
         }
 
         /** @var Gift $subject */
-        if ($subject->isOwnedBy($user)) {
+        if ($subject->getOwnership()->includes($user)) {
             return true;
         }
 

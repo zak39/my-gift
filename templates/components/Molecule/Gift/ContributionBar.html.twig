@@ -2,28 +2,28 @@
     <div {{ attributes.defaults({ class: 'mt-4 rounded-box border border-base-300 bg-base-200/60 p-3' }) }}>
         <div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
             <p class="text-sm">
-                <span class="font-semibold tabular-nums">{{ gift.totalContributed|format_currency('EUR') }}</span>
+                <span class="font-semibold tabular-nums">{{ gift.pool.totalContributed|format_currency('EUR') }}</span>
                 <span class="text-base-content/70">réunis sur</span>
                 <span class="font-semibold tabular-nums">{{ gift.price|format_currency('EUR') }}</span>
             </p>
-            <p class="text-sm font-semibold tabular-nums">{{ gift.contributionPercent }} %</p>
+            <p class="text-sm font-semibold tabular-nums">{{ gift.pool.contributionPercent }} %</p>
         </div>
 
         <progress class="progress mt-2 w-full {{ computed.progressColor }}"
-            value="{{ gift.contributionPercent }}"
+            value="{{ gift.pool.contributionPercent }}"
             max="100"
             aria-label="Cagnotte réunie pour {{ gift.title }}"></progress>
 
         <p class="mt-1 flex items-center gap-1.5 text-xs text-base-content/70">
-            {% if gift.exceededAmount > 0 %}
+            {% if gift.pool.exceededAmount > 0 %}
                 <twig:ux:icon name="lucide:circle-alert" class="size-3.5 shrink-0 text-warning" />
-                Objectif dépassé de {{ gift.exceededAmount|format_currency('EUR') }}
-            {% elseif gift.poolComplete %}
+                Objectif dépassé de {{ gift.pool.exceededAmount|format_currency('EUR') }}
+            {% elseif gift.pool.complete %}
                 <twig:ux:icon name="lucide:circle-check" class="size-3.5 shrink-0 text-success" />
                 Cagnotte complète, le cadeau peut être offert
             {% else %}
                 <twig:ux:icon name="lucide:hand-coins" class="size-3.5 shrink-0" />
-                Il reste {{ gift.remainingToCollect|format_currency('EUR') }} à réunir
+                Il reste {{ gift.pool.remainingToCollect|format_currency('EUR') }} à réunir
             {% endif %}
         </p>
     </div>
