@@ -8,7 +8,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Back to the page a button was on, for actions offered on several pages (the friend
- * buttons sit on the search, which keeps its query and page in the URL).
+ * buttons sit on the search, which keeps its query and page in the URL), and the URL of
+ * a page's « Retour » link.
  */
 final class RefererRedirector
 {
@@ -17,17 +18,19 @@ final class RefererRedirector
     ) {
     }
 
-    /**
-     * The referer comes from the client, hence the same-site check before following it.
-     */
     public function back(Request $request, string $fallbackRoute): RedirectResponse
+    {
+        return new RedirectResponse($this->localReferer($request) ?? $this->urlGenerator->generate($fallbackRoute));
+    }
+
+    /**
+     * The page the user came from, if it is one of this site's: the referer comes from the
+     * client, so an external or forged one is dropped (null) rather than linked to.
+     */
+    public function localReferer(Request $request): ?string
     {
         $referer = $request->headers->get('referer');
 
-        if (null !== $referer && str_starts_with($referer, $request->getSchemeAndHttpHost().'/')) {
-            return new RedirectResponse($referer);
-        }
-
-        return new RedirectResponse($this->urlGenerator->generate($fallbackRoute));
+        return null !== $referer && str_starts_with($referer, $request->getSchemeAndHttpHost().'/') ? $referer : null;
     }
 }

@@ -122,17 +122,29 @@ voter guards it:
 
 - `Me/` — `/me/...`, the logged-in user's own space (dashboard, list, profile, friends,
   favorites, crews, received invitations). No user id in the URL; nested resource ids
-  still get their voter (`section.is_owner`, `gift.is_owner`…)
+  still get their voter (`section.is_owner`, `gift.is_owner`…), and a crew's section or
+  gift is not found there
 - `User/` — `/users/{id}/...`, another user: search, their list (`user.can_see_gifts`),
   friendship actions
 - `Crew/` — `/crews/{id}/...`, one crew run by its members (`crew.is_member`); a nested
-  section or gift must belong to that crew (checked, else 404)
+  section or gift must belong to that crew
 - `Gift/` — `/gift/{id}/...`, a gift from the giver's side: its page, favorites,
   reservation / contribution / completion requests. Its owners see the same page from
   their own URL (`/me/gifts/{id}/show`, `/crews/{id}/gifts/{gift}/show`); one opening
   `/gift/{id}/show` is redirected there. A route `condition` cannot tell them apart: it
   runs before the firewall knows the user, so each point of view gets its own path
 - `Security/` — login, registration, password reset; `Admin/` — EasyAdmin
+
+A nested resource is loaded through the list of its URL, never checked after loading:
+`#[MapEntity(expr: 'repository.findOneInCrew(gift, id)')]`, `repository.findOnePersonal(id)`,
+`repository.findOneBy({"id": section, "crew": id})`. Not found in that list means 404, before
+any `#[IsGranted]` runs, so an outsider cannot tell the id exists. Under `/me`, the owner
+voter of a gift or a section answers 404 too (`#[IsGranted('gift.is_owner', ..., statusCode:
+404)]`): someone else's gift or section does not exist in the user's own space. Invitations
+and friend requests are not concerned: their POST actions check a CSRF token, then the
+workflow guards, and answer with a flash. Nor is an optional query parameter, which is no
+nested resource: `/me/gifts/new?section=` ignores a section that is not the user's own (the
+gift is created unfiled) instead of answering 404.
 
 The same resource may have a controller per folder (`Me/SectionController`,
 `User/SectionController`, `Crew/SectionController`), one per point of view. What two of

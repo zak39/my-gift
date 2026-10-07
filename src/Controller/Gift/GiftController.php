@@ -5,6 +5,7 @@ namespace App\Controller\Gift;
 use App\Entity\Gift;
 use App\Entity\User;
 use App\Services\BreadcrumbBuilder;
+use App\Services\RefererRedirector;
 use App\Services\Url\GiftOwnerUrlGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +24,7 @@ final class GiftController extends AbstractController
 {
     #[IsGranted('gift.can_see', subject: 'gift')]
     #[Route('/show', name: 'app_gift_show')]
-    public function show(Gift $gift, BreadcrumbBuilder $breadcrumbBuilder, GiftOwnerUrlGenerator $giftOwnerUrlGenerator, Request $request): Response
+    public function show(Gift $gift, BreadcrumbBuilder $breadcrumbBuilder, GiftOwnerUrlGenerator $giftOwnerUrlGenerator, RefererRedirector $refererRedirector, Request $request): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -36,7 +37,7 @@ final class GiftController extends AbstractController
         return $this->render('gift/show.html.twig', [
             'gift' => $gift,
             'breadcrumbs' => $breadcrumbBuilder->gift($gift),
-            'btnReturn' => $request->headers->get('referer'),
+            'btnReturn' => $refererRedirector->localReferer($request),
         ]);
     }
 }

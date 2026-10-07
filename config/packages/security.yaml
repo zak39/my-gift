@@ -45,8 +45,9 @@ security:
     # Note: Only the *first* matching rule is applied
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
-        # The user's own space (Controller/Me): every page there is theirs.
-        - { path: ^/me, roles: IS_AUTHENTICATED }
+        # The user's own space (Controller/Me): every page there is theirs. Bounded, so a
+        # future /mentions-legales or /merci is not taken for it.
+        - { path: ^/me(/|$), roles: IS_AUTHENTICATED }
 
 when@test:
     security:

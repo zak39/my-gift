@@ -12,6 +12,7 @@ use App\Services\BreadcrumbBuilder;
 use App\Services\Section\CreateSection;
 use App\Services\Section\DeleteSection;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -69,15 +70,10 @@ final class SectionController extends AbstractController
         ]);
     }
 
-    #[IsGranted('section.is_owner', subject: 'section')]
+    #[IsGranted('section.is_owner', subject: 'section', statusCode: 404)]
     #[Route('/{id}/edit', name: 'app_section_edit', requirements: ['id' => '\d+'])]
-    public function edit(Section $section, Request $request, EntityManagerInterface $entityManager, BreadcrumbBuilder $breadcrumbBuilder): Response
+    public function edit(#[MapEntity(expr: 'repository.findOneBy({"id": id, "crew": null})')] Section $section, Request $request, EntityManagerInterface $entityManager, BreadcrumbBuilder $breadcrumbBuilder): Response
     {
-        // A crew's section is run from its crew's URL, as the links lead there.
-        if (null !== $section->getCrew()) {
-            throw $this->createNotFoundException();
-        }
-
         $form = $this->createForm(SectionType::class, $section);
         $form->handleRequest($request);
 
@@ -101,12 +97,12 @@ final class SectionController extends AbstractController
         ]);
     }
 
-    #[IsGranted('section.is_owner', subject: 'section')]
+    #[IsGranted('section.is_owner', subject: 'section', statusCode: 404)]
     #[Route('/{id}/delete', name: 'app_section_delete', requirements: ['id' => '\d+'], methods: ['DELETE'])]
-    public function delete(Section $section, DeleteSection $deleteSection): Response
+    public function delete(#[MapEntity(expr: 'repository.findOneBy({"id": id, "crew": null})')] Section $section, Request $request, DeleteSection $deleteSection): Response
     {
-        if (null !== $section->getCrew()) {
-            throw $this->createNotFoundException();
+        if (!$this->isCsrfTokenValid("section-delete-{$section->getId()}", $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
         }
 
         $deleteSection($section);

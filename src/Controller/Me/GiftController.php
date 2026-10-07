@@ -11,8 +11,10 @@ use App\Services\BreadcrumbBuilder;
 use App\Services\Gift\CreateGift;
 use App\Services\Gift\DeleteGift;
 use App\Services\Gift\UpdateGift;
+use App\Services\RefererRedirector;
 use App\Services\Url\GiftOwnerUrlGenerator;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,6 +39,8 @@ final class GiftController extends AbstractController
 
         // "Ajouter un cadeau" on a section files the gift straight into it. The submitted
         // form posts back to the same URL, so the section is set again before saving.
+        // An optional hint, not a nested resource of the URL: a section that is not one of
+        // the user's own is ignored (the gift is created unfiled) rather than a 404.
         $section = $sectionRepository->find($request->query->getInt('section'));
         if (null !== $section && null === $section->getCrew() && $this->isGranted('section.is_owner', $section)) {
             $gift->setSection($section);
@@ -59,31 +63,22 @@ final class GiftController extends AbstractController
         ]);
     }
 
-    #[IsGranted('gift.is_owner', subject: 'gift')]
+    #[IsGranted('gift.is_owner', subject: 'gift', statusCode: 404)]
     #[Route('/{id}/show', name: 'app_me_gift_show', requirements: ['id' => '\d+'])]
-    public function show(Gift $gift, BreadcrumbBuilder $breadcrumbBuilder, Request $request): Response
+    public function show(#[MapEntity(expr: 'repository.findOnePersonal(id)')] Gift $gift, BreadcrumbBuilder $breadcrumbBuilder, GiftOwnerUrlGenerator $giftOwnerUrlGenerator, RefererRedirector $refererRedirector, Request $request): Response
     {
-        // A crew's gift is shown from its crew's URL, as the links lead there.
-        if (null !== $gift->getCrew()) {
-            throw $this->createNotFoundException();
-        }
-
         return $this->render('gift/show.html.twig', [
             'gift' => $gift,
             'breadcrumbs' => $breadcrumbBuilder->myGift($gift),
-            'btnReturn' => $request->headers->get('referer'),
+            // Opened from an email, with no referer: back to the owner's list, not the public one.
+            'btnReturn' => $refererRedirector->localReferer($request) ?? $giftOwnerUrlGenerator->list($gift),
         ]);
     }
 
-    #[IsGranted('gift.is_owner', subject: 'gift')]
+    #[IsGranted('gift.is_owner', subject: 'gift', statusCode: 404)]
     #[Route('/{id}/edit', name: 'app_gift_edit', requirements: ['id' => '\d+'])]
-    public function edit(Gift $gift, Request $request, UpdateGift $updateGift, EntityManagerInterface $entityManager, GiftOwnerUrlGenerator $giftOwnerUrlGenerator, BreadcrumbBuilder $breadcrumbBuilder): Response
+    public function edit(#[MapEntity(expr: 'repository.findOnePersonal(id)')] Gift $gift, Request $request, UpdateGift $updateGift, EntityManagerInterface $entityManager, GiftOwnerUrlGenerator $giftOwnerUrlGenerator, BreadcrumbBuilder $breadcrumbBuilder): Response
     {
-        // A crew's gift is run from its crew's URL, as the links lead there.
-        if (null !== $gift->getCrew()) {
-            throw $this->createNotFoundException();
-        }
-
         // Read before handleRequest(), which writes the submitted price into $gift.
         $previousPrice = $gift->getPrice();
 
@@ -111,12 +106,12 @@ final class GiftController extends AbstractController
         ]);
     }
 
-    #[IsGranted('gift.is_owner', subject: 'gift')]
+    #[IsGranted('gift.is_owner', subject: 'gift', statusCode: 404)]
     #[Route('/{id}/delete', name: 'app_gift_delete', requirements: ['id' => '\d+'], methods: ['DELETE'])]
-    public function delete(Gift $gift, DeleteGift $deleteGift): Response
+    public function delete(#[MapEntity(expr: 'repository.findOnePersonal(id)')] Gift $gift, Request $request, DeleteGift $deleteGift): Response
     {
-        if (null !== $gift->getCrew()) {
-            throw $this->createNotFoundException();
+        if (!$this->isCsrfTokenValid("gift-delete-{$gift->getId()}", $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
         }
 
         $deleteGift($gift);

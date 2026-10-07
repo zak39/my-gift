@@ -4,15 +4,16 @@ namespace App\Controller\Crew;
 
 use App\Entity\Crew;
 use App\Entity\Gift;
+use App\Entity\Section;
 use App\Entity\User;
 use App\Form\GiftCrewMemberEditType;
 use App\Form\GiftEditType;
 use App\Form\GiftType;
-use App\Repository\SectionRepository;
 use App\Services\BreadcrumbBuilder;
 use App\Services\Gift\CreateGift;
 use App\Services\Gift\DeleteGift;
 use App\Services\Gift\UpdateGift;
+use App\Services\RefererRedirector;
 use App\Services\Url\GiftOwnerUrlGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -23,8 +24,9 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
- * The gifts of a crew's list, run by any of its members. The URL names the crew: a gift
- * of another list is not found here, whatever its id. The actions in Services\Gift hold what
+ * The gifts of a crew's list, run by any of its members. The URL names the crew, and a
+ * gift is loaded through it (GiftRepository::findOneInCrew()): one of another list is not
+ * found here, whatever its id. The actions in Services\Gift hold what
  * this and Me\GiftController do alike.
  */
 #[IsGranted('IS_AUTHENTICATED')]
@@ -36,13 +38,13 @@ final class GiftController extends AbstractController
      * A crew's gift is always filed: the "Ajouter un cadeau" of a section passes it.
      */
     #[Route('/new', name: 'app_crew_gift_create')]
-    public function create(Crew $crew, Request $request, CreateGift $createGift, SectionRepository $sectionRepository, BreadcrumbBuilder $breadcrumbBuilder): Response
-    {
-        $section = $sectionRepository->find($request->query->getInt('section'));
-        if (null === $section || $section->getCrew() !== $crew) {
-            throw $this->createNotFoundException();
-        }
-
+    public function create(
+        Crew $crew,
+        #[MapEntity(expr: 'repository.findOneBy({"id": request.query.getInt("section"), "crew": id})')] Section $section,
+        Request $request,
+        CreateGift $createGift,
+        BreadcrumbBuilder $breadcrumbBuilder,
+    ): Response {
         /** @var User $user */
         $user = $this->getUser();
         $gift = (new Gift())->setSection($section);
@@ -65,25 +67,21 @@ final class GiftController extends AbstractController
     }
 
     #[Route('/{gift}/show', name: 'app_crew_gift_show', requirements: ['gift' => '\d+'])]
-    public function show(Crew $crew, #[MapEntity(id: 'gift')] Gift $gift, BreadcrumbBuilder $breadcrumbBuilder, Request $request): Response
+    public function show(Crew $crew, #[MapEntity(expr: 'repository.findOneInCrew(gift, id)')] Gift $gift, BreadcrumbBuilder $breadcrumbBuilder, RefererRedirector $refererRedirector, Request $request): Response
     {
-        if ($gift->getCrew() !== $crew) {
-            throw $this->createNotFoundException();
-        }
-
         return $this->render('gift/show.html.twig', [
             'gift' => $gift,
             'breadcrumbs' => $breadcrumbBuilder->crewGift($gift),
-            'btnReturn' => $request->headers->get('referer'),
+            // Opened from an email, with no referer: back to the crew's list.
+            'btnReturn' => $refererRedirector->localReferer($request) ?? $this->generateUrl('app_crew_show', ['id' => $crew->getId()]),
         ]);
     }
 
     #[Route('/{gift}/edit', name: 'app_crew_gift_edit', requirements: ['gift' => '\d+'])]
-    public function edit(Crew $crew, #[MapEntity(id: 'gift')] Gift $gift, Request $request, UpdateGift $updateGift, EntityManagerInterface $entityManager, GiftOwnerUrlGenerator $giftOwnerUrlGenerator, BreadcrumbBuilder $breadcrumbBuilder): Response
+    public function edit(Crew $crew, #[MapEntity(expr: 'repository.findOneInCrew(gift, id)')] Gift $gift, Request $request, UpdateGift $updateGift, EntityManagerInterface $entityManager, GiftOwnerUrlGenerator $giftOwnerUrlGenerator, BreadcrumbBuilder $breadcrumbBuilder): Response
     {
-        if ($gift->getCrew() !== $crew) {
-            throw $this->createNotFoundException();
-        }
+        // $crew is unused here, yet required: it is the subject of the class's
+        // #[IsGranted('crew.is_member', subject: 'crew')], found by its argument name.
 
         /** @var User $user */
         $user = $this->getUser();
@@ -117,10 +115,10 @@ final class GiftController extends AbstractController
     }
 
     #[Route('/{gift}/delete', name: 'app_crew_gift_delete', requirements: ['gift' => '\d+'], methods: ['DELETE'])]
-    public function delete(Crew $crew, #[MapEntity(id: 'gift')] Gift $gift, DeleteGift $deleteGift): Response
+    public function delete(Crew $crew, #[MapEntity(expr: 'repository.findOneInCrew(gift, id)')] Gift $gift, Request $request, DeleteGift $deleteGift): Response
     {
-        if ($gift->getCrew() !== $crew) {
-            throw $this->createNotFoundException();
+        if (!$this->isCsrfTokenValid("gift-delete-{$gift->getId()}", $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
         }
 
         $deleteGift($gift);

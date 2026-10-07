@@ -7,6 +7,7 @@ use App\Repository\CrewRepository;
 use App\Repository\GiftRepository;
 use App\Repository\SectionRepository;
 use App\Services\BreadcrumbBuilder;
+use App\Services\RefererRedirector;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +23,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class SectionController extends AbstractController
 {
     #[Route('/sections', name: 'app_section_user_page')]
-    public function index(User $user, GiftRepository $giftRepository, SectionRepository $sectionRepository, CrewRepository $crewRepository, BreadcrumbBuilder $breadcrumbBuilder, Request $request): Response
+    public function index(User $user, GiftRepository $giftRepository, SectionRepository $sectionRepository, CrewRepository $crewRepository, BreadcrumbBuilder $breadcrumbBuilder, RefererRedirector $refererRedirector, Request $request): Response
     {
         if (!$this->isGranted('user.can_see_gifts', $user)) {
             // Neither sections nor gifts: what the template does not receive, it cannot show.
@@ -49,7 +50,7 @@ final class SectionController extends AbstractController
             'crews' => $crewRepository->findForMemberWithGifts($user),
             'user' => $user,
             'breadcrumbs' => $breadcrumbBuilder->userList($user),
-            'btnReturn' => $request->headers->get('referer'),
+            'btnReturn' => $refererRedirector->localReferer($request),
         ]);
     }
 }

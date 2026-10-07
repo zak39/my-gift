@@ -8,8 +8,9 @@ use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
- * Grants access to a page addressed by a user id only to that very user,
- * for routes such as /section/{id} where {id} is the owner of the list.
+ * Whether a page addressed by a user id is that very user's: on /users/{id}/sections, the
+ * owner previewing their own public page gets its owner actions (User\SectionController,
+ * Organism:GiftListHeader:Actions).
  */
 final class UserOwnerVoter extends Voter
 {

@@ -18,8 +18,8 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
- * The sections of a crew's list, run by any of its members. The URL names the crew: a
- * section of another crew is not found here, whatever its id.
+ * The sections of a crew's list, run by any of its members. The URL names the crew, and a
+ * section is loaded through it: one of another crew is not found here, whatever its id.
  */
 #[IsGranted('IS_AUTHENTICATED')]
 #[IsGranted('crew.is_member', subject: 'crew')]
@@ -53,12 +53,8 @@ final class SectionController extends AbstractController
     }
 
     #[Route('/{section}/edit', name: 'app_crew_section_edit', requirements: ['section' => '\d+'])]
-    public function edit(Crew $crew, #[MapEntity(id: 'section')] Section $section, Request $request, EntityManagerInterface $entityManager, BreadcrumbBuilder $breadcrumbBuilder): Response
+    public function edit(Crew $crew, #[MapEntity(expr: 'repository.findOneBy({"id": section, "crew": id})')] Section $section, Request $request, EntityManagerInterface $entityManager, BreadcrumbBuilder $breadcrumbBuilder): Response
     {
-        if ($section->getCrew() !== $crew) {
-            throw $this->createNotFoundException();
-        }
-
         $form = $this->createForm(SectionType::class, $section);
         $form->handleRequest($request);
 
@@ -83,10 +79,10 @@ final class SectionController extends AbstractController
     }
 
     #[Route('/{section}/delete', name: 'app_crew_section_delete', requirements: ['section' => '\d+'], methods: ['DELETE'])]
-    public function delete(Crew $crew, #[MapEntity(id: 'section')] Section $section, DeleteSection $deleteSection): Response
+    public function delete(Crew $crew, #[MapEntity(expr: 'repository.findOneBy({"id": section, "crew": id})')] Section $section, Request $request, DeleteSection $deleteSection): Response
     {
-        if ($section->getCrew() !== $crew) {
-            throw $this->createNotFoundException();
+        if (!$this->isCsrfTokenValid("section-delete-{$section->getId()}", $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
         }
 
         $deleteSection($section);

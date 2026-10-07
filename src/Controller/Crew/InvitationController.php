@@ -62,14 +62,10 @@ final class InvitationController extends AbstractController
     #[Route('/invitations/{invitation}/cancel', name: 'app_crew_invitation_cancel', requirements: ['invitation' => '\d+'], methods: ['POST'])]
     public function cancel(
         Crew $crew,
-        #[MapEntity(id: 'invitation')] CrewInvitation $invitation,
+        #[MapEntity(expr: 'repository.findOneBy({"id": invitation, "crew": id})')] CrewInvitation $invitation,
         Request $request,
         CrewLifecycle $crewLifecycle,
     ): Response {
-        if ($invitation->getCrew() !== $crew) {
-            throw $this->createNotFoundException();
-        }
-
         if (!$this->isCsrfTokenValid("crew-invitation-cancel-{$invitation->getId()}", $request->request->get('_token'))) {
             throw $this->createAccessDeniedException();
         }

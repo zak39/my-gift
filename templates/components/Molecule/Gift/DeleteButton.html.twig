@@ -25,6 +25,7 @@
         <twig:block name="actionButtons">
             <form method="post" action="{{ gift_delete_url(gift) }}">
                 <input type="hidden" name="_method" value="DELETE">
+                <input type="hidden" name="_token" value="{{ csrf_token('gift-delete-' ~ gift.id) }}">
                 <button type="submit" class="btn btn-error">
                     <twig:ux:icon name="heroicons:trash-16-solid" />
                     Supprimer
