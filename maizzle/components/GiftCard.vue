@@ -40,7 +40,7 @@
         <Raw>{% endif %}</Raw>
 
         <h2 class="m-0 mt-3 text-base leading-snug font-semibold"><Raw>{{ gift.title|u.truncate(120, '...', false) }}</Raw></h2>
-        <p class="m-0 mt-1 text-2xl font-bold"><Raw>{{ gift.price ? gift.price|format_currency('EUR') : 'Prix libre' }}</Raw></p>
+        <p class="m-0 mt-1 text-2xl font-bold"><Raw>{{ gift.price|format_currency('EUR') }}</Raw></p>
 
         <Raw>{% if gift.description %}</Raw>
           <p class="gift-card-muted m-0 mt-4 text-sm"><Raw>{{ gift.description|u.truncate(160, '...', false) }}</Raw></p>

@@ -9,7 +9,7 @@
             {{ gift.title }}
         </h1>
         <p class="mt-2 text-2xl font-semibold tabular-nums text-base-content/80">
-            {{ gift.price ? gift.price|format_currency('EUR') : 'Prix libre' }}
+            {{ gift.price|format_currency('EUR') }}
         </p>
     </div>
 

@@ -55,7 +55,7 @@ class Gift
 
     #[Assert\NotBlank(message: 'Vous devez renseigner le prix de votre cadeau')]
     #[Assert\Positive(message: 'Le prix de votre cadeau doit être possitif')]
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column]
     private ?float $price = null;
 
     /**

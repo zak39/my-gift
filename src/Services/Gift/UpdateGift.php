@@ -18,9 +18,10 @@ final class UpdateGift
     }
 
     /**
-     * @param float|null $previousPrice read before the form wrote the submitted one
+     * @param float $previousPrice read before the form wrote the submitted one; a saved
+     *                             gift always has a price (NOT NULL column)
      */
-    public function __invoke(Gift $gift, ?float $previousPrice): void
+    public function __invoke(Gift $gift, float $previousPrice): void
     {
         $this->entityManager->flush();
 
