@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Enum\GiftStatus;
 use App\Services\ImageDownloader;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 /**
  * Saves a gift its author just filled in, in their own list (Me\GiftController) or in a
@@ -17,6 +18,7 @@ final class CreateGift
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly ImageDownloader $imageDownloader,
+        private readonly SluggerInterface $slugger,
     ) {
     }
 
@@ -37,7 +39,7 @@ final class CreateGift
             ->setCreatedAt(new \DateTimeImmutable())
             ->setCreatedBy($author)
             ->setStatus(GiftStatus::CREATED)
-            ->setSlug(strtolower(str_replace(' ', '-', $gift->getTitle())))
+            ->setSlug($this->slugger->slug($gift->getTitle())->lower()->toString())
         ;
 
         $this->entityManager->persist($gift);
