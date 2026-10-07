@@ -43,7 +43,7 @@ final class UserGiftsVisibilityVoter extends Voter
             return true;
         }
 
-        $vote?->addReason('Seuls les amis peuvent voir cette liste.');
+        $vote?->addReason('Seuls les amis peuvent voir ces sections.');
 
         return false;
     }

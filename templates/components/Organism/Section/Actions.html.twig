@@ -47,7 +47,7 @@
         <twig:block name="message">
             <p class="py-4">Est-ce que vous êtes sûr de supprimer la section <b>{{ section.title }}</b> ?</p>
             {% if section.crew %}
-                <p class="py-4">La suppression de la section ne supprimera pas les cadeaux. Ils quitteront la liste du groupe et retourneront dans les <b>Cadeaux sans section</b> de celles et ceux qui les ont ajoutés.</p>
+                <p class="py-4">La suppression de la section ne supprimera pas les cadeaux. Ils quitteront les sections du groupe et retourneront dans les <b>Cadeaux sans section</b> de celles et ceux qui les ont ajoutés.</p>
             {% else %}
                 <p class="py-4">La suppression de la section ne supprimera pas les cadeaux. Ils seront déplacer dans la section <b>Cadeaux sans Section</b></p>
             {% endif %}

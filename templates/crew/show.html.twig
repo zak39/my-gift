@@ -64,7 +64,7 @@
         </div>
     {% elseif ownerView %}
         <twig:molecule:EmptyContent class="mt-6"
-            title="La liste du groupe est encore vide"
+            title="Le groupe n'a pas encore de section"
             description="Créez une première section, « Jouets » ou « Livres » par exemple, puis ajoutez-y des cadeaux : chaque membre peut le faire.">
             <twig:block name="action_buttons">
                 <a href="{{ path('app_crew_section_new', { id: crew.id }) }}" class="btn btn-primary mt-6">

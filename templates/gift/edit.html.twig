@@ -22,7 +22,7 @@
 
             <twig:Molecule:Form:FieldGroup
                 title="Le cadeau"
-                description="Ce que vos amis verront en premier dans votre liste.">
+                description="Ce que vos amis verront en premier dans vos sections.">
                 <div class="grid gap-4 sm:grid-cols-[minmax(0,1fr)_11rem]">
                     {{ form_row(form.title) }}
                     {{ form_row(form.price) }}
@@ -38,7 +38,7 @@
 
             <twig:Molecule:Form:FieldGroup
                 title="L'image"
-                description="Elle illustre le cadeau sur sa fiche et dans votre liste.">
+                description="Elle illustre le cadeau sur sa fiche et dans vos sections.">
                 <twig:Molecule:Gift:ImageField
                     :field="form.imageFile"
                     :fallbackUrl="gift.image ? vich_uploader_asset(gift, 'imageFile') : ''"
@@ -48,7 +48,7 @@
 
             <twig:Molecule:Form:FieldGroup
                 title="Rangement et visibilité"
-                description="Où le cadeau apparaît dans votre liste, et qui peut le voir.">
+                description="Dans quelle section le cadeau apparaît, et qui peut le voir.">
                 {{ form_row(form.section) }}
                 {{ form_row(form.isPublic) }}
             </twig:Molecule:Form:FieldGroup>

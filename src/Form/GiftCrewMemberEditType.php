@@ -27,7 +27,7 @@ class GiftCrewMemberEditType extends AbstractType
                 'class' => Section::class,
                 'choices' => $gift->getCrew()->getSections()->getValues(),
                 'choice_label' => 'title',
-                'help' => 'Le cadeau appartient à la liste du groupe : il ne peut changer que de section.',
+                'help' => 'Le cadeau appartient au groupe : il ne peut changer que pour une autre de ses sections.',
                 // Required is not enough: an empty value can still be posted.
                 'constraints' => [new Assert\NotNull(message: 'Choisissez une section du groupe.')],
             ])

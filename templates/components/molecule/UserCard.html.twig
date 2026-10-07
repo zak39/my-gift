@@ -8,7 +8,7 @@
             <h2 class="card-title min-w-0 line-clamp-2 wrap-anywhere" title="{{ user.fullname }}">{{ user.fullname }}</h2>
         </div>
 
-        {# "Voir sa liste" stays for everyone: for a non-friend, it leads to the private list page. #}
+        {# "Voir ses sections" stays for everyone: for a non-friend, it leads to the private list page. #}
         <div class="card-actions mt-auto items-center justify-end">
             <twig:Molecule:Friend:ActionButtons class="justify-end" :user="user" />
             <twig:atomic:ButtonLink
@@ -17,7 +17,7 @@
                 style="ghost"
                 :to="path('app_section_user_page', { id: user.id })">
                 <twig:block name="name">
-                    <span>Voir sa liste</span>
+                    <span>Voir ses sections</span>
                 </twig:block>
                 <twig:block name="icon">
                     <twig:ux:icon name="lucide:arrow-right" class="size-4" />

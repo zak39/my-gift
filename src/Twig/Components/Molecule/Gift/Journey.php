@@ -21,7 +21,7 @@ final class Journey
     public function getSteps(): array
     {
         return [
-            ['label' => 'Dans la liste', 'icon' => 'lucide:list-plus'],
+            ['label' => 'Ajouté', 'icon' => 'lucide:list-plus'],
             $this->gift->getPool()->isPooled()
                 ? ['label' => 'Cagnotte', 'icon' => 'lucide:piggy-bank']
                 : ['label' => 'Réservé', 'icon' => 'lucide:bookmark-check'],

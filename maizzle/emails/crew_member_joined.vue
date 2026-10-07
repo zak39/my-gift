@@ -38,11 +38,11 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
                     </div>
 
                     <p>
-                        Vous tenez désormais la liste ensemble : chacun peut y ajouter des cadeaux, et ses ami·es la verront aussi.
+                        Vous tenez désormais les sections ensemble : chacun peut y ajouter des cadeaux, et ses ami·es les verront aussi.
                     </p>
 
                     <div class="text-center my-6">
-                        <AccentButton label="Voir la liste du groupe" to="{{ url }}" />
+                        <AccentButton label="Voir les sections du groupe" to="{{ url }}" />
                     </div>
                 </div>
             </Container>

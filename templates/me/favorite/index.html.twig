@@ -36,7 +36,7 @@
                             style="ghost"
                             :to="path('app_section_user_page', { id: group.user.id })">
                             <twig:block name="name">
-                                <span>Voir sa liste</span>
+                                <span>Voir ses sections</span>
                             </twig:block>
                             <twig:block name="icon">
                                 <twig:ux:icon name="lucide:arrow-right" class="size-4" />
@@ -64,7 +64,7 @@
     {% else %}
         <twig:molecule:EmptyContentHero class="mt-6"
             title="Vous n'avez pas encore mis de cadeau en favoris"
-            description="Parcourez les listes de vos amis et gardez sous la main les cadeaux qui vous plaisent.">
+            description="Parcourez les sections de vos amis et gardez sous la main les cadeaux qui vous plaisent.">
             <twig:block name="action_buttons">
                 {# Solid primary: the single call to action of an otherwise empty page. #}
                 <twig:atomic:ButtonLink

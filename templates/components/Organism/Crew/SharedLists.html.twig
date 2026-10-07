@@ -7,7 +7,7 @@
                 {{ ownerView ? 'Mes groupes' : 'Les groupes de ' ~ user.firstname }}
             </h2>
             <p class="mt-1 text-sm text-base-content/70">
-                {{ ownerView ? 'Les listes de cadeaux que vous tenez à plusieurs.' : 'Les listes de cadeaux que ' ~ user.firstname ~ ' tient à plusieurs.' }}
+                {{ ownerView ? 'Les sections de cadeaux que vous tenez à plusieurs.' : 'Les sections de cadeaux que ' ~ user.firstname ~ ' tient à plusieurs.' }}
             </p>
         </div>
         {% if ownerView %}
@@ -20,7 +20,7 @@
 
     {% if crews is empty %}
         <p class="text-sm text-base-content/70">
-            Pas encore de groupe : créez-en un pour tenir une liste avec vos proches, celle de votre enfant par exemple.
+            Pas encore de groupe : créez-en un pour tenir des sections avec vos proches, pour votre enfant par exemple.
         </p>
     {% else %}
         <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">

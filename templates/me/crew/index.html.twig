@@ -9,7 +9,7 @@
             <h1 class="text-2xl leading-tight font-bold sm:text-3xl">Mes groupes</h1>
             <p class="mt-2 flex items-center gap-2 text-sm text-base-content/70">
                 <twig:ux:icon name="lucide:users" class="size-4 shrink-0" />
-                <span>Un groupe tient une liste de cadeaux à plusieurs : pour votre enfant, en famille, entre ami·es…</span>
+                <span>Un groupe tient des sections de cadeaux à plusieurs : pour votre enfant, en famille, entre ami·es…</span>
             </p>
         </div>
         <a href="{{ path('app_crew_new') }}" class="btn btn-primary">
@@ -29,7 +29,7 @@
     {% if crews is empty %}
         <twig:molecule:EmptyContent class="mt-6"
             title="Vous ne faites partie d'aucun groupe pour l'instant"
-            description="Créez-en un et invitez vos ami·es : vous gérerez la liste ensemble, et la surprise restera entière pour chacun." />
+            description="Créez-en un et invitez vos ami·es : vous gérerez les sections ensemble, et la surprise restera entière pour chacun." />
     {% else %}
         <div class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {% for crew in crews %}

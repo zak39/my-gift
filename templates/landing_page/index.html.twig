@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}My Gift | Des listes de cadeaux sans doublon{% endblock %}
+{% block title %}My Gift | Des cadeaux sans doublon{% endblock %}
 
 {% block body %}
 {# ================================================================= HERO #}
@@ -17,7 +17,7 @@
         </h1>
 
         <p class="text-base-content/70 mx-auto mt-10 max-w-2xl text-xl leading-relaxed">
-            Créez une liste par occasion, partagez le lien. Vos proches réservent un cadeau
+            Créez une section par occasion, partagez le lien. Vos proches réservent un cadeau
             ou cagnottent ensemble, sans jamais se marcher dessus.
         </p>
 
@@ -26,7 +26,7 @@
                 <twig:block name="icon">
                     <twig:ux:icon name="lucide:gift" class="size-5" />
                 </twig:block>
-                <twig:block name="name">Créer ma liste</twig:block>
+                <twig:block name="name">Créer mes sections</twig:block>
             </twig:atomic:ButtonLink>
             <twig:atomic:ButtonLink to="#comment-ca-marche" style="outline" class="btn-lg">
                 <twig:block name="name">
@@ -69,7 +69,7 @@
     {
         card: 'bg-primary/10', icon: 'bg-primary text-primary-content', badge: 'badge-primary',
         iconName: 'lucide:folder-heart', title: 'Créez une section',
-        text: 'Une liste par occasion : « Noël », « Anniversaire de Léa », « Crémaillère ».',
+        text: 'Une section par occasion : « Noël », « Anniversaire de Léa », « Crémaillère ».',
     },
     {
         card: 'bg-secondary/10', icon: 'bg-secondary text-secondary-content', badge: 'badge-secondary',
@@ -84,7 +84,7 @@
     {
         card: 'bg-success/10', icon: 'bg-success text-success-content', badge: 'badge-success',
         iconName: 'lucide:party-popper', title: "Ils s'organisent",
-        text: 'Vos proches réservent ou cagnottent. La liste se met à jour toute seule.',
+        text: 'Vos proches réservent ou cagnottent. Vos sections se mettent à jour toutes seules.',
     },
 ] %}
 <section id="comment-ca-marche" class="bg-base-100 border-base-300 -mx-4 scroll-mt-20 border-y px-4 py-24 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 lg:py-32">
@@ -126,7 +126,7 @@
             </h2>
             <p class="text-base-content/70 mt-6 text-lg leading-relaxed">
                 Le premier qui réserve bloque le cadeau. Il passe en « réservé » et les autres
-                visiteurs de la liste le voient pris. Un pseudonyme suffit pour rester discret
+                visiteurs le voient pris. Un pseudonyme suffit pour rester discret
                 jusqu'au jour J.
             </p>
         </div>
@@ -156,7 +156,7 @@
     { name: 'Youssef', amount: 50 },
 ] %}
 {% set journey = [
-    { label: 'Dans la liste', icon: 'lucide:list-plus' },
+    { label: 'Ajouté', icon: 'lucide:list-plus' },
     { label: 'Cagnotte', icon: 'lucide:piggy-bank' },
     { label: 'Prêt à offrir', icon: 'lucide:package-check' },
     { label: 'Offert', icon: 'lucide:party-popper' },
@@ -402,7 +402,7 @@
     {
         card: 'bg-base-100 border-base-300 border shadow-sm', icon: 'bg-base-300 text-base-content',
         iconName: 'lucide:list-plus', statuses: ['CREATED'],
-        text: "Le cadeau est dans la liste, personne ne s'est encore positionné.",
+        text: "Le cadeau est ajouté, personne ne s'est encore positionné.",
     },
     {
         card: 'bg-info/10', icon: 'bg-info text-info-content',
@@ -422,7 +422,7 @@
     {
         card: 'bg-base-100 border-base-300 border shadow-sm', icon: 'bg-base-300 text-base-content',
         iconName: 'lucide:archive', statuses: ['ARCHIVED'],
-        text: 'Rangé hors de la liste active, gardé pour se souvenir.',
+        text: 'Rangé à part, gardé pour se souvenir.',
     },
 ] %}
 <section class="py-24 lg:py-32">
@@ -512,14 +512,14 @@
                 <twig:block name="icon">
                     <twig:ux:icon name="lucide:gift" class="size-5" />
                 </twig:block>
-                <twig:block name="name">Créer ma liste</twig:block>
+                <twig:block name="name">Créer mes sections</twig:block>
             </twig:atomic:ButtonLink>
         </div>
 
         <ul class="mt-14 flex flex-wrap justify-center gap-3">
             <li><span class="badge badge-lg badge-soft">Gratuit, sans publicité</span></li>
             <li><span class="badge badge-lg badge-soft">Une adresse email suffit</span></li>
-            <li><span class="badge badge-lg badge-soft">Listes privées par défaut</span></li>
+            <li><span class="badge badge-lg badge-soft">Sections privées par défaut</span></li>
         </ul>
     </div>
 </section>

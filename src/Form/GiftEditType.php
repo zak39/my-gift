@@ -34,7 +34,7 @@ class GiftEditType extends AbstractType
                 'choices' => $this->sectionRepository->findManagedBy($gift->getCreatedBy()),
                 'choice_label' => 'title',
                 // The sections of a crew's list apart from those of the user's own.
-                'group_by' => fn (Section $section) => $section->getCrew()?->getName() ?? 'Ma liste',
+                'group_by' => fn (Section $section) => $section->getCrew()?->getName() ?? 'Mes sections',
                 'help' => 'Sans section, il apparaît dans « Cadeaux sans section ».',
                 'placeholder' => 'Dans aucune section',
                 'required' => false,
