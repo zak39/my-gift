@@ -31,18 +31,6 @@ class RemainingAmountValidator extends ConstraintValidator
             return;
         }
 
-        /*
-        $otherParticipantsTotal = 0;
-        foreach ($gift->getParticipants() as $otherParticipant) {
-            if ($otherParticipant === $participant) {
-                continue;
-            }
-
-            $otherParticipantsTotal += $otherParticipant->getAmount() ?? 0;
-        }
-
-        $remaining = $gift->getPrice() - $otherParticipantsTotal;
-        */
         $remaining = $gift->getPool()->getRemainingAmountExcluding($participant);
 
         if ($value > $remaining) {

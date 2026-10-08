@@ -3,10 +3,10 @@
 namespace App\Controller\Gift;
 
 use App\Entity\Gift;
-use App\Entity\User;
 use App\Services\BreadcrumbBuilder;
 use App\Services\RefererRedirector;
 use App\Services\Url\GiftOwnerUrlGenerator;
+use App\Services\Url\ViewerUrlGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,20 +24,17 @@ final class GiftController extends AbstractController
 {
     #[IsGranted('gift.can_see', subject: 'gift')]
     #[Route('/show', name: 'app_gift_show')]
-    public function show(Gift $gift, BreadcrumbBuilder $breadcrumbBuilder, GiftOwnerUrlGenerator $giftOwnerUrlGenerator, RefererRedirector $refererRedirector, Request $request): Response
+    public function show(Gift $gift, BreadcrumbBuilder $breadcrumbBuilder, GiftOwnerUrlGenerator $giftOwnerUrlGenerator, ViewerUrlGenerator $viewerUrlGenerator, RefererRedirector $refererRedirector, Request $request): Response
     {
-        /** @var User $user */
-        $user = $this->getUser();
-
         // An owner following a shared link or an email: to their own page of the gift.
-        if ($gift->getOwnership()->includes($user)) {
+        if ($this->isGranted('gift.is_owner', $gift)) {
             return $this->redirect($giftOwnerUrlGenerator->show($gift));
         }
 
         return $this->render('gift/show.html.twig', [
             'gift' => $gift,
             'breadcrumbs' => $breadcrumbBuilder->gift($gift),
-            'btnReturn' => $refererRedirector->localReferer($request),
+            'btnReturn' => $refererRedirector->localReferer($request) ?? $viewerUrlGenerator->list($gift),
         ]);
     }
 }

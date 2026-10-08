@@ -47,7 +47,7 @@
         <Raw>{% endif %}</Raw>
 
         <template v-if="showPool">
-          <Raw>{% if gift.price and gift.pool.contributionPercent %}</Raw>
+          <Raw>{% if gift.pool.contributionPercent %}</Raw>
             <table class="gift-card-pool mt-4 w-full border rounded-2xl" cellpadding="0" cellspacing="0" role="none">
               <tr>
                 <td class="p-3">

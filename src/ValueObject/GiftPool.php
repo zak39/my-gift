@@ -4,6 +4,7 @@ namespace App\ValueObject;
 
 use App\Entity\Participant;
 use App\Enum\GiftStatus;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * The money friends put together towards a gift, read from its price and participants.
@@ -15,28 +16,19 @@ use App\Enum\GiftStatus;
 final class GiftPool
 {
     /**
-     * @param iterable<Participant> $participants
+     * @param Collection<int, Participant> $participants walked by several getters, so a
+     *                                                   collection, not a one-pass iterable
      */
     public function __construct(
         private readonly ?float $price,
-        private readonly iterable $participants,
+        private readonly Collection $participants,
         private readonly ?GiftStatus $status,
     ) {
     }
 
     public function getTotalContributed(): float
     {
-        $total = 0;
-        foreach ($this->participants as $participant) {
-            $total += $participant->getAmount() ?? 0;
-        }
-
-        return $total;
-    }
-
-    public function getRemainingAmount(): float
-    {
-        return $this->getRemainingAmountExcluding();
+        return $this->sum();
     }
 
     /**
@@ -90,15 +82,23 @@ final class GiftPool
      */
     public function getRemainingAmountExcluding(?Participant $excluded = null): float
     {
+        return round($this->price - $this->sum($excluded), 2);
+    }
+
+    private function getRemainingAmount(): float
+    {
+        return $this->getRemainingAmountExcluding();
+    }
+
+    private function sum(?Participant $excluded = null): float
+    {
         $total = 0;
         foreach ($this->participants as $participant) {
-            if ($excluded === $participant) {
-                continue;
+            if ($excluded !== $participant) {
+                $total += $participant->getAmount() ?? 0;
             }
-
-            $total += $participant->getAmount();
         }
 
-        return round($this->price - $total, 2);
+        return $total;
     }
 }

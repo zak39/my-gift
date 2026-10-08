@@ -33,7 +33,7 @@ final class FriendController extends AbstractController
     }
 
     /**
-     * No voter on the route: the manager checks can(), which runs the workflow guards,
+     * No voter on the route: the lifecycle checks can(), which runs the workflow guards,
      * which ask FriendRequestVoter. A forged request ends in an error message.
      */
     #[Route('/friend-requests/{id}/{transition}', name: 'app_friend_request', requirements: ['id' => '\d+', 'transition' => 'accept|refuse|cancel'], methods: ['POST'])]

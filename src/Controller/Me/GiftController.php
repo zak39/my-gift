@@ -79,15 +79,12 @@ final class GiftController extends AbstractController
     #[Route('/{id}/edit', name: 'app_gift_edit', requirements: ['id' => '\d+'])]
     public function edit(#[MapEntity(expr: 'repository.findOnePersonal(id)')] Gift $gift, Request $request, UpdateGift $updateGift, EntityManagerInterface $entityManager, GiftOwnerUrlGenerator $giftOwnerUrlGenerator, BreadcrumbBuilder $breadcrumbBuilder): Response
     {
-        // Read before handleRequest(), which writes the submitted price into $gift.
-        $previousPrice = $gift->getPrice();
-
         // A gift of the user's own list is always theirs: its author edits it.
         $form = $this->createForm(GiftEditType::class, $gift);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $updateGift($gift, $previousPrice);
+            $updateGift($gift);
 
             // Filed in a crew's section, the gift now lives in the crew's list.
             return $this->redirect($giftOwnerUrlGenerator->list($gift));

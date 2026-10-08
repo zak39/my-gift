@@ -67,13 +67,13 @@ final class GiftController extends AbstractController
     }
 
     #[Route('/{gift}/show', name: 'app_crew_gift_show', requirements: ['gift' => '\d+'])]
-    public function show(Crew $crew, #[MapEntity(expr: 'repository.findOneInCrew(gift, id)')] Gift $gift, BreadcrumbBuilder $breadcrumbBuilder, RefererRedirector $refererRedirector, Request $request): Response
+    public function show(Crew $crew, #[MapEntity(expr: 'repository.findOneInCrew(gift, id)')] Gift $gift, BreadcrumbBuilder $breadcrumbBuilder, GiftOwnerUrlGenerator $giftOwnerUrlGenerator, RefererRedirector $refererRedirector, Request $request): Response
     {
         return $this->render('gift/show.html.twig', [
             'gift' => $gift,
             'breadcrumbs' => $breadcrumbBuilder->crewGift($gift),
             // Opened from an email, with no referer: back to the crew's list.
-            'btnReturn' => $refererRedirector->localReferer($request) ?? $this->generateUrl('app_crew_show', ['id' => $crew->getId()]),
+            'btnReturn' => $refererRedirector->localReferer($request) ?? $giftOwnerUrlGenerator->list($gift),
         ]);
     }
 
@@ -86,16 +86,13 @@ final class GiftController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        // Read before handleRequest(), which writes the submitted price into $gift.
-        $previousPrice = $gift->getPrice();
-
         // Its author may move it out of the crew's list; another member only within it.
         $formType = $gift->getCreatedBy() === $user ? GiftEditType::class : GiftCrewMemberEditType::class;
         $form = $this->createForm($formType, $gift);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $updateGift($gift, $previousPrice);
+            $updateGift($gift);
 
             // Its author may have moved it to their own list, or to another crew's.
             return $this->redirect($giftOwnerUrlGenerator->list($gift));

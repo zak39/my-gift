@@ -6,6 +6,7 @@ use App\Entity\Crew;
 use App\Entity\Gift;
 use App\Entity\Section;
 use App\Entity\User;
+use App\Services\Url\GiftOwnerUrlGenerator;
 use App\Services\Url\ViewerUrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -19,6 +20,7 @@ final class BreadcrumbBuilder
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly ViewerUrlGenerator $viewerUrlGenerator,
+        private readonly GiftOwnerUrlGenerator $giftOwnerUrlGenerator,
     ) {
     }
 
@@ -74,7 +76,7 @@ final class BreadcrumbBuilder
     {
         return [
             $this->myList(),
-            $this->item($gift->getTitle(), 'app_me_gift_show', ['id' => $gift->getId()]),
+            ['label' => $gift->getTitle(), 'url' => $this->giftOwnerUrlGenerator->show($gift)],
             $this->currentItem('Modifier'),
         ];
     }
@@ -132,7 +134,7 @@ final class BreadcrumbBuilder
     {
         return [
             $this->crewItem($gift->getCrew()),
-            $this->item($gift->getTitle(), 'app_crew_gift_show', ['id' => $gift->getCrew()->getId(), 'gift' => $gift->getId()]),
+            ['label' => $gift->getTitle(), 'url' => $this->giftOwnerUrlGenerator->show($gift)],
             $this->currentItem('Modifier'),
         ];
     }

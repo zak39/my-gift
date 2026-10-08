@@ -74,10 +74,14 @@ final class InvitationController extends AbstractController
 
         try {
             $crewLifecycle->cancel($invitation);
-            $this->addFlash('success', "L'invitation de $inviteeName a été annulée.");
         } catch (\LogicException $exception) {
             $this->addFlash('error', $exception->getMessage());
+
+            // The user may no longer see the crew's page (they left it): back to their crews.
+            return $this->redirectToRoute('app_crew');
         }
+
+        $this->addFlash('success', "L'invitation de $inviteeName a été annulée.");
 
         return $this->redirectToRoute('app_crew_show', ['id' => $crew->getId()]);
     }

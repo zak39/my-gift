@@ -50,7 +50,7 @@ final class SectionController extends AbstractController
             'crews' => $crewRepository->findForMemberWithGifts($user),
             'user' => $user,
             'breadcrumbs' => $breadcrumbBuilder->userList($user),
-            'btnReturn' => $refererRedirector->localReferer($request),
+            'btnReturn' => $refererRedirector->localReferer($request) ?? $this->generateUrl('app_user'),
         ]);
     }
 }

@@ -12,11 +12,7 @@
         <twig:Molecule:Breadcrumbs :items="breadcrumbs" />
     {% endif %}
 
-    {% for type in ['success', 'error'] %}
-        {% for message in app.flashes(type) %}
-            <twig:Alert :type="type" :message="message" class="mb-4" />
-        {% endfor %}
-    {% endfor %}
+    <twig:Molecule:Flashes />
 
     <twig:Organism:Crew:Header :crew="crew" :ownerView="ownerView" />
 

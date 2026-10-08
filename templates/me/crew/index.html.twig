@@ -18,11 +18,7 @@
         </a>
     </header>
 
-    {% for type in ['success', 'error'] %}
-        {% for message in app.flashes(type) %}
-            <twig:Alert :type="type" :message="message" class="mt-4" />
-        {% endfor %}
-    {% endfor %}
+    <twig:Molecule:Flashes alertClass="mt-4" />
 
     <twig:Organism:Crew:PendingInvitations :invitations="invitations" class="mt-6" />
 

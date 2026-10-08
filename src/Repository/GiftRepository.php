@@ -66,6 +66,7 @@ class GiftRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('g')
             ->innerJoin('g.section', 's')
+            ->addSelect('s')
             ->where('g.id = :gift')
             ->andWhere('s.crew = :crew')
             ->setParameter('gift', $giftId)
@@ -83,6 +84,7 @@ class GiftRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('g')
             ->leftJoin('g.section', 's')
+            ->addSelect('s')
             ->where('g.id = :id')
             ->andWhere('s.crew IS NULL')
             ->setParameter('id', $id)

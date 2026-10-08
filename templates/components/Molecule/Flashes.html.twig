@@ -1,0 +1,5 @@
+{% for type in ['success', 'error'] %}
+    {% for message in app.flashes(type) %}
+        <twig:Alert :type="type" :message="message" class="{{ alertClass }}" />
+    {% endfor %}
+{% endfor %}

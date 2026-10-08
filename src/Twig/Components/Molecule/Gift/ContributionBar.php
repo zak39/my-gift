@@ -21,10 +21,6 @@ final class ContributionBar
      */
     public function isVisible(): bool
     {
-        if (!$this->gift->getPrice()) {
-            return false;
-        }
-
         if (!$this->security->isGranted('gift.can_see_amounts', $this->gift)) {
             return false;
         }

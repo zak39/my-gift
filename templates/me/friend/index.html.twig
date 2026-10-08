@@ -15,11 +15,7 @@
         </p>
     </header>
 
-    {% for type in ['success', 'error'] %}
-        {% for message in app.flashes(type) %}
-            <twig:Alert :type="type" :message="message" class="mt-4" />
-        {% endfor %}
-    {% endfor %}
+    <twig:Molecule:Flashes alertClass="mt-4" />
 
     <div class="tabs tabs-box mt-6">
         {% for key, tab in {

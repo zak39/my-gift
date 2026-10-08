@@ -11,7 +11,6 @@ use App\Event\GiftPriceChangedEvent;
 use App\Event\GiftReadyEvent;
 use App\Event\ParticipantJoinedEvent;
 use App\Event\ParticipantLeftEvent;
-use App\Repository\ParticipantRepository;
 use App\Services\Exception\GiftActionRefusedException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
@@ -24,21 +23,8 @@ class GiftLifecycle
         #[Target('gift_request')]
         private WorkflowInterface $giftRequestWorkflow,
         private EntityManagerInterface $entityManager,
-        private ParticipantRepository $participantRepository,
         private EventDispatcherInterface $eventDispatcher,
     ) {
-    }
-
-    private function getParticipant(Gift $gift, User $user): ?Participant
-    {
-        return
-            $this->participantRepository->findOneBy(
-                [
-                    'participantUser' => $user,
-                    'gift' => $gift,
-                ]
-            )
-        ;
     }
 
     public function reserved(Gift $gift, Participant $participant, User $user): void
@@ -66,7 +52,7 @@ class GiftLifecycle
             throw new GiftActionRefusedException('Le cadeau ne peut pas être libéré dans son état actuel.');
         }
 
-        $participant = $this->getParticipant($gift, $user);
+        $participant = $gift->getParticipant($user);
 
         if (!$participant) {
             throw new GiftActionRefusedException('Aucune participation trouvée pour cet utilisateur sur ce cadeau.');
@@ -85,7 +71,7 @@ class GiftLifecycle
             throw new GiftActionRefusedException('Le cadeau ne peut pas encore être marqué comme prêt à être donné.');
         }
 
-        $participant = $this->getParticipant($gift, $user);
+        $participant = $gift->getParticipant($user);
 
         if (!$participant) {
             throw new GiftActionRefusedException('Aucune participation trouvée pour cet utilisateur sur ce cadeau.');
@@ -175,7 +161,7 @@ class GiftLifecycle
             throw new GiftActionRefusedException('Le cadeau ne peut pas encore être annulé.');
         }
 
-        $participant = $this->getParticipant($gift, $user);
+        $participant = $gift->getParticipant($user);
         if (!$participant) {
             throw new GiftActionRefusedException('Aucune participation trouvée pour cet utilisateur sur ce cadeau.');
         }
