@@ -4,6 +4,7 @@ namespace App\Controller\Gift;
 
 use App\Entity\Gift;
 use App\Entity\User;
+use App\Services\Exception\GiftActionRefusedException;
 use App\Services\Lifecycle\GiftLifecycle;
 use App\Services\Url\GiftOwnerUrlGenerator;
 use App\Services\Url\ViewerUrlGenerator;
@@ -29,7 +30,11 @@ final class GiftCompletionRequestController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        $giftLifecycle->ready($gift, $user);
+        try {
+            $giftLifecycle->ready($gift, $user);
+        } catch (GiftActionRefusedException $exception) {
+            $this->addFlash('error', $exception->getMessage());
+        }
 
         return $this->redirect($viewerUrlGenerator->list($gift));
     }
@@ -38,7 +43,11 @@ final class GiftCompletionRequestController extends AbstractController
     #[Route('/given', name: 'app_gift_given', methods: ['POST'])]
     public function given(Gift $gift, GiftLifecycle $giftLifecycle, GiftOwnerUrlGenerator $giftOwnerUrlGenerator): Response
     {
-        $giftLifecycle->given($gift);
+        try {
+            $giftLifecycle->given($gift);
+        } catch (GiftActionRefusedException $exception) {
+            $this->addFlash('error', $exception->getMessage());
+        }
 
         return $this->redirect($giftOwnerUrlGenerator->list($gift));
     }
@@ -47,7 +56,11 @@ final class GiftCompletionRequestController extends AbstractController
     #[Route('/archived', name: 'app_gift_archived', methods: ['POST'])]
     public function archived(Gift $gift, GiftLifecycle $giftLifecycle, GiftOwnerUrlGenerator $giftOwnerUrlGenerator): Response
     {
-        $giftLifecycle->archived($gift);
+        try {
+            $giftLifecycle->archived($gift);
+        } catch (GiftActionRefusedException $exception) {
+            $this->addFlash('error', $exception->getMessage());
+        }
 
         return $this->redirect($giftOwnerUrlGenerator->list($gift));
     }

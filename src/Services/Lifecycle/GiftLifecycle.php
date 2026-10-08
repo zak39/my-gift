@@ -12,6 +12,7 @@ use App\Event\GiftReadyEvent;
 use App\Event\ParticipantJoinedEvent;
 use App\Event\ParticipantLeftEvent;
 use App\Repository\ParticipantRepository;
+use App\Services\Exception\GiftActionRefusedException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -43,7 +44,7 @@ class GiftLifecycle
     public function reserved(Gift $gift, Participant $participant, User $user): void
     {
         if (!$this->giftRequestWorkflow->can($gift, 'reserve')) {
-            throw new \Exception('Ce cadeau ne peut pas être réservé.');
+            throw new GiftActionRefusedException('Ce cadeau ne peut pas être réservé.');
         }
 
         $participant
@@ -62,13 +63,13 @@ class GiftLifecycle
     public function disengage(Gift $gift, User $user): void
     {
         if (!$this->giftRequestWorkflow->can($gift, 'disengage')) {
-            throw new \LogicException('Le cadeau ne peut pas être libéré dans son état actuel.');
+            throw new GiftActionRefusedException('Le cadeau ne peut pas être libéré dans son état actuel.');
         }
 
         $participant = $this->getParticipant($gift, $user);
 
         if (!$participant) {
-            throw new \LogicException('Aucune participation trouvée pour cet utilisateur sur ce cadeau.');
+            throw new GiftActionRefusedException('Aucune participation trouvée pour cet utilisateur sur ce cadeau.');
         }
 
         $gift->removeParticipant($participant);
@@ -81,13 +82,13 @@ class GiftLifecycle
     public function ready(Gift $gift, User $user): void
     {
         if (!$this->giftRequestWorkflow->can($gift, 'finalize')) {
-            throw new \LogicException('Le cadeau ne peut pas encore être marqué comme prêt à être donné.');
+            throw new GiftActionRefusedException('Le cadeau ne peut pas encore être marqué comme prêt à être donné.');
         }
 
         $participant = $this->getParticipant($gift, $user);
 
         if (!$participant) {
-            throw new \LogicException('Aucune participation trouvée pour cet utilisateur sur ce cadeau.');
+            throw new GiftActionRefusedException('Aucune participation trouvée pour cet utilisateur sur ce cadeau.');
         }
 
         $this->giftRequestWorkflow->apply($gift, 'finalize');
@@ -123,7 +124,7 @@ class GiftLifecycle
     public function given(Gift $gift): void
     {
         if (!$this->giftRequestWorkflow->can($gift, 'give')) {
-            throw new \LogicException('Le cadeau n\'est pas encore prêt à être donné.');
+            throw new GiftActionRefusedException('Le cadeau n\'est pas encore prêt à être donné.');
         }
 
         $gift->setGivenAt(new \DateTimeImmutable());
@@ -134,7 +135,7 @@ class GiftLifecycle
     public function archived(Gift $gift): void
     {
         if (!$this->giftRequestWorkflow->can($gift, 'archive')) {
-            throw new \LogicException('Le cadeau n\'est pas encore prêt à être archivé.');
+            throw new GiftActionRefusedException('Le cadeau n\'est pas encore prêt à être archivé.');
         }
 
         $this->giftRequestWorkflow->apply($gift, 'archive');
@@ -145,7 +146,7 @@ class GiftLifecycle
     {
         if (GiftStatus::CREATED !== $gift->getStatus()
             && GiftStatus::CONTRIBUTING !== $gift->getStatus()) {
-            throw new \Exception('Ce cadeau ne peut pas recevoir de contribution à son état actuel.');
+            throw new GiftActionRefusedException('Ce cadeau ne peut pas recevoir de contribution à son état actuel.');
         }
 
         $newParticipant
@@ -171,12 +172,12 @@ class GiftLifecycle
     public function cancelledContribution(Gift $gift, User $user): void
     {
         if (!$this->giftRequestWorkflow->can($gift, 'cancelled_contribution')) {
-            throw new \LogicException('Le cadeau ne peut pas encore être annulé.');
+            throw new GiftActionRefusedException('Le cadeau ne peut pas encore être annulé.');
         }
 
         $participant = $this->getParticipant($gift, $user);
         if (!$participant) {
-            throw new \LogicException('Aucune participation trouvée pour cet utilisateur sur ce cadeau.');
+            throw new GiftActionRefusedException('Aucune participation trouvée pour cet utilisateur sur ce cadeau.');
         }
 
         $gift->removeParticipant($participant);

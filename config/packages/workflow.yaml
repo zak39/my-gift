@@ -25,6 +25,8 @@ framework:
                     from: !php/enum App\Enum\GiftStatus::CONTRIBUTING
                     to: !php/enum App\Enum\GiftStatus::CREATED
                 finalize:
+                    # A reservation is ready whenever its giver says so; a pool once it is complete.
+                    guard: "not subject.getStatus().isPoolOpen() or subject.getPool().isComplete()"
                     from:
                         - !php/enum App\Enum\GiftStatus::RESERVED
                         - !php/enum App\Enum\GiftStatus::CONTRIBUTING

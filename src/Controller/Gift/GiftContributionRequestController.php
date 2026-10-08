@@ -6,6 +6,7 @@ use App\Entity\Gift;
 use App\Entity\Participant;
 use App\Entity\User;
 use App\Form\ParticipantContributingType;
+use App\Services\Exception\GiftActionRefusedException;
 use App\Services\Lifecycle\GiftLifecycle;
 use App\Services\Url\ViewerUrlGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,7 +38,11 @@ final class GiftContributionRequestController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $giftLifecycle->participated($gift, $participant, $user);
+            try {
+                $giftLifecycle->participated($gift, $participant, $user);
+            } catch (GiftActionRefusedException $exception) {
+                $this->addFlash('error', $exception->getMessage());
+            }
 
             return $this->redirect($viewerUrlGenerator->list($gift));
         }
@@ -58,7 +63,11 @@ final class GiftContributionRequestController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        $giftLifecycle->cancelledContribution($gift, $user);
+        try {
+            $giftLifecycle->cancelledContribution($gift, $user);
+        } catch (GiftActionRefusedException $exception) {
+            $this->addFlash('error', $exception->getMessage());
+        }
 
         return $this->redirect($viewerUrlGenerator->list($gift));
     }

@@ -7,8 +7,10 @@
 {% set hasContent = sections|length > 0 or giftsWithoutSection|length > 0 %}
 
 <div class="mx-auto w-full max-w-6xl py-6 pb-12">
-    {% for message in app.flashes('success') %}
-        <twig:Alert type="success" :message="message" class="mb-4" />
+    {% for type in ['success', 'error'] %}
+        {% for message in app.flashes(type) %}
+            <twig:Alert :type="type" :message="message" class="mb-4" />
+        {% endfor %}
     {% endfor %}
 
     <twig:Organism:GiftListHeader

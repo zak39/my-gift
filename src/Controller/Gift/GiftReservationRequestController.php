@@ -6,6 +6,7 @@ use App\Entity\Gift;
 use App\Entity\Participant;
 use App\Entity\User;
 use App\Form\ParticipantReserveType;
+use App\Services\Exception\GiftActionRefusedException;
 use App\Services\Lifecycle\GiftLifecycle;
 use App\Services\Url\ViewerUrlGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,7 +34,11 @@ final class GiftReservationRequestController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $giftLifecycle->reserved($gift, $participant, $user);
+            try {
+                $giftLifecycle->reserved($gift, $participant, $user);
+            } catch (GiftActionRefusedException $exception) {
+                $this->addFlash('error', $exception->getMessage());
+            }
 
             return $this->redirect($viewerUrlGenerator->list($gift));
         }
@@ -54,7 +59,11 @@ final class GiftReservationRequestController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        $giftLifecycle->disengage($gift, $user);
+        try {
+            $giftLifecycle->disengage($gift, $user);
+        } catch (GiftActionRefusedException $exception) {
+            $this->addFlash('error', $exception->getMessage());
+        }
 
         return $this->redirect($viewerUrlGenerator->list($gift));
     }
