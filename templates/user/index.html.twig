@@ -8,16 +8,12 @@
         <h1 class="text-2xl leading-tight font-bold sm:text-3xl">Trouver vos amis</h1>
         <p class="mt-2 flex items-center gap-2 text-sm text-base-content/70">
             <twig:ux:icon name="lucide:users" class="size-4 shrink-0" />
-            <span>Retrouvez vos proches pour découvrir leurs listes de cadeaux.</span>
+            <span>Retrouvez vos proches pour découvrir leurs sections de cadeaux.</span>
         </p>
     </header>
 
     {# The friendship buttons of the cards come back here. #}
-    {% for type in ['success', 'error'] %}
-        {% for message in app.flashes(type) %}
-            <twig:Alert :type="type" :message="message" class="mt-4" />
-        {% endfor %}
-    {% endfor %}
+    <twig:Molecule:Flashes alertClass="mt-4" />
 
     <twig:SearchUsers class="mt-6" />
 </div>

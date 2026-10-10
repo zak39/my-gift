@@ -11,7 +11,7 @@
             Ami·e
         </span>
         <twig:Molecule:Friend:UnlinkButton :user="user" action="remove" label="Retirer" icon="lucide:user-minus"
-            question="Retirer {{ user.firstname }} de vos ami·es ? Vous ne verrez plus vos listes respectives." />
+            question="Retirer {{ user.firstname }} de vos ami·es ? Vous ne verrez plus vos sections respectives." />
         <twig:Molecule:Friend:UnlinkButton :user="user" action="block" label="Bloquer" icon="lucide:ban" :question="blockQuestion" />
 
     {% elseif relation is same as(Relation.BLOCKED) %}

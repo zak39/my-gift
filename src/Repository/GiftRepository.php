@@ -49,12 +49,47 @@ class GiftRepository extends ServiceEntityRepository
     private function createPersonalQueryBuilder(User $user): QueryBuilder
     {
         return $this->createQueryBuilder('g')
-            // A gift outside any section has no crew either. Selected for isOwnedBy().
+            // A gift outside any section has no crew either. Selected for getOwnership().
             ->leftJoin('g.section', 's')
             ->addSelect('s')
             ->where('g.createdBy = :user')
             ->andWhere('s.crew IS NULL')
             ->setParameter('user', $user)
+        ;
+    }
+
+    /**
+     * The gift, if it is filed in the crew's list: what a /crews/{id}/gifts/{gift} URL
+     * reaches. Another crew's gift, or one of a user's own list, is not found there (404).
+     */
+    public function findOneInCrew(int $giftId, int $crewId): ?Gift
+    {
+        return $this->createQueryBuilder('g')
+            ->innerJoin('g.section', 's')
+            ->addSelect('s')
+            ->where('g.id = :gift')
+            ->andWhere('s.crew = :crew')
+            ->setParameter('gift', $giftId)
+            ->setParameter('crew', $crewId)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+    /**
+     * The gift, if it belongs to a user's own list, filed or not: what a /me/gifts/{id} URL
+     * reaches. A crew's gift is run from its crew's URL, as the links lead there (404 here).
+     */
+    public function findOnePersonal(int $id): ?Gift
+    {
+        return $this->createQueryBuilder('g')
+            ->leftJoin('g.section', 's')
+            ->addSelect('s')
+            ->where('g.id = :id')
+            ->andWhere('s.crew IS NULL')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult()
         ;
     }
 

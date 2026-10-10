@@ -72,7 +72,7 @@
                     </p> <p>
                       Le prix du cadeau <b>{{ gift.title }}</b> est passé de <b>{{ previousPrice|format_currency('EUR') }}</b> à <b>{{ gift.price|format_currency('EUR') }}</b>.
                     </p> <p>
-                      La cagnotte a réuni <b>{{ gift.totalContributed|format_currency('EUR') }}</b> jusqu'ici. Pensez à revoir votre participation avec les autres contributeurs.
+                      La cagnotte a réuni <b>{{ gift.pool.totalContributed|format_currency('EUR') }}</b> jusqu'ici. Pensez à revoir votre participation avec les autres contributeurs.
                     </p> <p>
                       Vous pouvez consulter les détails du cadeau en cliquant sur le bouton ci-dessous.
                     </p> <div style="margin-top: 24px; margin-bottom: 24px; text-align: center;"><a href="{{ url }}" class="accent-button" style="display: inline-block; padding: 10px 16px; text-align: center; font-size: 14px; line-height: 24px; font-weight: 600; text-decoration: none;"><!--[if mso]><i style="mso-font-width: 150%; mso-text-raise: 30px;" hidden>&emsp;</i><![endif]--> <span style="mso-text-raise:16px;">Voir le cadeau de {{ gift.createdBy.firstname|title }}</span> <!--[if mso]><i style="mso-font-width: 150%;" hidden>&emsp;&#8203;</i><![endif]--></a></div></div></div> <!--[if mso]></td></tr></table><![endif]--></div></body></div></body></html>

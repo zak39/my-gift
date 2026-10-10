@@ -23,12 +23,12 @@
 
       <div>
         <twig:atomic:ButtonLink class="btn-ghost btn-sm"
-          :to="btnReturn|default(null) ?: (gift.crew ? path('app_crew_show', { id: gift.crew.id }) : path('app_section_user_page', { id: gift.createdBy.id }))">
+          :to="btnReturn">
           <twig:block name="icon">
             <twig:ux:icon name="lucide:arrow-left" class="size-4" />
           </twig:block>
           <twig:block name="name">
-            <span>Retour à la liste</span>
+            <span>Retour aux sections</span>
           </twig:block>
         </twig:atomic:ButtonLink>
       </div>

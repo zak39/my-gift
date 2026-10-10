@@ -38,11 +38,11 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
                     </div>
 
                     <p>
-                        Les cadeaux qu'il ou elle y avait ajoutés restent dans la liste du groupe : vous pouvez toujours les gérer, et les réservations comme les cagnottes continuent.
+                        Les cadeaux qu'il ou elle y avait ajoutés restent dans les sections du groupe : vous pouvez toujours les gérer, et les réservations comme les cagnottes continuent.
                     </p>
 
                     <div class="text-center my-6">
-                        <AccentButton label="Voir la liste du groupe" to="{{ url }}" />
+                        <AccentButton label="Voir les sections du groupe" to="{{ url }}" />
                     </div>
                 </div>
             </Container>

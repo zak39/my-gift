@@ -19,7 +19,7 @@ class CrewType extends AbstractType
                     'maxlength' => 80,
                 ],
                 'label' => 'Nom du groupe',
-                'help' => 'Il sert de titre à votre liste commune. 80 caractères maximum.',
+                'help' => 'Il sert de titre à vos sections communes. 80 caractères maximum.',
                 // A blank name reaches NotBlank as '' instead of null, which setName() refuses.
                 'empty_data' => '',
             ])

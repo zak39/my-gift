@@ -54,8 +54,17 @@ with a `ParticipantStatus` and, for contributions, an amount).
 
 A `Crew` (a ManyToMany `Crew::$members` with the same rights; its creator `Crew::$createdBy`
 cannot leave it and alone deletes it) shares a gift list: a `Section` with a crew belongs to the crew's list, not to its creator's. Ownership is
-`Gift::isOwnedBy()` / `Section::isOwnedBy()` (crew members, or else the creator), never a bare
-`getCreatedBy()` comparison. Invitations (`CrewInvitation`) run through the `crew_invitation`
+`$gift->getOwnership()->includes($user)` / `Section::isOwnedBy()` (crew members, or else the
+creator), never a bare `getCreatedBy()` comparison.
+
+`Gift` is composed of value objects, one per concern: `getOwnership()` (`App\ValueObject\GiftOwnership`:
+`includes()`) and `getPool()` (`App\ValueObject\GiftPool`: what was collected, what
+remains, rounding and overshoot rules) are value objects built on demand, not persisted. In
+Twig, `gift.pool.totalContributed`, `gift.pool.complete`… — the Maizzle email sources use the
+same paths. No `GiftCrew`/`GiftPersonal` entity classes or Doctrine inheritance: a gift
+enters a crew or opens a pool over its life, and a Doctrine entity cannot change class. That
+is a reason about this entity, not a rule against splitting classes by role elsewhere: the
+yardstick is the most readable code (clean code, SOLID). Invitations (`CrewInvitation`) run through the `crew_invitation`
 workflow and `src/Services/Lifecycle/CrewLifecycle.php`, as friend requests do through
 `FriendRequestLifecycle`.
 
@@ -106,6 +115,51 @@ to prefill gift fields from a pasted product URL.
 
 Routes are defined with `#[Route]` PHP attributes directly on controller methods
 (`src/Controller/`), not YAML route files.
+
+Controllers are filed by the first URL segment, which says whose resource a page is
+about; the class carries that prefix (`#[Route('/me/...')]`), and the segment tells which
+voter guards it:
+
+- `Me/` — `/me/...`, the logged-in user's own space (dashboard, list, profile, friends,
+  favorites, crews, received invitations). No user id in the URL; nested resource ids
+  still get their voter (`section.is_owner`, `gift.is_owner`…), and a crew's section or
+  gift is not found there
+- `User/` — `/users/{id}/...`, another user: search, their list (`user.can_see_gifts`),
+  friendship actions
+- `Crew/` — `/crews/{id}/...`, one crew run by its members (`crew.is_member`); a nested
+  section or gift must belong to that crew
+- `Gift/` — `/gift/{id}/...`, a gift from the giver's side: its page, favorites,
+  reservation / contribution / completion requests. Its owners see the same page from
+  their own URL (`/me/gifts/{id}/show`, `/crews/{id}/gifts/{gift}/show`); one opening
+  `/gift/{id}/show` is redirected there. A route `condition` cannot tell them apart: it
+  runs before the firewall knows the user, so each point of view gets its own path
+- `Security/` — login, registration, password reset; `Admin/` — EasyAdmin
+
+A nested resource is loaded through the list of its URL, never checked after loading:
+`#[MapEntity(expr: 'repository.findOneInCrew(gift, id)')]`, `repository.findOnePersonal(id)`,
+`repository.findOneBy({"id": section, "crew": id})`. Not found in that list means 404, before
+any `#[IsGranted]` runs, so an outsider cannot tell the id exists. Under `/me`, the owner
+voter of a gift or a section answers 404 too (`#[IsGranted('gift.is_owner', ..., statusCode:
+404)]`): someone else's gift or section does not exist in the user's own space. Invitations
+and friend requests are not concerned: their POST actions check a CSRF token, then the
+workflow guards, and answer with a flash. Nor is an optional query parameter, which is no
+nested resource: `/me/gifts/new?section=` ignores a section that is not the user's own (the
+gift is created unfiled) instead of answering 404.
+
+The same resource may have a controller per folder (`Me/SectionController`,
+`User/SectionController`, `Crew/SectionController`), one per point of view. What two of
+them do alike lives in a service, one class per action with a single `__invoke()`
+(`Services/Gift/CreateGift`, `UpdateGift`, `DeleteGift`; `Services/Section/CreateSection`,
+`DeleteSection`), a form's choices live in its FormType (form types are services), and URLs
+come from `src/Services/Url/`, one generator per point of view, the caller picking the one
+it already knows it is: `GiftOwnerUrlGenerator` (a gift's pages for its owners, in its
+crew's list or its author's own), `SectionUrlGenerator`, `ViewerUrlGenerator` (a giver's:
+`/gift/{id}/show`, the list the gift is part of). Most methods are also Twig functions
+(`gift_owner_show_url()`, `gift_edit_url()`, `section_edit_url()`…); only a component
+shared by owners' and givers' pages (`Molecule:Gift:ShowButton`) chooses, with
+`is_granted('gift.is_owner')`. The paths linked from
+emails (`/users/{id}/sections`, `/crews/{id}`, `/gift/{id}/show`, `/me/crews`,
+`/me/sections`) must not move.
 
 <easyadmin-guidelines>
 This project uses EasyAdmin 5.6.1.

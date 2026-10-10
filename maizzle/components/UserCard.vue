@@ -31,7 +31,7 @@
         </table>
 
         <p class="m-0 mt-4 text-right text-sm font-semibold">
-          <a :href="to" class="accent-link no-underline">&rarr; Voir sa liste</a>
+          <a :href="to" class="accent-link no-underline">&rarr; Voir son profil</a>
         </p>
       </td>
     </tr>

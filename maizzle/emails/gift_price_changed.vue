@@ -27,7 +27,7 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
                       Le prix du cadeau <b><Raw>{{ gift.title }}</Raw></b> est passé de <b><Raw>{{ previousPrice|format_currency('EUR') }}</Raw></b> à <b><Raw>{{ gift.price|format_currency('EUR') }}</Raw></b>.
                     </p>
                     <p>
-                      La cagnotte a réuni <b><Raw>{{ gift.totalContributed|format_currency('EUR') }}</Raw></b> jusqu'ici. Pensez à revoir votre participation avec les autres contributeurs.
+                      La cagnotte a réuni <b><Raw>{{ gift.pool.totalContributed|format_currency('EUR') }}</Raw></b> jusqu'ici. Pensez à revoir votre participation avec les autres contributeurs.
                     </p>
 
                     <p>

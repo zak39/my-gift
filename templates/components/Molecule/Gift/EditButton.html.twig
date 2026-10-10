@@ -6,7 +6,7 @@
     <twig:atomic:ButtonLink
         :style="style"
         class="{{ iconOnly ? 'btn-circle' : '' }}"
-        :to="path('app_gift_edit', { id: gift.id })"
+        :to="gift_edit_url(gift)"
         :color="color">
         <twig:block name="icon">
             <twig:ux:icon name="ic:baseline-edit" />

@@ -21,22 +21,18 @@ final class ContributionBar
      */
     public function isVisible(): bool
     {
-        if (!$this->gift->getPrice()) {
-            return false;
-        }
-
         if (!$this->security->isGranted('gift.can_see_amounts', $this->gift)) {
             return false;
         }
 
-        return $this->gift->isPooled();
+        return $this->gift->getPool()->isPooled();
     }
 
     public function getProgressColor(): string
     {
         return match (true) {
-            $this->gift->getExceededAmount() > 0 => 'progress-warning',
-            $this->gift->isPoolComplete() => 'progress-success',
+            $this->gift->getPool()->getExceededAmount() > 0 => 'progress-warning',
+            $this->gift->getPool()->isComplete() => 'progress-success',
             default => 'progress-accent',
         };
     }

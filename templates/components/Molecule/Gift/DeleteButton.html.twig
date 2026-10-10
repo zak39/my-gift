@@ -23,8 +23,9 @@
             <p class="py-4">Est-ce que vous êtes sûr de supprimer le cadeau <b>{{ gift.title }}</b> ?</p>
         </twig:block>
         <twig:block name="actionButtons">
-            <form method="post" action="{{ path('app_gift_delete', { id: gift.id }) }}">
+            <form method="post" action="{{ gift_delete_url(gift) }}">
                 <input type="hidden" name="_method" value="DELETE">
+                <input type="hidden" name="_token" value="{{ csrf_token('gift-delete-' ~ gift.id) }}">
                 <button type="submit" class="btn btn-error">
                     <twig:ux:icon name="heroicons:trash-16-solid" />
                     Supprimer

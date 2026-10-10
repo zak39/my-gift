@@ -12,7 +12,7 @@
                 <h1 class="text-2xl leading-tight font-bold wrap-anywhere sm:text-3xl">{{ crew.name }}</h1>
                 <p class="mt-2 flex items-center gap-2 text-sm text-base-content/70">
                     <twig:ux:icon name="lucide:users" class="size-4 shrink-0" />
-                    <span>Liste commune de {{ members|map(member => member.firstname)|join(', ', ' et ') }}</span>
+                    <span>Sections communes de {{ members|map(member => member.firstname)|join(', ', ' et ') }}</span>
                 </p>
                 {% if giftCount > 0 %}
                     <p class="mt-1 flex items-center gap-2 text-sm text-base-content/70">
@@ -25,7 +25,7 @@
 
         {% if ownerView %}
             <div class="flex flex-wrap items-center gap-2 lg:shrink-0 lg:justify-end">
-                <a href="{{ path('app_section_new', { crew: crew.id }) }}" class="btn btn-primary">
+                <a href="{{ path('app_crew_section_new', { id: crew.id }) }}" class="btn btn-primary">
                     <twig:ux:icon name="lucide:folder-plus" class="size-4" />
                     Créer une section
                 </a>

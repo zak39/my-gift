@@ -40,7 +40,7 @@ final class GiftOfferVoter extends Voter
         }
 
         /* @var Gift $subject */
-        return !$subject->isOwnedBy($user)
+        return !$subject->getOwnership()->includes($user)
             && null === $subject->getParticipant($user)
             && $this->accessDecisionManager->decide($token, ['gift.can_see'], $subject)
         ;

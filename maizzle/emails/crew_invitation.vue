@@ -30,7 +30,7 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
                     </p>
 
                     <p>
-                        Les membres d'un groupe tiennent une liste de cadeaux ensemble : chacun peut y ajouter des cadeaux, et la surprise reste entière pour tous.
+                        Les membres d'un groupe tiennent des sections de cadeaux ensemble : chacun peut y ajouter des cadeaux, et la surprise reste entière pour tous.
                     </p>
 
                     <div class="my-6">

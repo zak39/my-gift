@@ -6,7 +6,7 @@
     <twig:atomic:Button :style="style"
         class="{{ iconOnly ? 'btn-circle' : '' }}"
         data-controller="copy"
-        data-copy-text-value="{{ absolute_url(path('app_gift_show', { 'id': gift.id })) }}"
+        data-copy-text-value="{{ absolute_url(gift_viewer_show_url(gift)) }}"
         data-action="click->copy#copy"
         :color="color">
         <twig:block name="icon">
