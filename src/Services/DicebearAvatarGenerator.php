@@ -17,14 +17,14 @@ class DicebearAvatarGenerator
         return 'https://api.dicebear.com/10.x';
     }
 
-    public function generate(string $seed): UploadedFile
+    public function generate(string $firstname): UploadedFile
     {
         $content = $this->client->request(
             'GET',
             $this->getBaseApi().'/thumbs/png',
             [
                 'query' => [
-                    'seed' => $seed,
+                    'seed' => $this->seedFor($firstname),
                 ],
             ]
         )->getContent();
@@ -40,5 +40,14 @@ class DicebearAvatarGenerator
             null,
             true
         );
+    }
+
+    /**
+     * The random part gives two users with the same first name different avatars,
+     * and the hash keeps the first name itself from being sent to Dicebear.
+     */
+    private function seedFor(string $firstname): string
+    {
+        return hash('sha256', $firstname.bin2hex(random_bytes(16)));
     }
 }
