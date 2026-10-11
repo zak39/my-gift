@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Entity\User;
+use App\Services\Security\CheckCurrentPassword;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -17,6 +18,7 @@ final class UserProfileService
         private readonly EntityManagerInterface $entityManager,
         private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly TokenStorageInterface $tokenStorage,
+        private readonly CheckCurrentPassword $checkCurrentPassword,
     ) {
     }
 
@@ -55,9 +57,10 @@ final class UserProfileService
             return;
         }
 
-        if (!$this->passwordHasher->isPasswordValid($user, $oldPassword)) {
-            $form->get('oldPassword')->addError(new FormError('Le mot de passe actuel est incorrect.'));
-            $form->addError(new FormError('Vous devez saisir votre mot de passe actuel pour changer le mot de passe.'));
+        $refusal = ($this->checkCurrentPassword)($user, $oldPassword);
+        if (null !== $refusal) {
+            $form->get('oldPassword')->addError(new FormError($refusal));
+            $form->addError(new FormError('Votre mot de passe n\'a pas été modifié.'));
 
             return;
         }

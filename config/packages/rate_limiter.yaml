@@ -1,0 +1,9 @@
+framework:
+    rate_limiter:
+        # Re-entering one's password to change it or to delete the account: a session left
+        # open on someone else's computer must not let them guess it. Per user, shared by
+        # both forms through App\Services\Security\CheckCurrentPassword.
+        password_check:
+            policy: 'fixed_window'
+            limit: 5
+            interval: '15 minutes'
