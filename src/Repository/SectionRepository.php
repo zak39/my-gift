@@ -40,7 +40,7 @@ class SectionRepository extends ServiceEntityRepository
             // Selected for the crew's name GiftEditType groups the sections by.
             ->leftJoin('s.crew', 'c')
             ->addSelect('c')
-            ->leftJoin('c.members', 'm', 'WITH', 'm = :user')
+            ->leftJoin('c.memberships', 'm', 'WITH', 'm.user = :user')
             ->where('c.id IS NULL AND s.createdBy = :user')
             ->orWhere('m.id IS NOT NULL')
             ->setParameter('user', $user)

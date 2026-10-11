@@ -2,7 +2,7 @@
 
 namespace App\Twig\Components\Molecule\Crew;
 
-use App\Entity\User;
+use App\Entity\CrewMember;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 /**
@@ -12,7 +12,7 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 #[AsTwigComponent]
 final class MemberRow
 {
-    public User $member;
+    public CrewMember $membership;
 
     /** The member who created the crew, the only one who can delete it. */
     public bool $creator = false;

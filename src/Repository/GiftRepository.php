@@ -108,15 +108,22 @@ class GiftRepository extends ServiceEntityRepository
             // The friendship rule of GiftVisibilityVoter, read from the user's own book as
             // CrewVoter does: a favourite drops out of the list once the user is no friend
             // anymore of its list's owners, the creator of a personal list or a member of a
-            // crew's. MEMBER OF works on a crew's members, not on the book's friends, which
-            // Doctrine cannot translate on a book whose id is its owner (derived identity).
+            // crew's. The friends are read through a join, not MEMBER OF, which Doctrine
+            // cannot translate on a book whose id is its owner (derived identity).
             ->andWhere(<<<'DQL'
                 EXISTS (
                     SELECT viewerFriend.id
                     FROM App\Entity\FriendBook viewerBook
                     JOIN viewerBook.friends viewerFriend
                     WHERE viewerBook.owner = :currentUser
-                    AND ((crew.id IS NULL AND viewerFriend = c) OR viewerFriend MEMBER OF crew.members)
+                    AND (
+                        (crew.id IS NULL AND viewerFriend = c)
+                        OR EXISTS (
+                            SELECT membership.id
+                            FROM App\Entity\CrewMember membership
+                            WHERE membership.crew = crew AND membership.user = viewerFriend
+                        )
+                    )
                 )
                 DQL)
             ->setParameter('userId', $user->getId())

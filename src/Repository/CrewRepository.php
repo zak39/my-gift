@@ -26,9 +26,10 @@ class CrewRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('c')
             // One join picks the user's crews, the other loads every member of them.
-            ->innerJoin('c.members', 'own', 'WITH', 'own = :user')
-            ->leftJoin('c.members', 'm')
-            ->addSelect('m')
+            ->innerJoin('c.memberships', 'own', 'WITH', 'own.user = :user')
+            ->leftJoin('c.memberships', 'ms')
+            ->leftJoin('ms.user', 'm')
+            ->addSelect('ms', 'm')
             ->setParameter('user', $user)
             ->orderBy('c.name', 'ASC')
             ->getQuery()
