@@ -33,6 +33,17 @@ enum GiftStatus: string
         return self::CONTRIBUTING === $this;
     }
 
+    /**
+     * Someone is giving it, and it is not given yet: reserved, pooled or ready.
+     */
+    public function isInProgress(): bool
+    {
+        return match ($this) {
+            self::RESERVED, self::CONTRIBUTING, self::READY => true,
+            default => false,
+        };
+    }
+
     public function hasReachedContributing(): bool
     {
         return match ($this) {

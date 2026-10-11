@@ -22,11 +22,11 @@ class FriendRequest
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'sentRequests')]
-    #[ORM\JoinColumn(name: 'sender_id', referencedColumnName: 'owner_id', nullable: false)]
+    #[ORM\JoinColumn(name: 'sender_id', referencedColumnName: 'owner_id', nullable: false, onDelete: 'CASCADE')]
     private ?FriendBook $sender = null;
 
     #[ORM\ManyToOne(inversedBy: 'receivedRequests')]
-    #[ORM\JoinColumn(name: 'recipient_id', referencedColumnName: 'owner_id', nullable: false)]
+    #[ORM\JoinColumn(name: 'recipient_id', referencedColumnName: 'owner_id', nullable: false, onDelete: 'CASCADE')]
     private ?FriendBook $recipient = null;
 
     #[ORM\Column(enumType: FriendRequestStatus::class)]

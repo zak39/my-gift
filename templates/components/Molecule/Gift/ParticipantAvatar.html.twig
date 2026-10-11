@@ -5,6 +5,12 @@
                 <span class="text-3xl">{{ participant.pseudoAnonyme|u.truncate(2)|capitalize }}</span>
             </div>
         </div>
+    {% elseif participant.isFromDeletedUser %}
+        <div class="avatar avatar-placeholder {{ size }}">
+            <div class="bg-base-300 text-base-content/60 w-24 rounded-full">
+                <twig:ux:icon name="lucide:user-x" class="size-1/2" aria-label="{{ participant.displayName }}" />
+            </div>
+        </div>
     {% else %}
         <twig:Molecule:UserAvatar :user="participant.participantUser" :sizeClass="size" />
     {% endif %}

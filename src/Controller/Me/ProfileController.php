@@ -4,8 +4,12 @@ namespace App\Controller\Me;
 
 use App\Entity\User;
 use App\Form\UserProfileType;
+use App\Services\Lifecycle\UserLifecycle;
+use App\Services\Security\CheckCurrentPassword;
 use App\Services\UserProfileService;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -57,5 +61,52 @@ final class ProfileController extends AbstractController
             'profileForm' => $form->createView(),
             'user' => $user,
         ], new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY));
+    }
+
+    /**
+     * The password again, on top of the CSRF token: a session left open on someone else's
+     * computer is not enough to destroy an account.
+     */
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    #[Route('/profile/delete', name: 'app_user_profile_delete', methods: ['POST'])]
+    public function delete(
+        Request $request,
+        CheckCurrentPassword $checkCurrentPassword,
+        UserLifecycle $userLifecycle,
+        Security $security,
+        LoggerInterface $logger,
+    ): Response {
+        if (!$this->isCsrfTokenValid('account-delete', $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $refusal = $checkCurrentPassword($user, $request->request->getString('password'));
+        if (null !== $refusal) {
+            $this->addFlash('error', $refusal.' Votre compte n\'a pas été supprimé.');
+
+            return $this->redirectToRoute('app_user_profile');
+        }
+
+        try {
+            $userLifecycle->delete($user);
+        } catch (\Throwable $exception) {
+            // Rolled back: the account is intact. Logged, being caught, for whoever looks into it.
+            $logger->error('Account deletion failed', ['user' => $user->getId(), 'exception' => $exception]);
+            $this->addFlash('error', 'La suppression de votre compte n\'a pas pu aboutir : rien n\'a été supprimé. Réessayez plus tard ou contactez-nous.');
+
+            return $this->redirectToRoute('app_user_profile');
+        }
+
+        // Invalidates the session and clears the remember-me cookie on the response it
+        // returns, a redirection to the landing page.
+        $response = $security->logout(false);
+
+        // Added once logged out, so that it lands in the new session.
+        $this->addFlash('success', 'Votre compte a bien été supprimé. Un email de confirmation vous a été envoyé.');
+
+        return $response ?? $this->redirectToRoute('app_landing_page');
     }
 }

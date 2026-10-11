@@ -28,10 +28,11 @@
                         <span class="text-base-content/80 md:text-base text-lg">a réservé ce cadeau</span>
                     </div>
                 {% else %}
-                    <twig:Molecule:UserAvatar :user="participant.participantUser" sizeClass="size-8 shrink-0" />
+                    {# ParticipantAvatar and displayName cover a deleted user too. #}
+                    <twig:Molecule:Gift:ParticipantAvatar :participant="participant" size="size-8 shrink-0" />
                     <div class="min-w-0 leading-tight wrap-anywhere">
                         <span class="font-bold md:text-base text-sm">
-                            {{ this.isCurrentUser(participant.participantUser) ? 'Vous' : participant.participantUser.fullname }}
+                            {{ this.isCurrentUser(participant.participantUser) ? 'Vous' : participant.displayName }}
                         </span>
                         <span class="text-base-content/80 md:text-base text-sm">
                             {{ this.isCurrentUser(participant.participantUser) ? 'avez réservé ce cadeau' : 'a réservé ce cadeau' }}

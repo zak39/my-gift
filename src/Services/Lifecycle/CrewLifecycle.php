@@ -6,6 +6,7 @@ use App\Entity\Crew;
 use App\Entity\CrewInvitation;
 use App\Entity\User;
 use App\Event\CrewDeletedEvent;
+use App\Event\CrewHandedOverEvent;
 use App\Event\CrewInvitationSentEvent;
 use App\Event\CrewMemberJoinedEvent;
 use App\Event\CrewMemberLeftEvent;
@@ -85,10 +86,33 @@ class CrewLifecycle
      */
     public function leave(Crew $crew, User $user): void
     {
-        $crew->removeMember($user);
+        $this->removeMember($crew, $user, accountDeleted: false);
+    }
+
+    /**
+     * A member deleting their account: the others are told they left, as for leave(), but
+     * without the card that would lead to a profile about to disappear.
+     */
+    public function leaveOnAccountDeletion(Crew $crew, User $user): void
+    {
+        $this->removeMember($crew, $user, accountDeleted: true);
+    }
+
+    /**
+     * The creator deleting their account: another member takes the crew over, from now on
+     * the only one who may delete it, and the creator leaves. One event tells everyone,
+     * the successor and the other members each their own way.
+     */
+    public function handOver(Crew $crew, User $successor): void
+    {
+        $previousCreator = $crew->getCreatedBy();
+
+        $crew->handOverTo($successor);
+        // No longer its creator: removeMember() lets them go.
+        $crew->removeMember($previousCreator);
         $this->entityManager->flush();
 
-        $this->eventDispatcher->dispatch(new CrewMemberLeftEvent($crew, $user));
+        $this->eventDispatcher->dispatch(new CrewHandedOverEvent($crew, $previousCreator));
     }
 
     /**
@@ -99,7 +123,7 @@ class CrewLifecycle
     public function delete(Crew $crew): void
     {
         // Read before the crew goes, for whoever listens to its deletion.
-        $members = $crew->getMembers()->getValues();
+        $members = $crew->getMembers();
 
         foreach ($crew->getSections() as $section) {
             $section->releaseGifts();
@@ -111,6 +135,14 @@ class CrewLifecycle
         $this->entityManager->flush();
 
         $this->eventDispatcher->dispatch(new CrewDeletedEvent($crew->getName(), $crew->getCreatedBy(), $members));
+    }
+
+    private function removeMember(Crew $crew, User $user, bool $accountDeleted): void
+    {
+        $crew->removeMember($user);
+        $this->entityManager->flush();
+
+        $this->eventDispatcher->dispatch(new CrewMemberLeftEvent($crew, $user, $accountDeleted));
     }
 
     private function applyTransition(CrewInvitation $invitation, string $transition, string $error): void

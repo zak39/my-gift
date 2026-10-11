@@ -362,6 +362,17 @@ class Gift
         return $this;
     }
 
+    /**
+     * The participants an email can reach: a participation kept from a deleted account has
+     * nobody left behind it.
+     *
+     * @return list<Participant>
+     */
+    public function getParticipantsToNotify(): array
+    {
+        return $this->participants->filter(fn (Participant $participant) => !$participant->isFromDeletedUser())->getValues();
+    }
+
     public function getParticipant(User $user): ?Participant
     {
         foreach ($this->participants as $participant) {

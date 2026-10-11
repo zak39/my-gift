@@ -15,10 +15,10 @@
       <Raw>{% for contributor in gift.participants %}</Raw>
         <tr>
           <td class="w-8 py-1 align-middle">
-            <Raw>{% if contributor.isAnonymous %}</Raw>
+            <Raw>{% if contributor.isAnonymous or contributor.isFromDeletedUser %}</Raw>
               <table class="gift-card-secondary rounded-full" cellpadding="0" cellspacing="0" role="none">
                 <tr>
-                  <td width="32" height="32" class="text-center text-xs font-semibold"><Raw>{{ contributor.pseudoAnonyme|u.truncate(2)|capitalize }}</Raw></td>
+                  <td width="32" height="32" class="text-center text-xs font-semibold"><Raw>{{ contributor.isAnonymous ? contributor.pseudoAnonyme|u.truncate(2)|capitalize : '?' }}</Raw></td>
                 </tr>
               </table>
             <Raw>{% else %}</Raw>
@@ -32,7 +32,7 @@
             <Raw>{% endif %}</Raw>
           </td>
           <td class="py-1 pl-3 align-middle text-sm">
-            <span class="font-semibold"><Raw>{{ contributor.isAnonymous ? contributor.pseudoAnonyme : contributor.participantUser.fullName|title }}</Raw></span>
+            <span class="font-semibold"><Raw>{{ contributor.isAnonymous or contributor.isFromDeletedUser ? contributor.displayName : contributor.participantUser.fullName|title }}</Raw></span>
           </td>
           <td v-if="showAmount" class="py-1 text-right align-middle text-sm font-semibold"><Raw>{{ contributor.amount|format_currency('EUR') }}</Raw></td>
         </tr>

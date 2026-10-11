@@ -2,6 +2,10 @@
 
 namespace App\EventSubscriber;
 
+use App\Entity\Gift;
+use App\Entity\Participant;
+use App\Enum\GiftStatus;
+use App\Event\GiftNoLongerReadyEvent;
 use App\Event\GiftReadyEvent;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -23,7 +27,7 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
 
     public function giftReserved(EnteredEvent $event): void
     {
-        /** @var \App\Entity\Gift $gift */
+        /** @var Gift $gift */
         $gift = $event->getSubject();
 
         $participant = $gift->getParticipants()->first();
@@ -43,14 +47,19 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
         $this->mailer->send($email);
     }
 
+    /**
+     * Whoever reserved the gift no longer offers it: a reservation released (`disengage`),
+     * or a giver gone with their account from a reservation they had declared ready
+     * (`release`).
+     */
     public function giftDisengaged(TransitionEvent $event): void
     {
-        /** @var \App\Entity\Gift $gift */
+        /** @var Gift $gift */
         $gift = $event->getSubject();
-
+        /** @var Participant $participant */
         $participant = $event->getContext()['participant'];
-        $participantName = $participant->isAnonymous() ? $participant->getPseudoAnonyme() : $participant->getParticipantUser()->getFullName();
-        $participantName = ucwords($participantName);
+
+        $participantName = ucwords($participant->getDisplayName());
 
         $subject = "Mince ! $participantName a retiré sa réservation ! 😢";
 
@@ -71,12 +80,10 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
 
     public function giftContributing(CompletedEvent $event): void
     {
-        /** @var \App\Entity\Gift $gift */
+        /** @var Gift $gift */
         $gift = $event->getSubject();
 
         $participant = $event->getContext()['participant'];
-        $participantName = $participant->isAnonymous() ? $participant->getPseudoAnonyme() : $participant->getParticipantUser()->getFullName();
-        $participantName = ucwords($participantName);
 
         $ownerName = ucwords($gift->getCreatedBy()->getFirstname());
 
@@ -97,12 +104,16 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
 
     public function giftCancelContribution(TransitionEvent $event): void
     {
-        /** @var \App\Entity\Gift $gift */
+        // Their account is being deleted (PoolContributionRelease, ReadyPoolRelease): there
+        // is nobody left to tell.
+        if ($event->getContext()['accountDeleted'] ?? false) {
+            return;
+        }
+
+        /** @var Gift $gift */
         $gift = $event->getSubject();
 
         $participant = $event->getContext()['participant'];
-        $participantName = $participant->isAnonymous() ? $participant->getPseudoAnonyme() : $participant->getParticipantUser()->getFullName();
-        $participantName = ucwords($participantName);
 
         $ownerName = ucwords($gift->getCreatedBy()->getFirstname());
 
@@ -116,6 +127,28 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
                 'url' => $this->urlGenerator->generate('app_gift_show', ['id' => $gift->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
             ])
             ->htmlTemplate('emails/gift_cancelled_contribution.html.twig')
+        ;
+
+        $this->mailer->send($email);
+    }
+
+    /**
+     * The owner was told the pool was complete: it no longer is.
+     */
+    public function giftNoLongerReady(GiftNoLongerReadyEvent $event): void
+    {
+        $gift = $event->getGift();
+
+        $email = (new TemplatedEmail())
+            ->from(self::FROM_EMAIL)
+            ->to($gift->getCreatedBy()->getEmail())
+            ->subject("Votre cadeau {$gift->getTitle()} n'est plus prêt")
+            ->context([
+                'gift' => $gift,
+                'backOnOffer' => GiftStatus::CREATED === $gift->getStatus(),
+                'url' => $this->urlGenerator->generate('app_gift_show', ['id' => $gift->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
+            ])
+            ->htmlTemplate('emails/gift_no_longer_ready.html.twig')
         ;
 
         $this->mailer->send($email);
@@ -147,8 +180,10 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
             // Not `entered.contributing`: `reopen` enters that place too, without a participant.
             'workflow.gift_request.completed.contribute' => 'giftContributing',
             'workflow.gift_request.transition.cancelled_contribution' => 'giftCancelContribution',
+            'workflow.gift_request.transition.release' => 'giftDisengaged',
             // Only a pool declared ready, which `leave.contributing` cannot tell from a cancelled one.
             GiftReadyEvent::class => 'giftReady',
+            GiftNoLongerReadyEvent::class => 'giftNoLongerReady',
         ];
     }
 }

@@ -56,7 +56,7 @@ class CrewCrudController extends AbstractCrudController
             ->onlyOnDetail()
         ;
 
-        yield AssociationField::new('members')
+        yield AssociationField::new('memberships')
             ->onlyOnDetail()
             ->setTemplatePath('admin/field/members.html.twig')
         ;

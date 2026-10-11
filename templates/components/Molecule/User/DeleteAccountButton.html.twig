@@ -1,0 +1,48 @@
+{# Inside the Modal blocks, id, title, class and even attributes are those of Modal: user
+   stays in reach, under a name Modal does not use. #}
+<twig:Modal :id="user.id" title="Supprimer mon compte" class="account_delete">
+    <twig:block name="handlerButton">
+        <button type="button" class="btn btn-error btn-outline" onclick="modal_account_delete_{{ user.id }}.showModal()">
+            <twig:ux:icon name="lucide:trash-2" class="size-4" />
+            Supprimer mon compte
+        </button>
+    </twig:block>
+    <twig:block name="message">
+        <div class="space-y-3 py-4 text-sm">
+            <p>La suppression est immédiate et définitive :</p>
+            <ul class="list-disc space-y-1 pl-5">
+                <li>vos sections et vos cadeaux disparaissent ; celles et ceux qui y participaient sont prévenu·es par email ;</li>
+                <li>chaque groupe que vous avez créé passe au membre le plus ancien, ou disparaît si vous y étiez seul·e ; les cadeaux que vous avez ajoutés à un groupe y restent ;</li>
+                <li>vos réservations et participations en cours sont annulées ;</li>
+                <li>sur les cadeaux déjà offerts, votre participation reste, au nom d'« Utilisateur supprimé ».</li>
+            </ul>
+        </div>
+        <form id="account_delete_form" method="post" action="{{ path('app_user_profile_delete') }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('account-delete') }}">
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend">Confirmez avec votre mot de passe</legend>
+                <div data-controller="password-toggle">
+                    <label class="input w-full">
+                        <twig:ux:icon name="lucide:key-round" class="size-4 opacity-50" />
+                        <input
+                            type="password"
+                            name="password"
+                            required
+                            autocomplete="current-password"
+                            class="grow"
+                            data-password-toggle-target="field">
+                        {# Its icon comes from the password-toggle controller. #}
+                        <button type="button" data-password-toggle-target="button" data-action="password-toggle#toggle" class="btn btn-sm btn-ghost" aria-label="Afficher le mot de passe"></button>
+                    </label>
+                </div>
+            </fieldset>
+        </form>
+    </twig:block>
+    <twig:block name="actionButtons">
+        {# Outside the form, in the modal's actions: form= ties the button to it. #}
+        <button type="submit" form="account_delete_form" class="btn btn-error">
+            <twig:ux:icon name="lucide:trash-2" class="size-4" />
+            Oui, supprimer mon compte
+        </button>
+    </twig:block>
+</twig:Modal>

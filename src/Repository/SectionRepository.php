@@ -29,6 +29,23 @@ class SectionRepository extends ServiceEntityRepository
     }
 
     /**
+     * The sections a user created in crews' lists, with their crew.
+     *
+     * @return list<Section>
+     */
+    public function findInCrewsCreatedBy(User $user): array
+    {
+        return $this->createQueryBuilder('s')
+            ->innerJoin('s.crew', 'c')
+            ->addSelect('c')
+            ->where('s.createdBy = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
      * Every section the user may file a gift in: those of their own list, and those of
      * their crews' lists, whoever created them.
      *
@@ -40,7 +57,7 @@ class SectionRepository extends ServiceEntityRepository
             // Selected for the crew's name GiftEditType groups the sections by.
             ->leftJoin('s.crew', 'c')
             ->addSelect('c')
-            ->leftJoin('c.members', 'm', 'WITH', 'm = :user')
+            ->leftJoin('c.memberships', 'm', 'WITH', 'm.user = :user')
             ->where('c.id IS NULL AND s.createdBy = :user')
             ->orWhere('m.id IS NOT NULL')
             ->setParameter('user', $user)

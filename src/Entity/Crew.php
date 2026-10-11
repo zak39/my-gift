@@ -45,14 +45,13 @@ class Crew
     private User $createdBy;
 
     /**
-     * @var Collection<int, User>
+     * In the order they joined, the creator first.
+     *
+     * @var Collection<int, CrewMember>
      */
-    #[ORM\ManyToMany(targetEntity: User::class)]
-    #[ORM\JoinTable(name: 'crew_member')]
-    #[ORM\JoinColumn(name: 'crew_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    #[ORM\InverseJoinColumn(name: 'user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    #[ORM\OrderBy(['firstname' => 'ASC'])]
-    private Collection $members;
+    #[ORM\OneToMany(targetEntity: CrewMember::class, mappedBy: 'crew', cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['joinedAt' => 'ASC', 'id' => 'ASC'])]
+    private Collection $memberships;
 
     /**
      * Pending only: an invitation is deleted once answered or cancelled.
@@ -73,7 +72,7 @@ class Crew
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->createdBy = $creator;
-        $this->members = new ArrayCollection();
+        $this->memberships = new ArrayCollection();
         $this->invitations = new ArrayCollection();
         $this->sections = new ArrayCollection();
 
@@ -108,11 +107,25 @@ class Crew
     }
 
     /**
-     * @return Collection<int, User>
+     * @return Collection<int, CrewMember>
      */
-    public function getMembers(): Collection
+    public function getMemberships(): Collection
     {
-        return $this->members;
+        return $this->memberships;
+    }
+
+    /**
+     * The members by first name, as the pages list them. A copy: add or remove one through
+     * addMember() and removeMember().
+     *
+     * @return list<User>
+     */
+    public function getMembers(): array
+    {
+        $members = $this->memberships->map(fn (CrewMember $membership) => $membership->getUser())->getValues();
+        usort($members, fn (User $a, User $b) => strnatcasecmp($a->getFirstname() ?? '', $b->getFirstname() ?? ''));
+
+        return $members;
     }
 
     /**
@@ -120,18 +133,18 @@ class Crew
      */
     public function getMembersExcept(User $user): array
     {
-        return $this->members->filter(fn (User $member) => $member !== $user)->getValues();
+        return array_values(array_filter($this->getMembers(), fn (User $member) => $member !== $user));
     }
 
     public function hasMember(User $user): bool
     {
-        return $this->members->contains($user);
+        return null !== $this->getMembershipOf($user);
     }
 
     public function addMember(User $user): static
     {
-        if (!$this->members->contains($user)) {
-            $this->members->add($user);
+        if (!$this->hasMember($user)) {
+            $this->memberships->add(new CrewMember($this, $user));
         }
 
         return $this;
@@ -147,9 +160,24 @@ class Crew
             throw new \LogicException('Vous avez créé ce groupe : vous ne pouvez pas le quitter, mais vous pouvez le supprimer.');
         }
 
-        $this->members->removeElement($user);
+        $membership = $this->getMembershipOf($user);
+        if (null !== $membership) {
+            // orphanRemoval deletes its row.
+            $this->memberships->removeElement($membership);
+        }
 
         return $this;
+    }
+
+    private function getMembershipOf(User $user): ?CrewMember
+    {
+        foreach ($this->memberships as $membership) {
+            if ($membership->getUser() === $user) {
+                return $membership;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -219,5 +247,34 @@ class Crew
         }
 
         return $count;
+    }
+
+    /**
+     * Who takes the crew over when its creator deletes their account: the member who has
+     * been there the longest. Null when the creator is alone, and the crew goes with them.
+     */
+    public function getSuccessor(): ?User
+    {
+        /** @var CrewMember|null $successor */
+        $successor = $this->memberships->findFirst(
+            fn (int $key, CrewMember $membership) => $membership->getUser() !== $this->createdBy
+        );
+
+        return $successor?->getUser();
+    }
+
+    /**
+     * The crew goes on under its successor once its creator deletes their account: they
+     * may then leave it, as any member.
+     */
+    public function handOverTo(User $successor): static
+    {
+        if (!$this->hasMember($successor)) {
+            throw new \LogicException('Seul un membre du groupe peut le reprendre.');
+        }
+
+        $this->createdBy = $successor;
+
+        return $this;
     }
 }

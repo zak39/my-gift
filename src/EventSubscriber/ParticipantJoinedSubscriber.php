@@ -85,7 +85,7 @@ class ParticipantJoinedSubscriber implements EventSubscriberInterface
     private function sendEmailToParticipants(Gift $gift, string $subject, string $template, array $context = [], ?Participant $excluded = null): void
     {
         $recipients = array_filter(
-            $gift->getParticipants()->toArray(),
+            $gift->getParticipantsToNotify(),
             fn (Participant $participant) => $participant !== $excluded,
         );
 

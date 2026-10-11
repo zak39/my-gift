@@ -4,6 +4,8 @@ namespace App\Controller\Admin;
 
 use App\Entity\User;
 use App\Services\Admin\Filter\RoleFilter;
+use App\Services\Lifecycle\UserLifecycle;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -33,6 +35,7 @@ class UserCrudController extends AbstractCrudController
         private UploaderHelper $uploaderHelper,
         #[Autowire(param: 'security.role_hierarchy.roles')]
         private array $roleHierarchy,
+        private UserLifecycle $userLifecycle,
     ) {
     }
 
@@ -59,9 +62,30 @@ class UserCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
+        // An admin deletes their own account from their profile, with their password.
+        $notMe = fn (User $user): bool => $user !== $this->getUser();
+
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            // One account at a time: a deletion hands crews over, sends emails, removes
+            // files, and a batch failing halfway would leave part of it applied.
+            ->remove(Crud::PAGE_INDEX, Action::BATCH_DELETE)
+            ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => $action->displayIf($notMe))
+            ->update(Crud::PAGE_DETAIL, Action::DELETE, fn (Action $action) => $action->displayIf($notMe))
         ;
+    }
+
+    /**
+     * A user is deleted as from their profile, their crews handed over and their
+     * participations released.
+     */
+    public function deleteEntity(EntityManagerInterface $entityManager, object $entityInstance): void
+    {
+        if ($entityInstance === $this->getUser()) {
+            throw $this->createAccessDeniedException('Supprimez votre propre compte depuis votre profil.');
+        }
+
+        $this->userLifecycle->delete($entityInstance);
     }
 
     public function configureFilters(Filters $filters): Filters

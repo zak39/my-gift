@@ -1,15 +1,19 @@
+{% set member = membership.user %}
 <li {{ attributes.defaults({ class: 'list-row items-center' }) }}>
     <twig:Molecule:UserAvatar :user="member" sizeClass="w-10" />
 
-    <p class="min-w-0 font-medium">
-        <span class="wrap-anywhere">{{ member.fullname }}</span>
-        {% if member is same as(app.user) %}
-            <span class="text-sm font-normal text-base-content/60">(vous)</span>
-        {% endif %}
-        {% if creator %}
-            <span class="badge badge-sm badge-ghost">Créateur·rice</span>
-        {% endif %}
-    </p>
+    <div class="min-w-0">
+        <p class="font-medium">
+            <span class="wrap-anywhere">{{ member.fullname }}</span>
+            {% if member is same as(app.user) %}
+                <span class="text-sm font-normal text-base-content/60">(vous)</span>
+            {% endif %}
+            {% if creator %}
+                <span class="badge badge-sm badge-ghost">Créateur·rice</span>
+            {% endif %}
+        </p>
+        <p class="text-xs text-base-content/60">Membre depuis le {{ membership.joinedAt|date('d/m/Y') }}</p>
+    </div>
 
     {# For a member who is not a friend yet, the locked page offers to send a request. #}
     {% if member is not same as(app.user) %}

@@ -3,15 +3,15 @@
         <h2 id="crew-members-title" class="card-title">
             <twig:ux:icon name="lucide:users" class="size-5" />
             Membres
-            <span class="badge badge-sm badge-ghost tabular-nums">{{ crew.members|length }}</span>
+            <span class="badge badge-sm badge-ghost tabular-nums">{{ crew.memberships|length }}</span>
         </h2>
         <p class="text-sm text-base-content/70">
             Tous gèrent les sections et invitent leurs ami·es, et chacun peut quitter le groupe. Seule la personne qui l'a créé ne peut pas le quitter : elle seule peut le supprimer.
         </p>
 
         <ul class="list -mx-4">
-            {% for member in crew.members %}
-                <twig:Molecule:Crew:MemberRow :member="member" :creator="member is same as crew.createdBy" />
+            {% for membership in crew.memberships %}
+                <twig:Molecule:Crew:MemberRow :membership="membership" :creator="membership.user is same as crew.createdBy" />
             {% endfor %}
         </ul>
     </div>

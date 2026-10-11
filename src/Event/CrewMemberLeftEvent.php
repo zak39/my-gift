@@ -11,6 +11,7 @@ final class CrewMemberLeftEvent extends Event
     public function __construct(
         private readonly Crew $crew,
         private readonly User $member,
+        private readonly bool $accountDeleted = false,
     ) {
     }
 
@@ -23,5 +24,11 @@ final class CrewMemberLeftEvent extends Event
     public function getMember(): User
     {
         return $this->member;
+    }
+
+    /** Left because they deleted their account: their profile and avatar are gone. */
+    public function isAccountDeleted(): bool
+    {
+        return $this->accountDeleted;
     }
 }
