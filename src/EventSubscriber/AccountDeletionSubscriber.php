@@ -3,7 +3,9 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Participant;
+use App\Enum\AccountDeletionReason;
 use App\Event\AccountDeletedEvent;
+use App\Event\AccountInactivityNoticeEvent;
 use App\Event\GiftDeletedWithAccountEvent;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -11,8 +13,8 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
- * The emails of an account's deletion: its confirmation, and a word to whoever was giving
- * one of its gifts. The sender is the mailer's (config/packages/mailer.yaml).
+ * The emails of an account's deletion: the warnings of an inactive one, its confirmation,
+ * and a word to whoever was giving one of its gifts. The sender is the mailer's (config/packages/mailer.yaml).
  *
  * The contexts hold plain values only: the emails are rendered by the worker once the
  * account, its gifts and their images are gone.
@@ -27,13 +29,50 @@ class AccountDeletionSubscriber implements EventSubscriberInterface
 
     public function accountDeleted(AccountDeletedEvent $event): void
     {
+        // An address never confirmed may not be theirs.
+        if (AccountDeletionReason::Unverified === $event->getReason()) {
+            return;
+        }
+
+        [$subject, $template] = AccountDeletionReason::Inactivity === $event->getReason()
+            ? ['Votre compte My Gift a été supprimé', 'emails/account_deleted_inactive.html.twig']
+            : ['Votre compte My Gift a bien été supprimé', 'emails/account_deleted.html.twig']
+        ;
+
         $email = (new TemplatedEmail())
             ->to($event->getEmail())
-            ->subject('Votre compte My Gift a bien été supprimé')
-            ->htmlTemplate('emails/account_deleted.html.twig')
+            ->subject($subject)
+            ->htmlTemplate($template)
             ->context([
                 'firstname' => $event->getFirstname(),
                 'url' => $this->urlGenerator->generate('app_landing_page', [], UrlGeneratorInterface::ABSOLUTE_URL),
+            ])
+        ;
+
+        $this->mailer->send($email);
+    }
+
+    /**
+     * The warning and the reminder before an inactive account goes: logging in is all it
+     * takes to keep it, so the button leads there.
+     */
+    public function accountInactivityNotice(AccountInactivityNoticeEvent $event): void
+    {
+        $user = $event->getUser();
+        $deletionDate = $event->getDeletionDate()->format('d/m/Y');
+
+        $email = (new TemplatedEmail())
+            ->to($user->getEmail())
+            ->subject($event->isReminder()
+                ? \sprintf('Rappel : votre compte My Gift sera supprimé le %s', $deletionDate)
+                : \sprintf('Votre compte My Gift sera supprimé le %s', $deletionDate)
+            )
+            ->htmlTemplate('emails/account_inactivity_warning.html.twig')
+            ->context([
+                'firstname' => $user->getFirstname(),
+                'deletionDate' => $deletionDate,
+                'reminder' => $event->isReminder(),
+                'url' => $this->urlGenerator->generate('app_login', [], UrlGeneratorInterface::ABSOLUTE_URL),
             ])
         ;
 
@@ -80,6 +119,7 @@ class AccountDeletionSubscriber implements EventSubscriberInterface
     {
         return [
             AccountDeletedEvent::class => 'accountDeleted',
+            AccountInactivityNoticeEvent::class => 'accountInactivityNotice',
             GiftDeletedWithAccountEvent::class => 'giftDeletedWithAccount',
         ];
     }
