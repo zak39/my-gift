@@ -115,30 +115,36 @@ class GiftLifecycle
         $this->entityManager->flush();
     }
 
-    public function participated(Gift $gift, Participant $newParticipant, User $user): void
+    /** Joins the pool, or changes the share of who already takes part in it. */
+    public function participated(Gift $gift, Participant $participant, User $user): void
     {
         if (GiftStatus::CREATED !== $gift->getStatus()
             && GiftStatus::CONTRIBUTING !== $gift->getStatus()) {
             throw new GiftActionRefusedException('Ce cadeau ne peut pas recevoir de contribution à son état actuel.');
         }
 
-        $newParticipant
+        // Before addParticipant(): a changed share must not be announced as a newcomer.
+        $joins = !$gift->getParticipants()->contains($participant);
+
+        $participant
             ->setParticipantUser($user)
             ->setStatus(ParticipantStatus::PARTICIPATING)
         ;
 
         // Not setGift() alone: the event's listeners read the gift's collection.
-        $gift->addParticipant($newParticipant);
+        $gift->addParticipant($participant);
 
         if (GiftStatus::CREATED === $gift->getStatus()) {
             $this->giftRequestWorkflow->apply($gift, 'contribute', [
-                'participant' => $newParticipant,
+                'participant' => $participant,
             ]);
         }
 
-        $this->eventDispatcher->dispatch(new ParticipantJoinedEvent($gift, $newParticipant));
+        if ($joins) {
+            $this->eventDispatcher->dispatch(new ParticipantJoinedEvent($gift, $participant));
+        }
 
-        $this->entityManager->persist($newParticipant);
+        $this->entityManager->persist($participant);
         $this->entityManager->flush();
     }
 
