@@ -34,6 +34,11 @@ framework:
                 reopen:
                     from: !php/enum App\Enum\GiftStatus::READY
                     to: !php/enum App\Enum\GiftStatus::CONTRIBUTING
+                release:
+                    # A reservation declared ready whose giver deletes their account
+                    # (ReadyReservationRelease): no button offers it.
+                    from: !php/enum App\Enum\GiftStatus::READY
+                    to: !php/enum App\Enum\GiftStatus::CREATED
                 give:
                     from: !php/enum App\Enum\GiftStatus::READY
                     to: !php/enum App\Enum\GiftStatus::GIVEN

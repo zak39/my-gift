@@ -29,13 +29,21 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
                         <b><Raw>{{ member.fullName|title }}</Raw></b> ne fait plus partie du groupe <b>« <Raw>{{ crewName }}</Raw> »</b>.
                     </p>
 
-                    <div class="my-6">
-                        <UserCard
-                            name="{{ member.fullName|title }}"
-                            avatar="{{ absolute_url(vich_uploader_asset(member, member.avatar ? 'avatarFile' : 'avatarDefaultFile')) }}"
-                            to="{{ url('app_section_user_page', { id: member.id }) }}"
-                        />
-                    </div>
+                    <Raw>{% if newCreatorName|default(false) %}</Raw>
+                        <p>
+                            <b><Raw>{{ newCreatorName|title }}</Raw></b> en est maintenant créateur·rice : c'est la seule personne qui peut supprimer le groupe.
+                        </p>
+                    <Raw>{% endif %}</Raw>
+
+                    <Raw>{% if not accountDeleted|default(false) %}</Raw>
+                        <div class="my-6">
+                            <UserCard
+                                name="{{ member.fullName|title }}"
+                                avatar="{{ absolute_url(vich_uploader_asset(member, member.avatar ? 'avatarFile' : 'avatarDefaultFile')) }}"
+                                to="{{ url('app_section_user_page', { id: member.id }) }}"
+                            />
+                        </div>
+                    <Raw>{% endif %}</Raw>
 
                     <p>
                         Les cadeaux qu'il ou elle y avait ajoutés restent dans les sections du groupe : vous pouvez toujours les gérer, et les réservations comme les cagnottes continuent.

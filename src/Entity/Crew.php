@@ -248,4 +248,33 @@ class Crew
 
         return $count;
     }
+
+    /**
+     * Who takes the crew over when its creator deletes their account: the member who has
+     * been there the longest. Null when the creator is alone, and the crew goes with them.
+     */
+    public function getSuccessor(): ?User
+    {
+        /** @var CrewMember|null $successor */
+        $successor = $this->memberships->findFirst(
+            fn (int $key, CrewMember $membership) => $membership->getUser() !== $this->createdBy
+        );
+
+        return $successor?->getUser();
+    }
+
+    /**
+     * The crew goes on under its successor once its creator deletes their account: they
+     * may then leave it, as any member.
+     */
+    public function handOverTo(User $successor): static
+    {
+        if (!$this->hasMember($successor)) {
+            throw new \LogicException('Seul un membre du groupe peut le reprendre.');
+        }
+
+        $this->createdBy = $successor;
+
+        return $this;
+    }
 }

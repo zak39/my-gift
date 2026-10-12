@@ -30,8 +30,20 @@ class Participant
     #[ORM\ManyToOne(inversedBy: 'participants')]
     private ?Gift $gift = null;
 
+    /**
+     * Null only once its user deleted their account: see detachDeletedUser().
+     */
     #[ORM\ManyToOne(inversedBy: 'participations')]
     private ?User $participantUser = null;
+
+    /**
+     * When the participant's account was deleted. The database refuses a participation
+     * without a user unless this date is set (a CHECK constraint, written in the migration
+     * since Doctrine maps none): a user missing by mistake fails loudly instead of being
+     * shown as deleted.
+     */
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $userDeletedAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\When(
@@ -111,11 +123,33 @@ class Participant
         return $this->participantUser;
     }
 
-    public function setParticipantUser(?User $participantUser): static
+    public function setParticipantUser(User $participantUser): static
     {
         $this->participantUser = $participantUser;
 
         return $this;
+    }
+
+    /**
+     * Keeps the participation in the gift's history once its user deleted their account,
+     * with no trace of who they were.
+     */
+    public function detachDeletedUser(): static
+    {
+        $this->participantUser = null;
+        $this->userDeletedAt = new \DateTimeImmutable();
+
+        return $this;
+    }
+
+    public function isFromDeletedUser(): bool
+    {
+        return null !== $this->userDeletedAt;
+    }
+
+    public function getUserDeletedAt(): ?\DateTimeImmutable
+    {
+        return $this->userDeletedAt;
     }
 
     public function getPseudoAnonyme(): ?string
@@ -130,11 +164,16 @@ class Participant
         return $this;
     }
 
+    /**
+     * An anonymous participation keeps its pseudonym once its user is deleted: it never
+     * showed who they were.
+     */
     public function getDisplayName(): string
     {
-        return $this->isAnonymous()
-            ? $this->getPseudoAnonyme()
-            : $this->getParticipantUser()->getFullname()
-        ;
+        return match (true) {
+            $this->isAnonymous() => $this->getPseudoAnonyme(),
+            $this->isFromDeletedUser() => 'Utilisateur supprimé',
+            default => $this->getParticipantUser()->getFullname(),
+        };
     }
 }

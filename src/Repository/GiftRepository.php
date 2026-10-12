@@ -77,6 +77,24 @@ class GiftRepository extends ServiceEntityRepository
     }
 
     /**
+     * The gifts a user added to crews' lists, with their section and crew.
+     *
+     * @return list<Gift>
+     */
+    public function findInCrewsCreatedBy(User $user): array
+    {
+        return $this->createQueryBuilder('g')
+            ->innerJoin('g.section', 's')
+            ->innerJoin('s.crew', 'c')
+            ->addSelect('s', 'c')
+            ->where('g.createdBy = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
      * The gift, if it belongs to a user's own list, filed or not: what a /me/gifts/{id} URL
      * reaches. A crew's gift is run from its crew's URL, as the links lead there (404 here).
      */

@@ -7,6 +7,7 @@ use App\Entity\Participant;
 use App\Entity\User;
 use App\Enum\GiftStatus;
 use App\Enum\ParticipantStatus;
+use App\Event\GiftNoLongerReadyEvent;
 use App\Event\GiftPriceChangedEvent;
 use App\Event\GiftReadyEvent;
 use App\Event\ParticipantJoinedEvent;
@@ -48,21 +49,7 @@ class GiftLifecycle
 
     public function disengage(Gift $gift, User $user): void
     {
-        if (!$this->giftRequestWorkflow->can($gift, 'disengage')) {
-            throw new GiftActionRefusedException('Le cadeau ne peut pas être libéré dans son état actuel.');
-        }
-
-        $participant = $gift->getParticipant($user);
-
-        if (!$participant) {
-            throw new GiftActionRefusedException('Aucune participation trouvée pour cet utilisateur sur ce cadeau.');
-        }
-
-        $gift->removeParticipant($participant);
-        $this->giftRequestWorkflow->apply($gift, 'disengage', [
-            'participant' => $participant,
-        ]);
-        $this->entityManager->flush();
+        $this->withdrawReservation($gift, $user, 'disengage');
     }
 
     public function ready(Gift $gift, User $user): void
@@ -155,7 +142,11 @@ class GiftLifecycle
         $this->entityManager->flush();
     }
 
-    public function cancelledContribution(Gift $gift, User $user): void
+    /**
+     * @param bool $accountDeleted the giver is deleting their account: they are not told
+     *                             they were the last one (WorkflowGiftSubscriber)
+     */
+    public function cancelledContribution(Gift $gift, User $user, bool $accountDeleted = false): void
     {
         if (!$this->giftRequestWorkflow->can($gift, 'cancelled_contribution')) {
             throw new GiftActionRefusedException('Le cadeau ne peut pas encore être annulé.');
@@ -173,9 +164,57 @@ class GiftLifecycle
         if ($gift->getParticipants()->isEmpty()) {
             $this->giftRequestWorkflow->apply($gift, 'cancelled_contribution', [
                 'participant' => $participant,
+                'accountDeleted' => $accountDeleted,
             ]);
         }
 
+        $this->entityManager->flush();
+    }
+
+    /**
+     * The giver of a reservation they declared ready deletes their account: the gift is
+     * on offer again, its owner told as when a reservation is released. No button offers
+     * it: ReadyReservationRelease alone calls it.
+     */
+    public function release(Gift $gift, User $user): void
+    {
+        $this->withdrawReservation($gift, $user, 'release');
+    }
+
+    /**
+     * A contributor to a pool declared ready deletes their account: the pool reopens
+     * without their share, for the others to declare it ready again, or goes back on
+     * offer if they were alone. Its owner, told it was ready, is told it no longer is.
+     * ReadyPoolRelease calls it.
+     */
+    public function leaveReadyPool(Gift $gift, User $user): void
+    {
+        $this->giftRequestWorkflow->apply($gift, 'reopen');
+        $this->cancelledContribution($gift, $user, accountDeleted: true);
+
+        $this->eventDispatcher->dispatch(new GiftNoLongerReadyEvent($gift));
+    }
+
+    /**
+     * A reservation given up: released by its giver (`disengage`), or declared ready and
+     * left by a giver deleting their account (`release`). Both put the gift back on offer,
+     * the participant in the context for its owner's email (WorkflowGiftSubscriber).
+     */
+    private function withdrawReservation(Gift $gift, User $user, string $transition): void
+    {
+        if (!$this->giftRequestWorkflow->can($gift, $transition)) {
+            throw new GiftActionRefusedException('Le cadeau ne peut pas être libéré dans son état actuel.');
+        }
+
+        $participant = $gift->getParticipant($user);
+        if (!$participant) {
+            throw new GiftActionRefusedException('Aucune participation trouvée pour cet utilisateur sur ce cadeau.');
+        }
+
+        $gift->removeParticipant($participant);
+        $this->giftRequestWorkflow->apply($gift, $transition, [
+            'participant' => $participant,
+        ]);
         $this->entityManager->flush();
     }
 }

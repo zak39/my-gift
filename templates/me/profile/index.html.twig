@@ -220,6 +220,7 @@
                                     {% endif %}
                                 </div>
                             </div>
+                    </div>
 
                         {{ form_widget(profileForm._token) }}
                     <div class="pt-4">
@@ -227,8 +228,16 @@
                     </div>
                 {{ form_end(profileForm, {'render_rest': false}) }}
                 </turbo-frame>
+
+                {# Outside the frame: the deletion leads to the landing page, not into the frame. #}
+                <section class="mt-8 p-4 bg-base-100 border border-error/40 rounded-md shadow-sm" aria-labelledby="account-delete-title">
+                    <h3 id="account-delete-title" class="text-sm font-medium text-error mb-1">Zone de danger</h3>
+                    <p class="text-sm text-base-content/70 mb-4">
+                        Supprimer votre compte efface vos sections, vos cadeaux et votre photo. Cette action est définitive.
+                    </p>
+                    <twig:Molecule:User:DeleteAccountButton :user="user" />
+                </section>
             </div>
         </div>
-    </div>
 </div>
 {% endblock %}

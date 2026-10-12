@@ -80,7 +80,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Gift>
      */
-    #[ORM\OneToMany(targetEntity: Gift::class, mappedBy: 'createdBy', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Gift::class, mappedBy: 'createdBy')]
     private Collection $gifts;
 
     /**
@@ -385,7 +385,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->avatarDefault;
     }
 
-    public function setAvatarDefault(string $avatarDefault): static
+    public function setAvatarDefault(?string $avatarDefault): static
     {
         $this->avatarDefault = $avatarDefault;
 
@@ -455,14 +455,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->favoriteGifts->contains($gift);
     }
 
+    /**
+     * The inverse side only: the participation keeps its user (see
+     * Participant::detachDeletedUser()). Once a participation is deleted, leaving it here
+     * would make the next flush take it for a new entity.
+     */
     public function removeParticipation(Participant $participation): static
     {
-        if ($this->participations->removeElement($participation)) {
-            // set the owning side to null (unless already changed)
-            if ($participation->getParticipantUser() === $this) {
-                $participation->setParticipantUser(null);
-            }
-        }
+        $this->participations->removeElement($participation);
 
         return $this;
     }
