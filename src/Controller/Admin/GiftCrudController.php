@@ -5,6 +5,8 @@ namespace App\Controller\Admin;
 use App\Entity\Gift;
 use App\Enum\GiftStatus;
 use App\Repository\SectionRepository;
+use App\Services\Gift\UpdateGift;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -27,11 +29,15 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\NumericFilter;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
+/**
+ * @extends AbstractCrudController<Gift>
+ */
 class GiftCrudController extends AbstractCrudController
 {
     public function __construct(
         private UploaderHelper $uploaderHelper,
         private SectionRepository $sectionRepository,
+        private UpdateGift $updateGift,
     ) {
     }
 
@@ -57,6 +63,17 @@ class GiftCrudController extends AbstractCrudController
             ->setStatus(GiftStatus::CREATED)
             ->setCreatedAt(new \DateTimeImmutable())
         ;
+    }
+
+    /**
+     * Saved as on the site's edit pages, so that a new price reopens a pool declared
+     * ready and is told to its contributors.
+     *
+     * @param Gift $entityInstance
+     */
+    public function updateEntity(EntityManagerInterface $entityManager, object $entityInstance): void
+    {
+        ($this->updateGift)($entityInstance);
     }
 
     public function configureActions(Actions $actions): Actions
