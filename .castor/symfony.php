@@ -69,8 +69,8 @@ function buildFront(): void
     run('symfony console asset-map:compile');
 }
 
-#[AsTask(description: 'Consume async messengers', aliases: ['sf:ca'])]
+#[AsTask(description: 'Consume async messengers and the scheduled tasks', aliases: ['sf:ca'])]
 function consumeMessenger(): void
 {
-    run('symfony console messenger:consume async -vv');
+    run('symfony console messenger:consume async scheduler_default -vv');
 }

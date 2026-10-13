@@ -3,6 +3,7 @@
 namespace App\Services\Lifecycle;
 
 use App\Entity\User;
+use App\Enum\AccountDeletionReason;
 use App\Event\AccountDeletedEvent;
 use App\Event\GiftDeletedWithAccountEvent;
 use App\Repository\CrewRepository;
@@ -19,8 +20,8 @@ use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
- * Deleting an account, from the user's profile or, later, from the purge of inactive
- * accounts: nothing they took part in is left inconsistent, and no crew loses its list.
+ * Deleting an account, from the user's profile, by an admin or by the purge of inactive
+ * accounts (app:users:purge-inactive): nothing they took part in is left inconsistent, and no crew loses its list.
  *
  * The foreign keys left without ON DELETE (participant, crew, section, gift) are the
  * safety net: a case forgotten here makes the database refuse the deletion instead of
@@ -50,7 +51,7 @@ class UserLifecycle
     ) {
     }
 
-    public function delete(User $user): void
+    public function delete(User $user, AccountDeletionReason $reason = AccountDeletionReason::Requested): void
     {
         // Read now: Doctrine forgets the id of a deleted entity. Without one, the folder
         // below would be the parent of every user's.
@@ -59,7 +60,7 @@ class UserLifecycle
 
         // All or nothing: the services called flush along the way, and the emails they
         // queue (Messenger's doctrine transport) are rolled back with the rest.
-        $this->entityManager->wrapInTransaction(function () use ($user): void {
+        $this->entityManager->wrapInTransaction(function () use ($user, $reason): void {
             $this->releaseParticipations($user);
             $this->deleteCrewsWhereAlone($user);
             // Each crew left once, with a single email: as its creator, or as a member.
@@ -71,7 +72,7 @@ class UserLifecycle
             $this->deleteOwnGifts($user);
 
             // Within the transaction: no confirmation is queued for a deletion rolled back.
-            $this->eventDispatcher->dispatch(new AccountDeletedEvent($user->getEmail(), $user->getFirstname()));
+            $this->eventDispatcher->dispatch(new AccountDeletedEvent($user->getEmail(), $user->getFirstname(), $reason));
             $this->entityManager->remove($user);
         });
 

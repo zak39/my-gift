@@ -2,6 +2,7 @@
 
 namespace App\Event;
 
+use App\Enum\AccountDeletionReason;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
@@ -12,6 +13,7 @@ final class AccountDeletedEvent extends Event
     public function __construct(
         private readonly string $email,
         private readonly string $firstname,
+        private readonly AccountDeletionReason $reason,
     ) {
     }
 
@@ -23,5 +25,10 @@ final class AccountDeletedEvent extends Event
     public function getFirstname(): string
     {
         return $this->firstname;
+    }
+
+    public function getReason(): AccountDeletionReason
+    {
+        return $this->reason;
     }
 }

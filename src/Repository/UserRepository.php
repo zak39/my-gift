@@ -116,6 +116,109 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         );
     }
 
+    /**
+     * Verified accounts without activity since $inactiveSince and not scheduled for deletion
+     * yet. An unverified one goes on its own rule, without an email to an address never confirmed.
+     *
+     * @param list<int> $exceptIds
+     *
+     * @return User[]
+     */
+    public function findToWarnOfInactivity(\DateTimeImmutable $inactiveSince, array $exceptIds = [], ?int $limit = null): array
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->where('u.isVerified = true')
+            ->andWhere('u.lastActivityAt <= :inactiveSince')
+            ->andWhere('u.scheduledDeletionAt IS NULL')
+            ->setParameter('inactiveSince', $inactiveSince)
+        ;
+
+        return $this->resultExcept($qb, $exceptIds, $limit);
+    }
+
+    /**
+     * Scheduled for deletion before $scheduledBefore, not reminded yet: an account already due
+     * (scheduled before $dueBefore) gets no reminder.
+     *
+     * @param list<int> $exceptIds
+     *
+     * @return User[]
+     */
+    public function findToRemindOfInactivity(\DateTimeImmutable $scheduledBefore, \DateTimeImmutable $dueBefore, array $exceptIds = [], ?int $limit = null): array
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->where('u.scheduledDeletionAt <= :scheduledBefore')
+            ->andWhere('u.scheduledDeletionAt > :dueBefore')
+            ->andWhere('u.inactivityRemindedAt IS NULL')
+            ->setParameter('scheduledBefore', $scheduledBefore)
+            ->setParameter('dueBefore', $dueBefore)
+        ;
+
+        return $this->resultExcept($qb, $exceptIds, $limit);
+    }
+
+    /**
+     * Accounts whose scheduled deletion date has come by $dueBefore.
+     *
+     * @param list<int> $exceptIds
+     *
+     * @return User[]
+     */
+    public function findToDeleteForInactivity(\DateTimeImmutable $dueBefore, array $exceptIds = [], ?int $limit = null): array
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->where('u.scheduledDeletionAt <= :dueBefore')
+            ->setParameter('dueBefore', $dueBefore)
+        ;
+
+        return $this->resultExcept($qb, $exceptIds, $limit);
+    }
+
+    /**
+     * Unverified accounts created and without activity since $since: one in use is left
+     * alone, since a user can log in without verifying their address.
+     *
+     * @param list<int> $exceptIds
+     *
+     * @return User[]
+     */
+    public function findUnverifiedInactiveSince(\DateTimeImmutable $since, array $exceptIds = [], ?int $limit = null): array
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->where('u.isVerified = false')
+            ->andWhere('u.createdAt <= :since')
+            ->andWhere('u.lastActivityAt <= :since')
+            ->setParameter('since', $since)
+        ;
+
+        return $this->resultExcept($qb, $exceptIds, $limit);
+    }
+
+    /**
+     * The users of $qb but $exceptIds, by id, at most $limit: the purge fetches the next
+     * account still concerned one at a time, skipping those that failed.
+     *
+     * @param list<int> $exceptIds
+     *
+     * @return User[]
+     */
+    private function resultExcept(QueryBuilder $qb, array $exceptIds, ?int $limit): array
+    {
+        if ([] !== $exceptIds) {
+            $qb
+                ->andWhere('u.id NOT IN (:exceptIds)')
+                ->setParameter('exceptIds', $exceptIds)
+            ;
+        }
+
+        return $qb
+            ->orderBy('u.id')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     //    /**
     //     * @return User[] Returns an array of User objects
     //     */

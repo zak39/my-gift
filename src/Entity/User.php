@@ -77,6 +77,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private bool $isVerified = false;
 
+    /** Start of the inactivity the purge counts (app:users:purge-inactive). */
+    #[ORM\Column]
+    private \DateTimeImmutable $lastActivityAt;
+
+    /** The date given in the warning email: the account goes then unless its user comes back. */
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $scheduledDeletionAt = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $inactivityRemindedAt = null;
+
     /**
      * @var Collection<int, Gift>
      */
@@ -120,6 +131,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->sections = new ArrayCollection();
         $this->favoriteGifts = new ArrayCollection();
         $this->participations = new ArrayCollection();
+        // A new account starts active: one never logged into still reaches the purge.
+        $this->lastActivityAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -306,6 +319,49 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->isVerified = $isVerified;
 
         return $this;
+    }
+
+    public function getLastActivityAt(): \DateTimeImmutable
+    {
+        return $this->lastActivityAt;
+    }
+
+    /**
+     * Whether the user is still there: called on every login and authenticated request.
+     * Returns true when something changed, for the caller to flush only then.
+     */
+    public function recordActivity(\DateTimeImmutable $now): bool
+    {
+        // A user scheduled for deletion is let through the throttle: coming back must cancel it.
+        if ($this->lastActivityAt <= $now->modify('-1 day') || null !== $this->scheduledDeletionAt) {
+            $this->lastActivityAt = $now;
+            $this->scheduledDeletionAt = null;
+            $this->inactivityRemindedAt = null;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getScheduledDeletionAt(): ?\DateTimeImmutable
+    {
+        return $this->scheduledDeletionAt;
+    }
+
+    public function scheduleDeletion(\DateTimeImmutable $date): void
+    {
+        $this->scheduledDeletionAt = $date;
+    }
+
+    public function getInactivityRemindedAt(): ?\DateTimeImmutable
+    {
+        return $this->inactivityRemindedAt;
+    }
+
+    public function markInactivityReminded(\DateTimeImmutable $now): void
+    {
+        $this->inactivityRemindedAt = $now;
     }
 
     /**
