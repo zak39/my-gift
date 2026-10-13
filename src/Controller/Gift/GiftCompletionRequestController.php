@@ -10,6 +10,7 @@ use App\Services\Url\GiftOwnerUrlGenerator;
 use App\Services\Url\ViewerUrlGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -25,8 +26,12 @@ final class GiftCompletionRequestController extends AbstractController
 {
     #[IsGranted(new Expression('subject.getParticipant(user) != null'), subject: 'gift')]
     #[Route('/ready', name: 'app_gift_ready', methods: ['POST'])]
-    public function ready(Gift $gift, GiftLifecycle $giftLifecycle, ViewerUrlGenerator $viewerUrlGenerator): Response
+    public function ready(Gift $gift, Request $request, GiftLifecycle $giftLifecycle, ViewerUrlGenerator $viewerUrlGenerator): Response
     {
+        if (!$this->isCsrfTokenValid("gift-ready-{$gift->getId()}", $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
         /** @var User $user */
         $user = $this->getUser();
 
@@ -41,8 +46,12 @@ final class GiftCompletionRequestController extends AbstractController
 
     #[IsGranted('gift.is_owner', subject: 'gift')]
     #[Route('/given', name: 'app_gift_given', methods: ['POST'])]
-    public function given(Gift $gift, GiftLifecycle $giftLifecycle, GiftOwnerUrlGenerator $giftOwnerUrlGenerator): Response
+    public function given(Gift $gift, Request $request, GiftLifecycle $giftLifecycle, GiftOwnerUrlGenerator $giftOwnerUrlGenerator): Response
     {
+        if (!$this->isCsrfTokenValid("gift-given-{$gift->getId()}", $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
         try {
             $giftLifecycle->given($gift);
         } catch (GiftActionRefusedException $exception) {
@@ -54,8 +63,12 @@ final class GiftCompletionRequestController extends AbstractController
 
     #[IsGranted('gift.is_owner', subject: 'gift')]
     #[Route('/archived', name: 'app_gift_archived', methods: ['POST'])]
-    public function archived(Gift $gift, GiftLifecycle $giftLifecycle, GiftOwnerUrlGenerator $giftOwnerUrlGenerator): Response
+    public function archived(Gift $gift, Request $request, GiftLifecycle $giftLifecycle, GiftOwnerUrlGenerator $giftOwnerUrlGenerator): Response
     {
+        if (!$this->isCsrfTokenValid("gift-archived-{$gift->getId()}", $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
         try {
             $giftLifecycle->archived($gift);
         } catch (GiftActionRefusedException $exception) {

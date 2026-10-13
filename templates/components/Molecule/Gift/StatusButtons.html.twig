@@ -78,7 +78,10 @@
     {% endif %}
 
     {% if computed.canDeclareReady %}
-        <form method="post" action="{{ path('app_gift_ready', { id: gift.id}) }}" class="contents">
+        <form method="post" action="{{ path('app_gift_ready', { id: gift.id }) }}" class="contents">
+            <input type="hidden"
+                name="_token"
+                value="{{ csrf_token('gift-ready-' ~ gift.id) }}">
             <button type="submit" class="btn btn-accent md:w-52 w-full">
                 <twig:ux:icon name="famicons:gift" />
                 Prêt à donner le cadeau
@@ -157,7 +160,10 @@
     {% endif %}
 
     {% if computed.canGive %}
-        <form method="post" action="{{ path('app_gift_given', { id: gift.id}) }}" class="contents">
+        <form method="post" action="{{ path('app_gift_given', { id: gift.id }) }}" class="contents">
+            <input type="hidden"
+                name="_token"
+                value="{{ csrf_token('gift-given-' ~ gift.id) }}">
             <button type="submit" class="btn btn-accent md:w-52 w-full">
                 <twig:ux:icon name="mdi:gift-open" />
                 Cadeau donné
@@ -166,7 +172,10 @@
     {% endif %}
 
     {% if computed.canArchive %}
-        <form method="post" action="{{ path('app_gift_archived', { id: gift.id}) }}" class="contents">
+        <form method="post" action="{{ path('app_gift_archived', { id: gift.id }) }}" class="contents">
+            <input type="hidden"
+                name="_token"
+                value="{{ csrf_token('gift-archived-' ~ gift.id) }}">
             <button type="submit" class="btn btn-accent md:w-52 w-full">
                 <twig:ux:icon name="boxicons:archive-alt-filled" />
                 Archiver le cadeau
