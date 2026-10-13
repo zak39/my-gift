@@ -8,7 +8,7 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
 
 <template>
     <Layout>
-        <Preheader>Le groupe « <Raw>{{ crewName }}</Raw> » a été supprimé</Preheader>
+        <TwigPreheader>Le groupe « <Raw>{{ crewName }}</Raw> » a été supprimé</TwigPreheader>
 
         <BodyStyle />
         <CardStyle />

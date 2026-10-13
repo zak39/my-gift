@@ -7,7 +7,7 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
 
 <template>
     <Layout>
-        <Preheader>Le cadeau de <Raw>{{ gift.createdBy.firstname }}</Raw> est prêt ! 🎉</Preheader>
+        <TwigPreheader>Le cadeau de <Raw>{{ gift.createdBy.firstname }}</Raw> est prêt ! 🎉</TwigPreheader>
 
         <BodyStyle />
         <CardStyle />
