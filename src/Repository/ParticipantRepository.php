@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Participant;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -14,6 +15,28 @@ class ParticipantRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Participant::class);
+    }
+
+    /**
+     * The user's reservations and contributions, with their gift, its author, section and
+     * crew, for the data export.
+     *
+     * @return list<Participant>
+     */
+    public function findOfUser(User $user): array
+    {
+        return $this->createQueryBuilder('p')
+            ->innerJoin('p.gift', 'g')
+            ->innerJoin('g.createdBy', 'u')
+            ->leftJoin('g.section', 's')
+            ->leftJoin('s.crew', 'c')
+            ->addSelect('g', 'u', 's', 'c')
+            ->where('p.participantUser = :user')
+            ->setParameter('user', $user)
+            ->orderBy('p.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     //    /**

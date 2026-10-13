@@ -17,4 +17,13 @@ enum ParticipantStatus: string
             default => throw new \Exception('Unknown status: '.$status),
         };
     }
+
+    public function label(): string
+    {
+        return match ($this) {
+            self::RESERVED => 'Réservation',
+            self::PARTICIPATING => 'Contribution',
+            self::CANCELLED => 'Annulée',
+        };
+    }
 }
