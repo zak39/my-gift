@@ -229,6 +229,31 @@
                 {{ form_end(profileForm, {'render_rest': false}) }}
                 </turbo-frame>
 
+                {# Outside the frame, Turbo off: a download is no page to render. No `download`
+                   attribute: a session expired in the meantime would save the login page
+                   as the file; Content-Disposition only comes with the export itself. #}
+                <section class="mt-8 p-4 bg-base-100 border border-base-200 rounded-md shadow-sm" aria-labelledby="data-export-title">
+                    <h3 id="data-export-title" class="text-sm font-medium mb-1">Télécharger mes données</h3>
+                    <p class="text-sm text-base-content/70 mb-4">
+                        Récupérez vos cadeaux et ceux de vos groupes. L'ODS et Excel ont une feuille pour vos cadeaux et une par groupe, le CSV les met bout à bout, le JSON se réutilise ailleurs.
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        {% for format, export in {
+                            csv: {label: 'CSV', icon: 'lucide:file-spreadsheet'},
+                            ods: {label: 'ODS', icon: 'lucide:sheet'},
+                            xlsx: {label: 'Excel', icon: 'lucide:sheet'},
+                            json: {label: 'JSON', icon: 'lucide:file-json'},
+                        } %}
+                            <twig:atomic:ButtonLink style="outline" class="btn-sm" :to="path('app_user_profile_export_gifts', {format: format})" data-turbo="false">
+                                <twig:block name="icon">
+                                    <twig:ux:icon name="{{ export.icon }}" class="h-4 w-4" aria-hidden="true" />
+                                </twig:block>
+                                <twig:block name="name">{{ export.label }}</twig:block>
+                            </twig:atomic:ButtonLink>
+                        {% endfor %}
+                    </div>
+                </section>
+
                 {# Outside the frame: the deletion leads to the landing page, not into the frame. #}
                 <section class="mt-8 p-4 bg-base-100 border border-error/40 rounded-md shadow-sm" aria-labelledby="account-delete-title">
                     <h3 id="account-delete-title" class="text-sm font-medium text-error mb-1">Zone de danger</h3>

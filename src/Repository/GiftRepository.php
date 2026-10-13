@@ -95,6 +95,36 @@ class GiftRepository extends ServiceEntityRepository
     }
 
     /**
+     * Every gift of the lists the user runs: their own, and those of the crews they belong
+     * to, whoever added them. With their section, crew, author and participants, for the
+     * data export.
+     *
+     * @return list<Gift>
+     */
+    public function findInListsOf(User $user): array
+    {
+        return $this->createQueryBuilder('g')
+            ->innerJoin('g.createdBy', 'u')
+            ->leftJoin('g.section', 's')
+            ->leftJoin('s.crew', 'c')
+            // Joined only when the user is a member: a crew's gift stays out otherwise.
+            ->leftJoin('c.memberships', 'm', 'WITH', 'm.user = :user')
+            ->leftJoin('g.participants', 'p')
+            ->leftJoin('p.participantUser', 'pu')
+            ->addSelect('u', 's', 'c', 'p', 'pu')
+            ->where('c.id IS NULL AND g.createdBy = :user')
+            ->orWhere('m.id IS NOT NULL')
+            ->setParameter('user', $user)
+            ->orderBy('s.title', 'ASC')
+            ->addOrderBy('g.createdAt', 'DESC')
+            // The participants in the order they joined.
+            ->addOrderBy('p.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
      * The gift, if it belongs to a user's own list, filed or not: what a /me/gifts/{id} URL
      * reaches. A crew's gift is run from its crew's URL, as the links lead there (404 here).
      */
