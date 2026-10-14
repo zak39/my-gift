@@ -19,7 +19,7 @@ final class GiftRow
 {
     /**
      * The keys of every row, in their order: the header of a sheet, even without any gift.
-     * A column added to the rows is added here too, which of() checks.
+     * A column added to the rows is added here too, which ExportedDatasetDto checks.
      */
     public const COLUMNS = ['Section', 'Titre', 'Description', 'Prix', 'Lien', 'Statut', 'Participants', 'Montant cagnotte', 'Contribution (%)', 'Créé par', 'Créé le'];
 
@@ -43,7 +43,7 @@ final class GiftRow
      */
     public function of(Gift $gift, User $viewer): array
     {
-        $row = [
+        return [
             'Section' => $gift->getSection()?->getTitle() ?? 'Cadeau sans section',
             'Titre' => $gift->getTitle(),
             'Description' => $gift->getDescription(),
@@ -54,13 +54,6 @@ final class GiftRow
             'Créé par' => $gift->getCreatedBy()->getFullname(),
             'Créé le' => $gift->getCreatedAt(),
         ];
-
-        // A header out of step would shift every cell under the wrong title.
-        if (self::COLUMNS !== array_keys($row)) {
-            throw new \LogicException('GiftRow::COLUMNS does not match the keys of the rows.');
-        }
-
-        return $row;
     }
 
     /**

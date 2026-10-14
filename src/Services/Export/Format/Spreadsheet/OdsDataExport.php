@@ -7,15 +7,20 @@ use OpenSpout\Writer\ODS\Writer;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 
 /**
- * The gift lists as an OpenDocument spreadsheet, for LibreOffice: no import dialog asks
+ * The user's data as an OpenDocument spreadsheet, for LibreOffice: no import dialog asks
  * for a separator, as with the CSV.
  */
 #[AsTaggedItem(index: 'ods')]
-final class OdsGiftListExport extends SpreadsheetGiftListExport
+final class OdsDataExport extends SpreadsheetDataExport
 {
     public function contentType(): string
     {
         return 'application/vnd.oasis.opendocument.spreadsheet';
+    }
+
+    public function extension(): string
+    {
+        return 'ods';
     }
 
     protected function createWriter(): AbstractWriterMultiSheets

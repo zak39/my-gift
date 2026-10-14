@@ -235,16 +235,16 @@
                 <section class="mt-8 p-4 bg-base-100 border border-base-200 rounded-md shadow-sm" aria-labelledby="data-export-title">
                     <h3 id="data-export-title" class="text-sm font-medium mb-1">Télécharger mes données</h3>
                     <p class="text-sm text-base-content/70 mb-4">
-                        Récupérez vos cadeaux et ceux de vos groupes. L'ODS et Excel ont une feuille pour vos cadeaux et une par groupe, le CSV les met bout à bout, le JSON se réutilise ailleurs.
+                        Récupérez votre profil, vos sections, vos cadeaux et ceux de vos groupes, vos participations, vos favoris, vos amis, les personnes bloquées et vos groupes. L'ODS et Excel ont une feuille par sujet, une par groupe pour les cadeaux ; le CSV est une archive ZIP d'un fichier par sujet ; le JSON se réutilise ailleurs.
                     </p>
                     <div class="flex flex-wrap gap-2">
                         {% for format, export in {
-                            csv: {label: 'CSV', icon: 'lucide:file-spreadsheet'},
+                            csv: {label: 'CSV (ZIP)', icon: 'lucide:file-spreadsheet'},
                             ods: {label: 'ODS', icon: 'lucide:sheet'},
                             xlsx: {label: 'Excel', icon: 'lucide:sheet'},
                             json: {label: 'JSON', icon: 'lucide:file-json'},
                         } %}
-                            <twig:atomic:ButtonLink style="outline" class="btn-sm" :to="path('app_user_profile_export_gifts', {format: format})" data-turbo="false">
+                            <twig:atomic:ButtonLink style="outline" class="btn-sm" :to="path('app_user_profile_export', {format: format})" data-turbo="false">
                                 <twig:block name="icon">
                                     <twig:ux:icon name="{{ export.icon }}" class="h-4 w-4" aria-hidden="true" />
                                 </twig:block>

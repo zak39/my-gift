@@ -145,12 +145,12 @@ class GiftRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('g')
             ->innerJoin('g.favoritedBy', 'u')
-            // The inner join on section drops gifts left outside one; both joins also
-            // load the creator and section the favourites page displays.
+            // The inner join on section drops gifts left outside one; the joins also load
+            // the creator, section and crew the favourites page and the data export display.
             ->innerJoin('g.createdBy', 'c')
             ->innerJoin('g.section', 's')
-            ->addSelect('c', 's')
             ->leftJoin('s.crew', 'crew')
+            ->addSelect('c', 's', 'crew')
             ->where('u.id = :userId')
             ->andWhere('g.isPublic = true')
             // The friendship rule of GiftVisibilityVoter, read from the user's own book as

@@ -141,6 +141,14 @@ class Crew
         return null !== $this->getMembershipOf($user);
     }
 
+    /**
+     * When the member joined, null for who is none.
+     */
+    public function getJoinedAt(User $member): ?\DateTimeImmutable
+    {
+        return $this->getMembershipOf($member)?->getJoinedAt();
+    }
+
     public function addMember(User $user): static
     {
         if (!$this->hasMember($user)) {

@@ -1,19 +1,23 @@
 <?php
 
-namespace App\Services\Export;
+namespace App\Services\Export\Dataset;
 
 use App\Entity\User;
 use App\Repository\CrewRepository;
 use App\Repository\GiftRepository;
+use App\Services\Dto\ExportedDatasetDto;
 use App\Services\Dto\ExportedListDto;
+use App\Services\Export\GiftRow;
+use App\Services\Export\ListName;
+use App\Services\Export\OwnerName;
 
 /**
- * The user's lists, their own then their crews' by name, each gift as a GiftRow: what
- * every export format writes.
+ * The gifts of the lists the user runs, split by list: their own, then their crews' by
+ * name, each gift as a GiftRow.
  *
  * A crew without any gift is still a list: a sheet with its header only.
  */
-final class GiftLists
+final class GiftsDataset
 {
     public function __construct(
         private readonly GiftRepository $giftRepository,
@@ -22,10 +26,7 @@ final class GiftLists
     ) {
     }
 
-    /**
-     * @return list<ExportedListDto>
-     */
-    public function of(User $user): array
+    public function of(User $user): ExportedDatasetDto
     {
         // Loaded first: their memberships, fetch-joined here, are what GiftPoolVoter reads
         // for each crew's gift, instead of one query per crew.
@@ -36,11 +37,11 @@ final class GiftLists
             $rowsByList[$gift->getCrew()?->getId() ?? 'personal'][] = $this->giftRow->of($gift, $user);
         }
 
-        $lists = [new ExportedListDto('Mes cadeaux', $rowsByList['personal'])];
+        $lists = [new ExportedListDto(ListName::own(), $rowsByList['personal'], OwnerName::me())];
         foreach ($crews as $crew) {
-            $lists[] = new ExportedListDto('Groupe '.$crew->getName(), $rowsByList[$crew->getId()] ?? []);
+            $lists[] = new ExportedListDto(ListName::crew($crew), $rowsByList[$crew->getId()] ?? [], OwnerName::crew($crew));
         }
 
-        return $lists;
+        return ExportedDatasetDto::split('Cadeaux', 'Propriétaire', GiftRow::COLUMNS, $lists);
     }
 }
