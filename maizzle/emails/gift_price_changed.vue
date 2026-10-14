@@ -7,7 +7,7 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
 
 <template>
     <Layout>
-        <Preheader>Le prix du cadeau de <Raw>{{ gift.createdBy.firstname|title }}</Raw> a changé</Preheader>
+        <TwigPreheader>Le prix du cadeau de <Raw>{{ gift.createdBy.firstname|title }}</Raw> a changé</TwigPreheader>
 
         <BodyStyle />
         <CardStyle />

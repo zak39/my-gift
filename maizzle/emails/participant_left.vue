@@ -7,7 +7,7 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
 
 <template>
     <Layout>
-        <Preheader>Un participant a quitté le cadeau de <Raw>{{ gift.createdBy.firstname|title }}</Raw></Preheader>
+        <TwigPreheader>Un participant a quitté le cadeau de <Raw>{{ gift.createdBy.firstname|title }}</Raw></TwigPreheader>
 
         <BodyStyle />
         <CardStyle />

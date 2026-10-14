@@ -8,7 +8,7 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
 
 <template>
     <Layout>
-        <Preheader><Raw>{{ inviter.firstname|title }}</Raw> vous invite à rejoindre le groupe « <Raw>{{ crewName }}</Raw> »</Preheader>
+        <TwigPreheader><Raw>{{ inviter.firstname|title }}</Raw> vous invite à rejoindre le groupe « <Raw>{{ crewName }}</Raw> »</TwigPreheader>
 
         <BodyStyle />
         <CardStyle />

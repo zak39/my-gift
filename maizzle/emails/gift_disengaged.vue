@@ -7,7 +7,7 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
 
 <template>
     <Layout>
-        <Preheader>Mince ! <Raw>{{ participantName|title }}</Raw> a retiré sa réservation ! 😢</Preheader>
+        <TwigPreheader>Mince ! <Raw>{{ participantName|title }}</Raw> a retiré sa réservation ! 😢</TwigPreheader>
 
         <BodyStyle />
         <CardStyle />

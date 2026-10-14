@@ -9,7 +9,7 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
 
 <template>
     <Layout>
-        <Preheader>Un nouveau participant a rejoint pour le cadeau de <Raw>{{ gift.createdBy.firstname|title }}</Raw></Preheader>
+        <TwigPreheader>Un nouveau participant a rejoint pour le cadeau de <Raw>{{ gift.createdBy.firstname|title }}</Raw></TwigPreheader>
 
         <BodyStyle />
         <CardStyle />
