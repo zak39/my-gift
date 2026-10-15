@@ -107,7 +107,10 @@ above) has its own independent Node toolchain for email HTML only.
 ### File uploads
 
 `vich/uploader-bundle` handles file uploads on `Gift` and `User` (avatars), with custom
-directory namers in `src/Vich/`. `App\Services\DicebearAvatarGenerator` generates default
+directory namers in `src/Vich/`. Every upload is stored as WebP: `ConvertUploadedImageToWebpListener`
+(`vich_uploader.pre_upload`) rewrites the file in place through `App\Services\WebpConverter`
+(Imagick, `ext-imagick`), capped per mapping (`App\Vich\UploadedImage`, which also holds the accepted formats and pixel limit, and checks a file with `accepts()`), before
+`SmartUniqueNamer` names it from its content. `App\Services\DicebearAvatarGenerator` generates default
 avatars; `App\Services\ImageDownloader` + `App\Services\OpenGraphApi` fetch Open Graph metadata
 to prefill gift fields from a pasted product URL.
 
