@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Vich\UploadedImage;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -9,6 +10,7 @@ class ImageDownloader
 {
     public function __construct(
         private HttpClientInterface $httpClient,
+        private UploadedImage $uploadedImage,
     ) {
     }
 
@@ -38,15 +40,18 @@ class ImageDownloader
             return null;
         }
 
-        $extension = match (true) {
-            str_contains($contentType, 'png') => 'png',
-            str_contains($contentType, 'webp') => 'webp',
-            default => 'jpeg',
-        };
-
-        $tmpPath = sys_get_temp_dir().'/og_image_'.bin2hex(random_bytes(8)).'.'.$extension;
+        $tmpPath = tempnam(sys_get_temp_dir(), 'og_image_');
         file_put_contents($tmpPath, $response->getContent());
 
-        return new UploadedFile($tmpPath, 'og-image.'.$extension, $contentType, null, true);
+        // The Content-Type is the remote server's word: the content itself must be an image
+        // following the upload rules, since no Assert\Image validates this file
+        if (!$this->uploadedImage->accepts($tmpPath)) {
+            unlink($tmpPath);
+
+            return null;
+        }
+
+        // Stored as WebP and named after its content: the client name only gives the base name
+        return new UploadedFile($tmpPath, 'og-image', mime_content_type($tmpPath), null, true);
     }
 }

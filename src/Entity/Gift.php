@@ -6,6 +6,7 @@ use App\Enum\GiftStatus;
 use App\Repository\GiftRepository;
 use App\ValueObject\GiftOwnership;
 use App\ValueObject\GiftPool;
+use App\Vich\UploadedImage;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -47,9 +48,10 @@ class Gift
 
     #[UploadableField(mapping: 'imageGift', fileNameProperty: 'image')]
     #[Assert\Image(
-        allowLandscape: false,
-        mimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
-        mimeTypesMessage: 'Le format de l\'image n\'est pas valide (formats acceptés : JPEG, PNG, WEBP)'
+        mimeTypes: UploadedImage::MIME_TYPES,
+        mimeTypesMessage: 'Le format de l\'image n\'est pas valide (formats acceptés : '.UploadedImage::FORMATS.')',
+        maxPixels: UploadedImage::MAX_PIXELS,
+        maxPixelsMessage: 'L\'image est trop grande ({{ pixels }} pixels, {{ max_pixels }} au maximum)'
     )]
     private ?File $imageFile = null;
 
