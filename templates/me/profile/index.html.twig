@@ -25,10 +25,7 @@
 
         <div class="grid gap-6 lg:grid-cols-[280px_1fr] items-start">
             <div class="flex flex-col items-center space-y-4 text-center p-4 bg-base-100 border border-base-200 rounded-md shadow-sm">
-                <twig:Molecule:UserAvatar
-                    :user="user"
-                    sizeClass="md:h-32 md:w-32 h-24 w-24"
-                    id="user_avatar_settings" />
+                <twig:Molecule:User:ProfileAvatar :user="user" />
                 <div>
                     <h2 class="text-2xl font-semibold">{{ user.firstname }} {{ user.lastname }}</h2>
                     <p class="text-sm text-base-content/70">{{ user.email }}</p>

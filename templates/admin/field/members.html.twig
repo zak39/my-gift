@@ -7,7 +7,7 @@
     <ul class="list-unstyled d-flex flex-column gap-2 mb-0">
         {% for member in members %}
             <li class="d-flex align-items-center gap-2">
-                <img src="{{ vich_uploader_asset(member, member.avatarField) }}" alt="" width="32" height="32" style="object-fit: cover; border-radius: 4px;">
+                <img src="{{ user_avatar_image_url(member) }}" alt="" width="32" height="32" style="object-fit: cover; border-radius: 4px;">
                 <a href="{{ path('admin_user_detail', { entityId: member.id }) }}">{{ member.fullname }}</a>
                 {% if member == entity.instance.createdBy %}
                     <twig:ea:Badge variant="secondary">Créateur·rice</twig:ea:Badge>

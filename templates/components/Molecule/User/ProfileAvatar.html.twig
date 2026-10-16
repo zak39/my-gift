@@ -1,0 +1,5 @@
+{# The reset button is the indicator's item, so it comes first. #}
+<div {{ attributes.defaults({id: 'user_avatar_settings', class: 'indicator'}) }}>
+    <twig:Molecule:User:ResetAvatarButton :user="user" />
+    <twig:Molecule:UserAvatar :user="user" sizeClass="md:h-32 md:w-32 h-24 w-24" />
+</div>

@@ -32,7 +32,7 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
                     <div class="my-6">
                         <UserCard
                             name="{{ creator.fullName|title }}"
-                            avatar="{{ absolute_url(vich_uploader_asset(creator, creator.avatar ? 'avatarFile' : 'avatarDefaultFile')) }}"
+                            avatar="{{ absolute_url(user_avatar_image_url(creator)) }}"
                             to="{{ url('app_section_user_page', { id: creator.id }) }}"
                         />
                     </div>

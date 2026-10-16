@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\User;
 use App\Services\Admin\Filter\RoleFilter;
 use App\Services\Lifecycle\UserLifecycle;
+use App\Services\Url\AvatarUrlGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -24,7 +25,6 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Vich\UploaderBundle\Form\Type\VichImageType;
-use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 class UserCrudController extends AbstractCrudController
 {
@@ -32,7 +32,7 @@ class UserCrudController extends AbstractCrudController
      * @param array<string, list<string>> $roleHierarchy security.yaml's role_hierarchy
      */
     public function __construct(
-        private UploaderHelper $uploaderHelper,
+        private AvatarUrlGenerator $avatarUrlGenerator,
         #[Autowire(param: 'security.role_hierarchy.roles')]
         private array $roleHierarchy,
         private UserLifecycle $userLifecycle,
@@ -112,7 +112,7 @@ class UserCrudController extends AbstractCrudController
 
         yield ImageField::new('avatar', 'Avatar')
             ->hideOnForm()
-            ->formatValue(fn (?string $avatar, User $user) => $this->uploaderHelper->asset($user, $user->getAvatarField()))
+            ->formatValue(fn (?string $avatar, User $user) => $this->avatarUrlGenerator->imageUrl($user))
         ;
 
         yield TextField::new('avatarFile', 'Avatar File')

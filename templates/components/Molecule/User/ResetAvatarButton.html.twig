@@ -1,0 +1,41 @@
+{# Inside the Modal blocks, id, title, class and even attributes are those of Modal: user
+   stays in reach, under a name Modal does not use. #}
+{% if this.available %}
+    <twig:Modal :id="user.id" title="Réinitialiser ma photo de profil" class="avatar_reset">
+        <twig:block name="handlerButton">
+            {# indicator-item: in the parent's indicator. Not shifted half its size outwards as
+               indicator items are, which would float it off a round avatar: in the box's
+               corner, it lands on the circle's edge. #}
+            <button
+                type="button"
+                class="btn btn-circle btn-sm indicator-item indicator-bottom indicator-end [--indicator-x:0%] [--indicator-y:0%]"
+                title="Réinitialiser ma photo de profil"
+                aria-label="Réinitialiser ma photo de profil"
+                onclick="modal_avatar_reset_{{ user.id }}.showModal()">
+                <twig:ux:icon name="lucide:rotate-ccw" class="size-4" aria-hidden="true" />
+            </button>
+        </twig:block>
+        <twig:block name="message">
+            <div class="space-y-3 py-4 text-sm">
+                {% if user.avatar %}
+                    <p>La photo que vous avez choisie sera supprimée, et vous ne pourrez pas la récupérer.</p>
+                {% endif %}
+                {% if user.avatarDefault %}
+                    <p>Vous retrouverez l'avatar généré à la création de votre compte.</p>
+                {% else %}
+                    <p>Un nouvel avatar sera généré pour vous.</p>
+                {% endif %}
+            </div>
+            <form id="avatar_reset_form" method="post" action="{{ path('app_user_profile_avatar_reset') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('avatar-reset') }}">
+            </form>
+        </twig:block>
+        <twig:block name="actionButtons">
+            {# Outside the form, in the modal's actions: form= ties the button to it. #}
+            <button type="submit" form="avatar_reset_form" class="btn btn-warning">
+                <twig:ux:icon name="lucide:rotate-ccw" class="size-4" aria-hidden="true" />
+                Oui, réinitialiser
+            </button>
+        </twig:block>
+    </twig:Modal>
+{% endif %}

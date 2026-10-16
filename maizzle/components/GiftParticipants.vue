@@ -23,7 +23,7 @@
               </table>
             <Raw>{% else %}</Raw>
               <img
-                src="{{ absolute_url(vich_uploader_asset(contributor.participantUser, contributor.participantUser.avatar ? 'avatarFile' : 'avatarDefaultFile')) }}"
+                src="{{ absolute_url(user_avatar_image_url(contributor.participantUser)) }}"
                 alt="Photo de profil {{ contributor.participantUser.fullName }}"
                 width="32"
                 height="32"
