@@ -22,8 +22,13 @@
             {% else %}
                 <div class="text-center lg:text-left">
                     <h1 class="text-5xl font-bold">Connectez-vous !</h1>
+                    {# A link shared with "Partager", opened while logged out (SharedLinkPreviewListener). #}
                     <p class="py-6">
-                        Connectez-vous pour regarder qui vous a offert un joli cadeau 🎁
+                        {% if linkPreview is defined %}
+                            On vous partage « {{ linkPreview.title }} » : connectez-vous pour le découvrir 🎁
+                        {% else %}
+                            Connectez-vous pour regarder qui vous a offert un joli cadeau 🎁
+                        {% endif %}
                     </p>
                 </div>
                 {{ include('security/_login_form.html.twig') }}

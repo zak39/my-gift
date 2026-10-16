@@ -6,7 +6,7 @@
     <twig:Molecule:Gift:ContributionBar :gift="gift" />
 
     <div class="flex flex-wrap items-center gap-2 border-t border-base-300 pt-4">
-        <twig:Molecule:Gift:ShareLinkButton :gift="gift" style="ghost" />
+        <twig:Molecule:ShareLinkButton :url="gift_share_url(gift)" style="ghost" />
         {% if gift.link %}
             <twig:Molecule:Gift:LinkButton :gift="gift" style="ghost" />
         {% endif %}

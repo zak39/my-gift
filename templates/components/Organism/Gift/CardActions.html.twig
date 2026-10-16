@@ -5,7 +5,7 @@
     </div>
 
     <div class="flex flex-wrap items-center justify-end gap-1">
-        <twig:Molecule:Gift:ShareLinkButton :gift="gift" style="ghost" :iconOnly="true" />
+        <twig:Molecule:ShareLinkButton :url="gift_share_url(gift)" label="Copier le lien du cadeau" style="ghost" :iconOnly="true" />
         {% if gift.link %}
             <twig:Molecule:Gift:LinkButton :gift="gift" style="ghost" :iconOnly="true" />
         {% endif %}

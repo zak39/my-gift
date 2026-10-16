@@ -46,6 +46,20 @@ class GiftRepository extends ServiceEntityRepository
         ;
     }
 
+    /**
+     * What the user's friends see of their own list: the public gifts filed in a section.
+     */
+    public function countPublishedPersonalOf(User $user): int
+    {
+        return (int) $this->createPersonalQueryBuilder($user)
+            ->select('COUNT(g.id)')
+            ->andWhere('s.id IS NOT NULL')
+            ->andWhere('g.isPublic = true')
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+    }
+
     private function createPersonalQueryBuilder(User $user): QueryBuilder
     {
         return $this->createQueryBuilder('g')

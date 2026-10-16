@@ -57,7 +57,7 @@ final class GiftVisibilityVoter extends Voter
             return true;
         }
 
-        if (!$subject->isPublic() || null === $subject->getSection()) {
+        if (!$subject->isSharedWithFriends()) {
             return false;
         }
 

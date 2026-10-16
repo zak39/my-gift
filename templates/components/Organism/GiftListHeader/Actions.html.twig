@@ -21,15 +21,6 @@
                 Créer une section
             </a>
         {% endif %}
-        <button type="button"
-            class="btn btn-outline btn-neutral"
-            data-controller="copy"
-            data-copy-text-value="{{ app.request.uri }}"
-            data-action="click->copy#copy">
-            <span data-copy-target="icon">
-                <twig:ux:icon name="lucide:share" class="size-4" />
-            </span>
-            <span data-copy-target="label">Partager le profil</span>
-        </button>
+        <twig:Molecule:ShareLinkButton :url="user_list_share_url(user)" label="Partager le profil" color="neutral" />
     {% endif %}
 </div>

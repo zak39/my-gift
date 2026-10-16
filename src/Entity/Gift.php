@@ -235,6 +235,15 @@ class Gift
         return $this;
     }
 
+    /**
+     * What its owners' friends may see of it: published, and filed in a section. Who those
+     * friends are is GiftVisibilityVoter's call.
+     */
+    public function isSharedWithFriends(): bool
+    {
+        return true === $this->isPublic && null !== $this->section;
+    }
+
     public function getSlug(): ?string
     {
         return $this->slug;
