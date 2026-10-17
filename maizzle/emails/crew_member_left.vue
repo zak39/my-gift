@@ -39,7 +39,7 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
                         <div class="my-6">
                             <UserCard
                                 name="{{ member.fullName|title }}"
-                                avatar="{{ absolute_url(vich_uploader_asset(member, member.avatar ? 'avatarFile' : 'avatarDefaultFile')) }}"
+                                avatar="{{ absolute_url(user_avatar_image_url(member)) }}"
                                 to="{{ url('app_section_user_page', { id: member.id }) }}"
                             />
                         </div>

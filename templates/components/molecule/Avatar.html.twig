@@ -1,5 +1,8 @@
+{# w-full: daisyUI gives the inner div `aspect-ratio: 1` but no width, so in the inline-flex
+   frame it takes its content's. An image has a size of its own; the placeholder does not,
+   and would shrink to nothing in a frame sized by its width alone (`w-16`). #}
 <div {{ attributes.defaults({ class: 'avatar' }) }}>
-    <div class="rounded-full overflow-hidden border border-base-300">
+    <div class="w-full rounded-full overflow-hidden border border-base-300">
         {% block image %}{% endblock %}
     </div>
 </div>

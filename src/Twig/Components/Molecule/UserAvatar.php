@@ -3,22 +3,25 @@
 namespace App\Twig\Components\Molecule;
 
 use App\Entity\User;
+use App\Services\Url\AvatarUrlGenerator;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\PostMount;
-use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 /**
- * A user's avatar, falling back to the Dicebear default when they never uploaded one.
+ * A user's avatar (AvatarUrlGenerator::url()), or Molecule:User:AvatarPlaceholder without one.
  *
- * The fallback and the alt text live here so that the avatar asset lookup is written once
- * instead of at every place that shows a face.
+ * The choice between them and the alt text live here, so that every page showing a face
+ * renders it alike.
  */
 #[AsTwigComponent]
 final class UserAvatar
 {
     public User $user;
 
-    /** Tailwind utilities for the avatar frame: size, ring, shrink. */
+    /**
+     * Tailwind utilities for the avatar frame: size, ring, shrink. Empty, the frame is `w-10`,
+     * the size of a btn-circle: unsized, the placeholder, unlike an image, would have no size.
+     */
     public string $sizeClass = '';
 
     /** Turbo Stream target, for the pages that swap the avatar in place after an upload. */
@@ -36,10 +39,14 @@ final class UserAvatar
      */
     public array $frameAttributes = [];
 
-    /** @var array<string, string> */
+    /**
+     * Without a `source`, the template shows the placeholder with the same `alt` and `id`.
+     *
+     * @var array<string, string>
+     */
     public array $imageAttributes = [];
 
-    public function __construct(private readonly UploaderHelper $uploaderHelper)
+    public function __construct(private readonly AvatarUrlGenerator $avatarUrlGenerator)
     {
     }
 
@@ -48,16 +55,16 @@ final class UserAvatar
     {
         // daisyUI sizes the image off the frame — `.avatar > div` is `aspect-ratio: 1` and
         // `.avatar img` is `width/height: 100%` — so the frame alone carries the size.
-        // Left empty rather than `class: ''`, which would override the merged `avatar` class.
-        $this->frameAttributes = '' === $this->sizeClass ? [] : ['class' => $this->sizeClass];
+        $this->frameAttributes = ['class' => '' !== $this->sizeClass ? $this->sizeClass : 'w-10'];
 
-        $this->imageAttributes = [
-            'source' => $this->uploaderHelper->asset($this->user, $this->user->getAvatarField()) ?? '',
-            'alt' => 'Photo de profil '.$this->user->getFullname(),
-        ];
-
-        if (null !== $this->id) {
-            $this->imageAttributes['id'] = $this->id;
-        }
+        // Without a source (no avatar) or an id, the key is left out rather than null.
+        $this->imageAttributes = array_filter(
+            [
+                'source' => $this->avatarUrlGenerator->url($this->user),
+                'alt' => 'Photo de profil '.$this->user->getFullname(),
+                'id' => $this->id,
+            ],
+            fn (?string $value) => null !== $value,
+        );
     }
 }

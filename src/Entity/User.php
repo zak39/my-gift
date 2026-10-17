@@ -217,11 +217,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Ensure the session doesn't contain actual password hashes by CRC32C-hashing them, as supported since Symfony 7.3.
+     *
+     * The Vich files are left out, a File refusing serialization: avatarFile after an upload,
+     * avatarDefaultFile after an avatar reset (ResetAvatar), both on the logged-in user.
      */
     public function __serialize(): array
     {
-        $data = (array) $this;
-        unset($data["\0".self::class."\0avatarFile"]);
+        $data = array_filter((array) $this, fn (mixed $value) => !$value instanceof File);
         $data["\0".self::class."\0password"] = hash('crc32c', $this->password);
 
         return $data;
@@ -281,11 +283,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * The Vich field of the avatar to show: the one the user uploaded, or else the default
-     * one generated at registration. Passed to vich_uploader_asset() / UploaderHelper::asset().
+     * one generated at registration. Null when there is neither, DiceBear having failed at
+     * registration: AvatarUrlGenerator then falls back to a placeholder.
      */
-    public function getAvatarField(): string
+    public function getAvatarField(): ?string
     {
-        return $this->avatar ? 'avatarFile' : 'avatarDefaultFile';
+        return match (true) {
+            null !== $this->avatar => 'avatarFile',
+            null !== $this->avatarDefault => 'avatarDefaultFile',
+            default => null,
+        };
     }
 
     public function setAvatar(?string $avatar): static

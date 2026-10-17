@@ -1,11 +1,11 @@
-<twig:Turbo:Stream:Replace target="#user_avatar_header">
-    <twig:atomic:Image id="user_avatar_header"
-      source="{{ user.avatar ? vich_uploader_asset(user, 'avatarFile') : vich_uploader_asset(app.user, 'avatarDefaultFile') }}"
-      alt="Photo de profil {{ user.firstname }} {{ user.lastname }}" />
-</twig:Turbo:Stream:Replace>
+{# The navbar's face: without an avatar, the placeholder already there stays. #}
+{% set source = user_avatar_url(user) %}
+{% if source %}
+    <twig:Turbo:Stream:Replace target="#user_avatar_header">
+        <twig:atomic:Image id="user_avatar_header" :source="source" alt="Photo de profil {{ user.fullname }}" />
+    </twig:Turbo:Stream:Replace>
+{% endif %}
 
 <twig:Turbo:Stream:Replace target="#user_avatar_settings">
-    <twig:atomic:Image id="user_avatar_settings"
-      source="{{ user.avatar ? vich_uploader_asset(user, 'avatarFile') : vich_uploader_asset(app.user, 'avatarDefaultFile') }}"
-      alt="Photo de profil {{ user.firstname }} {{ user.lastname }}" />
+    <twig:Molecule:User:ProfileAvatar :user="user" />
 </twig:Turbo:Stream:Replace>

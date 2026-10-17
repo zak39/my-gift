@@ -3,25 +3,24 @@
 namespace App\EventListener;
 
 use App\Event\UserCreatedEvent;
-use App\Services\DicebearAvatarGenerator;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Message\GenerateDefaultAvatar;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 final class GenerateDefaultAvatarListener
 {
     public function __construct(
-        private DicebearAvatarGenerator $avatarGenerator,
-        private EntityManagerInterface $entityManager,
+        private MessageBusInterface $bus,
     ) {
     }
 
+    /**
+     * Only queued: the worker downloads the avatar (GenerateDefaultAvatarHandler), so that the
+     * registration, and its confirmation email, never depend on DiceBear.
+     */
     #[AsEventListener]
     public function onUserCreatedEvent(UserCreatedEvent $event): void
     {
-        $user = $event->getUser();
-        $uploadedFile = $this->avatarGenerator->generate($user->getFirstname());
-        $user->setAvatarDefaultFile($uploadedFile);
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        $this->bus->dispatch(new GenerateDefaultAvatar($event->getUser()->getId()));
     }
 }

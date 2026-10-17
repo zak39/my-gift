@@ -1,5 +1,9 @@
 <twig:molecule:Avatar {{ ...frameAttributes }}>
     <twig:block name="image">
-        <twig:atomic:Image {{ ...imageAttributes }} />
+        {% if imageAttributes.source is defined %}
+            <twig:atomic:Image {{ ...imageAttributes }} />
+        {% else %}
+            <twig:Molecule:User:AvatarPlaceholder {{ ...imageAttributes }} />
+        {% endif %}
     </twig:block>
 </twig:molecule:Avatar>

@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Form\UserProfileType;
 use App\Services\Lifecycle\UserLifecycle;
 use App\Services\Security\CheckCurrentPassword;
+use App\Services\User\ResetAvatar;
 use App\Services\UserProfileService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -61,6 +62,26 @@ final class ProfileController extends AbstractController
             'profileForm' => $form->createView(),
             'user' => $user,
         ], new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY));
+    }
+
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    #[Route('/profile/avatar/reset', name: 'app_user_profile_avatar_reset', methods: ['POST'])]
+    public function resetAvatar(Request $request, ResetAvatar $resetAvatar): Response
+    {
+        if (!$this->isCsrfTokenValid('avatar-reset', $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if ($resetAvatar($user)) {
+            $this->addFlash('success', 'Votre photo de profil a bien été réinitialisée.');
+        } else {
+            $this->addFlash('error', 'Aucun avatar n\'a pu être généré : réessayez plus tard.');
+        }
+
+        return $this->redirectToRoute('app_user_profile');
     }
 
     /**
