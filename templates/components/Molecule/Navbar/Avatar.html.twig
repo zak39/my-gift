@@ -1,6 +1,6 @@
-<div {{ attributes }} class="dropdown dropdown-end md:flex hidden">
+<div {{ attributes.defaults({ class: 'dropdown dropdown-end md:flex hidden', 'data-controller': 'dropdown' }) }}>
     {# The dot tells from any page that requests or invitations wait, without opening the menu. #}
-    <div tabindex="0" role="button" class="indicator btn btn-ghost btn-circle avatar">
+    <div tabindex="0" role="button" class="indicator btn btn-ghost btn-circle avatar" data-dropdown-target="trigger">
         {% if computed.pendingFriendRequestCount > 0 or computed.pendingCrewInvitationCount > 0 %}
             <span class="indicator-item badge badge-secondary badge-xs" aria-hidden="true"></span>
         {% endif %}

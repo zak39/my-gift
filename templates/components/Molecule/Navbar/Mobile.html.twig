@@ -1,5 +1,7 @@
 <div  {{ attributes }} class="drawer drawer-end md:hidden justify-end">
-  <input id="my-drawer-5" type="checkbox" class="drawer-toggle" />
+  {# The toggle takes the keyboard focus (daisyUI outlines the button below), back from a
+     dialog opened in the drawer too: its own name, or it takes the overlay's. #}
+  <input id="my-drawer-5" type="checkbox" class="drawer-toggle" aria-label="Menu" />
   <div class="drawer-content">
     <!-- Page content here -->
     <label for="my-drawer-5" class="drawer-button btn btn-circle">
