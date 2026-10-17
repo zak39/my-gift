@@ -48,6 +48,10 @@
             </div>
             <div><a class="link link-hover" href="{{ path('app_forgot_password_request') }}">Mot de passe oublié ?</a></div>
             <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+            {# A shared link opened while logged out (SharedLinkPreviewListener): back to it once logged in. #}
+            {% if target_path is defined %}
+                <input type="hidden" name="_target_path" value="{{ target_path }}">
+            {% endif %}
 
             <div class="flex items-center gap-1.5 my-4">
                 <input type="checkbox" class="checkbox checkbox-accent" name="_remember_me" id="_remember_me">

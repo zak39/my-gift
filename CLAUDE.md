@@ -160,7 +160,12 @@ crew's list or its author's own), `SectionUrlGenerator`, `ViewerUrlGenerator` (a
 `/gift/{id}/show`, the list the gift is part of). Most methods are also Twig functions
 (`gift_owner_show_url()`, `gift_edit_url()`, `section_edit_url()`…); only a component
 shared by owners' and givers' pages (`Molecule:Gift:ShowButton`) chooses, with
-`is_granted('gift.is_owner')`. The paths linked from
+`is_granted('gift.is_owner')`. The "Partager" buttons copy links from `ShareUrlGenerator`
+(`gift_share_url()`, `user_list_share_url()`, `crew_share_url()`), signed for 6 months
+for whoever may see what they show: a visitor who is not logged in, a messenger's preview
+bot, gets on a signed link the login page carrying its Open Graph card (`SharedLinkPreviewListener`,
+`LinkPreviewBuilder`); any other page carries the app's own card (`Molecule:LinkPreview`).
+The paths linked from
 emails (`/users/{id}/sections`, `/crews/{id}`, `/gift/{id}/show`, `/me/crews`,
 `/me/sections`) must not move.
 
