@@ -2,10 +2,12 @@
    component go by other names, so they stay in reach. #}
 <twig:Modal :title="label ~ ' ' ~ user.firstname" :class="'friend_' ~ action" :id="user.id">
     <twig:block name="handlerButton">
-        <button type="button" class="btn btn-sm btn-ghost" onclick="modal_friend_{{ action }}_{{ user.id }}.showModal()">
-            <twig:ux:icon :name="icon" class="size-4" />
-            {{ label }}
-        </button>
+        {% if withTrigger %}
+            <button type="button" class="btn btn-sm btn-ghost" onclick="modal_friend_{{ action }}_{{ user.id }}.showModal()">
+                <twig:ux:icon :name="icon" class="size-4" />
+                {{ label }}
+            </button>
+        {% endif %}
     </twig:block>
     <twig:block name="message">
         <p class="py-4">{{ question }}</p>

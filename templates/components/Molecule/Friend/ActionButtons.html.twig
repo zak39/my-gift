@@ -10,9 +10,30 @@
             <twig:ux:icon name="lucide:user-check" />
             Ami·e
         </span>
-        <twig:Molecule:Friend:UnlinkButton :user="user" action="remove" label="Retirer" icon="lucide:user-minus"
+        {# Removing and blocking are rare and final: they wait behind "…", on a row of its
+           own below the other buttons, each entry opening the modal of its UnlinkButton below. #}
+        <div class="dropdown dropdown-end order-last flex basis-full justify-end">
+            <div tabindex="0" role="button" class="btn btn-sm btn-ghost btn-square" aria-label="Plus d'actions pour {{ user.firstname }}">
+                <twig:ux:icon name="lucide:ellipsis" class="size-4" />
+            </div>
+            <ul tabindex="-1" class="dropdown-content menu menu-sm bg-base-100 rounded-box mt-1 w-40 shadow">
+                <li>
+                    <button type="button" onclick="modal_friend_remove_{{ user.id }}.showModal()">
+                        <twig:ux:icon name="lucide:user-minus" class="size-4" />
+                        Retirer
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="text-error" onclick="modal_friend_block_{{ user.id }}.showModal()">
+                        <twig:ux:icon name="lucide:ban" class="size-4" />
+                        Bloquer
+                    </button>
+                </li>
+            </ul>
+        </div>
+        <twig:Molecule:Friend:UnlinkButton :user="user" action="remove" label="Retirer" icon="lucide:user-minus" :withTrigger="false"
             question="Retirer {{ user.firstname }} de vos ami·es ? Vous ne verrez plus vos sections respectives." />
-        <twig:Molecule:Friend:UnlinkButton :user="user" action="block" label="Bloquer" icon="lucide:ban" :question="blockQuestion" />
+        <twig:Molecule:Friend:UnlinkButton :user="user" action="block" label="Bloquer" icon="lucide:ban" :withTrigger="false" :question="blockQuestion" />
 
     {% elseif relation is same as(Relation.BLOCKED) %}
         <span class="badge badge-error gap-1.5">
@@ -42,6 +63,7 @@
                 Refuser
             </button>
         </form>
+        {# Blocking stays in sight here: to a stranger's request, it is an answer like refusing. #}
         <twig:Molecule:Friend:UnlinkButton :user="user" action="block" label="Bloquer" icon="lucide:ban" :question="blockQuestion" />
 
     {% elseif relation is same as(Relation.REQUEST_SENT) %}
