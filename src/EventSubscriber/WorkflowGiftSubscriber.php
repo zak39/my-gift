@@ -17,8 +17,6 @@ use Symfony\Component\Workflow\Event\TransitionEvent;
 
 class WorkflowGiftSubscriber implements EventSubscriberInterface
 {
-    public const FROM_EMAIL = 'contact@zakode.dev';
-
     public function __construct(
         private MailerInterface $mailer,
         private UrlGeneratorInterface $urlGenerator,
@@ -33,7 +31,6 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
         $participant = $gift->getParticipants()->first();
 
         $email = (new TemplatedEmail())
-            ->from(self::FROM_EMAIL)
             ->to($gift->getCreatedBy()->getEmail())
             ->subject('Votre demande de cadeau a été réservée ! 🎁')
             ->context([
@@ -64,7 +61,6 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
         $subject = "Mince ! $participantName a retiré sa réservation ! 😢";
 
         $email = (new TemplatedEmail())
-            ->from(self::FROM_EMAIL)
             ->to($gift->getCreatedBy()->getEmail())
             ->subject($subject)
             ->context([
@@ -88,7 +84,6 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
         $ownerName = ucwords($gift->getCreatedBy()->getFirstname());
 
         $email = (new TemplatedEmail())
-            ->from(self::FROM_EMAIL)
             ->to($participant->getParticipantUser()->getEmail())
             ->subject("Vous participez au cadeau de $ownerName ! 🎁")
             ->context([
@@ -118,7 +113,6 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
         $ownerName = ucwords($gift->getCreatedBy()->getFirstname());
 
         $email = (new TemplatedEmail())
-            ->from(self::FROM_EMAIL)
             ->to($participant->getParticipantUser()->getEmail())
             ->subject("Vous êtiez le dernier participant au cadeau de $ownerName ! 😢")
             ->context([
@@ -140,7 +134,6 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
         $gift = $event->getGift();
 
         $email = (new TemplatedEmail())
-            ->from(self::FROM_EMAIL)
             ->to($gift->getCreatedBy()->getEmail())
             ->subject("Votre cadeau {$gift->getTitle()} n'est plus prêt")
             ->context([
@@ -159,7 +152,6 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
         $gift = $event->getGift();
 
         $email = (new TemplatedEmail())
-            ->from(self::FROM_EMAIL)
             ->to($gift->getCreatedBy()->getEmail())
             ->subject("Votre cadeau {$gift->getTitle()} est prêt ! 🎁")
             ->context([
