@@ -97,7 +97,6 @@ class ParticipantJoinedSubscriber implements EventSubscriberInterface
         $participantsMail = array_map(fn ($participant) => $participant->getParticipantUser()->getEmail(), $recipients);
 
         $email = (new TemplatedEmail())
-            ->from(WorkflowGiftSubscriber::FROM_EMAIL)
             ->to(...$participantsMail)
             ->subject(\sprintf($subject, ucfirst($gift->getCreatedBy()->getFirstname())))
             ->htmlTemplate($template)

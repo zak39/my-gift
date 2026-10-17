@@ -2,4 +2,4 @@ framework:
     mailer:
         dsn: '%env(MAILER_DSN)%'
         headers:
-            From: 'My Gift <contact@zakode.dev>'
+            From: 'My Gift <%app.contact_email%>'

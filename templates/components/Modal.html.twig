@@ -1,16 +1,22 @@
 <div{{ attributes }} class="contents">
     {% block handlerButton %}
     {% endblock %}
-    <dialog id="modal_{{ class }}_{{ id }}" class="modal modal-bottom sm:modal-middle">
+    <dialog id="modal_{{ class }}{{ id is not null ? '_' ~ id }}" class="modal modal-bottom sm:modal-middle">
         <div class="modal-box">
             <h3 class="text-lg font-bold">{{ title }}</h3>
             {% block message %}
             {% endblock %}
             <div class="modal-action flex-col gap-6">
-                <div class="flex flex-col gap-2 sm:flex-row">
+                {# Without actions (a modal only to read), no empty row adding its gap above « Fermer ». #}
+                {% set actionButtons %}
                     {% block actionButtons %}
                     {% endblock %}
-                </div>
+                {% endset %}
+                {% if actionButtons|trim is not empty %}
+                    <div class="flex flex-col gap-2 sm:flex-row">
+                        {{ actionButtons }}
+                    </div>
+                {% endif %}
                 <form class="self-end" method="dialog">
                     <button class="btn btn-outline btn-neutral">Fermer</button>
                 </form>
