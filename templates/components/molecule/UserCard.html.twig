@@ -8,9 +8,11 @@
             <h2 class="card-title min-w-0 line-clamp-2 wrap-anywhere" title="{{ user.fullname }}">{{ user.fullname }}</h2>
         </div>
 
-        {# "Voir son profil" stays for everyone: for a non-friend, it leads to the private list page. #}
+        {# "Voir son profil" stays for everyone: for a non-friend, it leads to the private list page.
+           The friendship buttons drop their own row (contents) to share this one, so their "…"
+           can wrap below all of them. #}
         <div class="card-actions mt-auto items-center justify-end">
-            <twig:Molecule:Friend:ActionButtons class="justify-end" :user="user" />
+            <twig:Molecule:Friend:ActionButtons class="contents!" :user="user" />
             <twig:atomic:ButtonLink
                 class="btn-sm"
                 color="neutral"

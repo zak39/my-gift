@@ -22,4 +22,10 @@ final class UnlinkButton
     public string $icon;
 
     public string $question;
+
+    /**
+     * False renders the modal alone, opened by a menu entry elsewhere: a closed dropdown
+     * hides its content with `display: none`, so the modal cannot live inside it.
+     */
+    public bool $withTrigger = true;
 }
