@@ -21,7 +21,7 @@ class DicebearAvatarGenerator
     {
         $content = $this->client->request(
             'GET',
-            $this->getBaseApi().'/thumbs/png',
+            $this->getBaseApi().'/thumbs/webp',
             [
                 'query' => [
                     'seed' => $this->seedFor($firstname),
@@ -35,8 +35,8 @@ class DicebearAvatarGenerator
 
         return new UploadedFile(
             $tmpFile,
-            'avatar.png',
-            'image/png',
+            'avatar.webp',
+            'image/webp',
             null,
             true
         );

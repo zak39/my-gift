@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use App\Vich\UploadedImage;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -68,9 +69,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[UploadableField(mapping: 'avatar', fileNameProperty: 'avatar')]
     #[Assert\Image(
-        allowLandscape: false,
-        mimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
-        mimeTypesMessage: 'Le format de l\'image n\'est pas valide (formats acceptés : JPEG, PNG, WEBP)'
+        mimeTypes: UploadedImage::MIME_TYPES,
+        mimeTypesMessage: 'Le format de l\'image n\'est pas valide (formats acceptés : '.UploadedImage::FORMATS.')',
+        maxPixels: UploadedImage::MAX_PIXELS,
+        maxPixelsMessage: 'L\'image est trop grande ({{ pixels }} pixels, {{ max_pixels }} au maximum)'
     )]
     private ?File $avatarFile = null;
 
