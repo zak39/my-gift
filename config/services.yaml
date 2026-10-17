@@ -28,3 +28,15 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    # For URLs a user pastes, the product page (OpenGraphApi) and its og:image
+    # (ImageDownloader): private and loopback addresses are refused, redirects included,
+    # or the server could be made to request its own network (SSRF)
+    app.public_http_client:
+        class: Symfony\Component\HttpClient\NoPrivateNetworkHttpClient
+        arguments: ['@http_client']
+
+when@dev:
+    services:
+        # A product page served locally may be pasted to try out the prefill
+        app.public_http_client: '@http_client'

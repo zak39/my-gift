@@ -5,11 +5,13 @@ namespace App\Services;
 use App\Services\Dto\OpenGraphDto;
 use App\Services\Exception\OpenGraphFetchException;
 use App\Services\Exception\OpenGraphNotFoundException;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class OpenGraphApi
 {
     public function __construct(
+        #[Autowire(service: 'app.public_http_client')]
         private HttpClientInterface $httpClient,
     ) {
     }
