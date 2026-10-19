@@ -1,8 +1,19 @@
 @import "tailwindcss";
 @plugin "../vendor/daisyui/daisyui.index.js";
 
+/* The app's name (font-brand). Modak, served from assets/ rather than Google Fonts: no
+   request to a third party. Latin only, its one weight (400). License: fonts/modak/OFL.txt */
+@font-face {
+    font-family: 'Modak';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../fonts/modak/modak-latin-400-normal.woff2') format('woff2');
+}
+
 @theme {
     --animate-favorite-pop: favorite-pop 0.4s ease-out;
+    --font-brand: 'Modak', system-ui, sans-serif;
 }
 
 @keyframes favorite-pop {
