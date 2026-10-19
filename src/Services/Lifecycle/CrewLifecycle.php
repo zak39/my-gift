@@ -137,7 +137,8 @@ class CrewLifecycle
     /**
      * The owner's way out, which ends the crew for every member. Each gift goes back to
      * its author, among their gifts without a section, as when a section is deleted: a
-     * reservation or a pool on it survives the crew.
+     * reservation or a pool on it survives the crew, and its image goes back to their
+     * folder, the crew's own folder removed (MoveGiftImageListener).
      */
     public function delete(Crew $crew): void
     {

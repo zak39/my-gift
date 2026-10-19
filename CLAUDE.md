@@ -110,7 +110,13 @@ above) has its own independent Node toolchain for email HTML only.
 ### File uploads
 
 `vich/uploader-bundle` handles file uploads on `Gift` and `User` (avatars), with custom
-directory namers in `src/Vich/`. Every upload is stored as WebP: `ConvertUploadedImageToWebpListener`
+directory namers in `src/Vich/`. A gift's image is filed with the list it belongs to
+(`GiftDirectoryNamer::directoryFor()`): `crews/{id}/images/gifts/` for a crew gift,
+`users/{author}/images/gifts/` otherwise. Vich resolves the folder on every read, so
+`MoveGiftImageListener` moves the file whenever a gift enters or leaves a crew, and removes
+a deleted crew's folder: copied on flush, the original removed once the database agreed
+(`App\Services\PendingFileRemovals`; whoever opens a wider transaction, like
+`UserLifecycle`, calls `removeAll()` after its commit and `forget()` on a rollback). Every upload is stored as WebP: `ConvertUploadedImageToWebpListener`
 (`vich_uploader.pre_upload`) rewrites the file in place through `App\Services\WebpConverter`
 (Imagick, `ext-imagick`), capped per mapping (`App\Vich\UploadedImage`, which also holds the accepted formats and pixel limit, and checks a file with `accepts()`), before
 `SmartUniqueNamer` names it from its content. `App\Services\DicebearAvatarGenerator` generates default
