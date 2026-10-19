@@ -3,12 +3,14 @@
 namespace App\Controller\Crew;
 
 use App\Entity\Crew;
+use App\Entity\CrewMember;
 use App\Entity\User;
 use App\Form\CrewInvitationType;
 use App\Form\CrewType;
 use App\Services\BreadcrumbBuilder;
 use App\Services\Lifecycle\CrewLifecycle;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -92,11 +94,52 @@ final class CrewController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        $crewLifecycle->leave($crew, $user);
+        try {
+            $crewLifecycle->leave($crew, $user);
+        } catch (\LogicException $exception) {
+            // Made owner in the meantime: CrewLifecycle reads the crew again before letting go.
+            $this->addFlash('error', $exception->getMessage());
+
+            return $this->redirectToRoute('app_crew_show', ['id' => $crew->getId()]);
+        }
 
         $this->addFlash('success', "Vous avez quitté le groupe « {$crew->getName()} ».");
 
         return $this->redirectToRoute('app_crew');
+    }
+
+    /**
+     * The new owner is looked for among the crew's members: anyone else is not found. A
+     * member who is not, or no longer, its owner (a page left open) is told so, not refused.
+     */
+    #[IsGranted('crew.is_member', subject: 'crew')]
+    #[Route('/members/{member}/transfer', name: 'app_crew_transfer', requirements: ['member' => '\d+'], methods: ['POST'])]
+    public function transfer(
+        Crew $crew,
+        #[MapEntity(mapping: ['id' => 'crew', 'member' => 'user'])] CrewMember $membership,
+        Request $request,
+        CrewLifecycle $crewLifecycle,
+    ): Response {
+        $newOwner = $membership->getUser();
+
+        if (!$this->isCsrfTokenValid("crew-transfer-{$crew->getId()}-{$newOwner->getId()}", $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        if (!$this->isGranted('crew.can_transfer', $crew)) {
+            $this->addFlash('error', 'Seule la personne propriétaire du groupe peut le confier à un autre membre.');
+
+            return $this->redirectToRoute('app_crew_show', ['id' => $crew->getId()]);
+        }
+
+        try {
+            $crewLifecycle->transfer($crew, $newOwner);
+            $this->addFlash('success', "{$newOwner->getFirstname()} est maintenant propriétaire du groupe « {$crew->getName()} ». Vous en restez membre, et pouvez désormais le quitter.");
+        } catch (\LogicException $exception) {
+            $this->addFlash('error', $exception->getMessage());
+        }
+
+        return $this->redirectToRoute('app_crew_show', ['id' => $crew->getId()]);
     }
 
     #[IsGranted('crew.can_delete', subject: 'crew')]

@@ -1,15 +1,19 @@
 {# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
-{% set members = entity.instance.members %}
+{# In the order they joined: the first one after the owner is who takes the crew over. #}
+{% set memberships = entity.instance.memberships %}
 
-{% if members is empty %}
+{% if memberships is empty %}
     <span class="text-muted">Aucun cadeau</span>
 {% else %}
     <ul class="list-unstyled d-flex flex-column gap-2 mb-0">
-        {% for member in members %}
+        {% for membership in memberships %}
             <li class="d-flex align-items-center gap-2">
-                <img src="{{ user_avatar_image_url(member) }}" alt="" width="32" height="32" style="object-fit: cover; border-radius: 4px;">
-                <a href="{{ path('admin_user_detail', { entityId: member.id }) }}">{{ member.fullname }}</a>
-                {% if member == entity.instance.createdBy %}
+                <img src="{{ user_avatar_image_url(membership.user) }}" alt="" width="32" height="32" style="object-fit: cover; border-radius: 4px;">
+                <a href="{{ path('admin_user_detail', { entityId: membership.user.id }) }}">{{ membership.user.fullname }}</a>
+                {% if membership.owner %}
+                    <twig:ea:Badge variant="success">Propriétaire</twig:ea:Badge>
+                {% endif %}
+                {% if membership.creator %}
                     <twig:ea:Badge variant="secondary">Créateur·rice</twig:ea:Badge>
                 {% endif %}
             </li>

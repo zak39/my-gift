@@ -12,11 +12,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Friends who share a gift list: a couple making one for their child, a family...
  *
  * Its members are equals: each of them manages the list, invites their friends and renames
- * the crew; nobody takes anyone else out. Only its creator stands apart: they never leave
- * it, and they alone delete it. The crew owns its sections and every gift filed in them,
- * whoever added it: like the owner of a personal list, no member may offer one or see its
- * pool. A member who leaves leaves their gifts behind. When the creator deletes the crew,
- * CrewLifecycle dissolves it and each gift goes back to its author.
+ * the crew; nobody takes anyone else out. Only its owner stands apart: they alone delete
+ * it, and leave it once they passed it on to another member. The crew owns its sections
+ * and every gift filed in them, whoever added it: like the owner of a personal list, no
+ * member may offer one or see its pool. A member who leaves leaves their gifts behind.
+ * When the owner deletes the crew, CrewLifecycle dissolves it and each gift goes back to
+ * its author.
  */
 #[ORM\Entity(repositoryClass: CrewRepository::class)]
 class Crew
@@ -38,14 +39,25 @@ class Crew
     private ?\DateTimeImmutable $createdAt = null;
 
     /**
-     * Always a member: removeMember() refuses to let them go.
+     * History only: who created the crew, never changed afterwards. Null once they deleted
+     * their account. The role is $owner's.
+     */
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    private ?User $createdBy;
+
+    /**
+     * The one member who alone deletes the crew, and passes the role on (transferTo()),
+     * its creator at first. Not to be confused with gift.is_owner / GiftOwnership, which
+     * mean every member of the crew. Always a member: removeMember() refuses to let them go.
      */
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private User $createdBy;
+    private User $owner;
 
     /**
-     * In the order they joined, the creator first.
+     * In the order they joined, the longest there first: the successor (getSuccessor())
+     * comes from this order, whoever created or owns the crew.
      *
      * @var Collection<int, CrewMember>
      */
@@ -72,6 +84,7 @@ class Crew
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->createdBy = $creator;
+        $this->owner = $creator;
         $this->memberships = new ArrayCollection();
         $this->invitations = new ArrayCollection();
         $this->sections = new ArrayCollection();
@@ -101,9 +114,14 @@ class Crew
         return $this->createdAt;
     }
 
-    public function getCreatedBy(): User
+    public function getCreatedBy(): ?User
     {
         return $this->createdBy;
+    }
+
+    public function getOwner(): User
+    {
+        return $this->owner;
     }
 
     /**
@@ -159,13 +177,13 @@ class Crew
     }
 
     /**
-     * The gifts the member added stay in the list: they belong to the crew. The creator
-     * never leaves, so a crew is never left empty: deleting it is their way out.
+     * The gifts the member added stay in the list: they belong to the crew. The owner
+     * never leaves, so a crew is never left empty: they pass it on first, or delete it.
      */
     public function removeMember(User $user): static
     {
-        if ($user === $this->createdBy) {
-            throw new \LogicException('Vous avez créé ce groupe : vous ne pouvez pas le quitter, mais vous pouvez le supprimer.');
+        if ($user === $this->owner) {
+            throw new \LogicException('Vous êtes propriétaire de ce groupe : confiez-le d\'abord à un autre membre pour le quitter, ou supprimez-le.');
         }
 
         $membership = $this->getMembershipOf($user);
@@ -258,30 +276,35 @@ class Crew
     }
 
     /**
-     * Who takes the crew over when its creator deletes their account: the member who has
-     * been there the longest. Null when the creator is alone, and the crew goes with them.
+     * Who takes the crew over when its owner deletes their account: the member who has
+     * been there the longest. Null when the owner is alone, and the crew goes with them.
      */
     public function getSuccessor(): ?User
     {
         /** @var CrewMember|null $successor */
         $successor = $this->memberships->findFirst(
-            fn (int $key, CrewMember $membership) => $membership->getUser() !== $this->createdBy
+            fn (int $key, CrewMember $membership) => $membership->getUser() !== $this->owner
         );
 
         return $successor?->getUser();
     }
 
     /**
-     * The crew goes on under its successor once its creator deletes their account: they
-     * may then leave it, as any member.
+     * Another member becomes the owner, chosen by the owner or, when they delete their
+     * account, the successor. The previous owner stays a member: they may now leave, as
+     * any member. The creator does not change.
      */
-    public function handOverTo(User $successor): static
+    public function transferTo(User $member): static
     {
-        if (!$this->hasMember($successor)) {
-            throw new \LogicException('Seul un membre du groupe peut le reprendre.');
+        if (!$this->hasMember($member)) {
+            throw new \LogicException('Seul un membre du groupe peut en devenir propriétaire.');
         }
 
-        $this->createdBy = $successor;
+        if ($member === $this->owner) {
+            throw new \LogicException(\sprintf('%s est déjà propriétaire du groupe.', $member->getFirstname()));
+        }
+
+        $this->owner = $member;
 
         return $this;
     }

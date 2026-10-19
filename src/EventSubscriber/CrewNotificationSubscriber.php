@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Tells the people concerned when someone is invited into a group, joins it, leaves it,
- * when its creator deletes it, or hands it over on deleting their account. The sender is the mailer's (config/packages/mailer.yaml).
+ * when its owner deletes it, or passes it on to another member. The sender is the mailer's (config/packages/mailer.yaml).
  *
  * The contexts hold plain values and the users the cards show, not the crew: the email is
  * serialized into the queue and rendered by the worker, sometimes once the crew is gone.
@@ -75,51 +75,57 @@ class CrewNotificationSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * The new creator learns they took the crew over; the other members, that the previous
-     * one left and who leads the crew now. One email each.
+     * The new owner learns they took the crew over. Passed on by its owner, nothing
+     * changes for the others: they see it on the crew's page. On an account deletion,
+     * they learn the previous owner left and who owns the crew now. One email each.
      */
     public function crewHandedOver(CrewHandedOverEvent $event): void
     {
         $crew = $event->getCrew();
-        $newCreator = $crew->getCreatedBy();
-        $previousCreator = $event->getPreviousCreator();
+        $newOwner = $crew->getOwner();
+        $previousOwner = $event->getPreviousOwner();
 
         $email = (new TemplatedEmail())
-            ->to($newCreator->getEmail())
-            ->subject(\sprintf('Vous êtes maintenant créateur·rice du groupe « %s »', $crew->getName()))
+            ->to($newOwner->getEmail())
+            ->subject(\sprintf('Vous êtes maintenant propriétaire du groupe « %s »', $crew->getName()))
             ->htmlTemplate('emails/crew_handed_over.html.twig')
             ->context([
                 'crewName' => $crew->getName(),
-                // A name only: their account is about to be deleted.
-                'previousCreatorName' => $previousCreator->getFullname(),
-                'newCreator' => $newCreator,
+                // A name only: on an account deletion, theirs is about to go.
+                'previousOwnerName' => $previousOwner->getFullname(),
+                'newOwner' => $newOwner,
+                'accountDeleted' => $event->isAccountDeleted(),
                 'url' => $this->urlGenerator->generate('app_crew_show', ['id' => $crew->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
             ])
         ;
 
         $this->mailer->send($email);
 
+        if (!$event->isAccountDeleted()) {
+            return;
+        }
+
         $this->tellMembers(
-            $crew->getMembersExcept($newCreator),
+            $crew->getMembersExcept($newOwner),
             $crew,
-            $previousCreator,
+            $previousOwner,
             '%s a quitté le groupe « %s »',
             'emails/crew_member_left.html.twig',
-            // handOver() only runs for a creator deleting their account.
-            ['accountDeleted' => true, 'newCreatorName' => $newCreator->getFullname()],
+            // Past the return above: the previous owner deleted their account.
+            ['accountDeleted' => true, 'newOwnerName' => $newOwner->getFullname()],
         );
     }
 
     /**
-     * One email per member but the creator, who deleted it, with a link to their own list,
+     * One email per member but the owner, who deleted it, with a link to their own list,
      * where their gifts are back.
      */
     public function crewDeleted(CrewDeletedEvent $event): void
     {
-        $creator = $event->getCreator();
+        $owner = $event->getOwner();
 
         foreach ($event->getMembers() as $member) {
-            if ($member === $creator) {
+            if ($member === $owner) {
                 continue;
             }
 
@@ -129,7 +135,7 @@ class CrewNotificationSubscriber implements EventSubscriberInterface
                 ->htmlTemplate('emails/crew_deleted.html.twig')
                 ->context([
                     'crewName' => $event->getCrewName(),
-                    'creator' => $creator,
+                    'owner' => $owner,
                     'member' => $member,
                     'url' => $this->urlGenerator->generate('app_section', [], UrlGeneratorInterface::ABSOLUTE_URL),
                 ])
@@ -152,7 +158,7 @@ class CrewNotificationSubscriber implements EventSubscriberInterface
 
     /**
      * One email to the members about the one who joined or left, with their card. A crew
-     * handed over may leave nobody to tell but its new creator, told apart.
+     * handed over may leave nobody to tell but its new owner, told apart.
      *
      * @param list<User>           $recipients
      * @param string               $subject    a sprintf() pattern receiving the member's first name and the crew's name

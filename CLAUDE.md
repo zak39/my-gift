@@ -52,8 +52,11 @@ Core entities (`src/Entity`): `User`, `Section` (owned by a user, groups gifts),
 `Gift` (belongs to a section, has a `GiftStatus`), `Participant` (links a `User` to a `Gift`
 with a `ParticipantStatus` and, for contributions, an amount).
 
-A `Crew` (a ManyToMany `Crew::$members` with the same rights; its creator `Crew::$createdBy`
-cannot leave it and alone deletes it) shares a gift list: a `Section` with a crew belongs to the crew's list, not to its creator's. Ownership is
+A `Crew` (members as `CrewMember` rows, all with the same rights; its owner `Crew::$owner`
+alone deletes it, and leaves it only once passed on with `CrewLifecycle::transfer()`;
+`Crew::$createdBy` is history only, null once its user is deleted) shares a gift list: a
+`Section` with a crew belongs to the crew's list, not to its creator's. `crew.can_transfer`
+/ `Crew::getOwner()` is that one role, not `gift.is_owner`. Ownership is
 `$gift->getOwnership()->includes($user)` / `Section::isOwnedBy()` (crew members, or else the
 creator), never a bare `getCreatedBy()` comparison.
 

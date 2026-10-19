@@ -6,16 +6,17 @@ use App\Entity\User;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Carries what the crew no longer can once deleted: its name, its creator and its members.
+ * Carries what the crew no longer can once deleted: its name, its owner, who deleted it,
+ * and its members.
  */
 final class CrewDeletedEvent extends Event
 {
     /**
-     * @param list<User> $members all of them, the creator included
+     * @param list<User> $members all of them, the owner included
      */
     public function __construct(
         private readonly string $crewName,
-        private readonly User $creator,
+        private readonly User $owner,
         private readonly array $members,
     ) {
     }
@@ -25,9 +26,9 @@ final class CrewDeletedEvent extends Event
         return $this->crewName;
     }
 
-    public function getCreator(): User
+    public function getOwner(): User
     {
-        return $this->creator;
+        return $this->owner;
     }
 
     /**

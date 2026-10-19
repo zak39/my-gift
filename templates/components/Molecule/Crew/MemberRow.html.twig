@@ -8,26 +8,49 @@
             {% if member is same as(app.user) %}
                 <span class="text-sm font-normal text-base-content/60">(vous)</span>
             {% endif %}
-            {% if creator %}
-                <span class="badge badge-sm badge-ghost">Créateur·rice</span>
-            {% endif %}
         </p>
         <p class="text-xs text-base-content/60">Membre depuis le {{ membership.joinedAt|date('d/m/Y') }}</p>
+        {# The role in accent, the history plain: the creator has no right of their own. #}
+        {% if membership.owner or membership.creator %}
+            <div class="mt-1.5 flex flex-wrap gap-1.5">
+                {% if membership.owner %}
+                    <span class="badge badge-sm badge-accent">Propriétaire</span>
+                {% endif %}
+                {% if membership.creator %}
+                    <span class="badge badge-sm">Créateur·rice</span>
+                {% endif %}
+            </div>
+        {% endif %}
     </div>
 
-    {# For a member who is not a friend yet, the locked page offers to send a request. #}
     {% if member is not same as(app.user) %}
-        <twig:atomic:ButtonLink
-            class="btn-sm"
-            color="neutral"
-            style="ghost"
-            :to="path('app_section_user_page', { id: member.id })">
-            <twig:block name="name">
-                <span>Voir ses sections</span>
-            </twig:block>
-            <twig:block name="icon">
-                <twig:ux:icon name="lucide:arrow-right" class="size-4" />
-            </twig:block>
-        </twig:atomic:ButtonLink>
+        {% set canTransfer = is_granted('crew.can_transfer', membership.crew) %}
+        {# Behind "…" like a friend's card: the entry opening the modal goes through the dialog
+           controller, the modal itself rendered below, out of the menu. #}
+        <div class="dropdown dropdown-end" data-controller="dropdown">
+            <div tabindex="0" role="button" class="btn btn-sm btn-ghost btn-square" aria-label="Plus d'actions pour {{ member.firstname }}" data-dropdown-target="trigger">
+                <twig:ux:icon name="lucide:ellipsis" class="size-4" />
+            </div>
+            <ul tabindex="-1" class="dropdown-content menu menu-sm z-1 mt-1 w-52 rounded-box bg-base-100 shadow">
+                <li>
+                    {# For a member who is not a friend yet, the locked page offers to send a request. #}
+                    <a href="{{ path('app_section_user_page', { id: member.id }) }}">
+                        <twig:ux:icon name="lucide:arrow-right" class="size-4" />
+                        Voir ses sections
+                    </a>
+                </li>
+                {% if canTransfer %}
+                    <li>
+                        <button type="button" data-controller="dialog" data-dialog-id-value="modal_crew_transfer_{{ member.id }}" data-action="dialog#open">
+                            <twig:ux:icon name="lucide:crown" class="size-4" />
+                            Nommer propriétaire
+                        </button>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+        {% if canTransfer %}
+            <twig:Molecule:Crew:TransferModal :crew="membership.crew" :member="member" />
+        {% endif %}
     {% endif %}
 </li>

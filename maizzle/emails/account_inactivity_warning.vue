@@ -38,7 +38,7 @@ import CardStyle from '../components/styles/CardStyle.vue'
                     </p>
 
                     <p>
-                        Sinon, votre compte sera supprimé avec vos sections, vos cadeaux et votre photo de profil. Les groupes que vous avez créés seront confiés à leur membre le plus ancien.
+                        Sinon, votre compte sera supprimé avec vos sections, vos cadeaux et votre photo de profil. Les groupes dont vous êtes propriétaire seront confiés à leur membre le plus ancien.
                     </p>
 
                     <div class="text-center my-6">

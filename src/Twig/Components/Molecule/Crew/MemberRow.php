@@ -6,14 +6,11 @@ use App\Entity\CrewMember;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 /**
- * A member in the crew's list of members. No action on it: nobody takes anyone else out
- * of a crew.
+ * A member in the crew's list of members. Its owner may make another member owner in
+ * their place; nobody takes anyone else out of a crew.
  */
 #[AsTwigComponent]
 final class MemberRow
 {
     public CrewMember $membership;
-
-    /** The member who created the crew, the only one who can delete it. */
-    public bool $creator = false;
 }

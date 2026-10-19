@@ -1,0 +1,18 @@
+{# Inside the Modal blocks, id, title and class are those of Modal: crew and member stay in
+   reach, under names Modal does not use. #}
+<twig:Modal :id="member.id" :title="'Confier le groupe à ' ~ member.firstname" class="crew_transfer">
+    <twig:block name="message">
+        <p class="py-4">
+            {{ member.firstname }} deviendra propriétaire de « {{ crew.name }} » : la seule personne qui peut supprimer le groupe. Vous en resterez membre, et pourrez alors le quitter.
+        </p>
+    </twig:block>
+    <twig:block name="actionButtons">
+        <form method="post" action="{{ path('app_crew_transfer', { id: crew.id, member: member.id }) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('crew-transfer-' ~ crew.id ~ '-' ~ member.id) }}">
+            <button type="submit" class="btn btn-primary">
+                <twig:ux:icon name="lucide:crown" class="size-4" />
+                Oui, confier le groupe
+            </button>
+        </form>
+    </twig:block>
+</twig:Modal>

@@ -23,8 +23,9 @@ class CrewCrudController extends AbstractCrudController
     {
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
-            // A crew needs its creator (Crew::__construct(User $creator)), a member of it who
-            // alone may delete it: crews are created by their members on the site, not here.
+            // A crew needs its creator (Crew::__construct(User $creator)), its first owner,
+            // a member who alone may delete it: crews are created by their members on the
+            // site, not here.
             ->disable(Action::NEW)
         ;
     }
