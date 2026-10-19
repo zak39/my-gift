@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * A user's place in a crew, since the day they joined it. The members are equals: the
  * date only tells who has been there the longest, who takes the crew over when its
- * creator deletes their account.
+ * owner deletes their account.
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'crew_member')]
@@ -59,5 +59,17 @@ class CrewMember
     public function getJoinedAt(): \DateTimeImmutable
     {
         return $this->joinedAt;
+    }
+
+    /** The member who alone deletes the crew and passes it on (Crew::$owner). */
+    public function isOwner(): bool
+    {
+        return $this->user === $this->crew->getOwner();
+    }
+
+    /** The member who created the crew: history, no right of their own. */
+    public function isCreator(): bool
+    {
+        return $this->user === $this->crew->getCreatedBy();
     }
 }

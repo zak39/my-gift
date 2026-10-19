@@ -25,7 +25,8 @@ use Symfony\Component\Filesystem\Filesystem;
  *
  * The foreign keys left without ON DELETE (participant, crew, section, gift) are the
  * safety net: a case forgotten here makes the database refuse the deletion instead of
- * leaving a crew without creator or a participation without anyone.
+ * leaving a crew without owner or a participation without anyone. A crew's creator is
+ * history only: ON DELETE SET NULL.
  *
  * What is left to delete is read from the repositories, not from the user's collections:
  * an entity deleted along the way and still held by one of them would make the next flush
@@ -63,9 +64,9 @@ class UserLifecycle
         $this->entityManager->wrapInTransaction(function () use ($user, $reason): void {
             $this->releaseParticipations($user);
             $this->deleteCrewsWhereAlone($user);
-            // Each crew left once, with a single email: as its creator, or as a member.
-            $this->handOverCreatedCrews($user);
-            // Once every crew has its creator for good: their items go to them.
+            // Each crew left once, with a single email: as its owner, or as a member.
+            $this->handOverOwnedCrews($user);
+            // Once every crew has its owner for good: their items go to them.
             $this->handOverFiledItems($user);
             $this->leaveCrews($user);
             $this->deleteOwnSections($user);
@@ -103,12 +104,12 @@ class UserLifecycle
     }
 
     /**
-     * The crews the user created and nobody else joined go with them. Their gifts go back
-     * to the user, among their gifts without a section, to be deleted with their own.
+     * The crews the user owns and nobody else is in go with them. Their gifts go back to
+     * the user, among their gifts without a section, to be deleted with their own.
      */
     private function deleteCrewsWhereAlone(User $user): void
     {
-        foreach ($this->crewRepository->findBy(['createdBy' => $user]) as $crew) {
+        foreach ($this->crewRepository->findBy(['owner' => $user]) as $crew) {
             if (null === $crew->getSuccessor()) {
                 $this->crewLifecycle->delete($crew);
             }
@@ -116,16 +117,16 @@ class UserLifecycle
     }
 
     /**
-     * The crews the user created that still exist go on under their oldest member, and
-     * the user leaves them.
+     * The crews the user owns that still exist go on under their oldest member, and the
+     * user leaves them.
      */
-    private function handOverCreatedCrews(User $user): void
+    private function handOverOwnedCrews(User $user): void
     {
-        foreach ($this->crewRepository->findBy(['createdBy' => $user]) as $crew) {
+        foreach ($this->crewRepository->findBy(['owner' => $user]) as $crew) {
             // Always someone: the crews they were alone in are already deleted.
             $successor = $crew->getSuccessor() ?? throw new \LogicException('A crew left alone should be deleted first.');
 
-            $this->crewLifecycle->handOver($crew, $successor);
+            $this->crewLifecycle->transferOnAccountDeletion($crew, $successor);
         }
     }
 
@@ -141,19 +142,19 @@ class UserLifecycle
     }
 
     /**
-     * What the user filed in a crew's list stays there, under its creator's name: crews
+     * What the user filed in a crew's list stays there, under its owner's name: crews
      * they already left included, since leaving kept their name on it. Two separate reads:
      * their section may hold other members' gifts, and another member's section theirs.
      */
     private function handOverFiledItems(User $user): void
     {
         foreach ($this->sectionRepository->findInCrewsCreatedBy($user) as $section) {
-            $section->setCreatedBy($section->getCrew()->getCreatedBy());
+            $section->setCreatedBy($section->getCrew()->getOwner());
         }
 
         foreach ($this->giftRepository->findInCrewsCreatedBy($user) as $gift) {
             // Its original image goes with the user's folder, once deleted.
-            ($this->handOverGift)($gift, $gift->getCrew()->getCreatedBy());
+            ($this->handOverGift)($gift, $gift->getCrew()->getOwner());
         }
 
         // One flush for every section and gift handed over: HandOverGift leaves it to us.

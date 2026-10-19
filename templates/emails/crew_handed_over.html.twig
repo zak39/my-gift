@@ -59,11 +59,12 @@
       <w:DontUseAdvancedTypographyReadingMail />
     </w:WordDocument>
   </xml>
-<![endif]--></span><div role="article" aria-roledescription="email" lang="en" dir="ltr" style="font-size: medium; font-size: max(16px, 1rem)"><!--[if mso]><table role="none" cellpadding="0" cellspacing="0" style="width: 576px" align="center"><tr><td style="padding: 40px 0"><![endif]--> <div class="sm-p-6" style="margin: 0 auto; max-width: 576px; padding: 40px 0;"><div class="email-card" style="border-radius: 8px; border-style: solid; border-width: 1px; padding: 24px;"><h1>Vous êtes maintenant créateur&middot;rice du groupe &laquo; {{ crewName }} &raquo;</h1> <p>
-                        Bonjour {{ newCreator.firstname|title }},
-                    </p> <p><b>{{ previousCreatorName|title }}</b>, qui avait créé le groupe <b>&laquo; {{ crewName }} &raquo;</b>, a supprimé son compte My Gift. Comme vous en êtes le membre le plus ancien, c'est vous qui reprenez le groupe.
-                    </p> <p>
-                        Rien ne change pour les autres membres : tout le monde gère toujours les sections et invite ses ami&middot;es. Seule différence pour vous : vous ne pouvez plus quitter le groupe, mais vous êtes la seule personne qui peut le supprimer.
-                    </p> <p>
-                        Les cadeaux que {{ previousCreatorName|title }} y avait ajoutés restent dans le groupe, à votre nom, avec leurs réservations et leurs cagnottes.
+<![endif]--></span><div role="article" aria-roledescription="email" lang="en" dir="ltr" style="font-size: medium; font-size: max(16px, 1rem)"><!--[if mso]><table role="none" cellpadding="0" cellspacing="0" style="width: 576px" align="center"><tr><td style="padding: 40px 0"><![endif]--> <div class="sm-p-6" style="margin: 0 auto; max-width: 576px; padding: 40px 0;"><div class="email-card" style="border-radius: 8px; border-style: solid; border-width: 1px; padding: 24px;"><h1>Vous êtes maintenant propriétaire du groupe &laquo; {{ crewName }} &raquo;</h1> <p>
+                        Bonjour {{ newOwner.firstname|title }},
+                    </p> {% if accountDeleted %} <p><b>{{ previousOwnerName|title }}</b>, propriétaire du groupe <b>&laquo; {{ crewName }} &raquo;</b>, a supprimé son compte My Gift. Comme vous en êtes le membre le plus ancien, c'est vous qui reprenez le groupe.
+                        </p> <p>
+                            Les cadeaux que {{ previousOwnerName|title }} y avait ajoutés restent dans le groupe, à votre nom, avec leurs réservations et leurs cagnottes.
+                        </p> {% else %} <p><b>{{ previousOwnerName|title }}</b> vous a confié le groupe <b>&laquo; {{ crewName }} &raquo;</b> : vous en êtes maintenant propriétaire. Il ou elle en reste membre.
+                        </p> {% endif %} <p>
+                        Rien ne change pour les autres membres : tout le monde gère toujours les sections et invite ses ami&middot;es. Seule différence pour vous : vous êtes la seule personne qui peut supprimer le groupe, et pour le quitter, vous devrez d'abord le confier à un autre membre.
                     </p> <div style="margin-top: 24px; margin-bottom: 24px; text-align: center;"><a href="{{ url }}" class="accent-button" style="display: inline-block; padding: 10px 16px; text-align: center; font-size: 14px; line-height: 24px; font-weight: 600; text-decoration: none;"><!--[if mso]><i style="mso-font-width: 150%; mso-text-raise: 30px;" hidden>&emsp;</i><![endif]--> <span style="mso-text-raise:16px;">Voir le groupe</span> <!--[if mso]><i style="mso-font-width: 150%;" hidden>&emsp;&#8203;</i><![endif]--></a></div></div></div> <!--[if mso]></td></tr></table><![endif]--></div></body></div></body></html>

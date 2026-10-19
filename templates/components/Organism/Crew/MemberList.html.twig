@@ -6,12 +6,12 @@
             <span class="badge badge-sm badge-ghost tabular-nums">{{ crew.memberships|length }}</span>
         </h2>
         <p class="text-sm text-base-content/70">
-            Tous gèrent les sections et invitent leurs ami·es, et chacun peut quitter le groupe. Seule la personne qui l'a créé ne peut pas le quitter : elle seule peut le supprimer.
+            Tous gèrent les sections et invitent leurs ami·es, et chacun peut quitter le groupe. Seule la personne propriétaire peut le supprimer : pour le quitter, elle le confie d'abord à un autre membre.
         </p>
 
         <ul class="list -mx-4">
             {% for membership in crew.memberships %}
-                <twig:Molecule:Crew:MemberRow :membership="membership" :creator="membership.user is same as crew.createdBy" />
+                <twig:Molecule:Crew:MemberRow :membership="membership" />
             {% endfor %}
         </ul>
     </div>

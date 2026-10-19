@@ -29,9 +29,9 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
                         <b><Raw>{{ member.fullName|title }}</Raw></b> ne fait plus partie du groupe <b>« <Raw>{{ crewName }}</Raw> »</b>.
                     </p>
 
-                    <Raw>{% if newCreatorName|default(false) %}</Raw>
+                    <Raw>{% if newOwnerName|default(false) %}</Raw>
                         <p>
-                            <b><Raw>{{ newCreatorName|title }}</Raw></b> en est maintenant créateur·rice : c'est la seule personne qui peut supprimer le groupe.
+                            <b><Raw>{{ newOwnerName|title }}</Raw></b> en est maintenant propriétaire : c'est la seule personne qui peut supprimer le groupe.
                         </p>
                     <Raw>{% endif %}</Raw>
 

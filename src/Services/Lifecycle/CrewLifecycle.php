@@ -12,6 +12,7 @@ use App\Event\CrewMemberJoinedEvent;
 use App\Event\CrewMemberLeftEvent;
 use App\Repository\FriendBookRepository;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -82,7 +83,7 @@ class CrewLifecycle
 
     /**
      * The only way out of a crew for a member: nobody takes anyone else out. The gifts
-     * they added stay in the crew's list. The creator cannot leave (Crew::removeMember()).
+     * they added stay in the crew's list. The owner cannot leave (Crew::removeMember()).
      */
     public function leave(Crew $crew, User $user): void
     {
@@ -99,24 +100,42 @@ class CrewLifecycle
     }
 
     /**
-     * The creator deleting their account: another member takes the crew over, from now on
-     * the only one who may delete it, and the creator leaves. One event tells everyone,
-     * the successor and the other members each their own way.
+     * The owner passing the crew on to another member, who alone may delete it from now
+     * on. The previous owner stays a member, free to leave it.
      */
-    public function handOver(Crew $crew, User $successor): void
+    public function transfer(Crew $crew, User $newOwner): void
     {
-        $previousCreator = $crew->getCreatedBy();
+        $this->whileLocked($crew, function () use ($crew, $newOwner): void {
+            $previousOwner = $crew->getOwner();
 
-        $crew->handOverTo($successor);
-        // No longer its creator: removeMember() lets them go.
-        $crew->removeMember($previousCreator);
-        $this->entityManager->flush();
+            $crew->transferTo($newOwner);
+            $this->entityManager->flush();
 
-        $this->eventDispatcher->dispatch(new CrewHandedOverEvent($crew, $previousCreator));
+            $this->eventDispatcher->dispatch(new CrewHandedOverEvent($crew, $previousOwner, accountDeleted: false));
+        });
     }
 
     /**
-     * The creator's way out, which ends the crew for every member. Each gift goes back to
+     * The owner deleting their account: their successor takes the crew over, and they
+     * leave it. One event tells everyone, the successor and the other members each their
+     * own way.
+     */
+    public function transferOnAccountDeletion(Crew $crew, User $successor): void
+    {
+        $this->whileLocked($crew, function () use ($crew, $successor): void {
+            $previousOwner = $crew->getOwner();
+
+            $crew->transferTo($successor);
+            // No longer its owner: removeMember() lets them go.
+            $crew->removeMember($previousOwner);
+            $this->entityManager->flush();
+
+            $this->eventDispatcher->dispatch(new CrewHandedOverEvent($crew, $previousOwner, accountDeleted: true));
+        });
+    }
+
+    /**
+     * The owner's way out, which ends the crew for every member. Each gift goes back to
      * its author, among their gifts without a section, as when a section is deleted: a
      * reservation or a pool on it survives the crew.
      */
@@ -134,15 +153,35 @@ class CrewLifecycle
         $this->entityManager->remove($crew);
         $this->entityManager->flush();
 
-        $this->eventDispatcher->dispatch(new CrewDeletedEvent($crew->getName(), $crew->getCreatedBy(), $members));
+        $this->eventDispatcher->dispatch(new CrewDeletedEvent($crew->getName(), $crew->getOwner(), $members));
     }
 
     private function removeMember(Crew $crew, User $user, bool $accountDeleted): void
     {
-        $crew->removeMember($user);
-        $this->entityManager->flush();
+        $this->whileLocked($crew, function () use ($crew, $user, $accountDeleted): void {
+            $crew->removeMember($user);
+            $this->entityManager->flush();
 
-        $this->eventDispatcher->dispatch(new CrewMemberLeftEvent($crew, $user, $accountDeleted));
+            $this->eventDispatcher->dispatch(new CrewMemberLeftEvent($crew, $user, $accountDeleted));
+        });
+    }
+
+    /**
+     * Who owns the crew and who is in it change one request at a time: its row locked till
+     * the commit, the crew read again, Crew's rules check what the database holds. Else a
+     * member could leave while being made owner, and the crew be left with an owner out
+     * of it. Anything not flushed on the crew is lost to the refresh.
+     *
+     * DBAL's transaction, not the ORM's wrapInTransaction(): that one closes the entity
+     * manager on any exception, a refusal of Crew's included, for the rest of the request.
+     * The emails queued on the way (Messenger's doctrine transport) commit with the change.
+     */
+    private function whileLocked(Crew $crew, \Closure $change): void
+    {
+        $this->entityManager->getConnection()->transactional(function () use ($crew, $change): void {
+            $this->entityManager->refresh($crew, LockMode::PESSIMISTIC_WRITE);
+            $change();
+        });
     }
 
     private function applyTransition(CrewInvitation $invitation, string $transition, string $error): void
