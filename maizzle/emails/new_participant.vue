@@ -9,7 +9,7 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
 
 <template>
     <Layout>
-        <TwigPreheader>Un nouveau participant a rejoint pour le cadeau de <Raw>{{ gift.createdBy.firstname|title }}</Raw></TwigPreheader>
+        <TwigPreheader>Un nouveau participant a rejoint pour le cadeau <Raw>{{ ownerOf }}</Raw></TwigPreheader>
 
         <BodyStyle />
         <CardStyle />
@@ -21,7 +21,7 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
         <Body class="email-bg">
             <Container class="max-w-xl p-0 py-10 sm:p-6">
                 <div class="email-card border rounded-lg p-6">
-                    <h1>Un nouveau participant a rejoint pour le cadeau de <Raw>{{ gift.createdBy.firstname|title }}</Raw> ! 🎁</h1>
+                    <h1>Un nouveau participant a rejoint pour le cadeau <Raw>{{ ownerOf }}</Raw> ! 🎁</h1>
 
                     <p>
                         Bonjour,
@@ -53,11 +53,11 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
                     </div>
 
                     <p>
-                      Vous pouvez consulter les détails du cadeau de <Raw>{{ gift.createdBy.firstname|title }}</Raw> en cliquant sur le bouton ci-dessous.
+                      Vous pouvez consulter les détails du cadeau <Raw>{{ ownerOf }}</Raw> en cliquant sur le bouton ci-dessous.
                     </p>
 
                     <div class="text-center my-6">
-                        <AccentButton label="Voir la progression du cadeau de {{ gift.createdBy.firstname|title }}" to="{{ url }}" />
+                        <AccentButton label="Voir la progression du cadeau {{ ownerOf }}" to="{{ url }}" />
                     </div>
                 </div>
             </Container>

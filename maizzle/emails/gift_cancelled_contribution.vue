@@ -7,7 +7,7 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
 
 <template>
     <Layout>
-        <TwigPreheader>Vous êtiez le dernier à participer au cadeau de <Raw>{{ gift.createdBy.firstname|title }}</Raw></TwigPreheader>
+        <TwigPreheader>Vous êtiez le dernier à participer au cadeau <Raw>{{ ownerOf }}</Raw></TwigPreheader>
 
         <BodyStyle />
         <CardStyle />
@@ -20,14 +20,14 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
                   {% set participantName = participant.isAnonymous ? participant.pseudoAnonyme : participant.participantUser.fullName %}
                 </Raw>
                 <div class="email-card border rounded-lg p-6">
-                    <h1>Vous étiez le dernier à participer au cadeau de <Raw>{{ gift.createdBy.firstname|title }}</Raw> ! 🎁</h1>
+                    <h1>Vous étiez le dernier à participer au cadeau <Raw>{{ ownerOf }}</Raw> ! 🎁</h1>
 
                     <p>
                         Bonjour <Raw>{{ participantName }}</Raw>,
                     </p>
 
                     <p>
-                        Zut, vous étiez le dernier à participer au cadeau <b><Raw>{{ gift.title }}</Raw></b> pour <b><Raw>{{ gift.createdBy.firstname|title }}</Raw></b>.
+                        Zut, vous étiez le dernier à participer au cadeau <b><Raw>{{ gift.title }}</Raw></b> pour <b><Raw>{{ ownerName }}</Raw></b>.
                     </p>
 
                     <p>
@@ -35,7 +35,7 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
                     </p>
 
                     <div class="text-center my-6">
-                      <AccentButton label="Voir le cadeau de {{ gift.createdBy.firstname|title }}" to="{{ url }}" />
+                      <AccentButton label="Voir le cadeau {{ ownerOf }}" to="{{ url }}" />
                     </div>
                 </div>
             </Container>

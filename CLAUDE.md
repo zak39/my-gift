@@ -58,7 +58,11 @@ alone deletes it, and leaves it only once passed on with `CrewLifecycle::transfe
 `Section` with a crew belongs to the crew's list, not to its creator's. `crew.can_transfer`
 / `Crew::getOwner()` is that one role, not `gift.is_owner`. Ownership is
 `$gift->getOwnership()->includes($user)` / `Section::isOwnedBy()` (crew members, or else the
-creator), never a bare `getCreatedBy()` comparison.
+creator), never a bare `getCreatedBy()` comparison. A crew's gift or section keeps no author
+(`createdBy` null) once its user deleted their account (`UserLifecycle` empties it; required
+out of a crew by `App\Validator\NotNullOutOfCrew`): read it null-safe, and name the crew rather than the
+author to its givers (`App\Services\Gift\GiftOwnerLabel`). Released by a section or crew
+deleted (`App\Services\Section\ReleaseGifts`), such a gift goes with it, its givers told.
 
 `Gift` is composed of value objects, one per concern: `getOwnership()` (`App\ValueObject\GiftOwnership`:
 `includes()`) and `getPool()` (`App\ValueObject\GiftPool`: what was collected, what
