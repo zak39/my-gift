@@ -7,7 +7,9 @@ use App\Entity\Gift;
 class FavoriteGiftGrouper
 {
     /**
-     * Gifts grouped by the friend who offers them, then by section.
+     * Gifts grouped by the list they are part of, then by section: a crew's gifts under
+     * their crew, whoever added them (their author may even be gone), any other under the
+     * friend who offers it.
      *
      * Every gift must belong to a section: callers
      * filter out the others (see `GiftRepository::findFavoritesGifts()`).
@@ -18,35 +20,40 @@ class FavoriteGiftGrouper
      * @param iterable<Gift> $gifts
      *
      * @return list<array{
-     *     user: \App\Entity\User,
+     *     crew: ?\App\Entity\Crew,
+     *     user: ?\App\Entity\User,
+     *     name: string,
      *     sections: list<array{section: \App\Entity\Section, gifts: list<Gift>}>,
      * }>
      */
-    public function groupedByCreator(iterable $gifts): array
+    public function groupedByList(iterable $gifts): array
     {
         $grouped = [];
 
         foreach ($gifts as $gift) {
-            $createdBy = $gift->getCreatedBy();
-            $creatorId = $createdBy->getId();
+            $crew = $gift->getCrew();
             $section = $gift->getSection();
+            // One key space for both kinds of list: a crew and a user may share an id.
+            $listKey = null !== $crew ? 'crew-'.$crew->getId() : 'user-'.$gift->getCreatedBy()->getId();
 
-            $grouped[$creatorId] ??= [
-                'user' => $createdBy,
+            $grouped[$listKey] ??= [
+                'crew' => $crew,
+                'user' => null !== $crew ? null : $gift->getCreatedBy(),
+                'name' => null !== $crew ? $crew->getName() : $gift->getCreatedBy()->getFullname(),
                 'sections' => [],
             ];
 
             $sectionId = $section->getId();
-            $grouped[$creatorId]['sections'][$sectionId] ??= [
+            $grouped[$listKey]['sections'][$sectionId] ??= [
                 'section' => $section,
                 'gifts' => [],
             ];
-            $grouped[$creatorId]['sections'][$sectionId]['gifts'][] = $gift;
+            $grouped[$listKey]['sections'][$sectionId]['gifts'][] = $gift;
         }
 
         // Section ids served only to group; the template just iterates.
-        foreach ($grouped as $creatorId => $group) {
-            $grouped[$creatorId]['sections'] = array_values($group['sections']);
+        foreach ($grouped as $listKey => $group) {
+            $grouped[$listKey]['sections'] = array_values($group['sections']);
         }
 
         return array_values($grouped);

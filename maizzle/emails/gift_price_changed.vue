@@ -7,7 +7,7 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
 
 <template>
     <Layout>
-        <TwigPreheader>Le prix du cadeau de <Raw>{{ gift.createdBy.firstname|title }}</Raw> a changé</TwigPreheader>
+        <TwigPreheader>Le prix du cadeau <Raw>{{ ownerOf }}</Raw> a changé</TwigPreheader>
 
         <BodyStyle />
         <CardStyle />
@@ -17,7 +17,7 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
         <Body class="email-bg">
             <Container class="max-w-xl p-0 py-10 sm:p-6">
                 <div class="email-card border rounded-lg p-6">
-                    <h1>Le prix du cadeau de <Raw>{{ gift.createdBy.firstname|title }}</Raw> a changé 💸</h1>
+                    <h1>Le prix du cadeau <Raw>{{ ownerOf }}</Raw> a changé 💸</h1>
 
                     <p>
                         Bonjour,
@@ -35,7 +35,7 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
                     </p>
 
                     <div class="text-center my-6">
-                        <AccentButton label="Voir le cadeau de {{ gift.createdBy.firstname|title }}" to="{{ url }}" />
+                        <AccentButton label="Voir le cadeau {{ ownerOf }}" to="{{ url }}" />
                     </div>
                 </div>
             </Container>

@@ -47,9 +47,11 @@
         <twig:block name="message">
             <p class="py-4">Est-ce que vous êtes sûr de supprimer la section <b>{{ section.title }}</b> ?</p>
             {% if section.crew %}
-                <p class="py-4">La suppression de la section ne supprimera pas les cadeaux. Ils quitteront les sections du groupe et retourneront dans les <b>Cadeaux sans section</b> de celles et ceux qui les ont ajoutés.</p>
+                <p class="py-4">Ses cadeaux quitteront les sections du groupe et retourneront dans les <b>Cadeaux sans section</b> de celles et ceux qui les ont ajoutés.</p>
+                {# ReleaseGifts: a crew gift whose author deleted their account has nobody to go back to. #}
+                <p class="pb-4">Un cadeau ajouté par une personne qui a depuis supprimé son compte (« Utilisateur supprimé ») n'a personne à qui revenir : il sera supprimé, avec ses réservations et ses cagnottes.</p>
             {% else %}
-                <p class="py-4">La suppression de la section ne supprimera pas les cadeaux. Ils seront déplacer dans la section <b>Cadeaux sans Section</b></p>
+                <p class="py-4">La suppression de la section ne supprimera pas les cadeaux. Ils seront déplacés dans la section <b>Cadeaux sans section</b>.</p>
             {% endif %}
         </twig:block>
         <twig:block name="actionButtons">

@@ -43,7 +43,8 @@ class SectionCrudController extends AbstractCrudController
         return [
             IdField::new('id')->hideOnForm(),
             TextField::new('title'),
-            // slug and createdBy are NOT NULL: on the site, CreateSection and the Me\/Crew\ SectionController fill them in
+            // slug is NOT NULL, and createdBy required out of a crew (Section::$createdBy): on the
+            // site, CreateSection and the Me\/Crew\ SectionController fill them in
             SlugField::new('slug', 'Slug')
                 ->onlyWhenCreating()
                 ->setTargetFieldName('title'),

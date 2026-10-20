@@ -57,7 +57,8 @@ class SectionRepository extends ServiceEntityRepository
             // Selected for the crew's name GiftEditType groups the sections by, and with the
             // creator for the data export.
             ->leftJoin('s.crew', 'c')
-            ->innerJoin('s.createdBy', 'u')
+            // Left: a crew's section may have lost its author (an account deleted).
+            ->leftJoin('s.createdBy', 'u')
             ->addSelect('c', 'u')
             ->leftJoin('c.memberships', 'm', 'WITH', 'm.user = :user')
             ->where('c.id IS NULL AND s.createdBy = :user')

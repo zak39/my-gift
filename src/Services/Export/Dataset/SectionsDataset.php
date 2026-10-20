@@ -31,7 +31,8 @@ final class SectionsDataset
                 'Propriétaire' => OwnerName::of($section, $user),
                 'Section' => $section->getTitle(),
                 'Description' => $section->getDescription(),
-                'Créée par' => $section->getCreatedBy()->getFullname(),
+                // A crew section keeps no author once its user deleted their account.
+                'Créée par' => $section->getCreatedBy()?->getFullname() ?? 'Utilisateur supprimé',
             ],
             $sections,
         ));

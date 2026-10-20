@@ -36,6 +36,8 @@ final class GiftController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $gift = new Gift();
+        // Its author before the form validates it: out of a crew, a gift needs one (Gift::$createdBy).
+        $gift->setCreatedBy($user);
 
         // "Ajouter un cadeau" on a section files the gift straight into it. The submitted
         // form posts back to the same URL, so the section is set again before saving.

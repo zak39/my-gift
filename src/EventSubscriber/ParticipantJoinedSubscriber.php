@@ -9,6 +9,7 @@ use App\Event\GiftPriceChangedEvent;
 use App\Event\GiftReadyEvent;
 use App\Event\ParticipantJoinedEvent;
 use App\Event\ParticipantLeftEvent;
+use App\Services\Gift\GiftOwnerLabel;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -19,6 +20,7 @@ class ParticipantJoinedSubscriber implements EventSubscriberInterface
     public function __construct(
         private MailerInterface $mailer,
         private UrlGeneratorInterface $urlGenerator,
+        private GiftOwnerLabel $giftOwnerLabel,
     ) {
     }
 
@@ -34,7 +36,7 @@ class ParticipantJoinedSubscriber implements EventSubscriberInterface
 
         $this->sendEmailToParticipants(
             $gift,
-            'Un nouveau participant a rejoint pour le cadeau de %s',
+            'Un nouveau participant a rejoint pour le cadeau %s',
             'emails/new_participant.html.twig',
             ['participant' => $participant],
             $participant,
@@ -52,7 +54,7 @@ class ParticipantJoinedSubscriber implements EventSubscriberInterface
 
         $this->sendEmailToParticipants(
             $gift,
-            'Un participant a quitté le cadeau de %s',
+            'Un participant a quitté le cadeau %s',
             'emails/participant_left.html.twig',
             ['participant' => $event->getParticipant()],
         );
@@ -63,7 +65,7 @@ class ParticipantJoinedSubscriber implements EventSubscriberInterface
     {
         $this->sendEmailToParticipants(
             $event->getGift(),
-            'Le cadeau de %s est prêt ! 🎉',
+            'Le cadeau %s est prêt ! 🎉',
             'emails/gift_ready.html.twig',
         );
     }
@@ -72,14 +74,14 @@ class ParticipantJoinedSubscriber implements EventSubscriberInterface
     {
         $this->sendEmailToParticipants(
             $event->getGift(),
-            'Le prix du cadeau de %s a changé',
+            'Le prix du cadeau %s a changé',
             'emails/gift_price_changed.html.twig',
             ['previousPrice' => $event->getPreviousPrice()],
         );
     }
 
     /**
-     * @param string       $subject  a sprintf() pattern receiving the gift owner's first name
+     * @param string       $subject  a sprintf() pattern receiving whose gift it is: « de Jon », « du groupe … »
      * @param ?Participant $excluded left out of the recipients, such as the newcomer being announced
      */
     private function sendEmailToParticipants(Gift $gift, string $subject, string $template, array $context = [], ?Participant $excluded = null): void
@@ -95,13 +97,15 @@ class ParticipantJoinedSubscriber implements EventSubscriberInterface
         }
 
         $participantsMail = array_map(fn ($participant) => $participant->getParticipantUser()->getEmail(), $recipients);
+        $ownerOf = $this->giftOwnerLabel->of($gift);
 
         $email = (new TemplatedEmail())
             ->to(...$participantsMail)
-            ->subject(\sprintf($subject, ucfirst($gift->getCreatedBy()->getFirstname())))
+            ->subject(\sprintf($subject, $ownerOf))
             ->htmlTemplate($template)
             ->context([
                 'gift' => $gift,
+                'ownerOf' => $ownerOf,
                 'url' => $this->urlGenerator->generate('app_gift_show', ['id' => $gift->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
                 ...$context,
             ])

@@ -7,6 +7,7 @@ use App\Entity\Participant;
 use App\Enum\GiftStatus;
 use App\Event\GiftNoLongerReadyEvent;
 use App\Event\GiftReadyEvent;
+use App\Services\Gift\GiftOwnerLabel;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -20,6 +21,7 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
     public function __construct(
         private MailerInterface $mailer,
         private UrlGeneratorInterface $urlGenerator,
+        private GiftOwnerLabel $giftOwnerLabel,
     ) {
     }
 
@@ -28,20 +30,9 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
         /** @var Gift $gift */
         $gift = $event->getSubject();
 
-        $participant = $gift->getParticipants()->first();
-
-        $email = (new TemplatedEmail())
-            ->to($gift->getCreatedBy()->getEmail())
-            ->subject('Votre demande de cadeau a été réservée ! 🎁')
-            ->context([
-                'gift' => $gift,
-                'url' => $this->urlGenerator->generate('app_gift_show', ['id' => $gift->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
-                'participant' => $participant,
-            ])
-            ->htmlTemplate('emails/gift_reserved.html.twig')
-        ;
-
-        $this->mailer->send($email);
+        $this->sendToAuthor($gift, 'Votre demande de cadeau a été réservée ! 🎁', 'emails/gift_reserved.html.twig', [
+            'participant' => $gift->getParticipants()->first(),
+        ]);
     }
 
     /**
@@ -58,20 +49,9 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
 
         $participantName = ucwords($participant->getDisplayName());
 
-        $subject = "Mince ! $participantName a retiré sa réservation ! 😢";
-
-        $email = (new TemplatedEmail())
-            ->to($gift->getCreatedBy()->getEmail())
-            ->subject($subject)
-            ->context([
-                'gift' => $gift,
-                'url' => $this->urlGenerator->generate('app_gift_show', ['id' => $gift->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
-                'participant' => $participant,
-            ])
-            ->htmlTemplate('emails/gift_disengaged.html.twig')
-        ;
-
-        $this->mailer->send($email);
+        $this->sendToAuthor($gift, "Mince ! $participantName a retiré sa réservation ! 😢", 'emails/gift_disengaged.html.twig', [
+            'participant' => $participant,
+        ]);
     }
 
     public function giftContributing(CompletedEvent $event): void
@@ -80,15 +60,16 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
         $gift = $event->getSubject();
 
         $participant = $event->getContext()['participant'];
-
-        $ownerName = ucwords($gift->getCreatedBy()->getFirstname());
+        $ownerOf = $this->giftOwnerLabel->of($gift);
 
         $email = (new TemplatedEmail())
             ->to($participant->getParticipantUser()->getEmail())
-            ->subject("Vous participez au cadeau de $ownerName ! 🎁")
+            ->subject('Vous participez au cadeau '.$ownerOf.' ! 🎁')
             ->context([
                 'participant' => $participant,
                 'gift' => $gift,
+                'ownerName' => $this->giftOwnerLabel->name($gift),
+                'ownerOf' => $ownerOf,
                 'url' => $this->urlGenerator->generate('app_gift_show', ['id' => $gift->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
             ])
             ->htmlTemplate('emails/gift_contributing.html.twig')
@@ -109,15 +90,16 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
         $gift = $event->getSubject();
 
         $participant = $event->getContext()['participant'];
-
-        $ownerName = ucwords($gift->getCreatedBy()->getFirstname());
+        $ownerOf = $this->giftOwnerLabel->of($gift);
 
         $email = (new TemplatedEmail())
             ->to($participant->getParticipantUser()->getEmail())
-            ->subject("Vous êtiez le dernier participant au cadeau de $ownerName ! 😢")
+            ->subject('Vous êtiez le dernier participant au cadeau '.$ownerOf.' ! 😢')
             ->context([
                 'participant' => $participant,
                 'gift' => $gift,
+                'ownerName' => $this->giftOwnerLabel->name($gift),
+                'ownerOf' => $ownerOf,
                 'url' => $this->urlGenerator->generate('app_gift_show', ['id' => $gift->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
             ])
             ->htmlTemplate('emails/gift_cancelled_contribution.html.twig')
@@ -133,35 +115,16 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
     {
         $gift = $event->getGift();
 
-        $email = (new TemplatedEmail())
-            ->to($gift->getCreatedBy()->getEmail())
-            ->subject("Votre cadeau {$gift->getTitle()} n'est plus prêt")
-            ->context([
-                'gift' => $gift,
-                'backOnOffer' => GiftStatus::CREATED === $gift->getStatus(),
-                'url' => $this->urlGenerator->generate('app_gift_show', ['id' => $gift->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
-            ])
-            ->htmlTemplate('emails/gift_no_longer_ready.html.twig')
-        ;
-
-        $this->mailer->send($email);
+        $this->sendToAuthor($gift, "Votre cadeau {$gift->getTitle()} n'est plus prêt", 'emails/gift_no_longer_ready.html.twig', [
+            'backOnOffer' => GiftStatus::CREATED === $gift->getStatus(),
+        ]);
     }
 
     public function giftReady(GiftReadyEvent $event): void
     {
         $gift = $event->getGift();
 
-        $email = (new TemplatedEmail())
-            ->to($gift->getCreatedBy()->getEmail())
-            ->subject("Votre cadeau {$gift->getTitle()} est prêt ! 🎁")
-            ->context([
-                'gift' => $gift,
-                'url' => $this->urlGenerator->generate('app_gift_show', ['id' => $gift->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
-            ])
-            ->htmlTemplate('emails/gift_ready_for_gift_owner.html.twig')
-        ;
-
-        $this->mailer->send($email);
+        $this->sendToAuthor($gift, "Votre cadeau {$gift->getTitle()} est prêt ! 🎁", 'emails/gift_ready_for_gift_owner.html.twig');
     }
 
     public static function getSubscribedEvents(): array
@@ -177,5 +140,34 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
             GiftReadyEvent::class => 'giftReady',
             GiftNoLongerReadyEvent::class => 'giftNoLongerReady',
         ];
+    }
+
+    /**
+     * One email to the gift's author, the owner of a personal list, with the gift and its
+     * page. A crew gift whose author deleted their account has nobody to tell (its
+     * members: #113).
+     *
+     * @param array<string, mixed> $context added to the template's
+     */
+    private function sendToAuthor(Gift $gift, string $subject, string $template, array $context = []): void
+    {
+        $author = $gift->getCreatedBy();
+
+        if (null === $author) {
+            return;
+        }
+
+        $email = (new TemplatedEmail())
+            ->to($author->getEmail())
+            ->subject($subject)
+            ->htmlTemplate($template)
+            ->context([
+                'gift' => $gift,
+                'url' => $this->urlGenerator->generate('app_gift_show', ['id' => $gift->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
+                ...$context,
+            ])
+        ;
+
+        $this->mailer->send($email);
     }
 }

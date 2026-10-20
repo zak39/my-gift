@@ -118,7 +118,8 @@ class GiftRepository extends ServiceEntityRepository
     public function findInListsOf(User $user): array
     {
         return $this->createQueryBuilder('g')
-            ->innerJoin('g.createdBy', 'u')
+            // Left: a crew's gift may have lost its author (an account deleted).
+            ->leftJoin('g.createdBy', 'u')
             ->leftJoin('g.section', 's')
             ->leftJoin('s.crew', 'c')
             // Joined only when the user is a member: a crew's gift stays out otherwise.
@@ -161,7 +162,8 @@ class GiftRepository extends ServiceEntityRepository
             ->innerJoin('g.favoritedBy', 'u')
             // The inner join on section drops gifts left outside one; the joins also load
             // the creator, section and crew the favourites page and the data export display.
-            ->innerJoin('g.createdBy', 'c')
+            // Left on the creator: a crew's gift may have lost its author.
+            ->leftJoin('g.createdBy', 'c')
             ->innerJoin('g.section', 's')
             ->leftJoin('s.crew', 'crew')
             ->addSelect('c', 's', 'crew')

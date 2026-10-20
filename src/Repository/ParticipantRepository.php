@@ -27,7 +27,8 @@ class ParticipantRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('p')
             ->innerJoin('p.gift', 'g')
-            ->innerJoin('g.createdBy', 'u')
+            // Left: a crew's gift may have lost its author (an account deleted).
+            ->leftJoin('g.createdBy', 'u')
             ->leftJoin('g.section', 's')
             ->leftJoin('s.crew', 'c')
             ->addSelect('g', 'u', 's', 'c')

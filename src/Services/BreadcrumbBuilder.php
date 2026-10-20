@@ -27,15 +27,19 @@ final class BreadcrumbBuilder
     /**
      * The gift's page as a friend who may offer it sees it, reached from the list it is
      * part of: its crew's, or its creator's once the crew's is out of their sight (an ended
-     * friendship), as ViewerUrlGenerator::listCrew() decides. Its owners have their own pages below.
+     * friendship), as ViewerUrlGenerator::listCrew() decides; the friends' search alone for a
+     * crew gift whose creator is gone. Its owners have their own pages below.
      */
     public function gift(Gift $gift): array
     {
         $crew = $this->viewerUrlGenerator->listCrew($gift);
+        $creator = $gift->getCreatedBy();
 
-        $list = null !== $crew
-            ? [$this->crewItem($crew)]
-            : [$this->findFriends(), $this->userListItem($gift->getCreatedBy())];
+        $list = match (true) {
+            null !== $crew => [$this->crewItem($crew)],
+            null !== $creator => [$this->findFriends(), $this->userListItem($creator)],
+            default => [$this->findFriends()],
+        };
 
         return [...$list, $this->currentItem($gift->getTitle())];
     }

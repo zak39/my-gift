@@ -7,7 +7,7 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
 
 <template>
     <Layout>
-        <TwigPreheader>Le cadeau de <Raw>{{ gift.createdBy.firstname }}</Raw> est prêt ! 🎉</TwigPreheader>
+        <TwigPreheader>Le cadeau <Raw>{{ ownerOf }}</Raw> est prêt ! 🎉</TwigPreheader>
 
         <BodyStyle />
         <CardStyle />
@@ -17,14 +17,14 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
         <Body class="email-bg">
             <Container class="max-w-xl p-0 py-10 sm:p-6">
                 <div class="email-card border rounded-lg p-6">
-                    <h1>Le cadeau de <Raw>{{ gift.createdBy.firstname }}</Raw> est prêt ! 🎉</h1>
+                    <h1>Le cadeau <Raw>{{ ownerOf }}</Raw> est prêt ! 🎉</h1>
 
                     <p>
                         Bonjour,
                     </p>
 
                     <p>
-                      Nous avons le plaisir de vous informer que le cadeau <b><Raw>{{ gift.title }}</Raw></b> de <b><Raw>{{ gift.createdBy.firstname }}</Raw></b> est prêt !
+                      Nous avons le plaisir de vous informer que le cadeau <b><Raw>{{ gift.title }}</Raw></b> <b><Raw>{{ ownerOf }}</Raw></b> est prêt !
                     </p>
                     <p>
                       N'oubliez pas de lui donner votre cadeau pour qu'il puisse en profiter ! 🎁
@@ -35,7 +35,7 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
                     </p>
 
                     <div class="text-center my-6">
-                        <AccentButton label="Voir le cadeau de {{ gift.createdBy.firstname }}" to="{{ url }}" />
+                        <AccentButton label="Voir le cadeau {{ ownerOf }}" to="{{ url }}" />
                     </div>
                 </div>
             </Container>
