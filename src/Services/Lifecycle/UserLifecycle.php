@@ -22,8 +22,10 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *
  * The foreign keys left without ON DELETE (participant, crew, section, gift) are the
  * safety net: a case forgotten here makes the database refuse the deletion instead of
- * leaving a crew without owner or a participation without anyone. A crew's creator is
- * history only: ON DELETE SET NULL.
+ * leaving a crew without owner, a personal gift without anyone or a participation without
+ * anyone. A crew's creator is history only: ON DELETE SET NULL. The author of a crew's gift
+ * or section is emptied here, explicitly, so that the safety net still holds for the
+ * personal ones.
  *
  * What is left to delete is read from the repositories, not from the user's collections:
  * an entity deleted along the way and still held by one of them would make the next flush
@@ -62,8 +64,7 @@ class UserLifecycle
                 $this->deleteCrewsWhereAlone($user);
                 // Each crew left once, with a single email: as its owner, or as a member.
                 $this->handOverOwnedCrews($user);
-                // Once every crew has its owner for good: their items go to them.
-                $this->handOverFiledItems($user);
+                $this->emptyFiledItems($user);
                 $this->leaveCrews($user);
                 $this->deleteOwnSections($user);
                 $this->deleteOwnGifts($user);
@@ -143,19 +144,20 @@ class UserLifecycle
     }
 
     /**
-     * What the user filed in a crew's list stays there, under its owner's name: crews
-     * they already left included, since leaving kept their name on it. Two separate reads:
-     * their section may hold other members' gifts, and another member's section theirs.
+     * What the user filed in a crew's list stays there, with no author: it belongs to the
+     * crew, not to anyone (« Utilisateur supprimé »). Crews they already left included,
+     * since leaving kept their name on it. Two separate reads: their section may hold other
+     * members' gifts, and another member's section theirs. The images stay put:
+     * GiftDirectoryNamer files a crew gift under its crew, whoever added it.
      */
-    private function handOverFiledItems(User $user): void
+    private function emptyFiledItems(User $user): void
     {
         foreach ($this->sectionRepository->findInCrewsCreatedBy($user) as $section) {
-            $section->setCreatedBy($section->getCrew()->getOwner());
+            $section->setCreatedBy(null);
         }
 
-        // Their images stay put: GiftDirectoryNamer files a crew gift under its crew.
         foreach ($this->giftRepository->findInCrewsCreatedBy($user) as $gift) {
-            $gift->setCreatedBy($gift->getCrew()->getOwner());
+            $gift->setCreatedBy(null);
         }
 
         $this->entityManager->flush();
@@ -173,8 +175,8 @@ class UserLifecycle
     }
 
     /**
-     * Every gift still theirs once the crews are left, those released by a crew deleted
-     * with them included. A gift's participants go with it (Gift::$participants,
+     * Every gift still theirs once their crew items are emptied: their own list's, those
+     * released by a crew deleted with them included. A gift's participants go with it (Gift::$participants,
      * orphanRemoval): they are told first.
      *
      * Removed without a flush, unlike DeleteGift: Vich deletes an image on the flush that

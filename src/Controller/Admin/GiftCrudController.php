@@ -129,8 +129,14 @@ class GiftCrudController extends AbstractCrudController
             AssociationField::new('section', 'Section')
                 ->onlyWhenUpdating()
                 // Every section the creator may file the gift in, crews' ones included
-                // whoever created them, as on the front's edit form.
-                ->setFormTypeOption('choices', $gift?->getCreatedBy() ? $this->sectionRepository->findManagedBy($gift->getCreatedBy()) : [])
+                // whoever created them, as on the front's edit form. A crew gift whose author
+                // deleted their account stays among its crew's sections, as for a member
+                // (GiftCrewMemberEditType).
+                ->setFormTypeOption('choices', match (true) {
+                    null !== $gift?->getCreatedBy() => $this->sectionRepository->findManagedBy($gift->getCreatedBy()),
+                    null !== $gift?->getCrew() => $gift->getCrew()->getSections()->getValues(),
+                    default => [],
+                })
                 ->setFormTypeOption('choice_label', 'title')
                 ->setFormTypeOption('placeholder', 'Choisir une section'),
             DateField::new('createdAt', 'Créé le')

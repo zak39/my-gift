@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Enum\GiftStatus;
 use App\Repository\GiftRepository;
+use App\Validator\NotNullOutOfCrew;
 use App\ValueObject\GiftOwnership;
 use App\ValueObject\GiftPool;
 use App\Vich\UploadedImage;
@@ -66,8 +67,15 @@ class Gift
     #[ORM\OneToMany(targetEntity: Participant::class, mappedBy: 'gift', orphanRemoval: true)]
     private Collection $participants;
 
+    /**
+     * Who added it. A personal gift's owner; on a crew gift, a trace with no right of its
+     * own (GiftOwnership), emptied when its user deletes their account: the gift stays in
+     * the crew's list. No ON DELETE: a personal gift forgotten by UserLifecycle makes the
+     * database refuse the deletion. Required out of a crew all the same (NotNullOutOfCrew).
+     */
+    #[NotNullOutOfCrew]
     #[ORM\ManyToOne(inversedBy: 'gifts')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?User $createdBy = null;
 
     #[ORM\Column]

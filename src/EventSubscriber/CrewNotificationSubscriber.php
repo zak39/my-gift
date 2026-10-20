@@ -3,8 +3,10 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Crew;
+use App\Entity\Participant;
 use App\Entity\User;
 use App\Event\CrewDeletedEvent;
+use App\Event\CrewGiftDeletedEvent;
 use App\Event\CrewHandedOverEvent;
 use App\Event\CrewInvitationSentEvent;
 use App\Event\CrewMemberJoinedEvent;
@@ -145,9 +147,45 @@ class CrewNotificationSubscriber implements EventSubscriberInterface
         }
     }
 
+    /**
+     * One email to the givers of a crew gift that went with its section or its crew, its
+     * author gone, as when a gift goes with its owner's account (AccountDeletionSubscriber).
+     */
+    public function crewGiftDeleted(CrewGiftDeletedEvent $event): void
+    {
+        $gift = $event->getGift();
+
+        // Once given, there is nothing left to tell its givers.
+        if (!$gift->getStatus()->isInProgress()) {
+            return;
+        }
+
+        $recipients = $gift->getParticipantsToNotify();
+
+        if (!$recipients) {
+            return;
+        }
+
+        $email = (new TemplatedEmail())
+            ->to(...array_map(fn (Participant $participant) => $participant->getParticipantUser()->getEmail(), $recipients))
+            ->subject(\sprintf('Le cadeau « %s » du groupe « %s » n\'existe plus', $gift->getTitle(), $event->getCrewName()))
+            ->htmlTemplate('emails/crew_gift_deleted.html.twig')
+            ->context([
+                'giftTitle' => $gift->getTitle(),
+                'crewName' => $event->getCrewName(),
+                'crewDeleted' => $event->isCrewDeleted(),
+                // A ready gift may come from a reservation or from a pool.
+                'pooled' => $gift->getPool()->isPooled(),
+            ])
+        ;
+
+        $this->mailer->send($email);
+    }
+
     public static function getSubscribedEvents(): array
     {
         return [
+            CrewGiftDeletedEvent::class => 'crewGiftDeleted',
             CrewInvitationSentEvent::class => 'invitationSent',
             CrewMemberJoinedEvent::class => 'memberJoined',
             CrewMemberLeftEvent::class => 'memberLeft',

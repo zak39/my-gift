@@ -11,6 +11,8 @@ use App\Event\CrewInvitationSentEvent;
 use App\Event\CrewMemberJoinedEvent;
 use App\Event\CrewMemberLeftEvent;
 use App\Repository\FriendBookRepository;
+use App\Services\PendingFileRemovals;
+use App\Services\Section\ReleaseGifts;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
@@ -31,6 +33,8 @@ class CrewLifecycle
         private EntityManagerInterface $entityManager,
         private FriendBookRepository $friendBookRepository,
         private EventDispatcherInterface $eventDispatcher,
+        private ReleaseGifts $releaseGifts,
+        private PendingFileRemovals $pendingFileRemovals,
     ) {
     }
 
@@ -138,23 +142,37 @@ class CrewLifecycle
      * The owner's way out, which ends the crew for every member. Each gift goes back to
      * its author, among their gifts without a section, as when a section is deleted: a
      * reservation or a pool on it survives the crew, and its image goes back to their
-     * folder, the crew's own folder removed (MoveGiftImageListener).
+     * folder, the crew's own folder removed (MoveGiftImageListener). A gift whose author
+     * deleted their account has nobody to go back to: it goes with the crew, its givers
+     * told (ReleaseGifts).
      */
     public function delete(Crew $crew): void
     {
         // Read before the crew goes, for whoever listens to its deletion.
         $members = $crew->getMembers();
+        $connection = $this->entityManager->getConnection();
 
-        foreach ($crew->getSections() as $section) {
-            $section->releaseGifts();
-            $this->entityManager->remove($section);
+        // One transaction: the emails queued on the way (Messenger's doctrine transport)
+        // are rolled back with the deletion if it fails.
+        $connection->transactional(function () use ($crew, $members): void {
+            foreach ($crew->getSections() as $section) {
+                ($this->releaseGifts)($section, crewDeleted: true);
+                $this->entityManager->remove($section);
+            }
+
+            // Its pending invitations go with it: ON DELETE CASCADE.
+            $this->entityManager->remove($crew);
+            $this->entityManager->flush();
+
+            $this->eventDispatcher->dispatch(new CrewDeletedEvent($crew->getName(), $crew->getOwner(), $members));
+        });
+
+        // Committed: the moved images' originals and the crew's folder can go
+        // (PendingFileRemovals). Inside a wider transaction (an account deletion), its
+        // opener removes them after its own.
+        if (!$connection->isTransactionActive()) {
+            $this->pendingFileRemovals->removeAll();
         }
-
-        // Its pending invitations go with it: ON DELETE CASCADE.
-        $this->entityManager->remove($crew);
-        $this->entityManager->flush();
-
-        $this->eventDispatcher->dispatch(new CrewDeletedEvent($crew->getName(), $crew->getOwner(), $members));
     }
 
     private function removeMember(Crew $crew, User $user, bool $accountDeleted): void

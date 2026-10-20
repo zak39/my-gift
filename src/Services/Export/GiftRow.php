@@ -51,7 +51,8 @@ final class GiftRow
             'Lien' => $gift->getLink(),
             'Statut' => $gift->getStatus()?->label(),
             ...$this->participation($gift, $viewer),
-            'Créé par' => $gift->getCreatedBy()->getFullname(),
+            // A crew gift keeps no author once its user deleted their account.
+            'Créé par' => $gift->getCreatedBy()?->getFullname() ?? 'Utilisateur supprimé',
             'Créé le' => $gift->getCreatedAt(),
         ];
     }

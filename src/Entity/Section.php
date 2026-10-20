@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\SectionRepository;
+use App\Validator\NotNullOutOfCrew;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -45,8 +46,13 @@ class Section
     #[ORM\Column(length: 255)]
     private ?string $slug = null;
 
+    /**
+     * Who created it: a personal section's owner; on a crew's, a trace emptied when its
+     * user deletes their account, as Gift::$createdBy.
+     */
+    #[NotNullOutOfCrew]
     #[ORM\ManyToOne(inversedBy: 'sections')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?User $createdBy = null;
 
     /**
@@ -114,19 +120,6 @@ class Section
             if ($gift->getSection() === $this) {
                 $gift->setSection(null);
             }
-        }
-
-        return $this;
-    }
-
-    /**
-     * Before the section is deleted: each gift goes back to its author, among their gifts
-     * without a section.
-     */
-    public function releaseGifts(): static
-    {
-        foreach ($this->gifts as $gift) {
-            $this->removeGift($gift);
         }
 
         return $this;

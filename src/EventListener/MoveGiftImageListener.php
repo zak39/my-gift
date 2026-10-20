@@ -93,7 +93,8 @@ final class MoveGiftImageListener
 
     /**
      * A crew deleted by this flush: its gifts go back to their authors on the same flush
-     * (CrewLifecycle::delete()), their images along, what is left is the crew's. Read here
+     * (CrewLifecycle::delete()), their images along, and those without author go with the
+     * crew (ReleaseGifts): what is left is the crew's. Read here
      * rather than on preRemove, which runs at remove(), before preFlush has emptied the
      * queue.
      */
