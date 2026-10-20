@@ -60,11 +60,11 @@
     </w:WordDocument>
   </xml>
 <![endif]--></span><div role="article" aria-roledescription="email" lang="en" dir="ltr" style="font-size: medium; font-size: max(16px, 1rem)"><!--[if mso]><table role="none" cellpadding="0" cellspacing="0" style="width: 576px" align="center"><tr><td style="padding: 40px 0"><![endif]--> <div class="sm-p-6" style="margin: 0 auto; max-width: 576px; padding: 40px 0;"><div class="email-card" style="border-radius: 8px; border-style: solid; border-width: 1px; padding: 24px;"><h1>Votre cadeau n'est plus prêt</h1> <p>
-                        Bonjour {{ gift.createdBy.firstname }},
+                        Bonjour{% if recipientName %} {{ recipientName }}{% endif %},
                     </p> <p>
-                        Un participant s'est retiré de la cagnotte de votre cadeau <b>{{ gift.title }}</b> : il n'est plus prêt à être offert.
+                        Un participant s'est retiré de la cagnotte de votre cadeau <b>{{ gift.title }}</b>{% if crewOf %} {{ crewOf }}{% endif %} : il n'est plus prêt à être offert.
                     </p> {% if backOnOffer %} <p>
                             Il n'y a plus personne dans la cagnotte : votre cadeau est de nouveau disponible pour vos proches.
                         </p> {% else %} <p>
                             La cagnotte est rouverte : les autres participants pourront la compléter et la déclarer prête à nouveau.
-                        </p> {% endif %} <div style="margin-top: 24px; margin-bottom: 24px; text-align: center;"><a href="{{ url }}" class="accent-button" style="display: inline-block; padding: 10px 16px; text-align: center; font-size: 14px; line-height: 24px; font-weight: 600; text-decoration: none;"><!--[if mso]><i style="mso-font-width: 150%; mso-text-raise: 30px;" hidden>&emsp;</i><![endif]--> <span style="mso-text-raise:16px;">Voir mon cadeau</span> <!--[if mso]><i style="mso-font-width: 150%;" hidden>&emsp;&#8203;</i><![endif]--></a></div></div></div> <!--[if mso]></td></tr></table><![endif]--></div></body></div></body></html>
+                        </p> {% endif %} <div style="margin-top: 24px; margin-bottom: 24px; text-align: center;"><a href="{{ url }}" class="accent-button" style="display: inline-block; padding: 10px 16px; text-align: center; font-size: 14px; line-height: 24px; font-weight: 600; text-decoration: none;"><!--[if mso]><i style="mso-font-width: 150%; mso-text-raise: 30px;" hidden>&emsp;</i><![endif]--> <span style="mso-text-raise:16px;">Voir le cadeau</span> <!--[if mso]><i style="mso-font-width: 150%;" hidden>&emsp;&#8203;</i><![endif]--></a></div></div></div> <!--[if mso]></td></tr></table><![endif]--></div></body></div></body></html>

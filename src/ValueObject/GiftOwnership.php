@@ -25,4 +25,19 @@ final class GiftOwnership
             : $this->creator === $user
         ;
     }
+
+    /**
+     * Who they are: the crew's members, or its creator. None for a gift out of a crew that
+     * lost its creator, a state NotNullOutOfCrew only keeps forms from making.
+     *
+     * @return list<User>
+     */
+    public function owners(): array
+    {
+        if (null !== $this->crew) {
+            return $this->crew->getMembers();
+        }
+
+        return null !== $this->creator ? [$this->creator] : [];
+    }
 }

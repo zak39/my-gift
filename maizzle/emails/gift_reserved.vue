@@ -24,19 +24,19 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
                     <h1>Votre demande de cadeau a été réservée ! 🎁</h1>
 
                     <p>
-                        Bonjour <Raw>{{ gift.createdBy.firstname }}</Raw>,
+                        Bonjour<Raw>{% if recipientName %} {{ recipientName }}{% endif %}</Raw>,
                     </p>
 
                     <Raw>{% if participant.isAnonymous %}</Raw>
                         <p>
-                            Nous avons le plaisir de vous informer que votre cadeau <b><Raw>{{ gift.title }}</Raw></b> a été réservé par <b><Raw>{{ participant.pseudoAnonyme }}</Raw></b>.
+                            Nous avons le plaisir de vous informer que votre cadeau <GiftTitle /> a été réservé par <b><Raw>{{ participant.pseudoAnonyme }}</Raw></b>.
                         </p>
                         <p>
                             Mais, qui est cette personne mystérieuse ? 🧐
                         </p>
                     <Raw>{% else %}</Raw>
                         <p>
-                            Nous avons le plaisir de vous informer que votre cadeau <b><Raw>{{ gift.title }}</Raw></b> a été réservé par <b><Raw>{{ participant.participantUser.fullName|title }}</Raw></b>.
+                            Nous avons le plaisir de vous informer que votre cadeau <GiftTitle /> a été réservé par <b><Raw>{{ participant.participantUser.fullName|title }}</Raw></b>.
                         </p>
                     <Raw>{% endif %}</Raw>
 
@@ -53,7 +53,7 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
                     </p>
 
                     <div class="text-center my-6">
-                        <AccentButton label="Voir mon cadeau" to="{{ url }}" />
+                        <AccentButton label="Voir le cadeau" to="{{ url }}" />
                     </div>
                 </div>
             </Container>
