@@ -4,7 +4,6 @@
 
 {% block body %}
 {# Favourites are always someone else's gifts: the heart is hidden on your own cards. #}
-{% set friendCount = favoriteGiftsByUsers|length %}
 
 <div class="mx-auto w-full max-w-6xl py-6 pb-12">
     <header>
@@ -13,30 +12,37 @@
             <p class="mt-2 flex items-center gap-2 text-sm text-base-content/70">
                 <twig:ux:icon name="lucide:heart" class="size-4 shrink-0" />
                 <span class="tabular-nums">
-                    {{ giftCount }} cadeau{{ giftCount > 1 ? 'x' : '' }}
-                    mis de côté chez {{ friendCount }} ami{{ friendCount > 1 ? 's' : '' }}
+                    {{ giftCount }} cadeau{{ giftCount > 1 ? 'x' : '' }} mis de côté
+                    {%- if friendCount > 0 %} chez {{ friendCount }} ami{{ friendCount > 1 ? 's' }}{% endif %}
+                    {%- if friendCount > 0 and crewCount > 0 %} et{% endif %}
+                    {%- if crewCount > 0 %} dans {{ crewCount }} groupe{{ crewCount > 1 ? 's' }}{% endif %}
                 </span>
             </p>
         {% endif %}
     </header>
 
-    {% if favoriteGiftsByUsers is not empty %}
+    {% if favoriteGiftsByList is not empty %}
         <div class="mt-6 flex flex-col gap-8">
-            {% for group in favoriteGiftsByUsers %}
+            {% for group in favoriteGiftsByList %}
+                {# A crew's gifts under their crew, whoever added them; any other under its friend. #}
                 <article class="flex min-w-0 flex-col gap-4">
                     <div class="flex items-center gap-3">
-                        <twig:Molecule:UserAvatar :user="group.user" sizeClass="h-12 w-12 shrink-0" />
+                        {% if group.crew %}
+                            <twig:Molecule:UserAvatarGroup class="shrink-0" :users="group.crew.members" :max="3" sizeClass="w-10" />
+                        {% else %}
+                            <twig:Molecule:UserAvatar :user="group.user" sizeClass="h-12 w-12 shrink-0" />
+                        {% endif %}
                         <h2 class="min-w-0 flex-1 text-lg font-semibold wrap-anywhere line-clamp-2 sm:line-clamp-none"
-                            title="{{ group.user.fullname }}">
-                            {{ group.user.fullname|u.truncate(90, '...', false) }}
+                            title="{{ group.name }}">
+                            {{ group.name|u.truncate(90, '...', false) }}
                         </h2>
                         <twig:atomic:ButtonLink
                             class="btn-sm shrink-0"
                             color="neutral"
                             style="ghost"
-                            :to="path('app_section_user_page', { id: group.user.id })">
+                            :to="group.crew ? path('app_crew_show', { id: group.crew.id }) : path('app_section_user_page', { id: group.user.id })">
                             <twig:block name="name">
-                                <span>Voir ses sections</span>
+                                <span>{{ group.crew ? 'Voir le groupe' : 'Voir ses sections' }}</span>
                             </twig:block>
                             <twig:block name="icon">
                                 <twig:ux:icon name="lucide:arrow-right" class="size-4" />
@@ -49,7 +55,7 @@
                             :title="entry.section.title"
                             :description="entry.section.description"
                             :checked="loop.first"
-                            :anchor="'favoris-' ~ group.user.id ~ '-' ~ entry.section.id"
+                            :anchor="'favoris-' ~ entry.section.id"
                             :giftCount="entry.gifts|length">
                             <twig:block name="gifts">
                                 {% for gift in entry.gifts %}

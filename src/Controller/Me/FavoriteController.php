@@ -24,10 +24,14 @@ final class FavoriteController extends AbstractController
         $user = $this->getUser();
 
         $gifts = $giftRepository->findFavoritesGifts($user);
+        $favoriteGiftsByList = $favoriteGiftGrouper->groupedByList($gifts);
 
         return $this->render('me/favorite/index.html.twig', [
             'giftCount' => \count($gifts),
-            'favoriteGiftsByUsers' => $favoriteGiftGrouper->groupedByCreator($gifts),
+            // The lists they come from, friends' and crews' apart for the page's summary.
+            'friendCount' => \count(array_filter($favoriteGiftsByList, fn (array $list) => null !== $list['user'])),
+            'crewCount' => \count(array_filter($favoriteGiftsByList, fn (array $list) => null !== $list['crew'])),
+            'favoriteGiftsByList' => $favoriteGiftsByList,
         ]);
     }
 }
