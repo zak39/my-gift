@@ -9,15 +9,12 @@ use App\Event\GiftDeletedWithAccountEvent;
 use App\Repository\CrewRepository;
 use App\Repository\GiftRepository;
 use App\Repository\SectionRepository;
-use App\Services\Gift\HandOverGift;
 use App\Services\Participation\ReleaseParticipation;
+use App\Services\PendingFileRemovals;
 use App\Services\Section\DeleteSection;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Deleting an account, from the user's profile, by an admin or by the purge of inactive
@@ -41,13 +38,11 @@ class UserLifecycle
         private CrewRepository $crewRepository,
         private GiftRepository $giftRepository,
         private SectionRepository $sectionRepository,
-        private HandOverGift $handOverGift,
         private DeleteSection $deleteSection,
-        private Filesystem $filesystem,
+        private PendingFileRemovals $pendingFileRemovals,
         private EventDispatcherInterface $eventDispatcher,
-        private LoggerInterface $logger,
-        // Where UserAvatarDirectoryNamer and UserGiftDirectoryNamer file a user's images.
-        #[Autowire('%kernel.project_dir%/public/data/users')]
+        // Where UserAvatarDirectoryNamer and GiftDirectoryNamer file a user's images.
+        #[Autowire('%app.data_dir%/users')]
         private string $usersDirectory,
     ) {
     }
@@ -61,30 +56,35 @@ class UserLifecycle
 
         // All or nothing: the services called flush along the way, and the emails they
         // queue (Messenger's doctrine transport) are rolled back with the rest.
-        $this->entityManager->wrapInTransaction(function () use ($user, $reason): void {
-            $this->releaseParticipations($user);
-            $this->deleteCrewsWhereAlone($user);
-            // Each crew left once, with a single email: as its owner, or as a member.
-            $this->handOverOwnedCrews($user);
-            // Once every crew has its owner for good: their items go to them.
-            $this->handOverFiledItems($user);
-            $this->leaveCrews($user);
-            $this->deleteOwnSections($user);
-            $this->deleteOwnGifts($user);
-
-            // Within the transaction: no confirmation is queued for a deletion rolled back.
-            $this->eventDispatcher->dispatch(new AccountDeletedEvent($user->getEmail(), $user->getFirstname(), $reason));
-            $this->entityManager->remove($user);
-        });
-
-        // A deleted file cannot be rolled back: it goes once the database has agreed. From
-        // here on, the account is gone: a folder left behind is logged, not reported as a
-        // deletion that failed.
         try {
-            $this->filesystem->remove($folder);
-        } catch (IOExceptionInterface $exception) {
-            $this->logger->error('Folder of a deleted account left behind', ['folder' => $folder, 'exception' => $exception]);
+            $this->entityManager->wrapInTransaction(function () use ($user, $reason): void {
+                $this->releaseParticipations($user);
+                $this->deleteCrewsWhereAlone($user);
+                // Each crew left once, with a single email: as its owner, or as a member.
+                $this->handOverOwnedCrews($user);
+                // Once every crew has its owner for good: their items go to them.
+                $this->handOverFiledItems($user);
+                $this->leaveCrews($user);
+                $this->deleteOwnSections($user);
+                $this->deleteOwnGifts($user);
+
+                // Within the transaction: no confirmation is queued for a deletion rolled back.
+                $this->eventDispatcher->dispatch(new AccountDeletedEvent($user->getEmail(), $user->getFirstname(), $reason));
+                $this->entityManager->remove($user);
+            });
+        } catch (\Throwable $exception) {
+            // Rolled back: the images moved and the crews deleted on the way are back.
+            $this->pendingFileRemovals->forget();
+
+            throw $exception;
         }
+
+        // A deleted file cannot be rolled back: it goes once the database has agreed, with
+        // what the flushes inside the transaction left pending (the folders of the crews
+        // deleted along). From here on, the account is gone: a folder left behind is
+        // logged, not reported as a deletion that failed (PendingFileRemovals).
+        $this->pendingFileRemovals->add($folder);
+        $this->pendingFileRemovals->removeAll();
     }
 
     /**
@@ -105,7 +105,8 @@ class UserLifecycle
 
     /**
      * The crews the user owns and nobody else is in go with them. Their gifts go back to
-     * the user, among their gifts without a section, to be deleted with their own.
+     * their authors, among their gifts without a section: the user's, to be deleted with
+     * their own, and those of members who left.
      */
     private function deleteCrewsWhereAlone(User $user): void
     {
@@ -152,12 +153,11 @@ class UserLifecycle
             $section->setCreatedBy($section->getCrew()->getOwner());
         }
 
+        // Their images stay put: GiftDirectoryNamer files a crew gift under its crew.
         foreach ($this->giftRepository->findInCrewsCreatedBy($user) as $gift) {
-            // Its original image goes with the user's folder, once deleted.
-            ($this->handOverGift)($gift, $gift->getCrew()->getOwner());
+            $gift->setCreatedBy($gift->getCrew()->getOwner());
         }
 
-        // One flush for every section and gift handed over: HandOverGift leaves it to us.
         $this->entityManager->flush();
     }
 
