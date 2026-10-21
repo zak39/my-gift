@@ -1,0 +1,6 @@
+{% extends '@Twig/Exception/layout.html.twig' %}
+
+{# A voter's refusal, but also an expired CSRF token or /admin for a mere user: no cause
+   named, a hint for the most frequent one. #}
+{% set title = 'Accès refusé' %}
+{% set message = 'Vous n\'avez pas les droits pour afficher cette page ou faire cette action. Si vous venez d\'envoyer un formulaire, rechargez la page puis réessayez.' %}

@@ -8,6 +8,8 @@
             <span class="font-brand text-3xl leading-none font-normal translate-y-[0.07em]">MyGift</span>
         </a>
     </div>
+    {# header_menus: false, the logo alone (the error pages, @Twig/Exception/layout.html.twig). #}
+    {% if header_menus ?? true %}
     <div class="navbar-end">
         {% if not is_granted('IS_AUTHENTICATED') %}
             {# Navbar content for unauthenticated users #}
@@ -23,4 +25,5 @@
             <twig:Molecule:AboutModal />
         {% endif %}
     </div>
+    {% endif %}
 </div>
