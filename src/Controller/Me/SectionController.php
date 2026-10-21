@@ -49,7 +49,8 @@ final class SectionController extends AbstractController
     {
         /** @var User $user */
         $user = $this->getUser();
-        $section = (new Section())->setCreatedBy($user);
+        $section = new Section();
+        $section->setCreatedBy($user);
 
         $form = $this->createForm(SectionType::class, $section);
         $form->handleRequest($request);
