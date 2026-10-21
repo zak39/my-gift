@@ -57,6 +57,17 @@ final class GiftOwnerUrlGenerator
         return $this->inItsList($gift, 'app_crew_gift_edit', 'app_gift_edit');
     }
 
+    /**
+     * A crew's gift only: taking over one whose author deleted their account (gift.can_claim).
+     */
+    #[AsTwigFunction('gift_claim_url')]
+    public function claim(Gift $gift): string
+    {
+        $crew = $gift->getCrew() ?? throw new \LogicException('Only a crew gift can be claimed.');
+
+        return $this->urlGenerator->generate('app_crew_gift_claim', ['id' => $crew->getId(), 'gift' => $gift->getId()]);
+    }
+
     #[AsTwigFunction('gift_delete_url')]
     public function delete(Gift $gift): string
     {

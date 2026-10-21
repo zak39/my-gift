@@ -3,9 +3,12 @@
 namespace App\Repository;
 
 use App\Entity\Gift;
+use App\Entity\Section;
 use App\Entity\User;
 use App\Enum\ParticipantStatus;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\LockMode;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -88,6 +91,46 @@ class GiftRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult()
         ;
+    }
+
+    /**
+     * The gift read again, its row locked till the commit (ClaimGift); null once deleted,
+     * where refresh() silently keeps its old state.
+     */
+    public function findOneLocked(int $id): ?Gift
+    {
+        return $this->createQueryBuilder('g')
+            ->where('g.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->setLockMode(LockMode::PESSIMISTIC_WRITE)
+            ->setHint(Query::HINT_REFRESH, true)
+            ->getOneOrNullResult()
+        ;
+    }
+
+    /**
+     * The author's id of each of the section's gifts as committed (null for none), by gift
+     * id, their rows locked till the commit (ReleaseGifts). Values, not entities: the gifts
+     * in memory are left as they are.
+     *
+     * @return array<int, ?int>
+     */
+    public function lockAuthorIdsIn(Section $section): array
+    {
+        $rows = $this->createQueryBuilder('g')
+            ->select('g.id', 'IDENTITY(g.createdBy) AS author')
+            ->where('g.section = :section')
+            ->setParameter('section', $section)
+            ->getQuery()
+            ->setLockMode(LockMode::PESSIMISTIC_WRITE)
+            ->getArrayResult()
+        ;
+
+        return array_map(
+            static fn (mixed $author): ?int => null === $author ? null : (int) $author,
+            array_column($rows, 'author', 'id'),
+        );
     }
 
     /**

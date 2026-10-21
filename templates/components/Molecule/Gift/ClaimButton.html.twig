@@ -1,0 +1,26 @@
+{# Inside the Modal blocks, id, title, class and even attributes are those of Modal: gift
+   stays in reach, under a name Modal does not use. #}
+{% if is_granted('gift.can_claim', gift) %}
+    <twig:Modal :id="gift.id" title="Reprendre ce cadeau" class="gift_claim">
+        <twig:block name="handlerButton">
+            <button type="button" class="btn btn-outline btn-warning" onclick="modal_gift_claim_{{ gift.id }}.showModal()">
+                <twig:ux:icon name="lucide:hand-heart" class="size-4" />
+                Reprendre ce cadeau
+            </button>
+        </twig:block>
+        <twig:block name="message">
+            <p class="py-4">
+                Un utilisateur a supprimé son compte et le cadeau <b>{{ gift.title }}</b> n'a plus de propriétaire. Voulez-vous le reprendre ?
+            </p>
+        </twig:block>
+        <twig:block name="actionButtons">
+            <form method="post" action="{{ gift_claim_url(gift) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('gift-claim-' ~ gift.id) }}">
+                <button type="submit" class="btn btn-warning">
+                    <twig:ux:icon name="lucide:hand-heart" class="size-4" />
+                    Oui, reprendre ce cadeau
+                </button>
+            </form>
+        </twig:block>
+    </twig:Modal>
+{% endif %}

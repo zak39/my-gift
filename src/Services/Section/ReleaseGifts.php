@@ -4,6 +4,7 @@ namespace App\Services\Section;
 
 use App\Entity\Section;
 use App\Event\CrewGiftDeletedEvent;
+use App\Repository\GiftRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -15,19 +16,30 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * the section, its givers told. Still filed in it when removed, so that Vich finds its
  * image where GiftDirectoryNamer put it, under the crew.
  *
- * No flush: the caller removes the section, or the whole crew, on the same one.
+ * No flush: the caller removes the section, or the whole crew, on the same one, inside
+ * the transaction the lock below needs (DeleteSection, CrewLifecycle::delete()).
  */
 final class ReleaseGifts
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly GiftRepository $giftRepository,
         private readonly EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
     public function __invoke(Section $section, bool $crewDeleted = false): void
     {
+        $authorIds = $this->giftRepository->lockAuthorIdsIn($section);
+
         foreach ($section->getGifts()->toArray() as $gift) {
+            // Its author changed since it was loaded: a member took it over (ClaimGift), or
+            // its author deleted their account. Read again, as MoveGiftImageListener files
+            // its image by the author in memory.
+            if ($gift->getCreatedBy()?->getId() !== ($authorIds[$gift->getId()] ?? null)) {
+                $this->entityManager->refresh($gift);
+            }
+
             if (null !== $gift->getCreatedBy()) {
                 $section->removeGift($gift);
 

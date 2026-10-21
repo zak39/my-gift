@@ -10,12 +10,14 @@ use App\Form\GiftCrewMemberEditType;
 use App\Form\GiftEditType;
 use App\Form\GiftType;
 use App\Services\BreadcrumbBuilder;
+use App\Services\Gift\ClaimGift;
 use App\Services\Gift\CreateGift;
 use App\Services\Gift\DeleteGift;
 use App\Services\Gift\UpdateGift;
 use App\Services\RefererRedirector;
 use App\Services\Url\GiftOwnerUrlGenerator;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityNotFoundException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -109,6 +111,39 @@ final class GiftController extends AbstractController
             'gift' => $gift,
             'breadcrumbs' => $breadcrumbBuilder->editCrewGift($gift),
         ]);
+    }
+
+    /**
+     * A member taking over a gift whose author deleted their account. No gift.can_claim
+     * on the route: ClaimGift asks it under its lock, and a refusal (a page left open) is
+     * a flash rather than a 403.
+     */
+    #[Route('/{gift}/claim', name: 'app_crew_gift_claim', requirements: ['gift' => '\d+'], methods: ['POST'])]
+    public function claim(Crew $crew, #[MapEntity(expr: 'repository.findOneInCrew(gift, id)')] Gift $gift, Request $request, ClaimGift $claimGift, GiftOwnerUrlGenerator $giftOwnerUrlGenerator): Response
+    {
+        if (!$this->isCsrfTokenValid("gift-claim-{$gift->getId()}", $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        try {
+            $claimGift($gift, $user);
+        } catch (EntityNotFoundException) {
+            $this->addFlash('error', 'Ce cadeau n\'existe plus : sa section ou son groupe vient d\'être supprimé.');
+
+            // The user's crews: its crew may be gone with it.
+            return $this->redirectToRoute('app_crew');
+        } catch (\LogicException $exception) {
+            $this->addFlash('error', $exception->getMessage());
+
+            return $this->redirect($giftOwnerUrlGenerator->list($gift));
+        }
+
+        $this->addFlash('success', "Le cadeau « {$gift->getTitle()} » est maintenant le vôtre : si sa section ou son groupe est supprimé, il reviendra dans vos « Cadeaux sans section ».");
+
+        return $this->redirect($giftOwnerUrlGenerator->show($gift));
     }
 
     #[Route('/{gift}/delete', name: 'app_crew_gift_delete', requirements: ['gift' => '\d+'], methods: ['DELETE'])]

@@ -18,6 +18,9 @@ final class GiftOwnership
     ) {
     }
 
+    /**
+     * Whether the given user is one of the owners of this gift.
+     */
     public function includes(User $user): bool
     {
         return null !== $this->crew
@@ -39,5 +42,18 @@ final class GiftOwnership
         }
 
         return null !== $this->creator ? [$this->creator] : [];
+    }
+
+    /**
+     * A crew's gift whose author deleted their account, that one of its members may take
+     * over, becoming its author (gift.can_claim, ClaimGift).
+     */
+    public function canBeClaimedBy(User $user): bool
+    {
+        if (null === $this->crew) {
+            return false;
+        }
+
+        return null === $this->creator && $this->crew->hasMember($user);
     }
 }
