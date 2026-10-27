@@ -1,0 +1,150 @@
+{% extends 'page/layout.html.twig' %}
+
+{% block title %}My Gift | Questions fréquentes{% endblock %}
+
+{% block heading %}Questions fréquentes{% endblock %}
+
+{% block lead %}
+    <p class="mt-4 text-lg text-base-content/70">
+        Réserver, cagnotter, garder la surprise : ce qu'il faut savoir pour offrir et recevoir
+        avec My Gift.
+    </p>
+    <ul class="menu menu-horizontal mt-6 flex-wrap gap-1 rounded-box bg-base-100" aria-label="Thèmes">
+        <li><a href="#offrir"><twig:ux:icon name="lucide:gift" class="size-4" aria-hidden="true" />Offrir</a></li>
+        <li><a href="#recevoir"><twig:ux:icon name="lucide:party-popper" class="size-4" aria-hidden="true" />Recevoir</a></li>
+        <li><a href="#groupes"><twig:ux:icon name="lucide:users" class="size-4" aria-hidden="true" />Groupes et amis</a></li>
+        <li><a href="#compte"><twig:ux:icon name="lucide:user-round" class="size-4" aria-hidden="true" />Mon compte</a></li>
+    </ul>
+{% endblock %}
+
+{% block content %}
+    <h2 id="offrir">Offrir</h2>
+    <div class="mt-4 space-y-2">
+        <twig:Molecule:FaqItem question="Réserver ou cagnotter : quelle différence ?">
+            <p>
+                Réserver, c'est offrir le cadeau seul·e : il passe « Réservé » et personne
+                d'autre ne peut plus le prendre.
+            </p>
+            <p>
+                Cagnotter, c'est offrir à plusieurs : chacun annonce le montant qu'il y met,
+                jusqu'à couvrir le prix. Une fois la cagnotte complète, un participant la
+                déclare « Prêt à offrir ».
+            </p>
+            <p>
+                Dans les deux cas, aucun paiement ne passe par My Gift : l'argent se règle
+                entre vous.
+            </p>
+        </twig:Molecule:FaqItem>
+        <twig:Molecule:FaqItem question="Puis-je changer d'avis ?">
+            <p>
+                Oui. Depuis la page du cadeau, vous annulez votre réservation ou retirez votre
+                participation à la cagnotte : le cadeau redevient disponible pour les autres.
+            </p>
+        </twig:Molecule:FaqItem>
+    </div>
+
+    <h2 id="recevoir">Recevoir</h2>
+    <div class="mt-4 space-y-2">
+        <twig:Molecule:FaqItem question="Que voit la personne qui reçoit le cadeau ?">
+            {# GiftPoolVoter: the owners never see the amounts, the contributors once the pool is closed. #}
+            <p>
+                Elle voit si un cadeau est réservé, et par qui. D'une cagnotte en cours, elle ne
+                voit que le statut « Cagnotte en cours », pas les participants. Elle découvre qui
+                a participé une fois le cadeau « Prêt à offrir ». Les montants, eux, lui restent
+                toujours cachés.
+            </p>
+        </twig:Molecule:FaqItem>
+        <twig:Molecule:FaqItem question="Qui voit mes cadeaux ?">
+            <p>
+                Vos ami·es seulement, et seulement les cadeaux rangés dans une section et
+                affichés publiquement. Un cadeau que vous n'affichez pas reste un brouillon
+                que vous seul·e voyez.
+            </p>
+            <p>
+                Les sections d'un groupe sont visibles de ses membres et des ami·es de chacun
+                d'eux.
+            </p>
+        </twig:Molecule:FaqItem>
+        {# Six months: ShareUrlGenerator::VALIDITY. #}
+        <twig:Molecule:FaqItem question="Comment partager mes sections ?">
+            <p>
+                Le bouton « Partager » copie un lien valable six mois. Sans être connectée, la
+                personne qui l'ouvre n'en voit qu'un aperçu (titre, image) ; une fois connectée,
+                elle ne voit que ce qu'elle a le droit de voir : vos sections, si vous êtes
+                ami·es.
+            </p>
+        </twig:Molecule:FaqItem>
+        <twig:Molecule:FaqItem question="Puis-je ajouter un cadeau depuis un site marchand ?">
+            <p>
+                Oui : collez le lien du produit, son titre, son image et sa description se
+                remplissent tout seuls. Vous pouvez ensuite les modifier.
+            </p>
+        </twig:Molecule:FaqItem>
+    </div>
+
+    <h2 id="groupes">Groupes et amis</h2>
+    <div class="mt-4 space-y-2">
+        <twig:Molecule:FaqItem question="À quoi sert un groupe ?">
+            <p>
+                À tenir des sections à plusieurs : un couple, ou des parents pour leur enfant.
+                Tous les membres y ajoutent et modifient les cadeaux, et la surprise reste
+                entière pour chacun.
+            </p>
+        </twig:Molecule:FaqItem>
+        <twig:Molecule:FaqItem question="Qui peut quitter ou supprimer un groupe ?">
+            <p>
+                Chaque membre peut le quitter. Seul son propriétaire peut le supprimer, et il
+                ne le quitte qu'après l'avoir transmis à un autre membre.
+            </p>
+        </twig:Molecule:FaqItem>
+        <twig:Molecule:FaqItem question="Comment ajouter un·e ami·e ?">
+            <p>
+                Cherchez la personne depuis la page Amis et envoyez-lui une demande. Une fois
+                acceptée, chacun voit les sections de l'autre et peut l'inviter dans un
+                groupe.
+            </p>
+        </twig:Molecule:FaqItem>
+    </div>
+
+    <h2 id="compte">Mon compte</h2>
+    <div class="mt-4 space-y-2">
+        <twig:Molecule:FaqItem question="Comment récupérer mes données ?">
+            <p>
+                Depuis <a href="{{ path('app_user_profile') }}" class="link">votre profil</a>,
+                exportez vos sections et vos cadeaux en CSV, ODS, Excel ou JSON.
+            </p>
+        </twig:Molecule:FaqItem>
+        <twig:Molecule:FaqItem question="Comment supprimer mon compte ?">
+            <p>
+                Depuis <a href="{{ path('app_user_profile') }}" class="link">votre profil</a>,
+                « Supprimer mon compte ». La suppression est immédiate et définitive : vos
+                sections et vos cadeaux disparaissent, leurs participants sont prévenus, et vos
+                réservations en cours sont annulées. Ceux que vous avez ajoutés à un groupe y
+                restent, et un groupe dont vous êtes propriétaire passe à son membre le plus
+                ancien.
+            </p>
+        </twig:Molecule:FaqItem>
+        {# The durations themselves live in the privacy policy only, so they are written once. #}
+        <twig:Molecule:FaqItem question="Mon compte peut-il être supprimé sans moi ?">
+            <p>
+                Oui, après une longue période sans connexion, et après vous avoir prévenu·e
+                par email. Seul un compte jamais vérifié et resté inutilisé part sans
+                avertissement. Les délais exacts sont dans la
+                <a href="{{ path('app_privacy') }}#duree" class="link">politique de confidentialité</a>.
+            </p>
+        </twig:Molecule:FaqItem>
+    </div>
+
+    <div class="card mt-12 bg-primary/10">
+        <div class="card-body sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h2 class="card-title">Pas trouvé votre réponse ?</h2>
+                <p class="mt-1 text-sm text-base-content/70">Un email suffit, je réponds moi-même.</p>
+            </div>
+            <a href="mailto:{{ site.contact_email }}" class="btn btn-primary">
+                <twig:ux:icon name="lucide:mail" class="size-4" aria-hidden="true" />
+                Me contacter
+            </a>
+        </div>
+    </div>
+{% endblock %}

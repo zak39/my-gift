@@ -1,11 +1,7 @@
 <div class="navbar bg-base-100 shadow-sm px-4 sm:px-6 lg:px-8">
     <div class="navbar-start">
-        <a class="btn btn-ghost gap-2 text-xl" href="{{ path('app_landing_page') }}">
-            <twig:ux:icon name="fluent-color:gift-24" class="size-7" aria-hidden="true" />
-            {# Modak has one weight: font-normal, or the browser fakes the btn's bold. Lowered
-               on purpose (optical alignment): centred as a box, the « y » pulls the word's
-               middle down, so its heavy capitals looked above the gift's body. #}
-            <span class="font-brand text-3xl leading-none font-normal translate-y-[0.07em]">MyGift</span>
+        <a class="btn btn-ghost text-xl" href="{{ path('app_landing_page') }}">
+            <twig:Molecule:Brand />
         </a>
     </div>
     <div class="navbar-end">

@@ -1,34 +1,14 @@
-{# Inside the Modal blocks, this is Modal: the values come from the props of this component,
-   exposed under names Modal does not use. Opened from the menus by the dialog controller. #}
+{# Opened from the menus by the dialog controller. #}
 <twig:Modal title="À propos" class="about">
     <twig:block name="message">
         <div class="flex flex-col items-center gap-2 py-6 text-center">
-            <twig:ux:icon name="fluent-color:gift-24" class="size-16" aria-hidden="true" />
-            <p class="font-brand text-4xl leading-none">My Gift</p>
-            <p class="badge badge-ghost">Version {{ version }}</p>
+            <twig:Molecule:Brand size="lg" class="flex-col" />
+            <p class="badge badge-ghost">Version {{ site.version }}</p>
+            <p class="text-sm text-base-content/70">
+                Fait par {{ site.author_name }} ·
+                <a href="{{ path('app_about') }}" class="link">Tout savoir sur My Gift</a>
+            </p>
         </div>
-        <ul class="menu w-full rounded-box bg-base-200">
-            <li>
-                <a href="{{ repositoryUrl }}" target="_blank" rel="noopener">
-                    <twig:ux:icon name="lucide:github" class="size-4" aria-hidden="true" />
-                    Code source sur GitHub
-                </a>
-            </li>
-            <li>
-                <a href="mailto:{{ contactEmail }}">
-                    <twig:ux:icon name="lucide:mail" class="size-4" aria-hidden="true" />
-                    Me contacter
-                </a>
-            </li>
-        </ul>
-        {# Buy Me a Coffee's own button script writes itself with document.writeln(), which a
-           Turbo visit ignores: the same button, as a plain link. #}
-        <div class="mt-4 flex justify-center">
-            <a href="{{ supportUrl }}" target="_blank" rel="noopener"
-               class="btn border-none bg-[#FFDD00] text-black hover:bg-[#FFDD00]/80">
-                <span aria-hidden="true">🍵</span>
-                Buy me a matcha
-            </a>
-        </div>
+        <twig:Molecule:AboutLinks />
     </twig:block>
 </twig:Modal>

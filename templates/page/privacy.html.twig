@@ -1,0 +1,136 @@
+{% extends 'page/layout.html.twig' %}
+
+{% block title %}My Gift | Politique de confidentialité{% endblock %}
+
+{% set updated_at = '27 octobre 2026' %}
+{% set toc = [
+    {id: 'donnees', label: 'Ce qui est conservé'},
+    {id: 'partage', label: 'Qui y a accès'},
+    {id: 'duree', label: 'Combien de temps'},
+    {id: 'cookies', label: 'Cookies'},
+    {id: 'droits', label: 'Vos droits'},
+] %}
+
+{% block heading %}Politique de confidentialité{% endblock %}
+
+{% block lead %}
+    <p class="mt-4 text-lg text-base-content/70">
+        My Gift ne garde que ce qu'il faut pour faire marcher vos sections : ni publicité, ni
+        revente, ni pistage.
+    </p>
+{% endblock %}
+
+{% block content %}
+    <h2 id="donnees">Ce qui est conservé, et pourquoi</h2>
+    <p>
+        Le responsable du traitement est l'éditeur du site (voir les
+        <a href="{{ path('app_legal_notice') }}" class="link">mentions légales</a>). Les
+        données servent uniquement à fournir le service que vous utilisez, ce qui en est la
+        base légale : l'exécution du service (article 6.1.b du RGPD).
+    </p>
+    <div class="mt-4 max-w-full overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Donnée</th>
+                    <th>À quoi elle sert</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    {# Hashed, not encrypted: it cannot be read back, by anyone. #}
+                    <td>Email et mot de passe (haché, illisible même par l'éditeur)</td>
+                    <td>Vous connecter, vous envoyer les emails du service</td>
+                </tr>
+                <tr>
+                    <td>Prénom, nom, photo de profil</td>
+                    <td>Que vos proches vous reconnaissent</td>
+                </tr>
+                <tr>
+                    <td>Sections, cadeaux et leurs images</td>
+                    <td>Ce que vous souhaitez recevoir</td>
+                </tr>
+                <tr>
+                    <td>Ami·es, groupes, favoris</td>
+                    <td>Décider qui voit quoi</td>
+                </tr>
+                <tr>
+                    <td>Réservations et montants annoncés</td>
+                    <td>Éviter les doublons, suivre les cagnottes</td>
+                </tr>
+                <tr>
+                    <td>Date de dernière activité</td>
+                    <td>Supprimer les comptes inactifs</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p>Aucun paiement ne passe par My Gift : aucune donnée bancaire n'est demandée.</p>
+
+    <h2 id="partage">Qui y a accès</h2>
+    <p>
+        Vos ami·es voient votre nom, votre photo et les cadeaux que vous affichez publiquement.
+        Les sections d'un groupe sont aussi visibles des ami·es de chacun de ses membres. Un
+        lien copié avec « Partager » montre un aperçu de la page partagée (titre, image) à qui
+        l'ouvre, même sans compte, et aux robots des messageries qui en dessinent la carte.
+        Les autres comptes ne voient que votre nom et votre photo, pour vous trouver. Votre email
+        n'apparaît sur aucune page ; seuls les emails envoyés aux participants d'un même cadeau
+        les mettent tous en destinataires. L'éditeur, qui administre le site, peut consulter
+        les comptes pour le maintenir. Les données ne sont ni vendues ni cédées.
+    </p>
+    <p>Pour fonctionner, My Gift s'appuie sur :</p>
+    <ul>
+        <li>son hébergeur, qui stocke la base de données et les images ;</li>
+        <li>un prestataire d'envoi d'emails, qui reçoit votre adresse pour vous écrire ;</li>
+        <li>
+            DiceBear, qui dessine l'avatar par défaut : il ne reçoit qu'une suite de
+            caractères aléatoire, rien qui vous désigne.
+        </li>
+    </ul>
+    <p>
+        Quand vous collez le lien d'un produit, c'est le serveur de My Gift, pas votre
+        navigateur, qui lit la page du site marchand.
+    </p>
+
+    <h2 id="duree">Combien de temps</h2>
+    {# The durations of config/services.yaml (app.retention.*). #}
+    <p>
+        Tant que vous utilisez votre compte. Après 12 mois sans connexion, un email vous
+        prévient ; sans nouvelle connexion, le compte est supprimé un mois plus tard, avec un
+        rappel 7 jours avant. Un compte jamais vérifié et resté 30 jours sans activité est
+        supprimé, sans avertissement : son adresse n'a jamais été confirmée.
+    </p>
+    <p>
+        À la suppression, vos données disparaissent, sauf deux choses : les sections et les
+        cadeaux que vous avez ajoutés à un groupe restent au groupe, sans votre nom ; et, sur
+        un cadeau déjà offert, votre participation reste, au nom d'« Utilisateur supprimé ».
+    </p>
+
+    {# One week: remember_me.lifetime in config/packages/security.yaml. #}
+    <h2 id="cookies">Cookies</h2>
+    <p>
+        My Gift ne dépose que les cookies nécessaires à son fonctionnement : celui de votre
+        session ; un jeton de sécurité, le temps d'envoyer un formulaire (protection CSRF) ;
+        et, si vous cochez « Se souvenir de moi », celui qui vous garde connecté·e une
+        semaine. Ni mesure d'audience, ni publicité : aucun consentement n'est donc demandé.
+    </p>
+
+    <h2 id="droits">Vos droits</h2>
+    <p>
+        Vous pouvez accéder à vos données, les corriger, les supprimer, vous opposer à leur
+        traitement ou les récupérer :
+    </p>
+    <ul>
+        <li>les corriger, depuis votre profil ;</li>
+        <li>les récupérer, depuis votre profil : export en CSV, ODS, Excel ou JSON ;</li>
+        <li>les supprimer, depuis votre profil : « Supprimer mon compte » ;</li>
+        <li>
+            pour tout le reste, en écrivant à
+            <a href="mailto:{{ site.contact_email }}" class="link">{{ site.contact_email }}</a>.
+        </li>
+    </ul>
+    <p>
+        Si la réponse ne vous satisfait pas, vous pouvez saisir la
+        <a href="https://www.cnil.fr/fr/plaintes" class="link" target="_blank" rel="noopener">CNIL</a>.
+    </p>
+{% endblock %}

@@ -1,0 +1,19 @@
+<div {{ attributes }}>
+    <ul class="menu w-full rounded-box bg-base-200">
+        <li>
+            <a href="{{ site.repository_url }}" target="_blank" rel="noopener">
+                <twig:ux:icon name="lucide:github" class="size-4" aria-hidden="true" />
+                Code source sur GitHub
+            </a>
+        </li>
+        <li>
+            <a href="mailto:{{ site.contact_email }}">
+                <twig:ux:icon name="lucide:mail" class="size-4" aria-hidden="true" />
+                Me contacter
+            </a>
+        </li>
+    </ul>
+    <div class="mt-4 flex justify-center">
+        <twig:Molecule:SupportButton />
+    </div>
+</div>
