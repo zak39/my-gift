@@ -20,23 +20,32 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
                     <h1>Votre cadeau est prêt ! 🎁</h1>
 
                     <p>
-                        Bonjour <Raw>{{ gift.createdBy.firstname }}</Raw>,
+                        Bonjour<Raw>{% if recipientName %} {{ recipientName }}{% endif %}</Raw>,
                     </p>
 
                     <p>
-                      Nous avons le plaisir de vous informer que votre cadeau <b><Raw>{{ gift.title }}</Raw></b> est prêt ! 🎁
+                      Nous avons le plaisir de vous informer que votre cadeau <GiftTitle /> est prêt ! 🎁
                     </p>
 
-                    <p>
-                      Plusieurs participants ont contribué à votre cadeau pour vous faire plaisir ❤️
-                    </p>
+                    <Raw>{% if crewOf %}</Raw>
+                        <p>
+                          Plusieurs participants ont complété sa cagnotte ❤️
+                        </p>
+                        <p>
+                          Regardez qui y a participé en cliquant sur le bouton ci-dessous.
+                        </p>
+                    <Raw>{% else %}</Raw>
+                        <p>
+                          Plusieurs participants ont contribué à votre cadeau pour vous faire plaisir ❤️
+                        </p>
 
-                    <p>
-                      Regardez qui vous a offert <b><Raw>{{ gift.title }}</Raw></b> en cliquant sur le bouton ci-dessous.
-                    </p>
+                        <p>
+                          Regardez qui vous a offert <b><Raw>{{ gift.title }}</Raw></b> en cliquant sur le bouton ci-dessous.
+                        </p>
+                    <Raw>{% endif %}</Raw>
 
                     <div class="text-center my-6">
-                        <AccentButton label="Voir mon cadeau" to="{{ url }}" />
+                        <AccentButton label="Voir le cadeau" to="{{ url }}" />
                     </div>
                 </div>
             </Container>

@@ -4,6 +4,7 @@ namespace App\EventSubscriber;
 
 use App\Entity\Gift;
 use App\Entity\Participant;
+use App\Entity\User;
 use App\Enum\GiftStatus;
 use App\Event\GiftNoLongerReadyEvent;
 use App\Event\GiftReadyEvent;
@@ -30,9 +31,11 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
         /** @var Gift $gift */
         $gift = $event->getSubject();
 
-        $this->sendToAuthor($gift, 'Votre demande de cadeau a été réservée ! 🎁', 'emails/gift_reserved.html.twig', [
-            'participant' => $gift->getParticipants()->first(),
-        ]);
+        $participant = $gift->getParticipants()->first();
+
+        $this->sendToOwners($gift, 'Votre demande de cadeau a été réservée ! 🎁', 'emails/gift_reserved.html.twig', [
+            'participant' => $participant,
+        ], excluded: $participant->getParticipantUser());
     }
 
     /**
@@ -49,9 +52,11 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
 
         $participantName = ucwords($participant->getDisplayName());
 
-        $this->sendToAuthor($gift, "Mince ! $participantName a retiré sa réservation ! 😢", 'emails/gift_disengaged.html.twig', [
+        $this->sendToOwners($gift, "Mince ! $participantName a retiré sa réservation ! 😢", 'emails/gift_disengaged.html.twig', [
             'participant' => $participant,
-        ]);
+            // Its case set by the template's |title, as on the other emails.
+            'participantName' => $participant->getDisplayName(),
+        ], excluded: $participant->getParticipantUser());
     }
 
     public function giftContributing(CompletedEvent $event): void
@@ -115,7 +120,7 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
     {
         $gift = $event->getGift();
 
-        $this->sendToAuthor($gift, "Votre cadeau {$gift->getTitle()} n'est plus prêt", 'emails/gift_no_longer_ready.html.twig', [
+        $this->sendToOwners($gift, "Votre cadeau {$this->titleWithCrew($gift)} n'est plus prêt", 'emails/gift_no_longer_ready.html.twig', [
             'backOnOffer' => GiftStatus::CREATED === $gift->getStatus(),
         ]);
     }
@@ -124,7 +129,7 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
     {
         $gift = $event->getGift();
 
-        $this->sendToAuthor($gift, "Votre cadeau {$gift->getTitle()} est prêt ! 🎁", 'emails/gift_ready_for_gift_owner.html.twig');
+        $this->sendToOwners($gift, "Votre cadeau {$this->titleWithCrew($gift)} est prêt ! 🎁", 'emails/gift_ready_for_gift_owner.html.twig');
     }
 
     public static function getSubscribedEvents(): array
@@ -143,31 +148,52 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * One email to the gift's author, the owner of a personal list, with the gift and its
-     * page. A crew gift whose author deleted their account has nobody to tell (its
-     * members: #113).
+     * One email to the gift's owners (GiftOwnership): its author for a personal gift, every
+     * member of its crew for a crew's, in one To:. Nothing sent when nobody is left to
+     * tell: a mail failing here would abort the workflow transition or the account
+     * deletion that triggered it.
      *
-     * @param array<string, mixed> $context added to the template's
+     * @param array<string, mixed> $context  added to the template's
+     * @param ?User                $excluded the giver behind the event, a member of the
+     *                                       crew too when they joined it after taking part
      */
-    private function sendToAuthor(Gift $gift, string $subject, string $template, array $context = []): void
+    private function sendToOwners(Gift $gift, string $subject, string $template, array $context = [], ?User $excluded = null): void
     {
-        $author = $gift->getCreatedBy();
+        $owners = array_filter($gift->getOwnership()->owners(), fn (User $owner) => $owner !== $excluded);
 
-        if (null === $author) {
+        if (!$owners) {
             return;
         }
 
+        $crew = $gift->getCrew();
+
         $email = (new TemplatedEmail())
-            ->to($author->getEmail())
+            ->to(...array_map(fn (User $owner) => $owner->getEmail(), $owners))
             ->subject($subject)
             ->htmlTemplate($template)
             ->context([
                 'gift' => $gift,
+                // Plain values: the worker renders the email later. A crew's members are
+                // greeted together, the crew named after the gift (Maizzle's GiftTitle).
+                'recipientName' => null !== $crew ? null : $this->giftOwnerLabel->name($gift),
+                'crewOf' => null !== $crew ? $this->giftOwnerLabel->of($gift) : null,
                 'url' => $this->urlGenerator->generate('app_gift_show', ['id' => $gift->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
                 ...$context,
             ])
         ;
 
         $this->mailer->send($email);
+    }
+
+    /**
+     * « Lego », or « Lego du groupe « La famille » »: a member of several crews tells their
+     * gifts apart from the subject.
+     */
+    private function titleWithCrew(Gift $gift): string
+    {
+        return null !== $gift->getCrew()
+            ? $gift->getTitle().' '.$this->giftOwnerLabel->of($gift)
+            : $gift->getTitle()
+        ;
     }
 }

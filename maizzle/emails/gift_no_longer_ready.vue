@@ -18,11 +18,11 @@ import CardStyle from '../components/styles/CardStyle.vue'
                     <h1>Votre cadeau n'est plus prêt</h1>
 
                     <p>
-                        Bonjour <Raw>{{ gift.createdBy.firstname }}</Raw>,
+                        Bonjour<Raw>{% if recipientName %} {{ recipientName }}{% endif %}</Raw>,
                     </p>
 
                     <p>
-                        Un participant s'est retiré de la cagnotte de votre cadeau <b><Raw>{{ gift.title }}</Raw></b> : il n'est plus prêt à être offert.
+                        Un participant s'est retiré de la cagnotte de votre cadeau <GiftTitle /> : il n'est plus prêt à être offert.
                     </p>
 
                     <Raw>{% if backOnOffer %}</Raw>
@@ -36,7 +36,7 @@ import CardStyle from '../components/styles/CardStyle.vue'
                     <Raw>{% endif %}</Raw>
 
                     <div class="text-center my-6">
-                        <AccentButton label="Voir mon cadeau" to="{{ url }}" />
+                        <AccentButton label="Voir le cadeau" to="{{ url }}" />
                     </div>
                 </div>
             </Container>
