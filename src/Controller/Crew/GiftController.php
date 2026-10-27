@@ -49,7 +49,8 @@ final class GiftController extends AbstractController
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
-        $gift = (new Gift())->setSection($section);
+        $gift = new Gift();
+        $gift->setSection($section);
 
         $form = $this->createForm(GiftType::class, $gift);
         $form->handleRequest($request);

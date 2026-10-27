@@ -57,7 +57,10 @@ class UserCrudController extends AbstractCrudController
 
     public function createEntity(string $entityFqcn): User
     {
-        return (new User())->setCreatedAt(new \DateTimeImmutable());
+        $user = new User();
+        $user->setCreatedAt(new \DateTimeImmutable());
+
+        return $user;
     }
 
     public function configureActions(Actions $actions): Actions
