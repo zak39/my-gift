@@ -1,0 +1,136 @@
+{% extends 'page/layout.html.twig' %}
+
+{% block title %}My Gift | Conditions d'utilisation{% endblock %}
+
+{% set updated_at = '27 octobre 2026' %}
+{% set toc = [
+    {id: 'service', label: 'Le service'},
+    {id: 'compte', label: 'Votre compte'},
+    {id: 'paiement', label: 'Aucun paiement'},
+    {id: 'interdits', label: 'Ce qui est interdit'},
+    {id: 'signalement', label: 'Signaler, retirer'},
+    {id: 'responsabilite', label: 'Responsabilité'},
+    {id: 'depart', label: 'Quitter My Gift'},
+    {id: 'evolution', label: 'Évolution et droit applicable'},
+] %}
+
+{% block heading %}Conditions d'utilisation{% endblock %}
+
+{% block lead %}
+    <p class="mt-4 text-lg text-base-content/70">
+        Les règles du jeu, en clair : ce que My Gift vous permet, et ce qu'on n'y offre pas.
+    </p>
+{% endblock %}
+
+{% block content %}
+    <h2 id="service">Le service</h2>
+    <p>
+        My Gift permet de tenir ses envies de cadeaux, rangées en sections, et de les partager
+        avec ses ami·es : chacun réserve un cadeau ou participe à une cagnotte, sans doublon,
+        en gardant la surprise. Le service est gratuit et sans publicité. Il est édité par un
+        particulier (voir les <a href="{{ path('app_legal_notice') }}" class="link">mentions
+        légales</a>).
+    </p>
+    <p>
+        En créant un compte, vous acceptez ces conditions. Ce que My Gift fait de vos données
+        est décrit dans la
+        <a href="{{ path('app_privacy') }}" class="link">politique de confidentialité</a>.
+    </p>
+
+    <h2 id="compte">Votre compte</h2>
+    <ul>
+        {# 15: the age at which one consents alone to the processing of one's data in France
+           (GDPR art. 8, loi Informatique et libertés art. 45). Taken on trust: a birth date
+           would be one more personal data kept for nothing. #}
+        <li>
+            Il faut avoir au moins 15 ans pour créer un compte. Aucune date de naissance ni
+            pièce d'identité n'est demandée : en acceptant ces conditions, vous déclarez avoir
+            cet âge. Les sections d'un enfant plus jeune peuvent être tenues par ses parents,
+            dans un groupe.
+        </li>
+        <li>Un compte par personne, à votre nom, avec des informations exactes.</li>
+        <li>
+            Votre mot de passe reste secret : ce qui est fait depuis votre compte l'est sous
+            votre responsabilité.
+        </li>
+        <li>
+            Vous êtes responsable de ce que vous publiez : titres, descriptions, images, liens,
+            noms de sections et de groupes, photo de profil.
+        </li>
+    </ul>
+
+    <h2 id="paiement">Aucun paiement</h2>
+    <p>
+        Aucun argent ne passe par My Gift. Le montant annoncé dans une cagnotte est un
+        engagement entre vous et les autres participants : il se règle entre vous, comme vous
+        l'entendez. L'éditeur ne collecte, ne vérifie et ne garantit aucun paiement, et
+        n'intervient pas dans un désaccord entre participants.
+    </p>
+
+    <h2 id="interdits">Ce qui est interdit</h2>
+    <p>Il est interdit d'ajouter à My Gift, en cadeau, en image ou en texte :</p>
+    <ul>
+        <li>
+            les produits illicites : stupéfiants, armes, contrefaçons, objets volés, et tout ce
+            que la loi française interdit de vendre ou d'offrir ;
+        </li>
+        <li>
+            tout ce qui sexualise des mineurs, y compris les poupées sexuelles d'apparence
+            enfantine ;
+        </li>
+        <li>les contenus haineux, violents ou discriminatoires ;</li>
+        <li>les contenus qui harcèlent, menacent ou dénigrent une personne.</li>
+    </ul>
+    <p>
+        Il est aussi interdit de détourner le service : créer des comptes en masse, tenter
+        d'accéder aux données d'autrui, ou gêner son fonctionnement.
+    </p>
+
+    <h2 id="signalement">Signaler, retirer</h2>
+    <p>
+        Un cadeau, une section ou un profil vous semble enfreindre ces règles ? Écrivez à
+        <a href="mailto:{{ site.contact_email }}" class="link">{{ site.contact_email }}</a>,
+        avec le lien de la page concernée.
+    </p>
+    <p>
+        L'éditeur peut retirer un cadeau ou une section, ou supprimer un compte, qui enfreint
+        ces règles, sans préavis. Un contenu manifestement illicite, comme ce qui sexualise des
+        mineurs, est en plus signalé aux autorités sur
+        <a href="https://www.internet-signalement.gouv.fr" class="link" target="_blank" rel="noopener">PHAROS</a>.
+    </p>
+
+    <h2 id="responsabilite">Responsabilité</h2>
+    <p>
+        My Gift est fourni tel quel, par un particulier, sur son temps libre : l'éditeur fait
+        de son mieux pour qu'il fonctionne, sans pouvoir garantir qu'il soit toujours
+        disponible ni exempt d'erreur. Pensez à
+        <a href="{{ path('app_user_profile') }}" class="link">exporter vos sections</a> si
+        vous y tenez.
+    </p>
+    <p>
+        Quand vous collez le lien d'un produit, son titre, son image et sa description viennent
+        du site marchand : l'éditeur ne contrôle ni ces informations, ni ces sites. Un achat se
+        fait entre vous et le marchand.
+    </p>
+
+    <h2 id="depart">Quitter My Gift</h2>
+    <p>
+        Vous pouvez supprimer votre compte à tout moment, depuis
+        <a href="{{ path('app_user_profile') }}" class="link">votre profil</a>. Ce qui disparaît
+        et ce qui reste est détaillé dans la
+        <a href="{{ path('app_privacy') }}#duree" class="link">politique de confidentialité</a>.
+    </p>
+
+    <h2 id="evolution">Évolution et droit applicable</h2>
+    <p>
+        Ces conditions peuvent évoluer ; la date en haut de cette page est celle de leur
+        dernière version. Continuer d'utiliser My Gift après un changement, c'est accepter la
+        nouvelle version.
+    </p>
+    <p>
+        Elles sont soumises au droit français. En cas de désaccord, écrivez d'abord à
+        <a href="mailto:{{ site.contact_email }}" class="link">{{ site.contact_email }}</a>
+        pour chercher une solution à l'amiable ; à défaut, les tribunaux français sont
+        compétents.
+    </p>
+{% endblock %}

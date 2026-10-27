@@ -37,4 +37,10 @@ final class PageController extends AbstractController
     {
         return $this->render('page/privacy.html.twig');
     }
+
+    #[Route('/conditions-utilisation', name: 'app_terms', methods: ['GET'])]
+    public function terms(): Response
+    {
+        return $this->render('page/terms.html.twig');
+    }
 }
