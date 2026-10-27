@@ -1,0 +1,27 @@
+<section class="hero min-h-[70vh] py-12">
+    <div class="hero-content flex-col gap-8 lg:flex-row lg:gap-16">
+        {# The code in the app's font, its zeros drawn as the logo's gift: 404 reads 4, gift, 4.
+           Screen readers get the number alone, from the label. #}
+        <p role="img" aria-label="Erreur {{ statusCode }}"
+           class="flex items-center font-brand text-8xl leading-none font-normal text-primary sm:text-9xl">
+            {% for digit in statusCode|split('') %}
+                {% if digit == '0' %}
+                    <twig:ux:icon name="fluent-color:gift-24" class="size-[0.8em]" aria-hidden="true" />
+                {% else %}
+                    <span aria-hidden="true">{{ digit }}</span>
+                {% endif %}
+            {% endfor %}
+        </p>
+        <div class="flex max-w-md flex-col items-center gap-4 text-center lg:items-start lg:text-left">
+            <h1 class="text-3xl font-bold sm:text-4xl">{{ title }}</h1>
+            <p class="text-base-content/80">{{ message }}</p>
+            {% block content %}{% endblock %}
+            {# The landing page sends a logged-in user on to their dashboard: one link fits
+               both, without asking who is there (a 404 does not know). #}
+            <a href="{{ path('app_landing_page') }}" class="btn btn-primary mt-2">
+                <twig:ux:icon name="lucide:house" class="size-4" aria-hidden="true" />
+                Retour à l'accueil
+            </a>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,10 @@
+{% extends '@Twig/Exception/layout.html.twig' %}
+
+{# Every HTML error without its own page: 405, 500, 503… status_text is Symfony's English
+   name of the code, never shown here; nor is the exception's message. A code that needs
+   its own words gets its own errorXXX.html.twig rather than a case here. #}
+
+{% set title = status_code >= 500 ? 'Un imprévu de notre côté' : 'Une erreur est survenue' %}
+{% set message = status_code >= 500
+    ? 'Le serveur n\'a pas pu traiter la demande, vous n\'y êtes pour rien. Réessayez dans quelques instants.'
+    : 'La page n\'a pas pu être affichée.' %}

@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{# The page sets `title` and `message`; the 404 overrides `body` to add the address. #}
+
+{# The header's menus read the user and query the database. Shown once the firewall has
+   run (a token), unless the server failed: a routing 404 comes before the firewall, and
+   a 5xx may come from the database itself. #}
+{% block header %}
+    {{ include('./_header.html.twig', { header_menus: status_code < 500 and app.token is not null }) }}
+{% endblock %}
+
+{% block title %}{{ title }} | My Gift{% endblock %}
+
+{% block body %}
+    <twig:Organism:ErrorPage :statusCode="status_code" :title="title" :message="message" />
+{% endblock %}

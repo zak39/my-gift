@@ -1,0 +1,17 @@
+{% extends '@Twig/Exception/layout.html.twig' %}
+
+{% set title = 'Cette page est introuvable' %}
+{% set message = 'L\'adresse est peut-être mal saisie, ou la page a été déplacée ou supprimée.' %}
+
+{% block body %}
+    <twig:Organism:ErrorPage :statusCode="status_code" :title="title" :message="message">
+        {# The address back to the one who typed it, to spot a typo: the path only, a query
+           string may carry a token. #}
+        <div class="card card-dash card-sm w-full bg-base-100">
+            <div class="card-body">
+                <p class="text-sm text-base-content/70">Adresse demandée</p>
+                <p class="font-mono text-sm break-all">{{ app.request.pathInfo }}</p>
+            </div>
+        </div>
+    </twig:Organism:ErrorPage>
+{% endblock %}
