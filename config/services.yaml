@@ -19,13 +19,22 @@ parameters:
     app.retention.remind_before: 'P7D'
     app.retention.unverified_after: 'P30D'
 
-    # The « À propos » modal (App\Twig\Components\Molecule\AboutModal).
+    # Who makes the app and how to reach them: the footer, the « À propos » page and modal,
+    # the legal pages, all through the `site` Twig global (config/packages/twig.yaml).
     # « dev » until the deployment sets APP_VERSION from the git tag (#101).
     env(APP_VERSION): 'dev'
     app.version: '%env(APP_VERSION)%'
+    app.author_name: 'zakode'
+    app.linkedin_url: 'https://www.linkedin.com/in/baptiste-fotia'
     app.repository_url: 'https://github.com/zak39/my-gift'
     app.contact_email: 'contact@zakode.dev'
     app.support_url: 'https://buymeacoffee.com/zakode'
+    # The host the legal notice must name (LCEN, art. 6): name, address and phone.
+    app.host:
+        name: 'Moji'
+        address: '189, rue de Suresnes - 92000 Nanterre'
+        mail: 'contact@moji.fr'
+        phone: '01.85.09.01.90'
 
 services:
     # default configuration for services in *this* file

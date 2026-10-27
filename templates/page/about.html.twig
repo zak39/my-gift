@@ -1,0 +1,82 @@
+{% extends 'page/layout.html.twig' %}
+
+{% block title %}My Gift | À propos{% endblock %}
+
+{% block heading %}<twig:Molecule:Brand size="lg" />{% endblock %}
+
+{% block lead %}
+    <p class="mt-6 text-xl text-base-content/70">
+        Offrir à plusieurs, sans doublon, en gardant la surprise.
+    </p>
+    <div class="mt-6 flex flex-wrap gap-2">
+        <span class="badge badge-ghost">Version {{ site.version }}</span>
+        <span class="badge badge-ghost">Gratuit, sans publicité</span>
+        <span class="badge badge-ghost">Code ouvert</span>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <h2 id="pourquoi">Pourquoi My Gift</h2>
+    <p>
+        Partager ses envies de cadeaux finit souvent en messages éparpillés, en doublons et en
+        cagnottes compliquées. My Gift est né pour répondre à trois besoins :
+    </p>
+    <ul>
+        <li>
+            <strong>Partager clairement.</strong> Une section par occasion, un lien à
+            envoyer : chacun voit ce qui est libre, réservé ou en cagnotte.
+        </li>
+        <li>
+            <strong>À deux ou entre ami·es.</strong> Un groupe tient ses sections à plusieurs :
+            un couple, des parents pour leur enfant, une bande d'ami·es.
+        </li>
+        <li>
+            <strong>Chacun selon ses moyens.</strong> Plutôt que de renoncer à un cadeau trop
+            cher, chacun met dans la cagnotte ce qu'il peut, jusqu'à couvrir le prix.
+        </li>
+    </ul>
+    <p>
+        Et la surprise reste entière : la personne fêtée ne voit jamais les montants. Aucun
+        paiement ne passe par l'application : on y annonce ce qu'on offre, l'argent se règle
+        entre vous.
+    </p>
+    <p>
+        <a href="{{ path('app_faq') }}" class="link">Les questions fréquentes</a> détaillent
+        le fonctionnement.
+    </p>
+
+    <h2 id="createur">Qui fait My Gift</h2>
+    {# The ribbon ties the card like a gift tag: whoever wrapped the app. #}
+    <div class="card mt-4 overflow-hidden bg-base-100 shadow-sm">
+        <twig:atomic:GiftRibbon />
+        <div class="card-body flex-row items-center gap-4">
+            <div class="avatar shrink-0">
+                <div class="w-20 rounded-full">
+                    <img src="{{ asset('images/zakode.webp') }}" alt="Photo de {{ site.author_name }}"
+                         width="160" height="160" loading="lazy" class="object-cover">
+                </div>
+            </div>
+            <div class="min-w-0">
+                <p class="card-title">{{ site.author_name }}</p>
+                <p class="mt-1 text-sm text-base-content/70">
+                    Développeur. My Gift est un projet personnel, construit en apprenant
+                    Symfony, et son code est public.
+                </p>
+                <div class="card-actions mt-3">
+                    <a href="{{ site.linkedin_url }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline">
+                        <twig:ux:icon name="lucide:linkedin" class="size-4" aria-hidden="true" />
+                        LinkedIn
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 id="soutenir">Le code, un mot, un matcha</h2>
+    <p>
+        Une idée, un bug, une question ? Le code est sur GitHub, et un email suffit pour me
+        joindre. My Gift reste gratuit et sans publicité : s'il vous rend service, vous pouvez
+        offrir un matcha à son créateur.
+    </p>
+    <twig:Molecule:AboutLinks class="mt-4 max-w-sm" />
+{% endblock %}

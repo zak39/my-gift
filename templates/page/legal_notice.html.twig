@@ -1,0 +1,52 @@
+{% extends 'page/layout.html.twig' %}
+
+{% block title %}My Gift | Mentions légales{% endblock %}
+
+{% set updated_at = '27 octobre 2026' %}
+{% set toc = [
+    {id: 'editeur', label: 'Éditeur'},
+    {id: 'hebergement', label: 'Hébergement'},
+    {id: 'propriete', label: 'Propriété intellectuelle'},
+    {id: 'donnees', label: 'Données personnelles'},
+] %}
+
+{% block heading %}Mentions légales{% endblock %}
+
+{% block content %}
+    <h2 id="editeur">Éditeur</h2>
+    <p>
+        My Gift est édité par un particulier, à titre non professionnel, sous le pseudonyme
+        {{ site.author_name }}. Comme le permet la loi n° 2004-575 du 21 juin 2004 pour la
+        confiance dans l'économie numérique (LCEN), ses nom, adresse et numéro de téléphone
+        ne sont pas publiés ici : ils ont été communiqués à l'hébergeur.
+    </p>
+    <ul>
+        <li>Directeur de la publication : {{ site.author_name }}</li>
+        <li>Contact : <a href="mailto:{{ site.contact_email }}" class="link">{{ site.contact_email }}</a></li>
+    </ul>
+
+    <h2 id="hebergement">Hébergement</h2>
+    <ul>
+        <li>{{ site.host.name }}</li>
+        <li>Adresse : {{ site.host.address }}</li>
+        <li>Téléphone : {{ site.host.phone }}</li>
+        <li>Email : <a href="mailto:{{ site.host.mail }}" class="link">{{ site.host.mail }}</a></li>
+    </ul>
+
+    <h2 id="propriete">Propriété intellectuelle</h2>
+    <p>
+        Le <a href="{{ site.repository_url }}" class="link" target="_blank" rel="noopener">code
+        source de My Gift</a> est consultable publiquement ; il reste, comme les textes et
+        les visuels du site, la propriété de son auteur, sauf mention contraire.
+    </p>
+    <p>
+        Le site utilise la police Modak (SIL Open Font License), les icônes Lucide (licence
+        ISC) et Fluent UI (licence MIT), et des avatars générés par DiceBear.
+    </p>
+
+    <h2 id="donnees">Données personnelles</h2>
+    <p>
+        Ce que My Gift conserve, pourquoi et pour combien de temps :
+        <a href="{{ path('app_privacy') }}" class="link">politique de confidentialité</a>.
+    </p>
+{% endblock %}

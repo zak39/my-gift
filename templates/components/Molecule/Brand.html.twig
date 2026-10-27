@@ -1,0 +1,12 @@
+{# Full class strings: Tailwind only generates classes it finds written out. #}
+{% set sizes = {
+    md: {icon: 'size-7', name: 'text-3xl'},
+    lg: {icon: 'size-14', name: 'text-5xl'},
+} %}
+<span {{ attributes.defaults({ class: 'inline-flex items-center gap-2' }) }}>
+    <twig:ux:icon name="fluent-color:gift-24" class="{{ sizes[size].icon }} shrink-0" aria-hidden="true" />
+    {# Modak has one weight: font-normal, or the browser fakes the bold of a btn or an h1.
+       Lowered on purpose (optical alignment): centred as a box, the « y » pulls the word's
+       middle down, so its heavy capitals looked above the gift's body. #}
+    <span class="font-brand {{ sizes[size].name }} leading-none font-normal translate-y-[0.07em]">My Gift</span>
+</span>

@@ -1,5 +1,16 @@
 twig:
     file_name_pattern: '*.twig'
+    globals:
+        # What the footer, the « À propos » page and modal and the legal pages say about
+        # the app and its maker (config/services.yaml): never written in a template.
+        site:
+            version: '%app.version%'
+            author_name: '%app.author_name%'
+            linkedin_url: '%app.linkedin_url%'
+            repository_url: '%app.repository_url%'
+            contact_email: '%app.contact_email%'
+            support_url: '%app.support_url%'
+            host: '%app.host%'
 
 when@test:
     twig:

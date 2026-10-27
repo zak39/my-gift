@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{# The pages linked from the footer (PageController): one reading column, and the sections
+   listed beside it on large screens when the page sets `toc` ([{id, label}], one per h2).
+   A legal page sets `updated_at`, the date its text last changed. #}
+{% block body %}
+<div class="mx-auto max-w-5xl py-10 lg:py-16">
+    <header class="max-w-3xl">
+        <h1 class="text-4xl font-bold text-balance lg:text-5xl">{% block heading %}{% endblock %}</h1>
+        {% block lead %}{% endblock %}
+        {% if updated_at is defined %}
+            <p class="mt-4 text-sm text-base-content/60">Dernière mise à jour : {{ updated_at }}</p>
+        {% endif %}
+    </header>
+
+    <div class="mt-10 lg:grid lg:grid-cols-[minmax(0,1fr)_14rem] lg:gap-12">
+        {# Long-form text, styled from here so the pages hold only their words. Direct
+           children only: a card or a menu in the text keeps its own spacing. scroll-mt: an
+           anchor lands with its heading visible. #}
+        <article class="min-w-0 max-w-3xl leading-relaxed
+            [&>h2]:mt-12 [&>h2]:scroll-mt-6 [&>h2]:text-2xl [&>h2]:font-bold [&>h2:first-child]:mt-0            [&>p]:mt-3 [&>ul]:mt-3 [&>ul]:list-disc [&>ul]:space-y-1 [&>ul]:pl-6">
+            {% block content %}{% endblock %}
+        </article>
+
+        {% if toc is defined %}
+            <nav aria-label="Sur cette page" class="hidden lg:block">
+                <ul class="menu sticky top-6 w-full rounded-box bg-base-100">
+                    <li class="menu-title">Sur cette page</li>
+                    {% for section in toc %}
+                        <li><a href="#{{ section.id }}">{{ section.label }}</a></li>
+                    {% endfor %}
+                </ul>
+            </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
