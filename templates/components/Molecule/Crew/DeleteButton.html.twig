@@ -13,11 +13,7 @@
             Chaque cadeau retournera dans les « Cadeaux sans section » de la personne qui l'a ajouté,
             avec ses réservations et ses cagnottes.
         </p>
-        {# ReleaseGifts: a crew gift whose author deleted their account has nobody to go back to. #}
-        <p class="pb-4">
-            Un cadeau ajouté par une personne qui a depuis supprimé son compte (« Utilisateur supprimé »)
-            n'a personne à qui revenir : il sera supprimé, avec ses réservations et ses cagnottes.
-        </p>
+        <twig:Molecule:Crew:OrphanGiftsWarning />
     </twig:block>
     <twig:block name="actionButtons">
         <form method="post" action="{{ path('app_crew_delete', { id: crew.id }) }}">

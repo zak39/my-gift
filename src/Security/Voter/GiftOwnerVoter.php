@@ -11,12 +11,15 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 /**
  * The owners of a gift manage it and stand on the receiving side: its creator, or every
  * member of the crew whose list it is filed in (Gift::getOwnership()).
+ *
+ * `gift.can_claim`: a crew member taking over a crew gift whose author deleted their
+ * account (ClaimGift).
  */
 final class GiftOwnerVoter extends Voter
 {
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return 'gift.is_owner' === $attribute
+        return \in_array($attribute, ['gift.is_owner', 'gift.can_claim'], true)
             && $subject instanceof Gift
         ;
     }
@@ -32,6 +35,9 @@ final class GiftOwnerVoter extends Voter
         }
 
         /* @var Gift $subject */
-        return $subject->getOwnership()->includes($user);
+        return match ($attribute) {
+            'gift.is_owner' => $subject->getOwnership()->includes($user),
+            'gift.can_claim' => $subject->getOwnership()->canBeClaimedBy($user),
+        };
     }
 }

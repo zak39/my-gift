@@ -62,7 +62,8 @@ creator), never a bare `getCreatedBy()` comparison. A crew's gift or section kee
 (`createdBy` null) once its user deleted their account (`UserLifecycle` empties it; required
 out of a crew by `App\Validator\NotNullOutOfCrew`): read it null-safe, and name the crew rather than the
 author to its givers (`App\Services\Gift\GiftOwnerLabel`). Released by a section or crew
-deleted (`App\Services\Section\ReleaseGifts`), such a gift goes with it, its givers told.
+deleted (`App\Services\Section\ReleaseGifts`), such a gift goes with it, its givers told,
+unless a member took it over first (`gift.can_claim`, `App\Services\Gift\ClaimGift`).
 
 `Gift` is composed of value objects, one per concern: `getOwnership()` (`App\ValueObject\GiftOwnership`:
 `includes()`) and `getPool()` (`App\ValueObject\GiftPool`: what was collected, what
