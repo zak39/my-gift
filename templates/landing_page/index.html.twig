@@ -20,7 +20,7 @@
         </h1>
 
         <p class="text-base-content/70 mx-auto mt-10 max-w-2xl text-xl leading-relaxed">
-            Créez une section par occasion, partagez le lien. Vos proches réservent un cadeau
+            Créez une section par occasion, seul·e ou en groupe. Vos ami·es réservent un cadeau
             ou cagnottent ensemble, sans jamais se marcher dessus.
         </p>
 
@@ -81,13 +81,13 @@
     },
     {
         card: 'bg-accent/10', icon: 'bg-accent text-accent-content', badge: 'badge-accent',
-        iconName: 'lucide:share-2', title: 'Partagez le lien',
-        text: 'Un lien par section, à envoyer dans la conversation de famille.',
+        iconName: 'lucide:user-plus', title: 'Invitez vos proches',
+        text: 'Ajoutez-les en ami·es, puis envoyez le lien « Partager » dans la conversation de famille.',
     },
     {
         card: 'bg-success/10', icon: 'bg-success text-success-content', badge: 'badge-success',
         iconName: 'lucide:party-popper', title: "Ils s'organisent",
-        text: 'Vos proches réservent ou cagnottent. Vos sections se mettent à jour toutes seules.',
+        text: 'Vos ami·es réservent ou cagnottent. Vos sections se mettent à jour toutes seules.',
     },
 ] %}
 <section id="comment-ca-marche" class="bg-base-100 border-base-300 -mx-4 scroll-mt-20 border-y px-4 py-24 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 lg:py-32">
@@ -128,8 +128,8 @@
                 Un cadeau réservé ne sera pas offert deux fois
             </h2>
             <p class="text-base-content/70 mt-6 text-lg leading-relaxed">
-                Le premier qui réserve bloque le cadeau. Il passe en « réservé » et les autres
-                visiteurs le voient pris. Un pseudonyme suffit pour rester discret
+                Le premier qui réserve bloque le cadeau. Il passe en « réservé » et vos autres
+                ami·es le voient pris. Un pseudonyme suffit pour rester discret
                 jusqu'au jour J.
             </p>
         </div>
@@ -258,20 +258,12 @@
                 My Gift lit les métadonnées Open Graph de la page marchande et reprend le titre,
                 l'image et la description. Vous n'ajoutez que le prix.
             </p>
-            <ul class="mt-12 space-y-6">
-                {% for benefit in [
-                    "Fonctionne avec n'importe quelle boutique en ligne",
-                    'Les champs restent modifiables après récupération',
-                    'Si la page ne répond pas, vous complétez à la main',
-                ] %}
-                    <li class="flex items-start gap-4">
-                        <span class="bg-success/15 text-success rounded-box grid size-9 shrink-0 place-content-center">
-                            <twig:ux:icon name="lucide:check" class="size-5" />
-                        </span>
-                        <span class="text-base-content/80 text-lg">{{ benefit }}</span>
-                    </li>
-                {% endfor %}
-            </ul>
+            {% set pasteBenefits = [
+                "Fonctionne avec n'importe quelle boutique en ligne",
+                'Les champs restent modifiables après récupération',
+                'Si la page ne répond pas, vous complétez à la main',
+            ] %}
+            <twig:Molecule:CheckList :items="pasteBenefits" iconClass="bg-success/15 text-success" class="mt-12" />
         </div>
 
         {# Reprise de la mise en page de templates/components/Organism/Gift/Form.html.twig #}
@@ -326,13 +318,13 @@
         <div class="mx-auto max-w-2xl text-center">
             <h2 class="text-4xl font-bold text-balance lg:text-5xl">Une section par occasion, ou par thème</h2>
             <p class="text-base-content/70 mt-6 text-lg leading-relaxed">
-                Vos proches ouvrent votre page et parcourent vos sections. Chacune se replie,
+                Vos ami·es ouvrent votre page et parcourent vos sections. Chacune se replie,
                 garde ses propres cadeaux et son statut.
             </p>
         </div>
 
         <div class="bg-base-200 rounded-box mt-16 p-6 lg:p-10">
-            <p class="text-base-content/60 mb-6 text-sm">Exemple : la page publique de Léa</p>
+            <p class="text-base-content/60 mb-6 text-sm">Exemple : la page de Léa, vue par une amie</p>
 
             <div class="flex flex-col gap-5">
                 <twig:molecule:Section
@@ -399,6 +391,137 @@
     </div>
 </section>
 
+{# ============================================================= GROUPES #}
+{# Julie created the crew and still owns it: she wears both badges. #}
+{% set crewMembers = [
+    { name: 'Julie Martin', owner: true },
+    { name: 'Thomas Martin', owner: false },
+] %}
+{% set crewRules = [
+    'Chaque membre peut ajouter et modifier des cadeaux dans le groupe.',
+    'Les sections du groupe sont visibles de ses membres et de leurs ami·es.',
+    'Un membre qui part laisse ses cadeaux au groupe.',
+] %}
+<section class="py-24 lg:py-32">
+    <div class="mx-auto grid max-w-6xl grid-cols-1 items-center gap-16 lg:grid-cols-2 lg:gap-24">
+        <div>
+            <span class="badge badge-lg badge-soft badge-info gap-2">
+                <twig:ux:icon name="lucide:users" class="size-4" />
+                Groupes
+            </span>
+            <h2 class="mt-8 text-4xl font-bold text-balance lg:text-5xl">
+                Des sections tenues à plusieurs
+            </h2>
+            <p class="text-base-content/70 mt-8 text-lg leading-relaxed">
+                Un couple, des parents pour leur enfant, une bande d'ami·es : créez un groupe,
+                invitez vos ami·es, et tenez ensemble les sections qui vous concernent tous.
+            </p>
+            <twig:Molecule:CheckList :items="crewRules" iconClass="bg-info/15 text-info" class="mt-12" />
+        </div>
+
+        {# Reprise de templates/crew/show.html.twig avec des données fixes : MemberRow demande un
+           CrewMember. Garder en phase avec templates/components/Molecule/Crew/MemberRow.html.twig. #}
+        <div class="card bg-base-100 border border-base-300 shadow-sm">
+            <div class="card-body gap-6">
+                <div>
+                    <h3 class="text-2xl leading-tight font-bold">Famille Martin</h3>
+                    <p class="text-base-content/70 mt-1 flex items-center gap-1.5 text-sm">
+                        <twig:ux:icon name="lucide:gift" class="size-4 shrink-0" />
+                        <span class="tabular-nums">2 sections, 9 cadeaux</span>
+                    </p>
+                </div>
+
+                <div class="flex flex-col gap-3">
+                    <h4 class="flex items-center gap-2 text-lg font-semibold">
+                        <twig:ux:icon name="lucide:users" class="size-5" />
+                        Membres
+                        <span class="badge badge-ghost badge-sm tabular-nums">{{ crewMembers|length }}</span>
+                    </h4>
+                    <ul class="list rounded-box border border-base-300">
+                        {% for member in crewMembers %}
+                            <li class="list-row items-center">
+                                <div class="avatar">
+                                    <div class="size-10 rounded-full">
+                                        <img src="https://api.dicebear.com/10.x/thumbs/svg?seed={{ member.name|url_encode }}" alt="Photo de profil {{ member.name }}" width="64" height="64" loading="lazy" />
+                                    </div>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="font-medium">{{ member.name }}</p>
+                                    <p class="text-xs text-base-content/60">Membre depuis le 12/03/2026</p>
+                                    {% if member.owner %}
+                                        <div class="mt-1.5 flex flex-wrap gap-1.5">
+                                            <span class="badge badge-sm badge-accent">Propriétaire</span>
+                                            <span class="badge badge-sm">Créateur·rice</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="rounded-box bg-base-200/60 flex items-center gap-3 p-4 text-sm">
+                    <twig:ux:icon name="lucide:mail-plus" class="text-info size-5 shrink-0" />
+                    <span>Invitation envoyée à <strong>Mamie Jo</strong>, en attente de réponse</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# ======================================================= AMI·ES ET SURPRISE #}
+{# Six months: ShareUrlGenerator::VALIDITY. The export formats: the list in templates/me/profile/index.html.twig. #}
+{% set features = [
+    {
+        iconName: 'lucide:user-check', title: 'Entre ami·es seulement',
+        text: "Vos sections ne sont visibles que de vos ami·es. Un cadeau que vous n'affichez pas reste un brouillon, que vous seul·e voyez, ou les membres de son groupe.",
+    },
+    {
+        iconName: 'lucide:share-2', title: 'Un lien à partager',
+        text: "« Partager » copie un lien valable six mois, qui s'affiche avec son aperçu dans les messageries.",
+    },
+    {
+        iconName: 'lucide:eye-off', title: 'La surprise gardée',
+        text: "D'une cagnotte, vous ne voyez jamais les montants, et découvrez ses participants une fois le cadeau prêt à offrir.",
+    },
+    {
+        iconName: 'lucide:heart', title: 'Des favoris',
+        text: 'Mettez de côté les cadeaux de vos ami·es qui vous tentent, pour y revenir à la prochaine occasion.',
+    },
+    {
+        iconName: 'lucide:mail', title: 'Prévenu au bon moment',
+        text: 'Réservation, nouvelle participation, prix modifié, cadeau prêt : un email part à qui est concerné.',
+    },
+    {
+        iconName: 'lucide:download', title: 'Vos données à vous',
+        text: 'Exportez vos sections en CSV, ODS, Excel ou JSON, et supprimez votre compte quand vous le souhaitez.',
+    },
+] %}
+<section class="bg-base-100 border-base-300 -mx-4 border-y px-4 py-24 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 lg:py-32">
+    <div class="mx-auto max-w-6xl">
+        <div class="mx-auto max-w-2xl text-center">
+            <h2 class="text-4xl font-bold text-balance lg:text-5xl">Entre ami·es, sans gâcher la surprise</h2>
+            <p class="text-base-content/70 mt-6 text-lg leading-relaxed">
+                Vos envies restent dans votre cercle, et la personne fêtée ne voit que ce qu'il faut.
+            </p>
+        </div>
+
+        <div class="mt-20 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {% for feature in features %}
+                <div class="card bg-base-200/60 h-full">
+                    <div class="card-body gap-4">
+                        <span class="bg-primary/15 text-primary rounded-box grid size-12 place-content-center">
+                            <twig:ux:icon :name="feature.iconName" class="size-6" />
+                        </span>
+                        <h3 class="card-title text-xl">{{ feature.title }}</h3>
+                        <p class="text-base-content/70 leading-relaxed">{{ feature.text }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
 {# ================================================ PARCOURS D'UN CADEAU #}
 {# Statuses follow the gift_request workflow; badges come from GiftStatus via Molecule:Gift:StatusBadge. #}
 {% set lifecycle = [
@@ -415,12 +538,12 @@
     {
         card: 'bg-warning/10', icon: 'bg-warning text-warning-content',
         iconName: 'lucide:package-check', statuses: ['READY'],
-        text: "Le cadeau est acheté : celui qui l'a réservé, ou l'un des contributeurs une fois la cagnotte complète, le déclare prêt.",
+        text: "Le cadeau est acheté : celui qui l'a réservé, ou l'un des contributeurs une fois la cagnotte complète, le déclare prêt. La personne fêtée découvre qui a cagnotté.",
     },
     {
         card: 'bg-success/10', icon: 'bg-success text-success-content',
         iconName: 'lucide:party-popper', statuses: ['GIVEN'],
-        text: "Le cadeau a été remis. La fiche affiche enfin qui l'a offert.",
+        text: "Le cadeau a été remis, il ne reste plus qu'à dire merci.",
     },
     {
         card: 'bg-base-100 border-base-300 border shadow-sm', icon: 'bg-base-300 text-base-content',
@@ -462,10 +585,15 @@
 </section>
 
 {# ================================================================ FAQ #}
+{# Shares answers with templates/page/faq.html.twig, the full FAQ: keep the common ones in step. #}
 {% set faq = [
     {
         question: 'Mes proches doivent-ils créer un compte pour réserver ?',
-        answer: "Oui. Un compte est nécessaire pour réserver ou contribuer, afin que My Gift sache qui s'est positionné et empêche qu'un cadeau soit pris deux fois. L'inscription demande votre nom, une adresse email et un mot de passe, rien de plus.",
+        answer: "Oui. Un compte est nécessaire pour réserver ou contribuer, afin que My Gift sache qui s'est positionné et empêche qu'un cadeau soit pris deux fois. L'inscription demande votre nom, une adresse email et un mot de passe, rien de plus. Une fois votre demande d'ami·e acceptée, chacun voit les sections de l'autre.",
+    },
+    {
+        question: 'À quoi sert un groupe ?',
+        answer: "À tenir des sections à plusieurs : un couple, ou des parents pour leur enfant. Tous les membres y ajoutent et modifient les cadeaux, et la surprise reste entière pour chacun.",
     },
     {
         question: "My Gift encaisse-t-il l'argent des cagnottes ?",
@@ -497,6 +625,10 @@
                 </div>
             {% endfor %}
         </div>
+
+        <p class="mt-10 text-center">
+            <a href="{{ path('app_faq') }}" class="link link-primary">Toutes les questions fréquentes</a>
+        </p>
     </div>
 </section>
 
@@ -522,7 +654,7 @@
         <ul class="mt-14 flex flex-wrap justify-center gap-3">
             <li><span class="badge badge-lg badge-soft">Gratuit, sans publicité</span></li>
             <li><span class="badge badge-lg badge-soft">Une adresse email suffit</span></li>
-            <li><span class="badge badge-lg badge-soft">Sections privées par défaut</span></li>
+            <li><span class="badge badge-lg badge-soft">Visible de vos ami·es seulement</span></li>
         </ul>
     </div>
 </section>
