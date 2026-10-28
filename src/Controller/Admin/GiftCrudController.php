@@ -5,6 +5,8 @@ namespace App\Controller\Admin;
 use App\Entity\Gift;
 use App\Enum\GiftStatus;
 use App\Repository\SectionRepository;
+use App\Services\Exception\GiftActionRefusedException;
+use App\Services\Gift\DeleteGift;
 use App\Services\Gift\UpdateGift;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -38,6 +40,7 @@ class GiftCrudController extends AbstractCrudController
         private UploaderHelper $uploaderHelper,
         private SectionRepository $sectionRepository,
         private UpdateGift $updateGift,
+        private DeleteGift $deleteGift,
     ) {
     }
 
@@ -74,6 +77,22 @@ class GiftCrudController extends AbstractCrudController
     public function updateEntity(EntityManagerInterface $entityManager, object $entityInstance): void
     {
         ($this->updateGift)($entityInstance);
+    }
+
+    /**
+     * Deleted as on the site, under the gift's lock, its givers told: their email names My
+     * Gift's team rather than the admin. The batch delete comes here too, once per gift.
+     *
+     * @param Gift $entityInstance
+     */
+    public function deleteEntity(EntityManagerInterface $entityManager, object $entityInstance): void
+    {
+        try {
+            ($this->deleteGift)($entityInstance, deletedBy: null);
+        } catch (GiftActionRefusedException $exception) {
+            // Deleted meanwhile from the site: what was asked is done.
+            $this->addFlash('warning', $exception->getMessage());
+        }
     }
 
     public function configureActions(Actions $actions): Actions

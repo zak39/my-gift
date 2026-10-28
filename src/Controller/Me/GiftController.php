@@ -8,6 +8,7 @@ use App\Form\GiftEditType;
 use App\Form\GiftType;
 use App\Repository\SectionRepository;
 use App\Services\BreadcrumbBuilder;
+use App\Services\Exception\GiftActionRefusedException;
 use App\Services\Gift\CreateGift;
 use App\Services\Gift\DeleteGift;
 use App\Services\Gift\UpdateGift;
@@ -113,9 +114,15 @@ final class GiftController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $deleteGift($gift);
+        /** @var User $user */
+        $user = $this->getUser();
 
-        $this->addFlash('success', "Le cadeau \"{$gift->getTitle()}\" a bien été supprimé.");
+        try {
+            $deleteGift($gift, $user);
+            $this->addFlash('success', "Le cadeau \"{$gift->getTitle()}\" a bien été supprimé.");
+        } catch (GiftActionRefusedException $exception) {
+            $this->addFlash('error', $exception->getMessage());
+        }
 
         return $this->redirectToRoute('app_section');
     }

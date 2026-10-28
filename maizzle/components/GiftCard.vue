@@ -1,6 +1,8 @@
 <script setup>
   // Twig can't use `>` or `<` here (escaped to `&gt;`) nor print into `class` (the braces
   // are stripped), hence truthy tests and one branch per colour.
+  // An email of a deleted gift passes giftImage, its image embedded (`cid:`): the file is
+  // gone by the time the worker renders it.
   defineProps({
     showPool: {
       type: Boolean,
@@ -18,7 +20,7 @@
     <tr>
       <td class="gift-card-figure rounded-t-2xl p-4 text-center">
         <img
-          src="{{ gift.image ? absolute_url(vich_uploader_asset(gift, 'imageFile')) : 'https://img.daisyui.com/images/stock/photo-1494232410401-ad00d5433cfa.webp' }}"
+          src="{{ giftImage ?? (gift.image ? absolute_url(vich_uploader_asset(gift, 'imageFile')) : 'https://img.daisyui.com/images/stock/photo-1494232410401-ad00d5433cfa.webp') }}"
           alt="{{ gift.title }}"
           height="192"
           class="mx-auto block h-48 w-auto"
