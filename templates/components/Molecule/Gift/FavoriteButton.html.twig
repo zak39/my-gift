@@ -6,6 +6,8 @@
         data-controller="favorite"
         data-favorite-id-value="{{ gift.id }}"
         data-favorite-is-favorite-value="{{ this.isFavorite ? 'true' : 'false' }}"
+        {# One token for every card: one per gift would pile up in the session, card after card. #}
+        data-favorite-token-value="{{ csrf_token('gift-favorite') }}"
         data-favorite-target="button"
         data-action="click->favorite#addFavorite">
         <twig:ux:icon
