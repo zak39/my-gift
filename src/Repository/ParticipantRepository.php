@@ -2,9 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Gift;
 use App\Entity\Participant;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -36,6 +38,34 @@ class ParticipantRepository extends ServiceEntityRepository
             ->setParameter('user', $user)
             ->orderBy('p.id', 'ASC')
             ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
+     * The gift's other participations read again, in place, as committed: the gift read
+     * again (GiftRepository::findOneLocked()) reloads its collection, but the identity map
+     * hands back the participations already loaded, with their amounts of then. The one
+     * kept is left as it is: a share being changed holds the amount typed in the form.
+     */
+    public function refreshOthersIn(Gift $gift, Participant $kept): void
+    {
+        $queryBuilder = $this->createQueryBuilder('p')
+            ->where('p.gift = :gift')
+            ->setParameter('gift', $gift)
+        ;
+
+        // A newcomer is in no row yet.
+        if (null !== $kept->getId()) {
+            $queryBuilder
+                ->andWhere('p.id != :kept')
+                ->setParameter('kept', $kept->getId())
+            ;
+        }
+
+        $queryBuilder
+            ->getQuery()
+            ->setHint(Query::HINT_REFRESH, true)
             ->getResult()
         ;
     }

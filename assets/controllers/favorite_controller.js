@@ -6,6 +6,7 @@ export default class extends Controller {
     static values = {
         id: Number,
         isFavorite: Boolean,
+        token: String,
     };
 
     addFavorite() {
@@ -16,6 +17,7 @@ export default class extends Controller {
 
         fetch(url, {
             method: 'POST',
+            body: new URLSearchParams({ _token: this.tokenValue }),
         })
             .then(response => {
                 if (!response.ok) {

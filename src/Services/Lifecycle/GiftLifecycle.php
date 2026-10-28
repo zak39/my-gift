@@ -12,10 +12,13 @@ use App\Event\GiftPriceChangedEvent;
 use App\Event\GiftReadyEvent;
 use App\Event\ParticipantJoinedEvent;
 use App\Event\ParticipantLeftEvent;
+use App\Repository\GiftRepository;
+use App\Repository\ParticipantRepository;
 use App\Services\Exception\GiftActionRefusedException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 class GiftLifecycle
@@ -25,26 +28,31 @@ class GiftLifecycle
         private WorkflowInterface $giftRequestWorkflow,
         private EntityManagerInterface $entityManager,
         private EventDispatcherInterface $eventDispatcher,
+        private GiftRepository $giftRepository,
+        private ParticipantRepository $participantRepository,
+        private ValidatorInterface $validator,
     ) {
     }
 
     public function reserved(Gift $gift, Participant $participant, User $user): void
     {
-        if (!$this->giftRequestWorkflow->can($gift, 'reserve')) {
-            throw new GiftActionRefusedException('Ce cadeau ne peut pas être réservé.');
-        }
+        $this->whileLocked($gift, function () use ($gift, $participant, $user): void {
+            if (!$this->giftRequestWorkflow->can($gift, 'reserve')) {
+                throw new GiftActionRefusedException('Ce cadeau ne peut pas être réservé.');
+            }
 
-        $participant
-            ->setParticipantUser($user)
-            ->setStatus(ParticipantStatus::RESERVED)
-        ;
+            $participant
+                ->setParticipantUser($user)
+                ->setStatus(ParticipantStatus::RESERVED)
+            ;
 
-        $gift->addParticipant($participant);
+            $gift->addParticipant($participant);
 
-        $this->giftRequestWorkflow->apply($gift, 'reserve');
+            $this->giftRequestWorkflow->apply($gift, 'reserve');
 
-        $this->entityManager->persist($participant);
-        $this->entityManager->flush();
+            $this->entityManager->persist($participant);
+            $this->entityManager->flush();
+        });
     }
 
     public function disengage(Gift $gift, User $user): void
@@ -118,34 +126,50 @@ class GiftLifecycle
     /** Joins the pool, or changes the share of who already takes part in it. */
     public function participated(Gift $gift, Participant $participant, User $user): void
     {
-        if (GiftStatus::CREATED !== $gift->getStatus()
-            && GiftStatus::CONTRIBUTING !== $gift->getStatus()) {
-            throw new GiftActionRefusedException('Ce cadeau ne peut pas recevoir de contribution à son état actuel.');
-        }
+        $this->whileLocked($gift, function () use ($gift, $participant, $user): void {
+            if (GiftStatus::CREATED !== $gift->getStatus()
+                && GiftStatus::CONTRIBUTING !== $gift->getStatus()) {
+                throw new GiftActionRefusedException('Ce cadeau ne peut pas recevoir de contribution à son état actuel.');
+            }
 
-        // Before addParticipant(): a changed share must not be announced as a newcomer.
-        $joins = !$gift->getParticipants()->contains($participant);
+            // Withdrawn in the meantime (another tab): its row is gone, and saving it would
+            // update nothing while announcing a share.
+            if (null !== $participant->getId() && !$gift->getParticipants()->contains($participant)) {
+                throw new GiftActionRefusedException('Votre participation a été retirée entre-temps : vous pouvez participer à nouveau.');
+            }
 
-        $participant
-            ->setParticipantUser($user)
-            ->setStatus(ParticipantStatus::PARTICIPATING)
-        ;
+            // Checked again against the pool as committed: the form checked the gift as
+            // loaded, before another contribution or a new price may have landed.
+            $this->participantRepository->refreshOthersIn($gift, $participant);
+            $violations = $this->validator->validateProperty($participant, 'amount');
+            if (\count($violations) > 0) {
+                throw new GiftActionRefusedException((string) $violations->get(0)->getMessage());
+            }
 
-        // Not setGift() alone: the event's listeners read the gift's collection.
-        $gift->addParticipant($participant);
+            // Before addParticipant(): a changed share must not be announced as a newcomer.
+            $joins = !$gift->getParticipants()->contains($participant);
 
-        if (GiftStatus::CREATED === $gift->getStatus()) {
-            $this->giftRequestWorkflow->apply($gift, 'contribute', [
-                'participant' => $participant,
-            ]);
-        }
+            $participant
+                ->setParticipantUser($user)
+                ->setStatus(ParticipantStatus::PARTICIPATING)
+            ;
 
-        if ($joins) {
-            $this->eventDispatcher->dispatch(new ParticipantJoinedEvent($gift, $participant));
-        }
+            // Not setGift() alone: the event's listeners read the gift's collection.
+            $gift->addParticipant($participant);
 
-        $this->entityManager->persist($participant);
-        $this->entityManager->flush();
+            if (GiftStatus::CREATED === $gift->getStatus()) {
+                $this->giftRequestWorkflow->apply($gift, 'contribute', [
+                    'participant' => $participant,
+                ]);
+            }
+
+            if ($joins) {
+                $this->eventDispatcher->dispatch(new ParticipantJoinedEvent($gift, $participant));
+            }
+
+            $this->entityManager->persist($participant);
+            $this->entityManager->flush();
+        });
     }
 
     /**
@@ -222,5 +246,23 @@ class GiftLifecycle
             'participant' => $participant,
         ]);
         $this->entityManager->flush();
+    }
+
+    /**
+     * Who takes the gift on changes one request at a time: its row locked till the
+     * commit, the gift read again with its participants, the rules check what the
+     * database holds. Else two friends could reserve it at once, or two contributions
+     * each fit in the remaining amount on their own and together exceed it. A DBAL
+     * transaction, as CrewLifecycle::whileLocked() says why.
+     */
+    private function whileLocked(Gift $gift, \Closure $change): void
+    {
+        $this->entityManager->getConnection()->transactional(function () use ($gift, $change): void {
+            if (null === $this->giftRepository->findOneLocked($gift->getId())) {
+                throw new GiftActionRefusedException('Ce cadeau n\'existe plus.');
+            }
+
+            $change();
+        });
     }
 }
