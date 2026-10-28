@@ -7,3 +7,10 @@ framework:
             policy: 'fixed_window'
             limit: 5
             interval: '15 minutes'
+        # A new confirmation email asked from the login page (ResendEmailConfirmation): per
+        # caller's IP, so that nobody floods inboxes with it. Not per address: anyone could
+        # then use up a victim's allowance.
+        verify_email_resend:
+            policy: 'fixed_window'
+            limit: 5
+            interval: '1 hour'

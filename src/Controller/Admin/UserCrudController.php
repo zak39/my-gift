@@ -59,6 +59,9 @@ class UserCrudController extends AbstractCrudController
     {
         $user = new User();
         $user->setCreatedAt(new \DateTimeImmutable());
+        // The admin hands over the credentials: no confirmation email is sent, which
+        // UserChecker would otherwise require before the first login.
+        $user->setIsVerified(true);
 
         return $user;
     }

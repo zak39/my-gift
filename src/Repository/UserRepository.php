@@ -175,8 +175,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
-     * Unverified accounts created and without activity since $since: one in use is left
-     * alone, since a user can log in without verifying their address.
+     * Unverified accounts created and without activity since $since: the ones that never
+     * confirmed their address, which UserChecker keeps from logging in. Activity is still
+     * checked, for an account that was used before it became required.
      *
      * @param list<int> $exceptIds
      *
