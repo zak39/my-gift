@@ -130,7 +130,8 @@
                                 {% endif %}
                             </div>
                             <div class="my-4">
-                                <label class="label mr-4">
+                                {# daisyUI's label does not wrap (white-space: nowrap): this sentence would widen the card. #}
+                                <label class="label mr-4 whitespace-normal">
                                     <span>
                                         J'accepte les
                                         {# A new tab, so the form half filled is not lost. #}
