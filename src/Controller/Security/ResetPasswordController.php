@@ -111,6 +111,8 @@ final class ResetPasswordController extends AbstractController
             );
 
             $user->setPassword($encodedPassword);
+            // The reset link went to the account's address: whoever used it reads that mailbox.
+            $user->setIsVerified(true);
             $this->entityManager->flush();
 
             // The session is cleaned up after the password has been changed.

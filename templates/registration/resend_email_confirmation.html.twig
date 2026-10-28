@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Gift | Confirmer mon adresse email{% endblock %}
+
+{% block body %}
+<div class="hero bg-base-200 min-h-screen">
+    <div class="flex flex-col items-center">
+        {% for flash_error in app.flashes('verify_email_error') %}
+            <div role="alert" class="alert alert-error mx-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{{ flash_error }}</span>
+            </div>
+        {% endfor %}
+        <div class="hero-content flex-col lg:flex-row-reverse gap-16">
+            <div class="text-center lg:text-left">
+                <h1 class="text-5xl font-bold">Confirmez votre adresse</h1>
+                <p class="py-6">
+                    Votre compte attend encore sa confirmation. Indiquez son adresse e-mail, nous vous enverrons un nouveau lien pour l'activer ✉️
+                </p>
+            </div>
+            <div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+                <div class="card-body">
+                    {% if resendForm.vars.errors|length > 0 %}
+                        <div class="alert alert-error alert-soft">{{ form_errors(resendForm) }}</div>
+                    {% endif %}
+                    {{ form_start(resendForm) }}
+                        <fieldset class="fieldset">
+                            {{ form_label(resendForm.email) }}
+                            <label class="input md:input-md input-xl w-full">
+                                <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <g
+                                    stroke-linejoin="round"
+                                    stroke-linecap="round"
+                                    stroke-width="2.5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    >
+                                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                    </g>
+                                </svg>
+                                {{ form_widget(resendForm.email, {
+                                    attr: {
+                                        autofocus: true
+                                    }
+                                }) }}
+                            </label>
+                            {% if resendForm.email.vars.errors|length > 0 %}
+                                <div class="alert alert-error alert-soft my-2">{{ form_errors(resendForm.email) }}</div>
+                            {% endif %}
+                            {{ form_rest(resendForm) }}
+                            <button type="submit" class="btn btn-accent mt-4">Renvoyer le lien</button>
+                        </fieldset>
+                    {{ form_end(resendForm) }}
+                    <a class="link link-hover" href="{{ path('app_login') }}">Retour à la connexion</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -10,6 +10,11 @@ use Symfony\Component\Mailer\MailerInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 
+/**
+ * The email confirming a new account's address, which UserChecker requires before logging
+ * in. Its link carries the user's id: they confirm without being logged in, which they
+ * cannot be yet (the bundle's anonymous validation).
+ */
 class EmailVerifier
 {
     public function __construct(
@@ -19,20 +24,29 @@ class EmailVerifier
     ) {
     }
 
-    public function sendEmailConfirmation(string $verifyEmailRouteName, User $user, TemplatedEmail $email): void
+    /**
+     * At registration, and again on request (ResendEmailConfirmation).
+     */
+    public function sendEmailConfirmation(User $user): void
     {
         $signatureComponents = $this->verifyEmailHelper->generateSignature(
-            $verifyEmailRouteName,
+            'app_verify_email',
             (string) $user->getId(),
-            (string) $user->getEmail()
+            (string) $user->getEmail(),
+            ['id' => $user->getId()],
         );
 
-        $context = $email->getContext();
-        $context['signedUrl'] = $signatureComponents->getSignedUrl();
-        $context['expiresAtMessageKey'] = $signatureComponents->getExpirationMessageKey();
-        $context['expiresAtMessageData'] = $signatureComponents->getExpirationMessageData();
-
-        $email->context($context);
+        $email = (new TemplatedEmail())
+            ->to((string) $user->getEmail())
+            ->subject('Confirmation de votre adresse e-mail sur My Gift')
+            ->htmlTemplate('emails/welcome.html.twig')
+            ->context([
+                'fullName' => $user->getFullName(),
+                'signedUrl' => $signatureComponents->getSignedUrl(),
+                'expiresAtMessageKey' => $signatureComponents->getExpirationMessageKey(),
+                'expiresAtMessageData' => $signatureComponents->getExpirationMessageData(),
+            ])
+        ;
 
         $this->mailer->send($email);
     }

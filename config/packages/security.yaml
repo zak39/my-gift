@@ -19,6 +19,8 @@ security:
         main:
             lazy: true
             provider: app_user_provider
+            # No account logs in before its email address is confirmed (issue #126).
+            user_checker: App\Security\UserChecker
             form_login:
                 login_path: app_login
                 check_path: app_login

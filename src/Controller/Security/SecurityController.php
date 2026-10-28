@@ -2,6 +2,7 @@
 
 namespace App\Controller\Security;
 
+use App\Security\Exception\UnverifiedEmailException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -26,6 +27,8 @@ class SecurityController extends AbstractController
         return $this->render('security/login.html.twig', [
             'last_username' => $lastUsername,
             'error' => $error,
+            // Not an error but a step left: a warning, with the link to a new email.
+            'emailUnverified' => $error instanceof UnverifiedEmailException,
         ]);
     }
 
