@@ -3,6 +3,7 @@
 namespace App\Services\Participation;
 
 use App\Entity\Participant;
+use App\Services\Lifecycle\GiftLifecycle;
 use App\Strategy\ParticipationReleaseStrategy;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
@@ -18,10 +19,27 @@ final class ReleaseParticipation
     public function __construct(
         #[AutowireIterator(ParticipationReleaseStrategy::class)]
         private readonly iterable $strategies,
+        private readonly GiftLifecycle $giftLifecycle,
     ) {
     }
 
     public function __invoke(Participant $participation): void
+    {
+        $gift = $participation->getGift();
+
+        if (null === $gift) {
+            $this->strategyFor($participation)->release($participation);
+
+            return;
+        }
+
+        // The rules tell the cases apart by the gift's status: chosen on the gift as
+        // committed, under its lock, else a « prêt » or an « offert » meanwhile would make
+        // the rule chosen refuse, and the whole account deletion fail.
+        $this->giftLifecycle->whileLocked($gift, fn () => $this->strategyFor($participation)->release($participation));
+    }
+
+    private function strategyFor(Participant $participation): ParticipationReleaseStrategy
     {
         $applying = array_values(array_filter(
             iterator_to_array($this->strategies, false),
@@ -34,6 +52,6 @@ final class ReleaseParticipation
             throw new \LogicException(\sprintf('%d release rules apply to participation %d: exactly one should.', \count($applying), $participation->getId()));
         }
 
-        $applying[0]->release($participation);
+        return $applying[0];
     }
 }
