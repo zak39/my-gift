@@ -43,12 +43,12 @@ class ParticipantRepository extends ServiceEntityRepository
     }
 
     /**
-     * The gift's other participations read again, in place, as committed: the gift read
-     * again (GiftRepository::findOneLocked()) reloads its collection, but the identity map
-     * hands back the participations already loaded, with their amounts of then. The one
-     * kept is left as it is: a share being changed holds the amount typed in the form.
+     * The gift's participations read again, in place, as committed: the gift read again
+     * (GiftRepository::findOneLocked()) reloads its collection, but the identity map hands
+     * back the participations already loaded, with their amounts of then. $except is left
+     * as it is (GiftLifecycle::whileLocked()).
      */
-    public function refreshOthersIn(Gift $gift, Participant $kept): void
+    public function refreshIn(Gift $gift, ?Participant $except): void
     {
         $queryBuilder = $this->createQueryBuilder('p')
             ->where('p.gift = :gift')
@@ -56,10 +56,10 @@ class ParticipantRepository extends ServiceEntityRepository
         ;
 
         // A newcomer is in no row yet.
-        if (null !== $kept->getId()) {
+        if (null !== $except?->getId()) {
             $queryBuilder
-                ->andWhere('p.id != :kept')
-                ->setParameter('kept', $kept->getId())
+                ->andWhere('p.id != :except')
+                ->setParameter('except', $except->getId())
             ;
         }
 

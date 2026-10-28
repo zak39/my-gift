@@ -94,8 +94,8 @@ class GiftRepository extends ServiceEntityRepository
     }
 
     /**
-     * The gift read again, its row locked till the commit (ClaimGift); null once deleted,
-     * where refresh() silently keeps its old state.
+     * The gift read again, its row locked till the commit (ClaimGift, GiftLifecycle); null
+     * once deleted, where refresh() silently keeps its old state.
      */
     public function findOneLocked(int $id): ?Gift
     {

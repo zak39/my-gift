@@ -57,70 +57,88 @@ class GiftLifecycle
 
     public function disengage(Gift $gift, User $user): void
     {
-        $this->withdrawReservation($gift, $user, 'disengage');
+        $this->whileLocked($gift, fn () => $this->withdrawReservation($gift, $user, 'disengage'));
     }
 
     public function ready(Gift $gift, User $user): void
     {
-        if (!$this->giftRequestWorkflow->can($gift, 'finalize')) {
-            throw new GiftActionRefusedException('Le cadeau ne peut pas encore être marqué comme prêt à être donné.');
-        }
+        $this->whileLocked($gift, function () use ($gift, $user): void {
+            // The guard of a pool (isComplete()) sums the amounts as committed.
+            if (!$this->giftRequestWorkflow->can($gift, 'finalize')) {
+                throw new GiftActionRefusedException('Le cadeau ne peut pas encore être marqué comme prêt à être donné.');
+            }
 
-        $participant = $gift->getParticipant($user);
+            $participant = $gift->getParticipant($user);
 
-        if (!$participant) {
-            throw new GiftActionRefusedException('Aucune participation trouvée pour cet utilisateur sur ce cadeau.');
-        }
+            if (!$participant) {
+                throw new GiftActionRefusedException('Aucune participation trouvée pour cet utilisateur sur ce cadeau.');
+            }
 
-        $this->giftRequestWorkflow->apply($gift, 'finalize');
-        $this->entityManager->flush();
+            $this->giftRequestWorkflow->apply($gift, 'finalize');
+            $this->entityManager->flush();
 
-        // A reservation has a single participant: the one who just clicked, nobody to tell.
-        if ($gift->getPool()->isPooled()) {
-            $this->eventDispatcher->dispatch(new GiftReadyEvent($gift));
-        }
+            // A reservation has a single participant: the one who just clicked, nobody to tell.
+            if ($gift->getPool()->isPooled()) {
+                $this->eventDispatcher->dispatch(new GiftReadyEvent($gift));
+            }
+        });
     }
 
     /**
      * The price of a pool is a target, not a threshold: when it moves, the contributors
      * have to review their share. A gift declared ready was bought, so a new price on a
      * pool reopens it; on a reservation it only updates the information.
+     *
+     * Called once the new price is saved (UpdateGift): the gift read again under the lock
+     * holds it, with the status and the shares others committed meanwhile.
      */
     public function priceChanged(Gift $gift, float $previousPrice): void
     {
-        if (!$gift->getPool()->isPooled()) {
-            return;
-        }
+        try {
+            $this->whileLocked($gift, function () use ($gift, $previousPrice): void {
+                if (!$gift->getPool()->isPooled()) {
+                    return;
+                }
 
-        if ($this->giftRequestWorkflow->can($gift, 'reopen')) {
-            $this->giftRequestWorkflow->apply($gift, 'reopen');
-            $this->entityManager->flush();
-        }
+                if ($this->giftRequestWorkflow->can($gift, 'reopen')) {
+                    $this->giftRequestWorkflow->apply($gift, 'reopen');
+                    $this->entityManager->flush();
+                }
 
-        if ($gift->getStatus()?->isPoolOpen()) {
-            $this->eventDispatcher->dispatch(new GiftPriceChangedEvent($gift, $previousPrice));
+                if ($gift->getStatus()?->isPoolOpen()) {
+                    $this->eventDispatcher->dispatch(new GiftPriceChangedEvent($gift, $previousPrice));
+                }
+            });
+        } catch (GiftActionRefusedException) {
+            // The one refusal here: the gift deleted while its price was being edited.
+            // Nothing left to reopen nor to announce, and its editor is sent back to the
+            // list, where it is gone.
         }
     }
 
     public function given(Gift $gift): void
     {
-        if (!$this->giftRequestWorkflow->can($gift, 'give')) {
-            throw new GiftActionRefusedException('Le cadeau n\'est pas encore prêt à être donné.');
-        }
+        $this->whileLocked($gift, function () use ($gift): void {
+            if (!$this->giftRequestWorkflow->can($gift, 'give')) {
+                throw new GiftActionRefusedException('Le cadeau n\'est pas encore prêt à être donné.');
+            }
 
-        $gift->setGivenAt(new \DateTimeImmutable());
-        $this->giftRequestWorkflow->apply($gift, 'give');
-        $this->entityManager->flush();
+            $gift->setGivenAt(new \DateTimeImmutable());
+            $this->giftRequestWorkflow->apply($gift, 'give');
+            $this->entityManager->flush();
+        });
     }
 
     public function archived(Gift $gift): void
     {
-        if (!$this->giftRequestWorkflow->can($gift, 'archive')) {
-            throw new GiftActionRefusedException('Le cadeau n\'est pas encore prêt à être archivé.');
-        }
+        $this->whileLocked($gift, function () use ($gift): void {
+            if (!$this->giftRequestWorkflow->can($gift, 'archive')) {
+                throw new GiftActionRefusedException('Le cadeau n\'est pas encore prêt à être archivé.');
+            }
 
-        $this->giftRequestWorkflow->apply($gift, 'archive');
-        $this->entityManager->flush();
+            $this->giftRequestWorkflow->apply($gift, 'archive');
+            $this->entityManager->flush();
+        });
     }
 
     /** Joins the pool, or changes the share of who already takes part in it. */
@@ -132,15 +150,22 @@ class GiftLifecycle
                 throw new GiftActionRefusedException('Ce cadeau ne peut pas recevoir de contribution à son état actuel.');
             }
 
-            // Withdrawn in the meantime (another tab): its row is gone, and saving it would
-            // update nothing while announcing a share.
-            if (null !== $participant->getId() && !$gift->getParticipants()->contains($participant)) {
+            // The user's participation as committed must be the one the form edited, none for
+            // a newcomer: another tab may have joined (a second row for the same user), or
+            // withdrawn their share (saving it would update a row gone), or both.
+            $current = $gift->getParticipant($user);
+            if (null === $participant->getId() && null !== $current) {
+                throw new GiftActionRefusedException('Vous participez déjà à ce cadeau, depuis une autre page : vous pouvez modifier votre participation.');
+            }
+            if (null !== $participant->getId() && null === $current) {
                 throw new GiftActionRefusedException('Votre participation a été retirée entre-temps : vous pouvez participer à nouveau.');
+            }
+            if (null !== $participant->getId() && $current !== $participant) {
+                throw new GiftActionRefusedException('Votre participation a changé depuis une autre page : vérifiez-la avant de la modifier.');
             }
 
             // Checked again against the pool as committed: the form checked the gift as
             // loaded, before another contribution or a new price may have landed.
-            $this->participantRepository->refreshOthersIn($gift, $participant);
             $violations = $this->validator->validateProperty($participant, 'amount');
             if (\count($violations) > 0) {
                 throw new GiftActionRefusedException((string) $violations->get(0)->getMessage());
@@ -169,7 +194,7 @@ class GiftLifecycle
 
             $this->entityManager->persist($participant);
             $this->entityManager->flush();
-        });
+        }, except: $participant);
     }
 
     /**
@@ -177,6 +202,48 @@ class GiftLifecycle
      *                             they were the last one (WorkflowGiftSubscriber)
      */
     public function cancelledContribution(Gift $gift, User $user, bool $accountDeleted = false): void
+    {
+        $this->whileLocked($gift, fn () => $this->leavePool($gift, $user, $accountDeleted));
+    }
+
+    /**
+     * The giver of a reservation they declared ready deletes their account: the gift is
+     * on offer again, its owner told as when a reservation is released. No button offers
+     * it: ReadyReservationRelease alone calls it.
+     */
+    public function release(Gift $gift, User $user): void
+    {
+        $this->whileLocked($gift, fn () => $this->withdrawReservation($gift, $user, 'release'));
+    }
+
+    /**
+     * A contributor to a pool declared ready deletes their account: the pool reopens
+     * without their share, for the others to declare it ready again, or goes back on
+     * offer if they were alone. Its owner, told it was ready, is told it no longer is.
+     * ReadyPoolRelease calls it.
+     */
+    public function leaveReadyPool(Gift $gift, User $user): void
+    {
+        // One lock for both steps: a second one would read the gift again, its reopening
+        // not saved yet.
+        $this->whileLocked($gift, function () use ($gift, $user): void {
+            if (!$this->giftRequestWorkflow->can($gift, 'reopen')) {
+                throw new GiftActionRefusedException('Le cadeau n\'est plus prêt à être donné.');
+            }
+
+            $this->giftRequestWorkflow->apply($gift, 'reopen');
+            $this->leavePool($gift, $user, accountDeleted: true);
+
+            $this->eventDispatcher->dispatch(new GiftNoLongerReadyEvent($gift));
+        });
+    }
+
+    /**
+     * A contribution withdrawn: by its giver (cancelledContribution()), or by a giver
+     * deleting their account from a pool open or declared ready (leaveReadyPool()). The
+     * last one out puts the gift back on offer.
+     */
+    private function leavePool(Gift $gift, User $user, bool $accountDeleted): void
     {
         if (!$this->giftRequestWorkflow->can($gift, 'cancelled_contribution')) {
             throw new GiftActionRefusedException('Le cadeau ne peut pas encore être annulé.');
@@ -199,30 +266,6 @@ class GiftLifecycle
         }
 
         $this->entityManager->flush();
-    }
-
-    /**
-     * The giver of a reservation they declared ready deletes their account: the gift is
-     * on offer again, its owner told as when a reservation is released. No button offers
-     * it: ReadyReservationRelease alone calls it.
-     */
-    public function release(Gift $gift, User $user): void
-    {
-        $this->withdrawReservation($gift, $user, 'release');
-    }
-
-    /**
-     * A contributor to a pool declared ready deletes their account: the pool reopens
-     * without their share, for the others to declare it ready again, or goes back on
-     * offer if they were alone. Its owner, told it was ready, is told it no longer is.
-     * ReadyPoolRelease calls it.
-     */
-    public function leaveReadyPool(Gift $gift, User $user): void
-    {
-        $this->giftRequestWorkflow->apply($gift, 'reopen');
-        $this->cancelledContribution($gift, $user, accountDeleted: true);
-
-        $this->eventDispatcher->dispatch(new GiftNoLongerReadyEvent($gift));
     }
 
     /**
@@ -249,18 +292,28 @@ class GiftLifecycle
     }
 
     /**
-     * Who takes the gift on changes one request at a time: its row locked till the
-     * commit, the gift read again with its participants, the rules check what the
-     * database holds. Else two friends could reserve it at once, or two contributions
-     * each fit in the remaining amount on their own and together exceed it. A DBAL
-     * transaction, as CrewLifecycle::whileLocked() says why.
+     * A gift changes one request at a time: its row locked till the commit, the gift read
+     * again with its participations, every transition decides on what the database holds.
+     * Else two friends could reserve it at once, two contributions each fit in the
+     * remaining amount and together exceed it, or the last contributor leaving put the gift
+     * back on offer while someone joins. A DBAL transaction, as CrewLifecycle::whileLocked()
+     * says why; within a wider one (an account deletion, UserLifecycle), a savepoint.
+     *
+     * Anything not flushed on the gift or its participations is lost to the refresh, but
+     * $except: a share being changed, which holds what was typed in the form.
+     *
+     * Public for a decision about the gift taken outside this class: ReleaseParticipation
+     * choosing how to release a participation from the gift's status. The transition it
+     * then calls locks again, a savepoint reading the same gift once more.
      */
-    private function whileLocked(Gift $gift, \Closure $change): void
+    public function whileLocked(Gift $gift, \Closure $change, ?Participant $except = null): void
     {
-        $this->entityManager->getConnection()->transactional(function () use ($gift, $change): void {
+        $this->entityManager->getConnection()->transactional(function () use ($gift, $change, $except): void {
             if (null === $this->giftRepository->findOneLocked($gift->getId())) {
                 throw new GiftActionRefusedException('Ce cadeau n\'existe plus.');
             }
+
+            $this->participantRepository->refreshIn($gift, $except);
 
             $change();
         });
