@@ -8,9 +8,10 @@
       type: String,
       required: true
     },
+    // Left out where the reader may not see their profile: no link then.
     to: {
       type: String,
-      required: true
+      default: null
     }
   })
 </script>
@@ -30,7 +31,7 @@
           </tr>
         </table>
 
-        <p class="m-0 mt-4 text-right text-sm font-semibold">
+        <p v-if="to" class="m-0 mt-4 text-right text-sm font-semibold">
           <a :href="to" class="accent-link no-underline">&rarr; Voir son profil</a>
         </p>
       </td>

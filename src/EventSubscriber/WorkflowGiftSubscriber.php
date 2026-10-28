@@ -6,9 +6,11 @@ use App\Entity\Gift;
 use App\Entity\Participant;
 use App\Entity\User;
 use App\Enum\GiftStatus;
+use App\Event\GiftDeletedEvent;
 use App\Event\GiftNoLongerReadyEvent;
 use App\Event\GiftReadyEvent;
 use App\Services\Gift\GiftOwnerLabel;
+use App\Services\Url\AvatarUrlGenerator;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -16,6 +18,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Workflow\Event\CompletedEvent;
 use Symfony\Component\Workflow\Event\EnteredEvent;
 use Symfony\Component\Workflow\Event\TransitionEvent;
+use Vich\UploaderBundle\Storage\StorageInterface;
 
 class WorkflowGiftSubscriber implements EventSubscriberInterface
 {
@@ -23,6 +26,8 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
         private MailerInterface $mailer,
         private UrlGeneratorInterface $urlGenerator,
         private GiftOwnerLabel $giftOwnerLabel,
+        private StorageInterface $storage,
+        private AvatarUrlGenerator $avatarUrlGenerator,
     ) {
     }
 
@@ -132,6 +137,65 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
         $this->sendToOwners($gift, "Votre cadeau {$this->titleWithCrew($gift)} est prêt ! 🎁", 'emails/gift_ready_for_gift_owner.html.twig');
     }
 
+    /**
+     * One email to all the givers of a gift its owners deleted, as when it goes with its
+     * author's account (AccountDeletionSubscriber) or with a crew's section
+     * (CrewNotificationSubscriber). The worker renders it once the gift is gone: the Gift
+     * travels serialized with the message, its own fields with it, but its crew is worded
+     * now, its image, removed from the disk on flush, is embedded now, and whoever deleted
+     * it is told in plain values, without a link the reader may not be allowed to follow.
+     */
+    public function giftDeleted(GiftDeletedEvent $event): void
+    {
+        $gift = $event->getGift();
+        $deletedBy = $event->getDeletedBy();
+
+        if (!$gift->getStatus()->isInProgress()) {
+            return;
+        }
+
+        // A member who took part before joining the crew knows they deleted it.
+        $recipients = array_filter($gift->getParticipantsToNotify(), fn (Participant $participant) => $participant->getParticipantUser() !== $deletedBy);
+        if (!$recipients) {
+            return;
+        }
+
+        $ownerOf = $this->giftOwnerLabel->of($gift);
+
+        $email = (new TemplatedEmail())
+            ->to(...array_map(fn (Participant $participant) => $participant->getParticipantUser()->getEmail(), $recipients))
+            ->subject(\sprintf('Le cadeau « %s » %s n\'existe plus', $gift->getTitle(), $ownerOf))
+            ->htmlTemplate('emails/gift_deleted.html.twig')
+        ;
+
+        $giftImage = null;
+        $imagePath = $this->storage->resolvePath($gift, 'imageFile');
+        if (null !== $imagePath && is_readable($imagePath)) {
+            // Its contents, not its path: the file is gone when the worker sends the email.
+            $email->embed(file_get_contents($imagePath), 'gift-image', mime_content_type($imagePath));
+            $giftImage = 'cid:gift-image';
+        }
+
+        $email->context([
+            'gift' => $gift,
+            // Null from the admin: the email names My Gift's team.
+            'deleter' => null === $deletedBy ? null : [
+                'name' => $deletedBy->getFullname(),
+                'avatar' => $this->avatarUrlGenerator->imageUrl($deletedBy),
+                // A crew's givers may only be friends of another member: their list is not
+                // this member's to show them (user.can_see_gifts).
+                'profileUrl' => null !== $gift->getCrew() ? null : $this->urlGenerator->generate('app_section_user_page', ['id' => $deletedBy->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
+            ],
+            'ownerOf' => $ownerOf,
+            'crewOf' => null !== $gift->getCrew() ? $ownerOf : null,
+            'giftImage' => $giftImage,
+            // A ready gift may come from a reservation or from a pool.
+            'pooled' => $gift->getPool()->isPooled(),
+        ]);
+
+        $this->mailer->send($email);
+    }
+
     public static function getSubscribedEvents(): array
     {
         return [
@@ -144,6 +208,7 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
             // Only a pool declared ready, which `leave.contributing` cannot tell from a cancelled one.
             GiftReadyEvent::class => 'giftReady',
             GiftNoLongerReadyEvent::class => 'giftNoLongerReady',
+            GiftDeletedEvent::class => 'giftDeleted',
         ];
     }
 
