@@ -18,3 +18,8 @@ when@prod:
     ux_icons:
         # Suppress exceptions for missing icons in production
         ignore_not_found: true
+
+when@preprod:
+    ux_icons:
+        # As in production: a missing icon renders nothing instead of failing the page
+        ignore_not_found: true

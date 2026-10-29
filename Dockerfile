@@ -23,5 +23,6 @@ realpath_cache_size = 4096K
 realpath_cache_ttl = 600
 EOF
 
-# "prod" and nothing else: any other name turns APP_DEBUG on and skips the when@prod blocks.
+# "prod", or "preprod" (.env.preprod.local): any other name turns APP_DEBUG on and skips the
+# when@prod / when@preprod blocks (composer.json, extra.runtime.prod_envs).
 ENV APP_ENV=prod

@@ -2,6 +2,9 @@
 # holds the HTTPS certificate and hands the requests to FrankenPHP over plain HTTP on
 # 127.0.0.1:9310: `reverse_proxy 127.0.0.1:9310` in the domain's site block.
 #   docker compose -f compose.preprod.yaml up -d --build, then `castor deploy preprod`.
+# .env.preprod.local sets APP_ENV=preprod: the « version de test » banner (Molecule:TestBanner),
+# with prod's settings (the when@preprod blocks of config/packages; no debug, composer.json
+# extra.runtime.prod_envs).
 name: mygift
 
 services:

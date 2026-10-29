@@ -31,6 +31,8 @@
         {% endif %}
     </head>
     <body class="bg-base-200">
+        {# Outside the header block: a page without the navbar still says it is a test version. #}
+        <twig:Molecule:TestBanner />
         {% block header %}{{ include('./_header.html.twig') }}{% endblock %}
             <main class="px-4 sm:px-6 lg:px-8">
                 {% block body %}{% endblock %}

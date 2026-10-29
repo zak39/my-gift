@@ -32,7 +32,7 @@ function deploy(
         'build --pull',
         'up -d',
         'exec php composer install --no-dev --no-scripts --classmap-authoritative --no-interaction',
-        'exec php composer dump-env prod --empty',
+        "exec php composer dump-env {$env} --empty",
         // cache:clear, assets:install, importmap:install
         'exec php composer run-script --no-dev post-install-cmd',
         'exec php bin/console tailwind:build --minify',
