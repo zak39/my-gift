@@ -1,0 +1,45 @@
+# Production: my-gift alone on the server, FrankenPHP takes ports 80 and 443 itself and Caddy
+# inside it gets the HTTPS certificate for SERVER_NAME (.env.prod.local, out of git).
+#   docker compose -f compose.prod.yaml up -d --build, then `castor deploy`.
+name: mygift
+
+services:
+  php:
+    build: .
+    restart: always
+    env_file: .env.prod.local
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp" # HTTP/3
+    volumes:
+      - .:/app
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - database
+
+  messenger-worker:
+    build: .
+    restart: always
+    env_file: .env.prod.local
+    # The async queue (emails, avatars) and the scheduler (the inactive account purge).
+    # --memory-limit stays below PHP's memory_limit (256M, Dockerfile): Messenger stops between
+    # two messages, before PHP kills it in the middle of one.
+    command: php bin/console messenger:consume async scheduler_default --time-limit=3600 --memory-limit=192M
+    volumes:
+      - .:/app
+    depends_on:
+      - database
+
+  database:
+    image: postgres:16-alpine
+    restart: always
+    env_file: .env.prod.local
+    volumes:
+      - database_data:/var/lib/postgresql/data
+
+volumes:
+  database_data:
+  caddy_data:
+  caddy_config:

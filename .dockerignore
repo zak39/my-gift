@@ -1,0 +1,2 @@
+# The Dockerfile copies nothing (the code is mounted): no file needs to reach the build.
+*
