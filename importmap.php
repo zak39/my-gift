@@ -32,10 +32,6 @@ return [
     'daisyui' => [
         'version' => '5.5.19',
     ],
-    'daisyui/daisyui.min.css' => [
-        'version' => '5.5.19',
-        'type' => 'css',
-    ],
     '@symfony/ux-live-component' => [
         'path' => './vendor/symfony/ux-live-component/assets/dist/live_controller.js',
     ],
@@ -44,5 +40,8 @@ return [
     ],
     '@kurkle/color' => [
         'version' => '0.3.4',
+    ],
+    'daisyui/theme' => [
+        'version' => '5.5.19',
     ],
 ];

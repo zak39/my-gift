@@ -131,7 +131,7 @@
                                     <span>
                                         J'accepte les
                                         {# A new tab, so the form half filled is not lost. #}
-                                        <a href="{{ path('app_terms') }}" target="_blank" rel="noopener" class="link link-accent">
+                                        <a href="{{ path('app_terms') }}" target="_blank" rel="noopener" class="link link-primary">
                                             conditions d'utilisation
                                         </a>
                                         et déclare avoir au moins 15 ans
@@ -143,7 +143,7 @@
                                 {% endif %}
                             </div>
                             {{ form_rest(registrationForm) }}
-                            <button type="submit" class="btn btn-accent w-full">Créer un compte</button>
+                            <button type="submit" class="btn btn-primary w-full">Créer un compte</button>
                         {{ form_end(registrationForm) }}
                     </fieldset>
                 </div>

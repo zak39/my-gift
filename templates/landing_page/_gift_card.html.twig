@@ -68,15 +68,15 @@
                 </div>
             {% endif %}
 
-            <div class="mt-auto flex flex-col gap-3 border-t border-base-200 pt-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+            <div class="mt-auto flex flex-col gap-3 border-t border-base-300 pt-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
                 <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
                     {% if gift.status == 'contributing' %}
-                        <span class="btn btn-accent md:w-52 w-full">
+                        <span class="btn btn-primary md:w-52 w-full">
                             <twig:ux:icon name="ri:hand-coin-fill" />
                             Participer au cadeau
                         </span>
                     {% elseif gift.status == 'created' %}
-                        <span class="btn btn-accent md:w-60 w-full">
+                        <span class="btn btn-primary md:w-60 w-full">
                             <twig:ux:icon name="famicons:gift" />
                             Offrir le cadeau
                         </span>

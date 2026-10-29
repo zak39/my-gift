@@ -1,0 +1,34 @@
+{# Shown to visitors too: the choice lives in a cookie of this device (ThemeCookie), not on an
+   account. Plain radios rather than daisyUI's theme-controller, which cannot take off the
+   data-theme the server rendered when "Système" is picked: theme_controller.js does. #}
+{% set current = current_theme() %}
+<div {{ attributes.defaults({
+    class: 'dropdown dropdown-end',
+    'data-controller': 'dropdown theme',
+    'data-theme-cookie-value': constant('App\\Services\\ThemeCookie::NAME'),
+    'data-theme-fallback-value': enum('App\\Enum\\Theme').SYSTEM.value,
+}) }}>
+    <div tabindex="0" role="button" class="btn btn-ghost btn-circle" data-dropdown-target="trigger" aria-label="Changer de thème">
+        <twig:ux:icon name="lucide:sun-moon" class="size-5" aria-hidden="true" />
+    </div>
+    <ul tabindex="-1" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-40 p-2 shadow">
+        {% for theme in enum_cases('App\\Enum\\Theme') %}
+            <li>
+                <label>
+                    <input
+                        type="radio"
+                        name="theme"
+                        class="radio radio-sm radio-primary"
+                        value="{{ theme.value }}"
+                        data-theme-target="choice"
+                        data-daisy-theme="{{ theme.daisyTheme }}"
+                        data-action="theme#choose"
+                        {{ theme == current ? 'checked' }}
+                    >
+                    <twig:ux:icon :name="theme.icon" class="size-4" aria-hidden="true" />
+                    {{ theme.label }}
+                </label>
+            </li>
+        {% endfor %}
+    </ul>
+</div>

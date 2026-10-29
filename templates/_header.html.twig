@@ -6,17 +6,20 @@
     </div>
     {# header_menus: false, the logo alone (the error pages, @Twig/Exception/layout.html.twig). #}
     {% if header_menus ?? true %}
-    <div class="navbar-end">
+    <div class="navbar-end gap-2">
         {% if not is_granted('IS_AUTHENTICATED') %}
+            <twig:Molecule:Navbar:ThemeSwitcher />
             {# Navbar content for unauthenticated users #}
             <twig:Molecule:Navbar:Visitor />
         {% else %}
-            {# Navbar for mobile view #}
-            <twig:Molecule:Navbar:Mobile />
             {# Navbar for browser view #}
             <twig:Molecule:Navbar:Web />
+            {# Between the menu and the user's own buttons #}
+            <twig:Molecule:Navbar:ThemeSwitcher />
             {# Navbar Avatar menu #}
             <twig:Molecule:Navbar:Avatar />
+            {# Navbar for mobile view, last: on a phone, the drawer button sits on the right edge #}
+            <twig:Molecule:Navbar:Mobile />
             {# Opened from both menus above, outside them: a dialog in a closed dropdown or drawer is hidden with it #}
             <twig:Molecule:AboutModal />
         {% endif %}

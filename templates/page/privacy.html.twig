@@ -108,13 +108,16 @@
         un cadeau déjà offert, votre participation reste, au nom d'« Utilisateur supprimé ».
     </p>
 
-    {# One week: remember_me.lifetime in config/packages/security.yaml. #}
+    {# One week: remember_me.lifetime in config/packages/security.yaml. One year: max-age in
+       assets/controllers/theme_controller.js. #}
     <h2 id="cookies">Cookies</h2>
     <p>
-        My Gift ne dépose que les cookies nécessaires à son fonctionnement : celui de votre
-        session ; un jeton de sécurité, le temps d'envoyer un formulaire (protection CSRF) ;
-        et, si vous cochez « Se souvenir de moi », celui qui vous garde connecté·e une
-        semaine. Ni mesure d'audience, ni publicité : aucun consentement n'est donc demandé.
+        My Gift ne dépose que les cookies nécessaires à son fonctionnement ou à un réglage
+        que vous avez choisi : celui de votre session ; un jeton de sécurité, le temps
+        d'envoyer un formulaire (protection CSRF) ; si vous cochez « Se souvenir de moi »,
+        celui qui vous garde connecté·e une semaine ; et, si vous choisissez un thème (clair,
+        sombre ou système), celui qui le retient un an. Ni mesure d'audience, ni publicité :
+        aucun consentement n'est donc demandé.
     </p>
 
     <h2 id="droits">Vos droits</h2>

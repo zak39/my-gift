@@ -4,7 +4,7 @@
             <twig:ux:icon name="lucide:plus" class="size-4" />
             Ajouter un cadeau
         </a>
-        <a href="{{ path('app_section_new') }}" class="btn btn-outline btn-neutral">
+        <a href="{{ path('app_section_new') }}" class="btn btn-outline">
             <twig:ux:icon name="lucide:folder-plus" class="size-4" />
             Créer une section
         </a>
@@ -21,6 +21,6 @@
                 Créer une section
             </a>
         {% endif %}
-        <twig:Molecule:ShareLinkButton :url="user_list_share_url(user)" label="Partager le profil" color="neutral" />
+        <twig:Molecule:ShareLinkButton :url="user_list_share_url(user)" label="Partager le profil" />
     {% endif %}
 </div>

@@ -3,7 +3,6 @@
 {% if is_granted('section.is_owner', section) %}
     <twig:atomic:ButtonLink
         class="btn-sm"
-        color="neutral"
         style="ghost"
         :to="gift_create_url(section)">
         <twig:block name="icon">
@@ -16,7 +15,6 @@
 
     <twig:atomic:ButtonLink
         class="btn-sm"
-        color="neutral"
         style="ghost"
         :to="section_edit_url(section)">
         <twig:block name="icon">
@@ -33,7 +31,6 @@
         <twig:block name="handlerButton">
             <twig:atomic:Button
                 class="btn-sm"
-                color="neutral"
                 style="ghost"
                 onclick="modal_remove_section_{{ section.id }}.showModal()">
                 <twig:block name="icon">

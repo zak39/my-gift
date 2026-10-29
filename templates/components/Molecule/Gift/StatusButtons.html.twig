@@ -4,7 +4,7 @@
     {% if computed.canEditContribution %}
         <twig:atomic:ButtonLink
             class="md:w-60 w-full"
-            color="accent"
+            color="primary"
             style="block"
             :to="path('app_gift_participated', { id: gift.id })">
             <twig:block name="icon">
@@ -19,7 +19,7 @@
     {% if computed.canJoinPool %}
         <twig:atomic:ButtonLink
             class="md:w-60 w-full"
-            color="accent"
+            color="primary"
             style="block"
             :to="path('app_gift_participated', { id: gift.id })">
             <twig:block name="icon">
@@ -37,7 +37,7 @@
             :id="gift.id">
         <twig:block name="handlerButton">
             <twig:atomic:Button class="md:w-52 w-full"
-                color="accent"
+                color="primary"
                 style="block"
                 onclick="modal_offer_gift_{{ gift.id }}.showModal()">
                 <twig:block name="icon">
@@ -52,7 +52,7 @@
         </twig:block>
         <twig:block name="actionButtons">
             <twig:atomic:ButtonLink class="sm:flex-1"
-                color="accent"
+                color="primary"
                 style="block"
                 :to="path('app_gift_reserved', { id: gift.id })">
                 <twig:block name="icon">
@@ -63,7 +63,6 @@
                 </twig:block>
             </twig:atomic:ButtonLink>
             <twig:atomic:ButtonLink class="sm:flex-1"
-                color="neutral"
                 style="outline"
                 :to="path('app_gift_participated', { id: gift.id })">
                 <twig:block name="icon">
@@ -82,7 +81,7 @@
             <input type="hidden"
                 name="_token"
                 value="{{ csrf_token('gift-ready-' ~ gift.id) }}">
-            <button type="submit" class="btn btn-accent md:w-52 w-full">
+            <button type="submit" class="btn btn-primary md:w-52 w-full">
                 <twig:ux:icon name="famicons:gift" />
                 Prêt à donner le cadeau
             </button>
@@ -94,16 +93,15 @@
             class="disengage_gift"
             :id="gift.id">
             <twig:block name="handlerButton">
-                <twig:atomic:Button:Outline class="md:w-52 w-full"
-                    onclick="modal_disengage_gift_{{ gift.id }}.showModal()"
-                    color="neutral">
+                <twig:atomic:Button class="md:w-52 w-full"
+                    onclick="modal_disengage_gift_{{ gift.id }}.showModal()">
                 <twig:block name="icon">
                     <twig:ux:icon name="mdi:gift-off" />
                 </twig:block>
                 <twig:block name="name">
                     <span>Se retirer du cadeau</span>
                 </twig:block>
-                </twig:atomic:Button:Outline>
+                </twig:atomic:Button>
             </twig:block>
             <twig:block name="message">
                 <p class="text-base">Êtes vous sûr de vouloir vous retirer de la réservation du cadeau <b>{{ gift.title }}</b> ?</p>
@@ -114,7 +112,7 @@
                         <input type="hidden"
                             name="_token"
                             value="{{ csrf_token('disengage-gift-' ~ gift.id) }}">
-                        <button type="submit" class="btn btn-accent">
+                        <button type="submit" class="btn btn-error">
                             <twig:ux:icon name="mdi:gift-off" />
                             Oui, ne plus réserver le cadeau
                         </button>
@@ -129,16 +127,15 @@
             class="cancelled_contribution_gift"
             :id="gift.id">
             <twig:block name="handlerButton">
-                <twig:atomic:Button:Outline class="md:w-56 w-full"
-                    onclick="modal_cancelled_contribution_gift_{{ gift.id }}.showModal()"
-                    color="neutral">
+                <twig:atomic:Button class="md:w-56 w-full"
+                    onclick="modal_cancelled_contribution_gift_{{ gift.id }}.showModal()">
                 <twig:block name="icon">
                     <twig:ux:icon name="mdi:gift-off" />
                 </twig:block>
                 <twig:block name="name">
                     <span>Annuler les contributions</span>
                 </twig:block>
-                </twig:atomic:Button:Outline>
+                </twig:atomic:Button>
             </twig:block>
             <twig:block name="message">
                 <p class="text-base">Êtes vous sûr de vouloir vous retirer de la contribution du cadeau <b>{{ gift.title }}</b> ?</p>
@@ -149,7 +146,7 @@
                         <input type="hidden"
                             name="_token"
                             value="{{ csrf_token('cancelled-contribution-gift-' ~ gift.id) }}">
-                        <button type="submit" class="btn btn-wide btn-accent md:w-64 w-full">
+                        <button type="submit" class="btn btn-wide btn-error md:w-64 w-full">
                             <twig:ux:icon name="mdi:gift-off" />
                             Oui, annuler ma contribution
                         </button>
@@ -164,7 +161,7 @@
             <input type="hidden"
                 name="_token"
                 value="{{ csrf_token('gift-given-' ~ gift.id) }}">
-            <button type="submit" class="btn btn-accent md:w-52 w-full">
+            <button type="submit" class="btn btn-primary md:w-52 w-full">
                 <twig:ux:icon name="mdi:gift-open" />
                 Cadeau donné
             </button>
@@ -176,7 +173,7 @@
             <input type="hidden"
                 name="_token"
                 value="{{ csrf_token('gift-archived-' ~ gift.id) }}">
-            <button type="submit" class="btn btn-accent md:w-52 w-full">
+            <button type="submit" class="btn btn-primary md:w-52 w-full">
                 <twig:ux:icon name="boxicons:archive-alt-filled" />
                 Archiver le cadeau
             </button>
