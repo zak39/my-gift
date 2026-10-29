@@ -74,7 +74,7 @@ enum GiftStatus: string
         return match ($this) {
             self::CREATED => 'badge-neutral',
             self::RESERVED => 'badge-info',
-            self::CONTRIBUTING => 'badge-accent',
+            self::CONTRIBUTING => 'badge-primary',
             self::READY => 'badge-warning',
             self::GIVEN => 'badge-success',
             self::ARCHIVED => 'badge-neutral badge-soft',

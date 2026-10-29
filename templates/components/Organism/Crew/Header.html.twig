@@ -29,13 +29,13 @@
                     <twig:ux:icon name="lucide:folder-plus" class="size-4" />
                     Créer une section
                 </a>
-                <a href="{{ path('app_crew_edit', { id: crew.id }) }}" class="btn btn-outline btn-neutral">
+                <a href="{{ path('app_crew_edit', { id: crew.id }) }}" class="btn btn-outline">
                     <twig:ux:icon name="lucide:pencil" class="size-4" />
                     Renommer
                 </a>
             {% endif %}
             {# The members and their friends alike: one page for both, one link. #}
-            <twig:Molecule:ShareLinkButton :url="crew_share_url(crew)" label="Partager le groupe" color="neutral" />
+            <twig:Molecule:ShareLinkButton :url="crew_share_url(crew)" label="Partager le groupe" />
             {% if is_granted('crew.can_leave', crew) %}
                 <twig:Molecule:Crew:LeaveButton :crew="crew" />
             {% endif %}

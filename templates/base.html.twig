@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html data-theme="emerald">
+{# Rendered from the theme cookie, no flash of the wrong theme on load. None for "system":
+   daisyUI then follows prefers-color-scheme. #}
+{% set daisyTheme = current_theme().daisyTheme %}
+<html{% if daisyTheme %} data-theme="{{ daisyTheme }}"{% endif %}>
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />

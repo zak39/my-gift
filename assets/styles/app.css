@@ -1,5 +1,43 @@
 @import "tailwindcss";
-@plugin "../vendor/daisyui/daisyui.index.js";
+/* No built-in theme from the main plugin: the two below, built-in ones with a few colours
+   changed, are the only ones generated, each once. Emerald applies without a data-theme on
+   <html> (default); dark instead when the system asks for a dark mode (prefersdark). "Follow
+   the system" is therefore a page that carries no data-theme at all. */
+@plugin "../vendor/daisyui/daisyui.index.js" {
+    themes: false;
+}
+
+/* Emerald's page background (base-200, under <body>) at 93% greyed the muted text over it:
+   lighter, the cards keep their white and their base-300 borders. Each block must repeat
+   default / prefersdark and color-scheme, which it would drop otherwise.
+   Both themes share their accent and success: the ribbon's pink rather than a salmon (emerald)
+   or a teal (dark), and a dark green, told apart from the light green of the calls to action
+   (a pool still open, primary, against a complete one, success). */
+@plugin "../vendor/daisyui/theme.js" {
+    name: "emerald";
+    default: true;
+    color-scheme: light;
+    --color-base-200: oklch(97.5% 0 0);
+    --color-base-300: oklch(90% 0 0);
+    --color-accent: var(--color-ribbon-pink);
+    --color-accent-content: oklch(94% 0.028 342.258);
+    --color-success: oklch(50% 0.13 155);
+    --color-success-content: oklch(98% 0.02 155);
+}
+
+/* The calls to action stay green in the dark theme too: emerald's primary, in place of
+   dark's violet, with the dark text emerald sets on it. */
+@plugin "../vendor/daisyui/theme.js" {
+    name: "dark";
+    prefersdark: true;
+    color-scheme: dark;
+    --color-primary: oklch(76.662% 0.135 153.45);
+    --color-primary-content: oklch(33.387% 0.04 162.24);
+    --color-accent: var(--color-ribbon-pink);
+    --color-accent-content: oklch(94% 0.028 342.258);
+    --color-success: oklch(50% 0.13 155);
+    --color-success-content: oklch(98% 0.02 155);
+}
 
 /* The app's name (font-brand). Modak, served from assets/ rather than Google Fonts: no
    request to a third party. Latin only, its one weight (400). License: fonts/modak/OFL.txt */
@@ -14,6 +52,17 @@
 @theme {
     --animate-favorite-pop: favorite-pop 0.4s ease-out;
     --font-brand: 'Modak', system-ui, sans-serif;
+    /* The gift-wrap ribbon's stripes (atomic:GiftRibbon), the same in every theme: the app's
+       signature, not a theme colour. */
+    --color-ribbon-pink: oklch(65% 0.241 354.308);
+    --color-ribbon-blue: oklch(61.302% 0.202 261.294);
+}
+
+/* The theme switch's cross-fade (theme_controller.js), a touch slower than the browser's
+   0.25s default so the eye follows it. The app's only view transition. */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 0.4s;
 }
 
 @keyframes favorite-pop {

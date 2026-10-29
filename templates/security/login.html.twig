@@ -24,7 +24,7 @@
             {% if app.user %}
                 <div class="card mb-3">
                     <p>Vous êtes déjà connecté en tant que {{ app.user.userIdentifier }}.</p>
-                    <a class="btn btn-neutral my-4" href="{{ logout_path() }}">Se déconnecter</a>
+                    <a class="btn btn-outline my-4" href="{{ logout_path() }}">Se déconnecter</a>
                 </div>
             {% else %}
                 <div class="text-center lg:text-left">

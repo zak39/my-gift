@@ -16,5 +16,4 @@ final class ShareLinkButton
     public string $label = 'Partager';
     public bool $iconOnly = false;
     public string $style = 'outline';
-    public string $color = '';
 }

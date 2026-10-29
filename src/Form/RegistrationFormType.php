@@ -45,7 +45,7 @@ class RegistrationFormType extends AbstractType
                     ),
                 ],
                 'attr' => [
-                    'class' => 'checkbox checkbox-accent my-4',
+                    'class' => 'checkbox checkbox-primary my-4',
                 ],
             ])
             ->add('plainPassword', RepeatedType::class, [

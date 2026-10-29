@@ -24,7 +24,7 @@
         </div>
 
         <div class="grid gap-6 lg:grid-cols-[280px_1fr] items-start">
-            <div class="flex flex-col items-center space-y-4 text-center p-4 bg-base-100 border border-base-200 rounded-md shadow-sm">
+            <div class="flex flex-col items-center space-y-4 text-center p-4 bg-base-100 border border-base-300 rounded-md shadow-sm">
                 <twig:Molecule:User:ProfileAvatar :user="user" />
                 <div>
                     <h2 class="text-2xl font-semibold">{{ user.firstname }} {{ user.lastname }}</h2>
@@ -46,7 +46,7 @@
                             </div>
                         {% endif %}
                     <div class="space-y-4">
-                        <div class="p-4 bg-base-100 border border-base-200 rounded-md shadow-sm">
+                        <div class="p-4 bg-base-100 border border-base-300 rounded-md shadow-sm">
                             <h3 class="text-sm font-medium mb-3">Informations personnelles</h3>
                             <div class="grid gap-4 md:grid-cols-2">
                                 <div>
@@ -78,7 +78,7 @@
                             </div>
                         </div>
 
-                        <div class="p-4 bg-base-100 border border-base-200 rounded-md shadow-sm">
+                        <div class="p-4 bg-base-100 border border-base-300 rounded-md shadow-sm">
                             <h3 class="text-sm font-medium mb-3">Sécurité</h3>
                             <div class="mb-4">
                                 {{ form_label(profileForm.oldPassword) }}
@@ -201,7 +201,7 @@
                             </div>
                             </div>
 
-                            <div class="p-4 bg-base-100 border border-base-200 rounded-md shadow-sm">
+                            <div class="p-4 bg-base-100 border border-base-300 rounded-md shadow-sm">
                                 <h3 class="text-sm font-medium mb-3">Photo de profil</h3>
                                 <div>
                                     {{ form_label(profileForm.avatarFile) }}
@@ -221,7 +221,7 @@
 
                         {{ form_widget(profileForm._token) }}
                     <div class="pt-4">
-                        <button type="submit" class="btn btn-accent w-full">Enregistrer les modifications</button>
+                        <button type="submit" class="btn btn-primary w-full">Enregistrer les modifications</button>
                     </div>
                 {{ form_end(profileForm, {'render_rest': false}) }}
                 </turbo-frame>
@@ -229,7 +229,7 @@
                 {# Outside the frame, Turbo off: a download is no page to render. No `download`
                    attribute: a session expired in the meantime would save the login page
                    as the file; Content-Disposition only comes with the export itself. #}
-                <section class="mt-8 p-4 bg-base-100 border border-base-200 rounded-md shadow-sm" aria-labelledby="data-export-title">
+                <section class="mt-8 p-4 bg-base-100 border border-base-300 rounded-md shadow-sm" aria-labelledby="data-export-title">
                     <h3 id="data-export-title" class="text-sm font-medium mb-1">Télécharger mes données</h3>
                     <p class="text-sm text-base-content/70 mb-4">
                         Récupérez votre profil, vos sections, vos cadeaux et ceux de vos groupes, vos participations, vos favoris, vos amis, les personnes bloquées et vos groupes. L'ODS et Excel ont une feuille par sujet, une par groupe pour les cadeaux ; le CSV est une archive ZIP d'un fichier par sujet ; le JSON se réutilise ailleurs.

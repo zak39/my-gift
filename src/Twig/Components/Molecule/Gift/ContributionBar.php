@@ -33,7 +33,7 @@ final class ContributionBar
         return match (true) {
             $this->gift->getPool()->getExceededAmount() > 0 => 'progress-warning',
             $this->gift->getPool()->isComplete() => 'progress-success',
-            default => 'progress-accent',
+            default => 'progress-primary',
         };
     }
 }

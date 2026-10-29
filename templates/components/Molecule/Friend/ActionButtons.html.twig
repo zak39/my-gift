@@ -43,7 +43,7 @@
         </span>
         <form method="post" action="{{ path('app_friend_action', { id: user.id, action: 'unblock' }) }}">
             <input type="hidden" name="_token" value="{{ csrf_token('friend-unblock-' ~ user.id) }}">
-            <button type="submit" class="btn btn-sm btn-outline btn-neutral">
+            <button type="submit" class="btn btn-sm btn-outline">
                 <twig:ux:icon name="lucide:lock-open" class="size-4" />
                 Débloquer
             </button>

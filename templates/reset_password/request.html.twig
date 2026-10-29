@@ -51,7 +51,7 @@
                                 <div class="alert alert-error alert-soft my-2">{{ form_errors(requestForm.email) }}</div>
                             {% endif %}
                             {{ form_rest(requestForm) }}
-                            <button type="submit" class="btn btn-accent mt-4">Envoyer le lien</button>
+                            <button type="submit" class="btn btn-primary mt-4">Envoyer le lien</button>
                         </fieldset>
                     {{ form_end(requestForm) }}
                     <a class="link link-hover" href="{{ path('app_login') }}">Retour à la connexion</a>

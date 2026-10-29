@@ -7,8 +7,7 @@
         class="{{ iconOnly ? 'btn-circle' : '' }}"
         data-controller="copy"
         data-copy-text-value="{{ url }}"
-        data-action="click->copy#copy"
-        :color="color">
+        data-action="click->copy#copy">
         <twig:block name="icon">
             {# The size of the icons next to it: other icon buttons, or labelled ones. #}
             <span data-copy-target="icon">
