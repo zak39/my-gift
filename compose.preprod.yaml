@@ -1,0 +1,52 @@
+# Preprod: Caddy, installed on the server (its Caddyfile is kept out of this repository),
+# holds the HTTPS certificate and hands the requests to FrankenPHP over plain HTTP on
+# 127.0.0.1:9310: `reverse_proxy 127.0.0.1:9310` in the domain's site block.
+#   docker compose -f compose.preprod.yaml up -d --build, then `castor deploy preprod`.
+name: mygift
+
+services:
+  php:
+    build: .
+    restart: always
+    env_file: .env.preprod.local
+    environment:
+      # HTTP only: the proxy holds the certificate.
+      SERVER_NAME: ":80"
+      # Both must trust the proxy, or the X-Forwarded-Proto it sends is ignored: PHP then
+      # believes the request is plain HTTP, and the login redirects to http://, which Turbo's
+      # fetch() refuses from an HTTPS page. The proxy reaches the container through Docker's
+      # bridge (a private address); the port is bound to 127.0.0.1, so nobody else does.
+      CADDY_GLOBAL_OPTIONS: |
+        servers {
+          trusted_proxies static private_ranges
+        }
+      SYMFONY_TRUSTED_PROXIES: private_ranges
+    ports:
+      - "127.0.0.1:9310:80"
+    volumes:
+      - .:/app
+    depends_on:
+      - database
+
+  messenger-worker:
+    build: .
+    restart: always
+    env_file: .env.preprod.local
+    # The async queue (emails, avatars) and the scheduler (the inactive account purge).
+    # --memory-limit stays below PHP's memory_limit (256M, Dockerfile): Messenger stops between
+    # two messages, before PHP kills it in the middle of one.
+    command: php bin/console messenger:consume async scheduler_default --time-limit=3600 --memory-limit=192M
+    volumes:
+      - .:/app
+    depends_on:
+      - database
+
+  database:
+    image: postgres:16-alpine
+    restart: always
+    env_file: .env.preprod.local
+    volumes:
+      - database_data:/var/lib/postgresql/data
+
+volumes:
+  database_data:

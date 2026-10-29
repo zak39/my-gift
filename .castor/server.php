@@ -2,8 +2,11 @@
 
 namespace server;
 
+use Castor\Attribute\AsArgument;
 use Castor\Attribute\AsTask;
 
+use function Castor\io;
+use function Castor\run;
 use function composer\install;
 use function database\fixtures;
 use function database\migrate;
@@ -44,4 +47,18 @@ function stop(bool $quietly = false, bool $purge = false): void
 {
     down($purge, $quietly);
     sfStop();
+}
+
+#[AsTask(description: 'Restart the Messenger worker on the server (env: prod or preprod)', aliases: ['restart:messenger'])]
+function restartMessenger(
+    #[AsArgument(description: 'prod or preprod')]
+    string $env = 'prod',
+): void {
+    if (!\in_array($env, ['prod', 'preprod'], true)) {
+        throw new \InvalidArgumentException("Unknown environment \"{$env}\": prod or preprod.");
+    }
+
+    run("docker compose -f compose.{$env}.yaml restart messenger-worker");
+
+    io()->success("Messenger worker restarted on {$env}");
 }

@@ -13,6 +13,7 @@ import(__DIR__.'/.castor/composer.php');
 import(__DIR__.'/.castor/context.php');
 import(__DIR__.'/.castor/npm.php');
 import(__DIR__.'/.castor/maizzle.php');
+import(__DIR__.'/.castor/deploy.php');
 
 #[AsTask(description: 'Getting Started to begin with commands', aliases: ['started'])]
 function gettingStarted(): void
