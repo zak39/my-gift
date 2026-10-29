@@ -115,6 +115,9 @@
         "symfony/symfony": "*"
     },
     "extra": {
+        "runtime": {
+            "prod_envs": ["prod", "preprod"]
+        },
         "symfony": {
             "allow-contrib": false,
             "require": "7.4.*"

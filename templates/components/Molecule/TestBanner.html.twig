@@ -1,0 +1,5 @@
+{% if this.visible %}
+    <div{{ attributes.defaults({class: 'bg-warning text-warning-content px-4 py-1.5 text-center text-sm font-medium', role: 'note'}) }}>
+        🚧 Version de test de My Gift (version {{ site.version }}) : des bugs sont possibles.
+    </div>
+{% endif %}

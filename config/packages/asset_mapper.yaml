@@ -9,3 +9,8 @@ when@prod:
     framework:
         asset_mapper:
             missing_import_mode: warn
+
+when@preprod:
+    framework:
+        asset_mapper:
+            missing_import_mode: warn

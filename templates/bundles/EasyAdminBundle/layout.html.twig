@@ -1,0 +1,9 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+{# The « version de test » banner, as on the front (base.html.twig). The admin loads Bootstrap,
+   not Tailwind (assets/admin.js): bg-warning, px-4 and text-center exist in both, the rest
+   is Bootstrap's. #}
+{% block wrapper_wrapper %}
+    <twig:Molecule:TestBanner class="text-dark py-1 small fw-medium" />
+    {{ parent() }}
+{% endblock %}
