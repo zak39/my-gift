@@ -21,7 +21,7 @@ parameters:
 
     # Who makes the app and how to reach them: the footer, the « À propos » page and modal,
     # the legal pages, all through the `site` Twig global (config/packages/twig.yaml).
-    # « dev » until the deployment sets APP_VERSION from the git tag (#101).
+    # « dev » unless `castor deploy` sets APP_VERSION to the tag it deploys (compose.*.yaml).
     env(APP_VERSION): 'dev'
     app.version: '%env(APP_VERSION)%'
     app.author_name: 'zakode'
