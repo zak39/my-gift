@@ -1,5 +1,6 @@
 # Production: my-gift alone on the server, FrankenPHP takes ports 80 and 443 itself and Caddy
-# inside it gets the HTTPS certificate for SERVER_NAME (.env.prod.local, out of git).
+# inside it gets the HTTPS certificate for SERVER_NAME (.env.prod.local, out of git: copy
+# .env.server.dist, which lists every variable the server must give).
 #   `castor deploy prod`: it checks out the latest tag and starts the containers.
 name: mygift
 
@@ -21,7 +22,8 @@ services:
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
-      - database
+      database:
+        condition: service_healthy
 
   messenger-worker:
     build: .
@@ -31,15 +33,28 @@ services:
     # --memory-limit stays below PHP's memory_limit (256M, Dockerfile): Messenger stops between
     # two messages, before PHP kills it in the middle of one.
     command: php bin/console messenger:consume async scheduler_default --time-limit=3600 --memory-limit=192M
+    # The image's own check asks Caddy, which this container does not run: always "unhealthy".
+    healthcheck:
+      disable: true
     volumes:
       - .:/app
     depends_on:
-      - database
+      database:
+        condition: service_healthy
 
   database:
     image: postgres:16-alpine
     restart: always
     env_file: .env.prod.local
+    # php and the worker wait for it (depends_on): migrations and the queue need a ready
+    # database, not just a started container. $$ leaves the variables to the container's
+    # shell, which has them from the env_file.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
     volumes:
       - database_data:/var/lib/postgresql/data
 

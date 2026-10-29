@@ -2,7 +2,7 @@
 # holds the HTTPS certificate and hands the requests to FrankenPHP over plain HTTP on
 # 127.0.0.1:9310: `reverse_proxy 127.0.0.1:9310` in the domain's site block.
 #   `castor deploy preprod`: it checks out the latest tag and starts the containers.
-# .env.preprod.local sets APP_ENV=preprod: the « version de test » banner (Molecule:TestBanner),
+# .env.preprod.local (out of git: copy .env.server.dist) sets APP_ENV=preprod: the « version de test » banner (Molecule:TestBanner),
 # with prod's settings (the when@preprod blocks of config/packages; no debug, composer.json
 # extra.runtime.prod_envs).
 name: mygift
@@ -31,7 +31,8 @@ services:
     volumes:
       - .:/app
     depends_on:
-      - database
+      database:
+        condition: service_healthy
 
   messenger-worker:
     build: .
@@ -41,15 +42,28 @@ services:
     # --memory-limit stays below PHP's memory_limit (256M, Dockerfile): Messenger stops between
     # two messages, before PHP kills it in the middle of one.
     command: php bin/console messenger:consume async scheduler_default --time-limit=3600 --memory-limit=192M
+    # The image's own check asks Caddy, which this container does not run: always "unhealthy".
+    healthcheck:
+      disable: true
     volumes:
       - .:/app
     depends_on:
-      - database
+      database:
+        condition: service_healthy
 
   database:
     image: postgres:16-alpine
     restart: always
     env_file: .env.preprod.local
+    # php and the worker wait for it (depends_on): migrations and the queue need a ready
+    # database, not just a started container. $$ leaves the variables to the container's
+    # shell, which has them from the env_file.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
     volumes:
       - database_data:/var/lib/postgresql/data
 
