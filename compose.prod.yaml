@@ -1,6 +1,6 @@
 # Production: my-gift alone on the server, FrankenPHP takes ports 80 and 443 itself and Caddy
 # inside it gets the HTTPS certificate for SERVER_NAME (.env.prod.local, out of git).
-#   docker compose -f compose.prod.yaml up -d --build, then `castor deploy`.
+#   `castor deploy prod`: it checks out the latest tag and starts the containers.
 name: mygift
 
 services:
@@ -8,6 +8,10 @@ services:
     build: .
     restart: always
     env_file: .env.prod.local
+    environment:
+      # The deployed tag, set by `castor deploy`. Not required (${APP_VERSION:?}): compose
+      # would then refuse every command without it, logs and exec included.
+      APP_VERSION: ${APP_VERSION:-dev}
     ports:
       - "80:80"
       - "443:443"
