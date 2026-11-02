@@ -1,9 +1,13 @@
+<!--
+  The app's --color-primary (assets/styles/app.css), in hex for the mail clients: emerald's
+  for light, dark's under prefers-color-scheme. Change them together.
+-->
 <template>
     <style embed>
-        .accent-link { color: #66cc8a; }
+        .accent-link { color: #7a47d9; }
 
         @media (prefers-color-scheme: dark) {
-            .accent-link { color: #1fb854 !important; }
+            .accent-link { color: #ab90f8 !important; }
         }
     </style>
 </template>
