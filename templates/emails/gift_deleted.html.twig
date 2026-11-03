@@ -39,11 +39,11 @@
   }
 }
 </style> <style>.accent-link {
-  color: #66cc8a;
+  color: #7a47d9;
 }
 @media (prefers-color-scheme: dark) {
   .accent-link {
-    color: #1fb854 !important;
+    color: #ab90f8 !important;
   }
 }
 </style> <style>.gift-card {
@@ -73,6 +73,11 @@
   background-color: #333c4d;
 }
 
+.gift-card-primary {
+  color: #fff;
+  background-color: #7a47d9;
+}
+
 .gift-card-secondary {
   color: #fff;
   background-color: #377cfb;
@@ -83,19 +88,14 @@
   background-color: #00b5ff;
 }
 
-.gift-card-accent {
-  color: #000;
-  background-color: #f68067;
-}
-
 .gift-card-warning {
   color: #000;
   background-color: #ffbe00;
 }
 
 .gift-card-success {
-  color: #000;
-  background-color: #00a96e;
+  color: #effdf3;
+  background-color: #007840;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -122,18 +122,18 @@
   }
 
   .gift-card-neutral {
-    color: #cdd3d1 !important;
-    background-color: #19362d !important;
+    color: #e4e4e7 !important;
+    background-color: #09090b !important;
+  }
+
+  .gift-card-primary {
+    color: #261547 !important;
+    background-color: #ab90f8 !important;
   }
 
   .gift-card-secondary {
-    color: #000c07 !important;
-    background-color: #1eb88e !important;
-  }
-
-  .gift-card-accent {
-    color: #010c0b !important;
-    background-color: #1fb8ab !important;
+    color: #f9e4f0 !important;
+    background-color: #f43098 !important;
   }
 }
 </style> <style>.user-card {
@@ -169,7 +169,7 @@
                     </p> {% if deleter %} <p><b>{{ deleter.name|title }}</b> a supprimé {% if crewOf %}le{% else %}son{% endif %} cadeau <b>{{ gift.title }}</b>{% if crewOf %} {{ crewOf }}{% endif %}, auquel vous participiez : il n'apparaît plus sur My Gift.
                         </p> <div style="margin-top: 24px; margin-bottom: 24px;">{% if deleter.profileUrl %} <table class="user-card" cellpadding="0" cellspacing="0" role="none" style="width: 100%; border-radius: 16px; border-style: solid; border-width: 1px;"><tr><td style="padding: 20px;"><table cellpadding="0" cellspacing="0" role="none"><tr><td style="vertical-align: middle;"><img src="{{ absolute_url(deleter.avatar) }}" alt="Photo de profil {{ deleter.name|title }}" width="56" height="56" class="user-card-avatar" style="vertical-align: middle; max-width: 100%; display: block; border-radius: 9999px; border-style: solid; border-width: 2px; object-fit: cover; padding: 2px;"></td> <td style="padding-left: 16px; vertical-align: middle;"><h2 style="margin: 0; font-size: 18px; line-height: 28px; font-weight: 600;">{{ deleter.name|title }}</h2></td></tr></table> <p style="margin: 16px 0 0; text-align: right; font-size: 14px; line-height: 20px; font-weight: 600;"><a href="{{ deleter.profileUrl }}" class="accent-link" style="text-decoration: none;">→ Voir son profil</a></p></td></tr></table> {% else %} <table class="user-card" cellpadding="0" cellspacing="0" role="none" style="width: 100%; border-radius: 16px; border-style: solid; border-width: 1px;"><tr><td style="padding: 20px;"><table cellpadding="0" cellspacing="0" role="none"><tr><td style="vertical-align: middle;"><img src="{{ absolute_url(deleter.avatar) }}" alt="Photo de profil {{ deleter.name|title }}" width="56" height="56" class="user-card-avatar" style="vertical-align: middle; max-width: 100%; display: block; border-radius: 9999px; border-style: solid; border-width: 2px; object-fit: cover; padding: 2px;"></td> <td style="padding-left: 16px; vertical-align: middle;"><h2 style="margin: 0; font-size: 18px; line-height: 28px; font-weight: 600;">{{ deleter.name|title }}</h2></td></tr></table></td></tr></table> {% endif %}</div> {% else %} <p>
                             Le cadeau <b>{{ gift.title }}</b> {{ ownerOf }}, auquel vous participiez, a été supprimé par l'équipe de My Gift : il n'apparaît plus sur le site.
-                        </p> {% endif %} <div style="margin-top: 24px; margin-bottom: 24px;"><table class="gift-card" cellpadding="0" cellspacing="0" role="none" style="width: 100%; border-radius: 16px; border-style: solid; border-width: 1px;"><tr><td class="gift-card-figure" style="border-top-left-radius: 16px; border-top-right-radius: 16px; padding: 16px; text-align: center;"><img src="{{ giftImage ?? (gift.image ? absolute_url(vich_uploader_asset(gift, 'imageFile')) : 'https://img.daisyui.com/images/stock/photo-1494232410401-ad00d5433cfa.webp') }}" alt="{{ gift.title }}" height="192" style="vertical-align: middle; max-width: 100%; margin-left: auto; margin-right: auto; display: block; height: 192px; width: auto;" width="auto"></td></tr> <tr><td style="padding: 24px;">{% if gift.status.value == 'reserved' %} <span class="gift-card-info" style="display: inline-block; border-radius: 9999px; padding: 2px 12px; font-size: 16px; line-height: 24px;">{{ gift.status.label }}</span> {% elseif gift.status.value == 'contributing' %} <span class="gift-card-accent" style="display: inline-block; border-radius: 9999px; padding: 2px 12px; font-size: 16px; line-height: 24px;">{{ gift.status.label }}</span> {% elseif gift.status.value == 'ready' %} <span class="gift-card-warning" style="display: inline-block; border-radius: 9999px; padding: 2px 12px; font-size: 16px; line-height: 24px;">{{ gift.status.label }}</span> {% elseif gift.status.value == 'given' %} <span class="gift-card-success" style="display: inline-block; border-radius: 9999px; padding: 2px 12px; font-size: 16px; line-height: 24px;">{{ gift.status.label }}</span> {% else %} <span class="gift-card-neutral" style="display: inline-block; border-radius: 9999px; padding: 2px 12px; font-size: 16px; line-height: 24px;">{{ gift.status.label }}</span> {% endif %} <h2 style="margin: 12px 0 0; font-size: 16px; line-height: 1.375; font-weight: 600;">{{ gift.title|u.truncate(120, '...', false) }}</h2> <p style="margin: 4px 0 0; font-size: 24px; line-height: 32px; font-weight: 700;">{{ gift.price|format_currency('EUR') }}</p> {% if gift.description %} <p class="gift-card-muted" style="margin: 16px 0 0; font-size: 14px; line-height: 20px;">{{ gift.description|u.truncate(160, '...', false) }}</p> {% endif %}</td></tr></table></div> {% if pooled %} <p>
+                        </p> {% endif %} <div style="margin-top: 24px; margin-bottom: 24px;"><table class="gift-card" cellpadding="0" cellspacing="0" role="none" style="width: 100%; border-radius: 16px; border-style: solid; border-width: 1px;"><tr><td class="gift-card-figure" style="border-top-left-radius: 16px; border-top-right-radius: 16px; padding: 16px; text-align: center;"><img src="{{ giftImage ?? (gift.image ? absolute_url(vich_uploader_asset(gift, 'imageFile')) : 'https://img.daisyui.com/images/stock/photo-1494232410401-ad00d5433cfa.webp') }}" alt="{{ gift.title }}" height="192" style="vertical-align: middle; max-width: 100%; margin-left: auto; margin-right: auto; display: block; height: 192px; width: auto;" width="auto"></td></tr> <tr><td style="padding: 24px;">{% if gift.status.value == 'reserved' %} <span class="gift-card-info" style="display: inline-block; border-radius: 9999px; padding: 2px 12px; font-size: 16px; line-height: 24px;">{{ gift.status.label }}</span> {% elseif gift.status.value == 'contributing' %} <span class="gift-card-primary" style="display: inline-block; border-radius: 9999px; padding: 2px 12px; font-size: 16px; line-height: 24px;">{{ gift.status.label }}</span> {% elseif gift.status.value == 'ready' %} <span class="gift-card-warning" style="display: inline-block; border-radius: 9999px; padding: 2px 12px; font-size: 16px; line-height: 24px;">{{ gift.status.label }}</span> {% elseif gift.status.value == 'given' %} <span class="gift-card-success" style="display: inline-block; border-radius: 9999px; padding: 2px 12px; font-size: 16px; line-height: 24px;">{{ gift.status.label }}</span> {% else %} <span class="gift-card-neutral" style="display: inline-block; border-radius: 9999px; padding: 2px 12px; font-size: 16px; line-height: 24px;">{{ gift.status.label }}</span> {% endif %} <h2 style="margin: 12px 0 0; font-size: 16px; line-height: 1.375; font-weight: 600;">{{ gift.title|u.truncate(120, '...', false) }}</h2> <p style="margin: 4px 0 0; font-size: 24px; line-height: 32px; font-weight: 700;">{{ gift.price|format_currency('EUR') }}</p> {% if gift.description %} <p class="gift-card-muted" style="margin: 16px 0 0; font-size: 14px; line-height: 20px;">{{ gift.description|u.truncate(160, '...', false) }}</p> {% endif %}</td></tr></table></div> {% if pooled %} <p>
                             Si de l'argent a déjà été réuni pour la cagnotte, voyez directement avec les autres participants ce que vous en faites : My Gift ne gère aucun paiement.
                         </p> {% else %} <p>
                             Si vous l'aviez déjà acheté, rien ne vous empêche de l'offrir quand même : simplement, il n'apparaît plus sur My Gift.

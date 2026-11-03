@@ -10,29 +10,31 @@
 /* Emerald's page background (base-200, under <body>) at 93% greyed the muted text over it:
    lighter, the cards keep their white and their base-300 borders. Each block must repeat
    default / prefersdark and color-scheme, which it would drop otherwise.
-   Both themes share their accent and success: the ribbon's pink rather than a salmon (emerald)
-   or a teal (dark), and a dark green, told apart from the light green of the calls to action
-   (a pool still open, primary, against a complete one, success). */
+   The calls to action (primary) take the logo's violet (the gift's body, hue 294), with white
+   text on it. Both themes share their accent and success: the ribbon's pink rather than a
+   salmon (emerald) or a teal (dark), and a dark green for a complete pool. */
 @plugin "../vendor/daisyui/theme.js" {
     name: "emerald";
     default: true;
     color-scheme: light;
     --color-base-200: oklch(97.5% 0 0);
     --color-base-300: oklch(90% 0 0);
+    --color-primary: oklch(53.8% 0.211 294.2);
+    --color-primary-content: oklch(100% 0 0);
     --color-accent: var(--color-ribbon-pink);
     --color-accent-content: oklch(94% 0.028 342.258);
     --color-success: oklch(50% 0.13 155);
     --color-success-content: oklch(98% 0.02 155);
 }
 
-/* The calls to action stay green in the dark theme too: emerald's primary, in place of
-   dark's violet, with the dark text emerald sets on it. */
+/* The logo's violet, lighter for 4.5:1 on dark's base-100 (emerald's reads at 2.8:1), with
+   less chroma to stay within sRGB. */
 @plugin "../vendor/daisyui/theme.js" {
     name: "dark";
     prefersdark: true;
     color-scheme: dark;
-    --color-primary: oklch(76.662% 0.135 153.45);
-    --color-primary-content: oklch(33.387% 0.04 162.24);
+    --color-primary: oklch(72% 0.15 294.2);
+    --color-primary-content: oklch(25% 0.09 294.2);
     --color-accent: var(--color-ribbon-pink);
     --color-accent-content: oklch(94% 0.028 342.258);
     --color-success: oklch(50% 0.13 155);

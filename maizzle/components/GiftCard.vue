@@ -32,7 +32,7 @@
         <Raw>{% if gift.status.value == 'reserved' %}</Raw>
           <span class="gift-card-info inline-block rounded-full px-3 py-0.5 text-base"><Raw>{{ gift.status.label }}</Raw></span>
         <Raw>{% elseif gift.status.value == 'contributing' %}</Raw>
-          <span class="gift-card-accent inline-block rounded-full px-3 py-0.5 text-base"><Raw>{{ gift.status.label }}</Raw></span>
+          <span class="gift-card-primary inline-block rounded-full px-3 py-0.5 text-base"><Raw>{{ gift.status.label }}</Raw></span>
         <Raw>{% elseif gift.status.value == 'ready' %}</Raw>
           <span class="gift-card-warning inline-block rounded-full px-3 py-0.5 text-base"><Raw>{{ gift.status.label }}</Raw></span>
         <Raw>{% elseif gift.status.value == 'given' %}</Raw>
@@ -71,7 +71,7 @@
                       <Raw>{% elseif gift.pool.complete %}</Raw>
                         <td width="{{ gift.pool.contributionPercent }}%" height="8" class="gift-card-success rounded-full text-0">&nbsp;</td>
                       <Raw>{% else %}</Raw>
-                        <td width="{{ gift.pool.contributionPercent }}%" height="8" class="gift-card-accent rounded-full text-0">&nbsp;</td>
+                        <td width="{{ gift.pool.contributionPercent }}%" height="8" class="gift-card-primary rounded-full text-0">&nbsp;</td>
                       <Raw>{% endif %}</Raw>
                       <Raw>{% if gift.pool.contributionPercent != 100 %}</Raw>
                         <td height="8" class="text-0">&nbsp;</td>
