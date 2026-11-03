@@ -5,9 +5,12 @@ namespace App\Services\Lifecycle;
 use App\Entity\FriendRequest;
 use App\Entity\User;
 use App\Enum\FriendRelation;
+use App\Event\FriendRequestSentEvent;
 use App\Repository\FriendBookRepository;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 /**
@@ -22,6 +25,7 @@ class FriendRequestLifecycle
         private WorkflowInterface $friendRequestWorkflow,
         private EntityManagerInterface $entityManager,
         private FriendBookRepository $friendBookRepository,
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -56,7 +60,16 @@ class FriendRequestLifecycle
         ;
 
         $this->entityManager->persist($friendRequest);
-        $this->entityManager->flush();
+
+        try {
+            $this->entityManager->flush();
+        } catch (UniqueConstraintViolationException) {
+            // The same request sent twice at once (a double click, two tabs): both passed the
+            // check above, the second one stops at UNIQ_FRIEND_REQUEST.
+            throw new \LogicException('Vous avez déjà envoyé une demande à cette personne.');
+        }
+
+        $this->eventDispatcher->dispatch(new FriendRequestSentEvent($friendRequest));
     }
 
     public function accept(FriendRequest $friendRequest): void
