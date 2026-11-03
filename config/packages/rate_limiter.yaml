@@ -14,3 +14,10 @@ framework:
             policy: 'fixed_window'
             limit: 5
             interval: '1 hour'
+        # The email of a friend request (FriendNotificationSubscriber), per sender and
+        # recipient: send, cancel and send again would otherwise flood the recipient's inbox.
+        # The requests themselves are not limited, only their email.
+        friend_request_email:
+            policy: 'fixed_window'
+            limit: 1
+            interval: '1 day'
