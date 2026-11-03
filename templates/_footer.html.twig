@@ -19,27 +19,31 @@
       </a>
       <p class="max-w-xs text-neutral-content/70">Des cadeaux qui ne font jamais doublon.</p>
     </aside>
+    {# h2, not daisyUI's h6: these sections sit beside the page's own, under its h1 (RGAA 9.1);
+       footer-title gives them their look. #}
     <nav>
-      <h6 class="footer-title">My Gift</h6>
+      <h2 class="footer-title">My Gift</h2>
       <a href="{{ path('app_about') }}" class="link link-hover">À propos</a>
       <a href="{{ path('app_faq') }}" class="link link-hover">Questions fréquentes</a>
       <a href="mailto:{{ site.contact_email }}" class="link link-hover">Contact</a>
     </nav>
     <nav>
-      <h6 class="footer-title">Informations légales</h6>
+      <h2 class="footer-title">Informations légales</h2>
       <a href="{{ path('app_terms') }}" class="link link-hover">Conditions d'utilisation</a>
       <a href="{{ path('app_legal_notice') }}" class="link link-hover">Mentions légales</a>
       <a href="{{ path('app_privacy') }}" class="link link-hover">Politique de confidentialité</a>
     </nav>
     <nav>
-      <h6 class="footer-title">Suivre</h6>
+      <h2 class="footer-title">Suivre</h2>
       <div class="flex gap-4">
-        <a href="{{ site.repository_url }}" target="_blank" rel="noopener" aria-label="Code source sur GitHub">
+        <twig:Molecule:Link newWindow :href="site.repository_url">
           <twig:ux:icon name="lucide:github" class="size-6" aria-hidden="true" />
-        </a>
-        <a href="{{ site.linkedin_url }}" target="_blank" rel="noopener" aria-label="{{ site.author_name }} sur LinkedIn">
+          <span class="sr-only">Code source sur GitHub</span>
+        </twig:Molecule:Link>
+        <twig:Molecule:Link newWindow :href="site.linkedin_url">
           <twig:ux:icon name="lucide:linkedin" class="size-6" aria-hidden="true" />
-        </a>
+          <span class="sr-only">{{ site.author_name }} sur LinkedIn</span>
+        </twig:Molecule:Link>
       </div>
       <twig:Molecule:SupportButton class="btn-sm mt-2" />
     </nav>
@@ -50,7 +54,7 @@
     <p>
       © {{ 'now'|date('Y') }} My Gift · version {{ site.version }} · Fait avec
       <span role="img" aria-label="amour">❤</span> par
-      <a href="{{ site.linkedin_url }}" target="_blank" rel="noopener" class="link link-hover">{{ site.author_name }}</a>
+      <twig:Molecule:Link newWindow :href="site.linkedin_url" class="link link-hover">{{ site.author_name }}</twig:Molecule:Link>
     </p>
   </div>
 </footer>

@@ -1,10 +1,10 @@
 <div {{ attributes }}>
     <ul class="menu w-full rounded-box bg-base-200">
         <li>
-            <a href="{{ site.repository_url }}" target="_blank" rel="noopener">
+            <twig:Molecule:Link newWindow :href="site.repository_url">
                 <twig:ux:icon name="lucide:github" class="size-4" aria-hidden="true" />
                 Code source sur GitHub
-            </a>
+            </twig:Molecule:Link>
         </li>
         <li>
             <a href="mailto:{{ site.contact_email }}">

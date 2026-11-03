@@ -2,11 +2,11 @@
 {# Rendered from the theme cookie, no flash of the wrong theme on load. None for "system":
    daisyUI then follows prefers-color-scheme. #}
 {% set daisyTheme = current_theme().daisyTheme %}
-<html{% if daisyTheme %} data-theme="{{ daisyTheme }}"{% endif %}>
+<html lang="fr"{% if daisyTheme %} data-theme="{{ daisyTheme }}"{% endif %}>
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>{% block title %}My Gift | Welcome!{% endblock %}</title>
+        <title>{% block title %}My Gift{% endblock %}</title>
         {# linkPreview: the card of a shared link opened while logged out (SharedLinkPreviewListener). #}
         <twig:Molecule:LinkPreview :preview="linkPreview ?? null" />
         {# The logo's gift. The SVG for the browsers that take one; sizes="32x32" keeps the
@@ -31,10 +31,14 @@
         {% endif %}
     </head>
     <body class="bg-base-200">
+        {# First focusable element: a keyboard user skips the banner and the navbar (RGAA 12.7). #}
+        <a href="#contenu" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-box focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-content focus:shadow-lg">Aller au contenu</a>
         {# Outside the header block: a page without the navbar still says it is a test version. #}
         <twig:Molecule:TestBanner />
         {% block header %}{{ include('./_header.html.twig') }}{% endblock %}
-            <main class="px-4 sm:px-6 lg:px-8">
+            {# tabindex="-1": the skip link moves the focus here, not only the scroll, where neither
+               Turbo nor the browser does it (RGAA 12.7); not reached by Tab, no outline drawn. #}
+            <main id="contenu" tabindex="-1" class="px-4 sm:px-6 lg:px-8 focus:outline-none">
                 {% block body %}{% endblock %}
             </main>
         {{ include('./_footer.html.twig') }}

@@ -131,9 +131,7 @@
                                     <span>
                                         J'accepte les
                                         {# A new tab, so the form half filled is not lost. #}
-                                        <a href="{{ path('app_terms') }}" target="_blank" rel="noopener" class="link link-primary">
-                                            conditions d'utilisation
-                                        </a>
+                                        <twig:Molecule:Link newWindow :href="path('app_terms')" class="link link-primary">conditions d'utilisation</twig:Molecule:Link>
                                         et déclare avoir au moins 15 ans
                                     </span>
                                     {{ form_widget(registrationForm.agreeTerms) }}
