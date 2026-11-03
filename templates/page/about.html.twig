@@ -63,10 +63,10 @@
                     Symfony, et son code est public.
                 </p>
                 <div class="card-actions mt-3">
-                    <a href="{{ site.linkedin_url }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline">
-                        <twig:ux:icon name="lucide:linkedin" class="size-4" aria-hidden="true" />
-                        LinkedIn
-                    </a>
+                    <twig:Atomic:ButtonLink :to="site.linkedin_url" style="outline" class="btn-sm" newWindow>
+                        <twig:block name="icon"><twig:ux:icon name="lucide:linkedin" class="size-4" aria-hidden="true" /></twig:block>
+                        <twig:block name="name">LinkedIn</twig:block>
+                    </twig:Atomic:ButtonLink>
                 </div>
             </div>
         </div>

@@ -11,6 +11,8 @@ final class ButtonLink
     public string $style = 'soft';
     public string $to;
     public bool $wide = false;
+    /** Opens in a new tab and says so to screen readers, as Molecule:Link does. */
+    public bool $newWindow = false;
 
     /**
      * Required through mount(): a typed property left unset is skipped on its way to the

@@ -3,7 +3,9 @@
             ~ (style|default('') ? " btn-" ~ style : "")
             ~ (color|default('') ? " btn-" ~ color : "")
             ~ (wide|default(false) ? " btn-wide" : "")}
+        |merge(newWindow ? {target: '_blank', rel: 'noopener'} : {})
     )}} href="{{ to }}">
     {% block icon %}{% endblock %}
     {% block name %}{% endblock %}
+    {% if newWindow %}<span class="sr-only">&nbsp;(nouvelle fenêtre)</span>{% endif %}
 </a>

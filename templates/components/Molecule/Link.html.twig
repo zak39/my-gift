@@ -1,0 +1,4 @@
+<a href="{{ href }}" {{ attributes.defaults(newWindow ? {target: '_blank', rel: 'noopener'} : {}) }}>{% block content %}{% endblock %}{% if newWindow %}<span class="sr-only">&nbsp;(nouvelle fenêtre)</span>{% endif %}</a>
+{#- On one line, and this comment trims what follows: a space after </a> would show before
+    the punctuation that comes next (« CNIL. »). &nbsp;, not a space: a hidden span is a block,
+    which drops a leading space, and screen readers would read « CNIL(nouvelle fenêtre) ». -#}
