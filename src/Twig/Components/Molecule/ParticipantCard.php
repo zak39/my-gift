@@ -9,13 +9,23 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 #[AsTwigComponent]
 final class ParticipantCard
 {
-    public ?Participant $participant = null;
+    public Participant $participant;
     public bool $showAmount = false;
     public string $avatarSize = 'size-10';
 
     public function __construct(
         private Security $security,
     ) {
+    }
+
+    /**
+     * Required through mount(): the template reads the participant throughout, so a missing
+     * one would only fail further down, in getDisplayName(), with a 500, instead of a clear
+     * error here.
+     */
+    public function mount(Participant $participant): void
+    {
+        $this->participant = $participant;
     }
 
     public function getDisplayName(): string
