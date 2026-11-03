@@ -3,7 +3,7 @@
     : { class: 'contents' } %}
 
 <div {{ attributes.defaults(wrapper) }}>
-    <twig:atomic:ButtonLink
+    <twig:Atomic:ButtonLink
         :to="gift.link"
         :style="style"
         class="{{ iconOnly ? 'btn-circle' : '' }}"
@@ -16,5 +16,5 @@
         <twig:block name="name">
             <span class="{{ iconOnly ? 'sr-only' : '' }}">Aller sur la boutique</span>
         </twig:block>
-    </twig:atomic:ButtonLink>
+    </twig:Atomic:ButtonLink>
 </div>

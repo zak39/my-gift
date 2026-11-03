@@ -241,12 +241,12 @@
                             xlsx: {label: 'Excel', icon: 'lucide:sheet'},
                             json: {label: 'JSON', icon: 'lucide:file-json'},
                         } %}
-                            <twig:atomic:ButtonLink style="outline" class="btn-sm" :to="path('app_user_profile_export', {format: format})" data-turbo="false">
+                            <twig:Atomic:ButtonLink style="outline" class="btn-sm" :to="path('app_user_profile_export', {format: format})" data-turbo="false">
                                 <twig:block name="icon">
                                     <twig:ux:icon name="{{ export.icon }}" class="h-4 w-4" aria-hidden="true" />
                                 </twig:block>
                                 <twig:block name="name">{{ export.label }}</twig:block>
-                            </twig:atomic:ButtonLink>
+                            </twig:Atomic:ButtonLink>
                         {% endfor %}
                     </div>
                 </section>

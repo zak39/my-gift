@@ -1,7 +1,7 @@
 {# Shown on the user's own list and on a crew's: the URLs follow the section's list
    (SectionUrlGenerator, GiftOwnerUrlGenerator). Guarded as the routes are, so no button leads to a refusal. #}
 {% if is_granted('section.is_owner', section) %}
-    <twig:atomic:ButtonLink
+    <twig:Atomic:ButtonLink
         class="btn-sm"
         style="ghost"
         :to="gift_create_url(section)">
@@ -11,9 +11,9 @@
         <twig:block name="name">
             <span>Ajouter un cadeau</span>
         </twig:block>
-    </twig:atomic:ButtonLink>
+    </twig:Atomic:ButtonLink>
 
-    <twig:atomic:ButtonLink
+    <twig:Atomic:ButtonLink
         class="btn-sm"
         style="ghost"
         :to="section_edit_url(section)">
@@ -23,13 +23,13 @@
         <twig:block name="name">
             <span>Editer la section</span>
         </twig:block>
-    </twig:atomic:ButtonLink>
+    </twig:Atomic:ButtonLink>
 
     <twig:Modal :id="section.id"
         :title="section.title"
         class="remove_section">
         <twig:block name="handlerButton">
-            <twig:atomic:Button
+            <twig:Atomic:Button
                 class="btn-sm"
                 style="ghost"
                 onclick="modal_remove_section_{{ section.id }}.showModal()">
@@ -39,7 +39,7 @@
                 <twig:block name="name">
                     <span>Supprimer la section</span>
                 </twig:block>
-            </twig:atomic:Button>
+            </twig:Atomic:Button>
         </twig:block>
         <twig:block name="message">
             <p class="py-4">Est-ce que vous êtes sûr de supprimer la section <b>{{ section.title }}</b> ?</p>

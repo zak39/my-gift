@@ -96,8 +96,9 @@ Each component is a PHP class under `src/Twig/Components/...` with `#[AsTwigComp
 paired with a template at the mirrored path under `templates/components/...`
 (e.g. `src/Twig/Components/Molecule/Breadcrumbs.php` ↔
 `templates/components/Molecule/Breadcrumbs.html.twig`). Components are organized loosely by
-atomic-design tiers (`Molecule/`, `Organism/`) plus feature groupings (`Gift/`, `Dashboard/`,
-`Navbar/`, `Router/`). When adding a new component, follow this class+template pairing.
+atomic-design tiers (`Atomic/`, `Molecule/`, `Organism/`) plus feature groupings (`Gift/`,
+`Dashboard/`, `Navbar/`, `Router/`). When adding a new component, follow this
+class+template pairing.
 
 Live/reactive UI where needed uses `symfony/ux-live-component`; page transitions use
 `symfony/ux-turbo`. Client-side behavior beyond that is implemented as Stimulus controllers in

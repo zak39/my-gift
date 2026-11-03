@@ -54,7 +54,7 @@
 @theme {
     --animate-favorite-pop: favorite-pop 0.4s ease-out;
     --font-brand: 'Modak', system-ui, sans-serif;
-    /* The gift-wrap ribbon's stripes (atomic:GiftRibbon), the same in every theme: the app's
+    /* The gift-wrap ribbon's stripes (Atomic:GiftRibbon), the same in every theme: the app's
        signature, not a theme colour. */
     --color-ribbon-pink: oklch(65% 0.241 354.308);
     --color-ribbon-blue: oklch(61.302% 0.202 261.294);

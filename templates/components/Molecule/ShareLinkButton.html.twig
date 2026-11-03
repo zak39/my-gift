@@ -3,7 +3,7 @@
     : { class: 'contents' } %}
 
 <div {{ attributes.defaults(wrapper) }}>
-    <twig:atomic:Button :style="style"
+    <twig:Atomic:Button :style="style"
         class="{{ iconOnly ? 'btn-circle' : '' }}"
         data-controller="copy"
         data-copy-text-value="{{ url }}"
@@ -17,5 +17,5 @@
         <twig:block name="name">
             <span class="{{ iconOnly ? 'sr-only' : '' }}" data-copy-target="label">{{ label }}</span>
         </twig:block>
-    </twig:atomic:Button>
+    </twig:Atomic:Button>
 </div>

@@ -25,18 +25,18 @@
         </p>
 
         <div class="mt-14 flex flex-col items-stretch justify-center gap-5 sm:flex-row sm:items-center">
-            <twig:atomic:ButtonLink :to="path('app_register')" color="primary" style="" class="btn-lg">
+            <twig:Atomic:ButtonLink :to="path('app_register')" color="primary" style="" class="btn-lg">
                 <twig:block name="icon">
                     <twig:ux:icon name="lucide:gift" class="size-5" />
                 </twig:block>
                 <twig:block name="name">Créer mes cadeaux</twig:block>
-            </twig:atomic:ButtonLink>
-            <twig:atomic:ButtonLink to="#comment-ca-marche" style="outline" class="btn-lg">
+            </twig:Atomic:ButtonLink>
+            <twig:Atomic:ButtonLink to="#comment-ca-marche" style="outline" class="btn-lg">
                 <twig:block name="name">
                     Comment ça marche
                     <twig:ux:icon name="lucide:arrow-down" class="size-5" />
                 </twig:block>
-            </twig:atomic:ButtonLink>
+            </twig:Atomic:ButtonLink>
         </div>
 
         <p class="text-base-content/60 mt-10 text-sm">
@@ -268,7 +268,7 @@
 
         {# Reprise de la mise en page de templates/components/Organism/Gift/Form.html.twig #}
         <div class="overflow-hidden rounded-box border border-base-300 bg-base-100 shadow-sm">
-            <twig:atomic:GiftRibbon />
+            <twig:Atomic:GiftRibbon />
 
             <twig:Molecule:Form:FieldGroup
                 :stacked="true"
@@ -647,12 +647,12 @@
         </p>
 
         <div class="mt-14">
-            <twig:atomic:ButtonLink :to="path('app_register')" color="primary" style="" class="btn-lg">
+            <twig:Atomic:ButtonLink :to="path('app_register')" color="primary" style="" class="btn-lg">
                 <twig:block name="icon">
                     <twig:ux:icon name="lucide:gift" class="size-5" />
                 </twig:block>
                 <twig:block name="name">Créer mes cadeaux</twig:block>
-            </twig:atomic:ButtonLink>
+            </twig:Atomic:ButtonLink>
         </div>
 
         <ul class="mt-14 flex flex-wrap justify-center gap-3">

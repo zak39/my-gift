@@ -1,7 +1,7 @@
 {# Shared by the owners' pages and the givers' ones, so it is the one place that picks the
    URL: an owner opens their own page of the gift, anyone else /gift/{id}/show. #}
 <div {{ attributes.defaults({ class: 'contents' }) }}>
-    <twig:atomic:ButtonLink
+    <twig:Atomic:ButtonLink
         :style="style"
         :to="is_granted('gift.is_owner', gift)
             ? gift_owner_show_url(gift)
@@ -13,5 +13,5 @@
         <twig:block name="name">
             <span>Voir</span>
         </twig:block>
-    </twig:atomic:ButtonLink>
+    </twig:Atomic:ButtonLink>
 </div>

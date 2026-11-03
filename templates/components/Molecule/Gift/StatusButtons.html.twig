@@ -2,7 +2,7 @@
    who already takes part in it (owners included), who owns it. #}
 <div{{ attributes }} class="contents">
     {% if computed.canEditContribution %}
-        <twig:atomic:ButtonLink
+        <twig:Atomic:ButtonLink
             class="md:w-60 w-full"
             color="primary"
             style="block"
@@ -13,11 +13,11 @@
             <twig:block name="name">
                 Modifier ma participation
             </twig:block>
-        </twig:atomic:ButtonLink>
+        </twig:Atomic:ButtonLink>
     {% endif %}
 
     {% if computed.canJoinPool %}
-        <twig:atomic:ButtonLink
+        <twig:Atomic:ButtonLink
             class="md:w-60 w-full"
             color="primary"
             style="block"
@@ -28,7 +28,7 @@
             <twig:block name="name">
                 Participer au cadeau
             </twig:block>
-        </twig:atomic:ButtonLink>
+        </twig:Atomic:ButtonLink>
     {% endif %}
 
     {% if computed.canStartOffer %}
@@ -36,7 +36,7 @@
             class="offer_gift"
             :id="gift.id">
         <twig:block name="handlerButton">
-            <twig:atomic:Button class="md:w-52 w-full"
+            <twig:Atomic:Button class="md:w-52 w-full"
                 color="primary"
                 style="block"
                 onclick="modal_offer_gift_{{ gift.id }}.showModal()">
@@ -46,12 +46,12 @@
                 <twig:block name="name">
                     <span>Offrir le cadeau</span>
                 </twig:block>
-            </twig:atomic:Button>
+            </twig:Atomic:Button>
         </twig:block>
         <twig:block name="message">
         </twig:block>
         <twig:block name="actionButtons">
-            <twig:atomic:ButtonLink class="sm:flex-1"
+            <twig:Atomic:ButtonLink class="sm:flex-1"
                 color="primary"
                 style="block"
                 :to="path('app_gift_reserved', { id: gift.id })">
@@ -61,8 +61,8 @@
                 <twig:block name="name">
                     <span>Réserver le cadeau</span>
                 </twig:block>
-            </twig:atomic:ButtonLink>
-            <twig:atomic:ButtonLink class="sm:flex-1"
+            </twig:Atomic:ButtonLink>
+            <twig:Atomic:ButtonLink class="sm:flex-1"
                 style="outline"
                 :to="path('app_gift_participated', { id: gift.id })">
                 <twig:block name="icon">
@@ -71,7 +71,7 @@
                 <twig:block name="name">
                     Participer au cadeau
                 </twig:block>
-            </twig:atomic:ButtonLink>
+            </twig:Atomic:ButtonLink>
         </twig:block>
         </twig:Modal>
     {% endif %}
@@ -93,7 +93,7 @@
             class="disengage_gift"
             :id="gift.id">
             <twig:block name="handlerButton">
-                <twig:atomic:Button class="md:w-52 w-full"
+                <twig:Atomic:Button class="md:w-52 w-full"
                     onclick="modal_disengage_gift_{{ gift.id }}.showModal()">
                 <twig:block name="icon">
                     <twig:ux:icon name="mdi:gift-off" />
@@ -101,7 +101,7 @@
                 <twig:block name="name">
                     <span>Se retirer du cadeau</span>
                 </twig:block>
-                </twig:atomic:Button>
+                </twig:Atomic:Button>
             </twig:block>
             <twig:block name="message">
                 <p class="text-base">Êtes vous sûr de vouloir vous retirer de la réservation du cadeau <b>{{ gift.title }}</b> ?</p>
@@ -127,7 +127,7 @@
             class="cancelled_contribution_gift"
             :id="gift.id">
             <twig:block name="handlerButton">
-                <twig:atomic:Button class="md:w-56 w-full"
+                <twig:Atomic:Button class="md:w-56 w-full"
                     onclick="modal_cancelled_contribution_gift_{{ gift.id }}.showModal()">
                 <twig:block name="icon">
                     <twig:ux:icon name="mdi:gift-off" />
@@ -135,7 +135,7 @@
                 <twig:block name="name">
                     <span>Annuler les contributions</span>
                 </twig:block>
-                </twig:atomic:Button>
+                </twig:Atomic:Button>
             </twig:block>
             <twig:block name="message">
                 <p class="text-base">Êtes vous sûr de vouloir vous retirer de la contribution du cadeau <b>{{ gift.title }}</b> ?</p>

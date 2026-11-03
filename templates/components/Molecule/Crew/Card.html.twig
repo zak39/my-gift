@@ -18,7 +18,7 @@
                 <twig:ux:icon name="lucide:gift" class="size-4 shrink-0" />
                 <span class="tabular-nums">{{ giftCount }} cadeau{{ giftCount > 1 ? 'x' }}</span>
             </span>
-            <twig:atomic:ButtonLink
+            <twig:Atomic:ButtonLink
                 class="btn-sm"
                 style="ghost"
                 :to="path('app_crew_show', { id: crew.id })">
@@ -28,7 +28,7 @@
                 <twig:block name="icon">
                     <twig:ux:icon name="lucide:arrow-right" class="size-4" />
                 </twig:block>
-            </twig:atomic:ButtonLink>
+            </twig:Atomic:ButtonLink>
         </div>
     </div>
 </article>

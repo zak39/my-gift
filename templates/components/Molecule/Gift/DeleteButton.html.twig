@@ -7,7 +7,7 @@
         class="remove_gift"
         :id="gift.id">
         <twig:block name="handlerButton">
-            <twig:atomic:Button :style="style"
+            <twig:Atomic:Button :style="style"
                 class="{{ iconOnly ? 'btn-circle' : '' }}"
                 onclick="modal_remove_gift_{{ gift.id }}.showModal()"
                 :color="color">
@@ -17,7 +17,7 @@
                 <twig:block name="name">
                     <span class="{{ iconOnly ? 'sr-only' : '' }}">Supprimer</span>
                 </twig:block>
-            </twig:atomic:Button>
+            </twig:Atomic:Button>
         </twig:block>
         <twig:block name="message">
             <p class="py-4">Est-ce que vous êtes sûr de supprimer le cadeau <b>{{ gift.title }}</b> ?</p>

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Twig\Components\Router;
+namespace App\Twig\Components\Atomic\Router;
 
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
-#[AsTwigComponent('atomic:Router:Link')]
+#[AsTwigComponent]
 final class Link
 {
     public string $name = '';
