@@ -27,7 +27,11 @@ parameters:
     app.author_name: 'zakode'
     app.linkedin_url: 'https://www.linkedin.com/in/baptiste-fotia'
     app.repository_url: 'https://github.com/zak39/my-gift'
-    app.contact_email: 'contact@zakode.dev'
+    app.contact_email: 'zakode.dev@gmail.com'
+    # The From of every email (config/packages/mailer.yaml), a mailbox that does not exist:
+    # replies bounce, people write through the contact links. An address of the Mailgun
+    # domain, or SPF and DKIM no longer match it and the emails land in spam.
+    app.sender_email: 'noreply@zakode.dev'
     app.support_url: 'https://buymeacoffee.com/zakode'
     # The host the legal notice must name (LCEN, art. 6): name, address and phone.
     app.host:
