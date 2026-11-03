@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Twig\Components;
+namespace App\Twig\Components\Molecule;
 
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
-#[AsTwigComponent('molecule:Avatar')]
+#[AsTwigComponent]
 final class Avatar
 {
 }

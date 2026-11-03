@@ -26,7 +26,7 @@
 
             <div class="flex min-w-0 flex-col gap-5">
                 {% for section in sections %}
-                    <twig:molecule:Section
+                    <twig:Molecule:Section
                         :title="section.title"
                         :description="section.description"
                         :checked="loop.first"
@@ -44,11 +44,11 @@
                         <twig:block name="actionButtons">
                             <twig:Organism:Section:Actions :section="section" />
                         </twig:block>
-                    </twig:molecule:Section>
+                    </twig:Molecule:Section>
                 {% endfor %}
 
                 {% if giftsWithoutSection|length > 0 %}
-                    <twig:molecule:Section
+                    <twig:Molecule:Section
                         title="Cadeaux sans section"
                         description="Les cadeaux qui ne sont pas encore rangés dans une section."
                         anchor="section-sans-section"
@@ -59,7 +59,7 @@
                                 <twig:CardGift :gift="gift" />
                             {% endfor %}
                         </twig:block>
-                    </twig:molecule:Section>
+                    </twig:Molecule:Section>
                 {% endif %}
 
                 <twig:Organism:Crew:SharedLists class="mt-5" :crews="crews" :user="user" :ownerView="true" />
@@ -67,7 +67,7 @@
         </div>
     {% else %}
         <div class="mt-6">
-        <twig:molecule:EmptyContentHero
+        <twig:Molecule:EmptyContentHero
             title="Pas encore de cadeau ni de section"
             description="Ajoutez un premier cadeau, puis rangez vos idées dans des sections comme « Geek » ou « Sport ».">
             <twig:block name="action_buttons">
@@ -95,7 +95,7 @@
                     </twig:Atomic:ButtonLink>
                 </div>
             </twig:block>
-        </twig:molecule:EmptyContentHero>
+        </twig:Molecule:EmptyContentHero>
         </div>
 
         <twig:Organism:Crew:SharedLists class="mt-10" :crews="crews" :user="user" :ownerView="true" />

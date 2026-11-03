@@ -10,7 +10,7 @@
 
         <ul class="list rounded-box border border-base-300 bg-base-100">
             {% for participant in gift.participants %}
-                <twig:molecule:ParticipantCard :participant="participant"
+                <twig:Molecule:ParticipantCard :participant="participant"
                     :showAmount="computed.pooled and computed.showAmounts" />
             {% endfor %}
         </ul>

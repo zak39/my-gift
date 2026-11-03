@@ -26,7 +26,7 @@
 
             <div class="flex min-w-0 flex-col gap-5">
                 {% for section in sections %}
-                    <twig:molecule:Section
+                    <twig:Molecule:Section
                         :title="section.title"
                         :description="section.description"
                         :checked="loop.first"
@@ -44,11 +44,11 @@
                         <twig:block name="actionButtons">
                             <twig:Organism:Section:Actions :section="section" />
                         </twig:block>
-                    </twig:molecule:Section>
+                    </twig:Molecule:Section>
                 {% endfor %}
 
                 {% if giftsWithoutSection|length > 0 %}
-                    <twig:molecule:Section
+                    <twig:Molecule:Section
                         title="Cadeaux sans section"
                         description="Les cadeaux qui n'ont pas encore été rangés dans une section."
                         anchor="section-sans-section"
@@ -58,14 +58,14 @@
                                 <twig:CardGift :gift="gift" />
                             {% endfor %}
                         </twig:block>
-                    </twig:molecule:Section>
+                    </twig:Molecule:Section>
                 {% endif %}
 
                 <twig:Organism:Crew:SharedLists class="mt-5" :crews="crews" :user="user" />
             </div>
         </div>
     {% else %}
-        <twig:molecule:EmptyContent class="mt-6"
+        <twig:Molecule:EmptyContent class="mt-6"
             title="Mince ! {{ user.firstname }} n'a pas encore de cadeau à offrir 😥"
             description="Revenez plus tard pour lui offrir un joli cadeau 😉" />
 
