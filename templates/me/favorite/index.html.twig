@@ -36,7 +36,7 @@
                             title="{{ group.name }}">
                             {{ group.name|u.truncate(90, '...', false) }}
                         </h2>
-                        <twig:atomic:ButtonLink
+                        <twig:Atomic:ButtonLink
                             class="btn-sm shrink-0"
                             style="ghost"
                             :to="group.crew ? path('app_crew_show', { id: group.crew.id }) : path('app_section_user_page', { id: group.user.id })">
@@ -46,7 +46,7 @@
                             <twig:block name="icon">
                                 <twig:ux:icon name="lucide:arrow-right" class="size-4" />
                             </twig:block>
-                        </twig:atomic:ButtonLink>
+                        </twig:Atomic:ButtonLink>
                     </div>
 
                     {% for entry in group.sections %}
@@ -72,7 +72,7 @@
             description="Parcourez les sections de vos amis et gardez sous la main les cadeaux qui vous plaisent.">
             <twig:block name="action_buttons">
                 {# Solid primary: the single call to action of an otherwise empty page. #}
-                <twig:atomic:ButtonLink
+                <twig:Atomic:ButtonLink
                     color="primary"
                     style=""
                     :to="path('app_user')">
@@ -82,7 +82,7 @@
                     <twig:block name="name">
                         <span>Commencez par trouver vos amis</span>
                     </twig:block>
-                </twig:atomic:ButtonLink>
+                </twig:Atomic:ButtonLink>
             </twig:block>
         </twig:molecule:EmptyContentHero>
     {% endif %}

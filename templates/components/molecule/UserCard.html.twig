@@ -13,7 +13,7 @@
            can wrap below all of them. #}
         <div class="card-actions mt-auto items-center justify-end">
             <twig:Molecule:Friend:ActionButtons class="contents!" :user="user" />
-            <twig:atomic:ButtonLink
+            <twig:Atomic:ButtonLink
                 class="btn-sm"
                 style="ghost"
                 :to="path('app_section_user_page', { id: user.id })">
@@ -23,7 +23,7 @@
                 <twig:block name="icon">
                     <twig:ux:icon name="lucide:arrow-right" class="size-4" />
                 </twig:block>
-            </twig:atomic:ButtonLink>
+            </twig:Atomic:ButtonLink>
         </div>
     </div>
 </article>

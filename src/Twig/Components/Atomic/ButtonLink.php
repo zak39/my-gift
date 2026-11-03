@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Twig\Components;
+namespace App\Twig\Components\Atomic;
 
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
-#[AsTwigComponent('atomic:ButtonLink')]
+#[AsTwigComponent]
 final class ButtonLink
 {
     public string $color = '';

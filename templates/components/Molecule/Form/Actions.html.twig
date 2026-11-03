@@ -1,16 +1,16 @@
 <footer {{ attributes.defaults({ class: 'flex flex-col-reverse gap-2 border-t border-base-300 bg-base-200/50 p-5 sm:flex-row sm:items-center sm:justify-end sm:px-7' }) }}>
-    <twig:atomic:ButtonLink style="ghost" :to="cancelUrl">
+    <twig:Atomic:ButtonLink style="ghost" :to="cancelUrl">
         <twig:block name="name">
             <span>Annuler</span>
         </twig:block>
-    </twig:atomic:ButtonLink>
+    </twig:Atomic:ButtonLink>
 
-    <twig:atomic:Button type="submit" color="primary" style="">
+    <twig:Atomic:Button type="submit" color="primary" style="">
         <twig:block name="icon">
             <twig:ux:icon :name="submitIcon" class="size-4" />
         </twig:block>
         <twig:block name="name">
             <span>{{ submitLabel }}</span>
         </twig:block>
-    </twig:atomic:Button>
+    </twig:Atomic:Button>
 </footer>

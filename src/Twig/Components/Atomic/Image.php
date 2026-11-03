@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Twig\Components;
+namespace App\Twig\Components\Atomic;
 
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
-#[AsTwigComponent('atomic:Image')]
+#[AsTwigComponent]
 final class Image
 {
     public string $source;
