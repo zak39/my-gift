@@ -327,7 +327,7 @@
             <p class="text-base-content/60 mb-6 text-sm">Exemple : la page de Léa, vue par une amie</p>
 
             <div class="flex flex-col gap-5">
-                <twig:molecule:Section
+                <twig:Molecule:Section
                     title="Sport"
                     description="Pour pratiquer des activités physiques"
                     :checked="true"
@@ -355,9 +355,9 @@
                             reservedBy: { name: 'Yanis Brun', seed: 'Yanis' },
                         }, with_context = false) }}
                     </twig:block>
-                </twig:molecule:Section>
+                </twig:Molecule:Section>
 
-                <twig:molecule:Section
+                <twig:Molecule:Section
                     title="Gourmandises"
                     description="Chocolats, épicerie fine et ateliers"
                     :giftCount="2">
@@ -385,7 +385,7 @@
                             reservedBy: { name: 'Inès Faure', seed: 'Ines' },
                         }, with_context = false) }}
                     </twig:block>
-                </twig:molecule:Section>
+                </twig:Molecule:Section>
             </div>
         </div>
     </div>

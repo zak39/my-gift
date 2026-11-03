@@ -31,7 +31,7 @@ final class UserAvatar
      * Attributes for the frame and the image, spread by the template.
      *
      * Derived rather than passed, but they have to be props: the template hands the image to
-     * `molecule:Avatar` through a block, and inside a block `this` is rebound to the
+     * `Molecule:Avatar` through a block, and inside a block `this` is rebound to the
      * receiving component, so a getter on this class would be out of reach there. Props do
      * carry over.
      *

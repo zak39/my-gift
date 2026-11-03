@@ -34,7 +34,7 @@
             <div class="flex min-w-0 flex-col gap-5">
                 {% for section in sections %}
                     {% set gifts = ownerView ? section.gifts : section.gifts|filter(gift => gift.isPublic) %}
-                    <twig:molecule:Section
+                    <twig:Molecule:Section
                         :title="section.title"
                         :description="section.description"
                         :checked="loop.first"
@@ -54,12 +54,12 @@
                         <twig:block name="actionButtons">
                             <twig:Organism:Section:Actions :section="section" />
                         </twig:block>
-                    </twig:molecule:Section>
+                    </twig:Molecule:Section>
                 {% endfor %}
             </div>
         </div>
     {% elseif ownerView %}
-        <twig:molecule:EmptyContent class="mt-6"
+        <twig:Molecule:EmptyContent class="mt-6"
             title="Le groupe n'a pas encore de section"
             description="Créez une première section, « Jouets » ou « Livres » par exemple, puis ajoutez-y des cadeaux : chaque membre peut le faire.">
             <twig:block name="action_buttons">
@@ -68,9 +68,9 @@
                     Créer une section
                 </a>
             </twig:block>
-        </twig:molecule:EmptyContent>
+        </twig:Molecule:EmptyContent>
     {% else %}
-        <twig:molecule:EmptyContent class="mt-6"
+        <twig:Molecule:EmptyContent class="mt-6"
             title="Pas encore de cadeau dans « {{ crew.name }} » 😥"
             description="Revenez plus tard pour leur faire plaisir 😉" />
     {% endif %}

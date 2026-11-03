@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Twig\Components;
+namespace App\Twig\Components\Molecule;
 
 use App\Entity\Participant;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
-#[AsTwigComponent('molecule:ParticipantCard')]
+#[AsTwigComponent]
 final class ParticipantCard
 {
     public ?Participant $participant = null;

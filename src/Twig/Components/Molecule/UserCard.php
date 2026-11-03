@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Twig\Components;
+namespace App\Twig\Components\Molecule;
 
 use App\Entity\User;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
-#[AsTwigComponent('molecule:UserCard')]
+#[AsTwigComponent]
 final class UserCard
 {
     public ?User $user = null;

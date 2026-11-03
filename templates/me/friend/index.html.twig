@@ -31,7 +31,7 @@
                 {% else %}
                     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
                         {% for person in tab.users %}
-                            <twig:molecule:UserCard :user="person" />
+                            <twig:Molecule:UserCard :user="person" />
                         {% endfor %}
                     </div>
                 {% endif %}

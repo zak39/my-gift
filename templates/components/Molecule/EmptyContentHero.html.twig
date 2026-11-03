@@ -1,6 +1,6 @@
 {# `attributes` has to be merged, not printed next to a literal class attribute: a caller
    passing `class` would otherwise emit a second class attribute and the browser would keep
-   the first one, dropping the hero layout. Same fix as molecule/EmptyContent. #}
+   the first one, dropping the hero layout. Same fix as Molecule:EmptyContent. #}
 <div {{ attributes.defaults({ class: 'hero bg-base-200 min-h-96' }) }}>
   <div class="hero-content text-center">
     <div class="md:max-w-xl">

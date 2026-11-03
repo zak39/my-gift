@@ -12,12 +12,12 @@
 
     <twig:Organism:GiftListHeader :user="user" />
 
-    <twig:molecule:EmptyContent class="mt-6"
+    <twig:Molecule:EmptyContent class="mt-6"
         title="Les sections de {{ user.firstname }} sont réservées à ses ami·es 🔒"
         description="Dès que votre demande sera acceptée, vous verrez ses cadeaux et {{ user.firstname }} verra les vôtres.">
         <twig:block name="action_buttons">
             <twig:Molecule:Friend:ActionButtons class="mt-6 justify-center" :user="user" />
         </twig:block>
-    </twig:molecule:EmptyContent>
+    </twig:Molecule:EmptyContent>
 </div>
 {% endblock %}

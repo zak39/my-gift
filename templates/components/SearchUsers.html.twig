@@ -53,9 +53,9 @@
         {% endfor %}
 
         {% for user in this.users %}
-            <twig:molecule:UserCard :user="user" class="group-data-searching:hidden" />
+            <twig:Molecule:UserCard :user="user" class="group-data-searching:hidden" />
         {% else %}
-            <twig:molecule:EmptyContentHero class="col-span-full rounded-box group-data-searching:hidden"
+            <twig:Molecule:EmptyContentHero class="col-span-full rounded-box group-data-searching:hidden"
                 title="Aucun utilisateur trouvé"
                 description='Aucun utilisateur trouvé avec "{{ query }}" !' />
         {% endfor %}

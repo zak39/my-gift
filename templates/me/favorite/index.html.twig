@@ -50,7 +50,7 @@
                     </div>
 
                     {% for entry in group.sections %}
-                        <twig:molecule:Section
+                        <twig:Molecule:Section
                             :title="entry.section.title"
                             :description="entry.section.description"
                             :checked="loop.first"
@@ -61,13 +61,13 @@
                                     <twig:CardGift :gift="gift" />
                                 {% endfor %}
                             </twig:block>
-                        </twig:molecule:Section>
+                        </twig:Molecule:Section>
                     {% endfor %}
                 </article>
             {% endfor %}
         </div>
     {% else %}
-        <twig:molecule:EmptyContentHero class="mt-6"
+        <twig:Molecule:EmptyContentHero class="mt-6"
             title="Vous n'avez pas encore mis de cadeau en favoris"
             description="Parcourez les sections de vos amis et gardez sous la main les cadeaux qui vous plaisent.">
             <twig:block name="action_buttons">
@@ -84,7 +84,7 @@
                     </twig:block>
                 </twig:Atomic:ButtonLink>
             </twig:block>
-        </twig:molecule:EmptyContentHero>
+        </twig:Molecule:EmptyContentHero>
     {% endif %}
 </div>
 {% endblock %}

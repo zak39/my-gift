@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Twig\Components;
+namespace App\Twig\Components\Molecule;
 
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
-#[AsTwigComponent('molecule:EmptyContentHero')]
-final class EmptyContentHero
+#[AsTwigComponent]
+final class EmptyContent
 {
     public ?string $title = null;
     public ?string $description = null;
