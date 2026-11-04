@@ -5,6 +5,7 @@
 
     Variables:
     - gift: { image, alt, title, price (number), description, status: 'created'|'reserved'|'contributing' }
+    - titleTag: 'h3' by default, 'p' before the page's first h2 (RGAA 9.1)
     - reservedBy: { name, seed } when status is 'reserved'
     - pool: { total (number), participants: [seed, …] } when status is 'contributing'
 #}
@@ -29,7 +30,8 @@
             </div>
 
             <div class="mt-3">
-                <h3 class="text-base leading-snug font-semibold wrap-anywhere md:text-lg">{{ gift.title }}</h3>
+                {% set titleTag = titleTag|default('h3') %}
+                <{{ titleTag }} class="text-base leading-snug font-semibold wrap-anywhere md:text-lg">{{ gift.title }}</{{ titleTag }}>
                 <p class="mt-1 text-2xl font-bold tabular-nums md:text-3xl">{{ gift.price|format_currency('EUR') }}</p>
             </div>
 

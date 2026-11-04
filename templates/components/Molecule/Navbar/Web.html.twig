@@ -1,5 +1,6 @@
-<div {{ attributes }} class="md:flex hidden">
+{# Phone: the same menu, in Navbar:Mobile's drawer. #}
+<nav {{ attributes.defaults({ class: 'md:flex hidden', 'aria-label': 'Navigation principale' }) }}>
     <ul class="menu menu-horizontal px-1">
         <twig:Molecule:Navbar:Links />
     </ul>
-</div>
+</nav>

@@ -1,5 +1,5 @@
 {% if pageCount > 1 %}
-    <div class="inline-block">
+    <nav class="inline-block" aria-label="Pagination">
         <div class="join">
 
         {% if previous is defined %}
@@ -16,13 +16,14 @@
         {% for page in pagesInRange %}
             {% if page != current %}
                 <button class="join-item btn btn-sm sm:btn-md bg-base-100"
+                    aria-label="Page {{ page }}"
                     data-action="live#action"
                     data-live-action-param="goToPage"
                     data-live-page-param="{{ page }}">
                     {{ page }}
                 </button>
             {% else %}
-                <button class="join-item btn btn-sm sm:btn-md btn-primary">{{ page }}</button>
+                <button class="join-item btn btn-sm sm:btn-md btn-primary" aria-label="Page {{ page }}" aria-current="page">{{ page }}</button>
             {% endif %}
 
         {% endfor %}
@@ -39,5 +40,5 @@
         {% endif %}
 
         </div>
-    </div>
+    </nav>
 {% endif %}

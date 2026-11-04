@@ -13,28 +13,28 @@
   <div class="footer md:footer-horizontal footer-vertical px-10 pb-10">
     {# Side by side (md), raised so the mark, taller than a footer-title, centres on the
        titles' row and the tagline falls on the first links' row. #}
-    <aside class="md:-mt-2">
+    <div class="md:-mt-2">
       <a href="{{ path('app_landing_page') }}">
         <twig:Molecule:Brand />
       </a>
       <p class="max-w-xs text-neutral-content/70">Des cadeaux qui ne font jamais doublon.</p>
-    </aside>
+    </div>
     {# h2, not daisyUI's h6: these sections sit beside the page's own, under its h1 (RGAA 9.1);
        footer-title gives them their look. #}
-    <nav>
-      <h2 class="footer-title">My Gift</h2>
+    <nav aria-labelledby="footer-about">
+      <h2 id="footer-about" class="footer-title">My Gift</h2>
       <a href="{{ path('app_about') }}" class="link link-hover">À propos</a>
       <a href="{{ path('app_faq') }}" class="link link-hover">Questions fréquentes</a>
       <a href="mailto:{{ site.contact_email }}" class="link link-hover">Contact</a>
     </nav>
-    <nav>
-      <h2 class="footer-title">Informations légales</h2>
+    <nav aria-labelledby="footer-legal">
+      <h2 id="footer-legal" class="footer-title">Informations légales</h2>
       <a href="{{ path('app_terms') }}" class="link link-hover">Conditions d'utilisation</a>
       <a href="{{ path('app_legal_notice') }}" class="link link-hover">Mentions légales</a>
       <a href="{{ path('app_privacy') }}" class="link link-hover">Politique de confidentialité</a>
     </nav>
-    <nav>
-      <h2 class="footer-title">Suivre</h2>
+    <nav aria-labelledby="footer-follow">
+      <h2 id="footer-follow" class="footer-title">Suivre</h2>
       <div class="flex gap-4">
         <twig:Molecule:Link newWindow :href="site.repository_url">
           <twig:ux:icon name="lucide:github" class="size-6" aria-hidden="true" />

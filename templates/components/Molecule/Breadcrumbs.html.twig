@@ -1,4 +1,4 @@
-<div {{ attributes.defaults({ class: 'breadcrumbs text-sm max-w-xs md:max-w-2xl my-4' }) }}>
+<nav {{ attributes.defaults({ class: 'breadcrumbs text-sm max-w-xs md:max-w-2xl my-4', 'aria-label': 'Fil d\'Ariane' }) }}>
     <ul>
         {% for item in items %}
             <li>
@@ -7,9 +7,9 @@
                         {{ item.label }}
                     </a>
                 {% else %}
-                    <span class="font-semibold">{{ item.label }}</span>
+                    <span class="font-semibold" aria-current="page">{{ item.label }}</span>
                 {% endif %}
             </li>
         {% endfor %}
     </ul>
-</div>
+</nav>
