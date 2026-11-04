@@ -11,8 +11,10 @@
    lighter, the cards keep their white and their base-300 borders. Each block must repeat
    default / prefersdark and color-scheme, which it would drop otherwise.
    The calls to action (primary) take the logo's violet (the gift's body, hue 294), with white
-   text on it. Both themes share their accent and success: the ribbon's pink rather than a
-   salmon (emerald) or a teal (dark), and a dark green for a complete pool. */
+   text on it. Both themes share their accent: the ribbon's pink rather than a salmon (emerald)
+   or a teal (dark). Success is drawn as text too, so each theme has its own, shaded to read at
+   4.5:1 on its page (RGAA 3.2): a dark green on light, a lighter one on dark. Error is darkened
+   on the light theme only: dark's already reads. */
 @plugin "../vendor/daisyui/theme.js" {
     name: "emerald";
     default: true;
@@ -25,6 +27,8 @@
     --color-accent-content: oklch(94% 0.028 342.258);
     --color-success: oklch(50% 0.13 155);
     --color-success-content: oklch(98% 0.02 155);
+    --color-error: oklch(55% 0.2 25);
+    --color-error-content: oklch(98% 0.01 20);
 }
 
 /* The logo's violet, lighter for 4.5:1 on dark's base-100 (emerald's reads at 2.8:1), with
@@ -37,8 +41,29 @@
     --color-primary-content: oklch(25% 0.09 294.2);
     --color-accent: var(--color-ribbon-pink);
     --color-accent-content: oklch(94% 0.028 342.258);
-    --color-success: oklch(50% 0.13 155);
-    --color-success-content: oklch(98% 0.02 155);
+    --color-success: oklch(72% 0.15 155);
+    --color-success-content: oklch(25% 0.07 155);
+}
+
+/* daisyUI draws its muted text at 60% (a menu title at 40%) and a soft badge in the raw colour:
+   too pale (RGAA 3.2). daisyUI emits its rules in a sublayer of utilities; this one comes after
+   it, so it wins over daisyUI while a text utility on the same element (the form labels'
+   text-base-content) still wins over it. Rerun the contrast check after a daisyUI upgrade. */
+@layer utilities.overrides {
+    .stat-title,
+    .stat-desc,
+    .menu-title,
+    :where(thead, tfoot) {
+        color: var(--color-muted);
+    }
+
+    .label {
+        color: color-mix(in oklab, currentcolor 80%, transparent);
+    }
+
+    .badge-soft {
+        color: var(--color-base-content);
+    }
 }
 
 /* The app's name (font-brand). Modak, served from assets/ rather than Google Fonts: no
@@ -54,6 +79,10 @@
 @theme {
     --animate-favorite-pop: favorite-pop 0.4s ease-out;
     --font-brand: 'Modak', system-ui, sans-serif;
+    /* Muted text (RGAA 3.2). It is translucent, so its ratio follows the surface under it:
+       4.96:1 at the lowest (light, on base-300), 8.5:1 or more on dark. /60 and /70 of the text
+       colour read at 3.4 to 4.4:1. The one definition: text-muted, never text-base-content/NN. */
+    --color-muted: color-mix(in oklab, var(--color-base-content) 80%, transparent);
     /* The gift-wrap ribbon's stripes (Atomic:GiftRibbon), the same in every theme: the app's
        signature, not a theme colour. */
     --color-ribbon-pink: oklch(65% 0.241 354.308);

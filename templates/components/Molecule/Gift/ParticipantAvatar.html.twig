@@ -7,7 +7,7 @@
         </div>
     {% elseif participant.isFromDeletedUser %}
         <div class="avatar avatar-placeholder {{ size }}">
-            <div class="bg-base-300 text-base-content/60 w-24 rounded-full">
+            <div class="bg-base-300 text-muted w-24 rounded-full">
                 <twig:ux:icon name="lucide:user-x" class="size-1/2" aria-label="{{ participant.displayName }}" />
             </div>
         </div>

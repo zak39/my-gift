@@ -13,7 +13,7 @@
                     {{ ownerView ? 'Mes cadeaux' : ('Les cadeaux de ' ~ user.firstname ~ ' ' ~ user.lastname) }}
                 </h1>
                 {% if this.total > 0 %}
-                    <p class="mt-2 flex items-center gap-2 text-sm text-base-content/70">
+                    <p class="mt-2 flex items-center gap-2 text-sm text-muted">
                         <twig:ux:icon name="lucide:gift" class="size-4 shrink-0" />
                         <span class="tabular-nums">{{ this.total }} cadeau{{ this.total > 1 ? 'x' : '' }}</span>
                     </p>

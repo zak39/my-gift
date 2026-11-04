@@ -6,10 +6,10 @@
         <p class="font-medium">
             <span class="wrap-anywhere">{{ member.fullname }}</span>
             {% if member is same as(app.user) %}
-                <span class="text-sm font-normal text-base-content/60">(vous)</span>
+                <span class="text-sm font-normal text-muted">(vous)</span>
             {% endif %}
         </p>
-        <p class="text-xs text-base-content/60">Membre depuis le {{ membership.joinedAt|date('d/m/Y') }}</p>
+        <p class="text-xs text-muted">Membre depuis le {{ membership.joinedAt|date('d/m/Y') }}</p>
         {# The role in accent, the history plain: the creator has no right of their own. #}
         {% if membership.owner or membership.creator %}
             <div class="mt-1.5 flex flex-wrap gap-1.5">

@@ -28,9 +28,9 @@
                 <twig:Molecule:User:ProfileAvatar :user="user" />
                 <div>
                     <h2 class="text-2xl font-semibold">{{ user.firstname }} {{ user.lastname }}</h2>
-                    <p class="text-sm text-base-content/70">{{ user.email }}</p>
+                    <p class="text-sm text-muted">{{ user.email }}</p>
                 </div>
-                <div class="mt-4 text-sm text-base-content/60">
+                <div class="mt-4 text-sm text-muted">
                     Mettez à jour vos informations publiques et votre photo de profil.
                 </div>
             </div>
@@ -231,7 +231,7 @@
                    as the file; Content-Disposition only comes with the export itself. #}
                 <section class="mt-8 p-4 bg-base-100 border border-base-300 rounded-md shadow-sm" aria-labelledby="data-export-title">
                     <h3 id="data-export-title" class="text-sm font-medium mb-1">Télécharger mes données</h3>
-                    <p class="text-sm text-base-content/70 mb-4">
+                    <p class="text-sm text-muted mb-4">
                         Récupérez votre profil, vos sections, vos cadeaux et ceux de vos groupes, vos participations, vos favoris, vos amis, les personnes bloquées et vos groupes. L'ODS et Excel ont une feuille par sujet, une par groupe pour les cadeaux ; le CSV est une archive ZIP d'un fichier par sujet ; le JSON se réutilise ailleurs.
                     </p>
                     <div class="flex flex-wrap gap-2">
@@ -254,7 +254,7 @@
                 {# Outside the frame: the deletion leads to the landing page, not into the frame. #}
                 <section class="mt-8 p-4 bg-base-100 border border-error/40 rounded-md shadow-sm" aria-labelledby="account-delete-title">
                     <h3 id="account-delete-title" class="text-sm font-medium text-error mb-1">Zone de danger</h3>
-                    <p class="text-sm text-base-content/70 mb-4">
+                    <p class="text-sm text-muted mb-4">
                         Supprimer votre compte efface vos sections, vos cadeaux et votre photo. Cette action est définitive.
                     </p>
                     <twig:Molecule:User:DeleteAccountButton :user="user" />

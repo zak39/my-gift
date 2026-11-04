@@ -36,7 +36,7 @@
                             {% for gift in section.gifts|filter(gift => gift.isPublic) %}
                                 <twig:CardGift :gift="gift" />
                             {% else %}
-                                <p class="py-4 text-sm text-base-content/70">
+                                <p class="py-4 text-sm text-muted">
                                     Aucun cadeau publié dans cette section pour le moment.
                                 </p>
                             {% endfor %}

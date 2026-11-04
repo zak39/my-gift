@@ -23,7 +23,7 @@
             <p class="py-4">Est-ce que vous êtes sûr de supprimer le cadeau <b>{{ gift.title }}</b> ?</p>
             {# The same sentence for every gift: telling it apart would reveal a pool that
                GiftPoolVoter hides from its owners. #}
-            <p class="pb-4 text-sm text-base-content/70">Si des personnes participent à ce cadeau, elles seront prévenues par email.</p>
+            <p class="pb-4 text-sm text-muted">Si des personnes participent à ce cadeau, elles seront prévenues par email.</p>
         </twig:block>
         <twig:block name="actionButtons">
             <form method="post" action="{{ gift_delete_url(gift) }}">
