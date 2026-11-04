@@ -19,6 +19,7 @@
                 {{ app.user.firstname|capitalize }} {{ app.user.lastname|capitalize }}
             </span>
         </div>
+        <nav aria-label="Navigation principale">
         <ul>
             <li><twig:Atomic:Router:Link link="{{ path('app_user_profile') }}" name="Profil" /></li>
             <li><twig:Atomic:Router:Link link="{{ path('app_dashboard') }}" name="Mon Dashboard" /></li>
@@ -55,6 +56,7 @@
         <ul class="menu menu-vertical px-1">
             <twig:Molecule:Navbar:Links />
         </ul>
+        </nav>
     </div>
   </div>
 </div>
