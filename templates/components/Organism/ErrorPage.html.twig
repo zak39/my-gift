@@ -14,7 +14,7 @@
         </p>
         <div class="flex max-w-md flex-col items-center gap-4 text-center lg:items-start lg:text-left">
             <h1 class="text-3xl font-bold sm:text-4xl">{{ title }}</h1>
-            <p class="text-base-content/80">{{ message }}</p>
+            <p class="text-muted">{{ message }}</p>
             {% block content %}{% endblock %}
             {# The landing page sends a logged-in user on to their dashboard: one link fits
                both, without asking who is there (a 404 does not know). #}

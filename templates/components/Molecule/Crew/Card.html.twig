@@ -8,13 +8,13 @@
 
         <div class="min-w-0">
             <h2 class="card-title line-clamp-2 wrap-anywhere" title="{{ crew.name }}">{{ crew.name }}</h2>
-            <p class="mt-1 text-sm text-base-content/70">
+            <p class="mt-1 text-sm text-muted">
                 {{ members|map(member => member.firstname)|join(', ', ' et ') }}
             </p>
         </div>
 
         <div class="card-actions mt-auto items-center justify-between">
-            <span class="flex items-center gap-1.5 text-sm text-base-content/70">
+            <span class="flex items-center gap-1.5 text-sm text-muted">
                 <twig:ux:icon name="lucide:gift" class="size-4 shrink-0" />
                 <span class="tabular-nums">{{ giftCount }} cadeau{{ giftCount > 1 ? 'x' }}</span>
             </span>

@@ -13,7 +13,7 @@
         {# Set from ?section=: the form has no field for it. #}
         <twig:block name="meta">
             {% if gift.section %}
-                <p class="flex items-center gap-2 text-sm text-base-content/70">
+                <p class="flex items-center gap-2 text-sm text-muted">
                     <twig:ux:icon name="lucide:folder" class="size-4 shrink-0" />
                     <span class="wrap-anywhere">
                         Rangé dans « {{ gift.section.title }} »{% if gift.crew %}, une section du groupe « {{ gift.crew.name }} »{% endif %}

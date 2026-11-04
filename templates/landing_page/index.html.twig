@@ -19,7 +19,7 @@
             Des cadeaux qui ne font jamais doublon
         </h1>
 
-        <p class="text-base-content/70 mx-auto mt-10 max-w-2xl text-xl leading-relaxed">
+        <p class="text-muted mx-auto mt-10 max-w-2xl text-xl leading-relaxed">
             Créez une section par occasion, seul·e ou en groupe. Vos ami·es réservent un cadeau
             ou cagnottent ensemble, sans jamais se marcher dessus.
         </p>
@@ -39,7 +39,7 @@
             </twig:Atomic:ButtonLink>
         </div>
 
-        <p class="text-base-content/60 mt-10 text-sm">
+        <p class="text-muted mt-10 text-sm">
             Une adresse email suffit. Aucune carte bancaire, aucun paiement dans l'application.
         </p>
 
@@ -94,7 +94,7 @@
     <div class="mx-auto max-w-6xl">
         <div class="mx-auto max-w-2xl text-center">
             <h2 class="text-4xl font-bold text-balance lg:text-5xl">Comment ça marche</h2>
-            <p class="text-base-content/70 mt-6 text-lg leading-relaxed">
+            <p class="text-muted mt-6 text-lg leading-relaxed">
                 Quatre étapes, rien à installer.
             </p>
         </div>
@@ -108,7 +108,7 @@
                         </span>
                         <span class="badge {{ step.badge }} badge-sm w-fit">Étape {{ loop.index }}</span>
                         <h3 class="card-title text-xl">{{ step.title }}</h3>
-                        <p class="text-base-content/70 leading-relaxed">{{ step.text }}</p>
+                        <p class="text-muted leading-relaxed">{{ step.text }}</p>
                     </div>
                 </div>
             {% endfor %}
@@ -127,7 +127,7 @@
             <h2 class="mt-8 text-4xl font-bold text-balance lg:text-5xl">
                 Un cadeau réservé ne sera pas offert deux fois
             </h2>
-            <p class="text-base-content/70 mt-6 text-lg leading-relaxed">
+            <p class="text-muted mt-6 text-lg leading-relaxed">
                 Le premier qui réserve bloque le cadeau. Il passe en « réservé » et vos autres
                 ami·es le voient pris. Un pseudonyme suffit pour rester discret
                 jusqu'au jour J.
@@ -175,12 +175,12 @@
             <h2 class="mt-8 text-4xl font-bold text-balance lg:text-5xl">
                 Pour les gros cadeaux, chacun met sa part
             </h2>
-            <p class="text-base-content/70 mt-8 text-lg leading-relaxed">
+            <p class="text-muted mt-8 text-lg leading-relaxed">
                 My Gift additionne les montants et affiche le reste à couvrir. Le prix sert
                 d'objectif : s'il change, les contributeurs sont prévenus par email et revoient
                 leur part. Une fois le cadeau acheté, l'un d'eux le passe en « prêt à offrir ».
             </p>
-            <p class="text-base-content/60 mt-8 text-sm">
+            <p class="text-muted mt-8 text-sm">
                 Aucun paiement ne transite par l'application : vous vous arrangez entre vous.
             </p>
         </div>
@@ -193,7 +193,7 @@
 
                     <div>
                         <h3 class="text-2xl leading-tight font-bold wrap-break-word">{{ pooledGift.title }}</h3>
-                        <p class="mt-1 text-xl font-semibold tabular-nums text-base-content/80">{{ pooledGift.price|format_currency('EUR') }}</p>
+                        <p class="mt-1 text-xl font-semibold tabular-nums text-muted">{{ pooledGift.price|format_currency('EUR') }}</p>
                     </div>
 
                     <div class="rounded-box bg-base-200/60 px-2 py-4">
@@ -205,7 +205,7 @@
                                     <span class="step-icon">
                                         <twig:ux:icon :name="isDone ? 'lucide:check' : step.icon" class="size-4" />
                                     </span>
-                                    <span class="text-sm {{ isCurrent ? 'font-semibold' : 'text-base-content/70' }}">{{ step.label }}</span>
+                                    <span class="text-sm {{ isCurrent ? 'font-semibold' : 'text-muted' }}">{{ step.label }}</span>
                                 </li>
                             {% endfor %}
                         </ol>
@@ -254,7 +254,7 @@
             <h2 class="mt-8 text-4xl font-bold text-balance lg:text-5xl">
                 Collez une adresse, la fiche se remplit
             </h2>
-            <p class="text-base-content/70 mt-8 text-lg leading-relaxed">
+            <p class="text-muted mt-8 text-lg leading-relaxed">
                 My Gift lit les métadonnées Open Graph de la page marchande et reprend le titre,
                 l'image et la description. Vous n'ajoutez que le prix.
             </p>
@@ -317,14 +317,14 @@
     <div class="mx-auto max-w-6xl">
         <div class="mx-auto max-w-2xl text-center">
             <h2 class="text-4xl font-bold text-balance lg:text-5xl">Une section par occasion, ou par thème</h2>
-            <p class="text-base-content/70 mt-6 text-lg leading-relaxed">
+            <p class="text-muted mt-6 text-lg leading-relaxed">
                 Vos ami·es ouvrent votre page et parcourent vos sections. Chacune se replie,
                 garde ses propres cadeaux et son statut.
             </p>
         </div>
 
         <div class="bg-base-200 rounded-box mt-16 p-6 lg:p-10">
-            <p class="text-base-content/60 mb-6 text-sm">Exemple : la page de Léa, vue par une amie</p>
+            <p class="text-muted mb-6 text-sm">Exemple : la page de Léa, vue par une amie</p>
 
             <div class="flex flex-col gap-5">
                 <twig:Molecule:Section
@@ -412,7 +412,7 @@
             <h2 class="mt-8 text-4xl font-bold text-balance lg:text-5xl">
                 Des sections tenues à plusieurs
             </h2>
-            <p class="text-base-content/70 mt-8 text-lg leading-relaxed">
+            <p class="text-muted mt-8 text-lg leading-relaxed">
                 Un couple, des parents pour leur enfant, une bande d'ami·es : créez un groupe,
                 invitez vos ami·es, et tenez ensemble les sections qui vous concernent tous.
             </p>
@@ -425,7 +425,7 @@
             <div class="card-body gap-6">
                 <div>
                     <h3 class="text-2xl leading-tight font-bold">Famille Martin</h3>
-                    <p class="text-base-content/70 mt-1 flex items-center gap-1.5 text-sm">
+                    <p class="text-muted mt-1 flex items-center gap-1.5 text-sm">
                         <twig:ux:icon name="lucide:gift" class="size-4 shrink-0" />
                         <span class="tabular-nums">2 sections, 9 cadeaux</span>
                     </p>
@@ -447,7 +447,7 @@
                                 </div>
                                 <div class="min-w-0">
                                     <p class="font-medium">{{ member.name }}</p>
-                                    <p class="text-xs text-base-content/60">Membre depuis le 12/03/2026</p>
+                                    <p class="text-xs text-muted">Membre depuis le 12/03/2026</p>
                                     {% if member.owner %}
                                         <div class="mt-1.5 flex flex-wrap gap-1.5">
                                             <span class="badge badge-sm badge-accent">Propriétaire</span>
@@ -501,7 +501,7 @@
     <div class="mx-auto max-w-6xl">
         <div class="mx-auto max-w-2xl text-center">
             <h2 class="text-4xl font-bold text-balance lg:text-5xl">Entre ami·es, sans gâcher la surprise</h2>
-            <p class="text-base-content/70 mt-6 text-lg leading-relaxed">
+            <p class="text-muted mt-6 text-lg leading-relaxed">
                 Vos envies restent dans votre cercle, et la personne fêtée ne voit que ce qu'il faut.
             </p>
         </div>
@@ -514,7 +514,7 @@
                             <twig:ux:icon :name="feature.iconName" class="size-6" />
                         </span>
                         <h3 class="card-title text-xl">{{ feature.title }}</h3>
-                        <p class="text-base-content/70 leading-relaxed">{{ feature.text }}</p>
+                        <p class="text-muted leading-relaxed">{{ feature.text }}</p>
                     </div>
                 </div>
             {% endfor %}
@@ -555,7 +555,7 @@
     <div class="mx-auto max-w-6xl">
         <div class="mx-auto max-w-2xl text-center">
             <h2 class="text-4xl font-bold text-balance lg:text-5xl">Le parcours d'un cadeau</h2>
-            <p class="text-base-content/70 mt-6 text-lg leading-relaxed">
+            <p class="text-muted mt-6 text-lg leading-relaxed">
                 Le statut est écrit sur la fiche. Personne n'a besoin de demander
                 « alors, quelqu'un l'a pris ? ».
             </p>
@@ -576,7 +576,7 @@
                                     class="whitespace-nowrap" />
                             {% endfor %}
                         </div>
-                        <p class="text-base-content/70 leading-relaxed">{{ stage.text }}</p>
+                        <p class="text-muted leading-relaxed">{{ stage.text }}</p>
                     </div>
                 </li>
             {% endfor %}
@@ -625,7 +625,7 @@
                 <div class="collapse collapse-arrow bg-base-200">
                     <input type="radio" name="faq-landing" {{ loop.first ? 'checked' }} aria-label="{{ item.question }}" />
                     <div class="collapse-title text-lg font-semibold">{{ item.question }}</div>
-                    <div class="collapse-content text-base-content/80 leading-relaxed">{{ item.answer }}</div>
+                    <div class="collapse-content text-muted leading-relaxed">{{ item.answer }}</div>
                 </div>
             {% endfor %}
         </div>
@@ -642,7 +642,7 @@
         <h2 class="text-4xl font-bold text-balance lg:text-5xl">
             La prochaine occasion arrive plus vite que prévu
         </h2>
-        <p class="text-base-content/70 mt-8 text-lg leading-relaxed">
+        <p class="text-muted mt-8 text-lg leading-relaxed">
             Créez votre première section en une minute, ajoutez trois cadeaux, envoyez le lien.
         </p>
 
@@ -666,7 +666,7 @@
 {# ========================================================== CONNEXION #}
 <section id="connexion" class="scroll-mt-20 pb-24 lg:pb-32">
     <div class="mx-auto flex max-w-md flex-col items-center">
-        <div class="divider text-base-content/60 w-full text-sm">Vous avez déjà un compte&nbsp;?</div>
+        <div class="divider text-muted w-full text-sm">Vous avez déjà un compte&nbsp;?</div>
         <h2 class="mt-12 text-2xl font-bold">Connectez-vous !</h2>
         <p class="py-6 text-center">Connectez-vous pour regarder qui vous a offert un joli cadeau 🎁</p>
         {{ include('security/_login_form.html.twig', { autofocus: false }) }}

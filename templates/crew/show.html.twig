@@ -44,7 +44,7 @@
                             {% for gift in gifts %}
                                 <twig:CardGift :gift="gift" />
                             {% else %}
-                                <p class="py-4 text-sm text-base-content/70">
+                                <p class="py-4 text-sm text-muted">
                                     {{ ownerView
                                         ? 'Cette section est vide. Ajoutez-y un cadeau depuis « Ajouter un cadeau ».'
                                         : 'Aucun cadeau publié dans cette section pour le moment.' }}

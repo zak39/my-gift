@@ -6,7 +6,7 @@
             <h2 id="shared-lists-title" class="text-xl font-bold">
                 {{ ownerView ? 'Mes groupes' : 'Les groupes de ' ~ user.firstname }}
             </h2>
-            <p class="mt-1 text-sm text-base-content/70">
+            <p class="mt-1 text-sm text-muted">
                 {{ ownerView ? 'Les sections de cadeaux que vous tenez à plusieurs.' : 'Les sections de cadeaux que ' ~ user.firstname ~ ' tient à plusieurs.' }}
             </p>
         </div>
@@ -19,7 +19,7 @@
     </div>
 
     {% if crews is empty %}
-        <p class="text-sm text-base-content/70">
+        <p class="text-sm text-muted">
             Pas encore de groupe : créez-en un pour tenir des sections avec vos proches, pour votre enfant par exemple.
         </p>
     {% else %}

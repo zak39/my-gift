@@ -7,13 +7,13 @@
                 <twig:ux:icon name="lucide:user-plus" class="size-5" />
                 Inviter des ami·es
             </h2>
-            <p class="mt-1 text-sm text-base-content/70">
+            <p class="mt-1 text-sm text-muted">
                 Chaque membre invite ses propres ami·es. Leurs ami·es verront aussi les sections.
             </p>
         </div>
 
         {% if form.invitee.vars.choices is empty %}
-            <p class="text-sm text-base-content/70">
+            <p class="text-sm text-muted">
                 Toutes vos ami·es font déjà partie du groupe ou ont déjà été invité·es.
                 <a href="{{ path('app_user') }}" class="link">Trouver d'autres ami·es</a>
             </p>

@@ -8,18 +8,18 @@
         <h1 class="text-3xl leading-tight font-bold wrap-break-word md:text-4xl">
             {{ gift.title }}
         </h1>
-        <p class="mt-2 text-2xl font-semibold tabular-nums text-base-content/80">
+        <p class="mt-2 text-2xl font-semibold tabular-nums text-muted">
             {{ gift.price|format_currency('EUR') }}
         </p>
     </div>
 
     {% if gift.description %}
-        <p class="max-w-prose text-base leading-relaxed text-base-content/80">
+        <p class="max-w-prose text-base leading-relaxed text-muted">
             {{ gift.description }}
         </p>
     {% endif %}
 
-    <p class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-base-content/60">
+    <p class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
         <span class="inline-flex items-center gap-1.5">
             <twig:ux:icon name="lucide:calendar-plus" class="size-4" />
             Ajouté le {{ gift.createdAt|format_datetime('medium', 'none', locale: 'fr') }}

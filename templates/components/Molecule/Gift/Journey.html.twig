@@ -10,7 +10,7 @@
                 <span class="step-icon">
                     <twig:ux:icon :name="isDone ? 'lucide:check' : step.icon" class="size-4" />
                 </span>
-                <span class="text-sm {{ isCurrent ? 'font-semibold' : 'text-base-content/70' }}">
+                <span class="text-sm {{ isCurrent ? 'font-semibold' : 'text-muted' }}">
                     {{ step.label }}
                     {% if isCurrent %}<span class="sr-only">(étape actuelle)</span>{% elseif isDone %}<span class="sr-only">(terminée)</span>{% endif %}
                 </span>
