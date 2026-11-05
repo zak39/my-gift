@@ -4,9 +4,11 @@
 
     <div class="min-w-0">
         <p class="font-medium">
-            <span class="wrap-anywhere">{{ member.fullname }}</span>
             {% if member is same as(app.user) %}
+                <span class="wrap-anywhere">{{ member.pseudo }}</span>
                 <span class="text-sm font-normal text-muted">(vous)</span>
+            {% else %}
+                <twig:Molecule:User:Name :user="member" />
             {% endif %}
         </p>
         <p class="text-xs text-muted">Membre depuis le {{ membership.joinedAt|date('d/m/Y') }}</p>
@@ -28,7 +30,7 @@
         {# Behind "…" like a friend's card: the entry opening the modal goes through the dialog
            controller, the modal itself rendered below, out of the menu. #}
         <div class="dropdown dropdown-end" data-controller="dropdown">
-            <div tabindex="0" role="button" class="btn btn-sm btn-ghost btn-square" aria-label="Plus d'actions pour {{ member.firstname }}" data-dropdown-target="trigger">
+            <div tabindex="0" role="button" class="btn btn-sm btn-ghost btn-square" aria-label="Plus d'actions pour {{ member.pseudo }}" data-dropdown-target="trigger">
                 <twig:ux:icon name="lucide:ellipsis" class="size-4" />
             </div>
             <ul tabindex="-1" class="dropdown-content menu menu-sm z-1 mt-1 w-52 rounded-box bg-base-100 shadow">

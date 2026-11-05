@@ -30,7 +30,7 @@
             <div class="flex flex-col items-center space-y-4 text-center p-4 bg-base-100 border border-base-300 rounded-md shadow-sm">
                 <twig:Molecule:User:ProfileAvatar :user="user" />
                 <div>
-                    <h2 class="text-2xl font-semibold">{{ user.fullname }}</h2>
+                    <h2 class="text-2xl font-semibold"><twig:Molecule:User:Name :user="user" /></h2>
                     <p class="text-sm text-muted">{{ user.email }}</p>
                 </div>
                 <div class="mt-4 text-sm text-muted">
@@ -51,6 +51,31 @@
                     <div class="space-y-4">
                         <div class="p-4 bg-base-100 border border-base-300 rounded-md shadow-sm">
                             <h2 class="text-sm font-medium mb-3">Informations personnelles</h2>
+                            <div class="mb-4">
+                                {{ form_label(profileForm.pseudo) }}
+                                {% set pseudoId = profileForm.pseudo.vars.id %}
+                                {% set pseudoInvalid = profileForm.pseudo.vars.errors|length > 0 %}
+                                {# RGAA 11.10: form_row would tie the help and the errors to the field, and mark
+                                   it invalid; form_widget alone does none of it. #}
+                                {{ form_widget(profileForm.pseudo, {
+                                    'attr': {
+                                        'class': 'input w-full' ~ (pseudoInvalid ? ' input-error' : ''),
+                                        'aria-describedby': pseudoId ~ '_help' ~ (pseudoInvalid ? ' ' ~ pseudoId ~ '_errors' : ''),
+                                    }|merge(pseudoInvalid ? { 'aria-invalid': 'true' } : {}),
+                                }) }}
+                                {# Its id is the field's aria-describedby (RGAA 11.10). #}
+                                <small id="{{ profileForm.pseudo.vars.id }}_help" class="mt-1 mb-2 flex items-start gap-1 text-xs text-muted">
+                                    <twig:ux:icon name="lucide:info" class="mt-px size-3.5 shrink-0" aria-hidden="true" />
+                                    <span>{{ profileForm.pseudo.vars.help }}</span>
+                                </small>
+                                {% if pseudoInvalid %}
+                                    {# Its id is in the field's aria-describedby: the error and the suggestions are read with it. #}
+                                    <div id="{{ pseudoId }}_errors" class="text-error mt-2 p-2 text-sm">
+                                        {{ form_errors(profileForm.pseudo) }}
+                                        <twig:Molecule:Form:PseudoSuggestion :field="profileForm.pseudo" class="text-base-content" />
+                                    </div>
+                                {% endif %}
+                            </div>
                             <div class="grid gap-4 md:grid-cols-2">
                                 <div>
                                     {{ form_label(profileForm.firstname) }}

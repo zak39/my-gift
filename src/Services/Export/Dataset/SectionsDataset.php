@@ -32,7 +32,7 @@ final class SectionsDataset
                 'Section' => $section->getTitle(),
                 'Description' => $section->getDescription(),
                 // A crew section keeps no author once its user deleted their account.
-                'Créée par' => $section->getCreatedBy()?->getFullname() ?? 'Utilisateur supprimé',
+                'Créée par' => $section->getCreatedBy()?->getPseudo() ?? 'Utilisateur supprimé',
             ],
             $sections,
         ));

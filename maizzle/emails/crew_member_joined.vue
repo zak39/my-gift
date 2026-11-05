@@ -8,7 +8,7 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
 
 <template>
     <Layout>
-        <TwigPreheader><Raw>{{ member.firstname|title }}</Raw> a rejoint le groupe « <Raw>{{ crewName }}</Raw> »</TwigPreheader>
+        <TwigPreheader><Raw>{{ member.pseudo }}</Raw> a rejoint le groupe « <Raw>{{ crewName }}</Raw> »</TwigPreheader>
 
         <BodyStyle />
         <CardStyle />
@@ -19,19 +19,19 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
         <Body class="email-bg">
             <Container class="max-w-xl p-0 py-10 sm:p-6">
                 <div class="email-card border rounded-lg p-6">
-                    <h1><Raw>{{ member.firstname|title }}</Raw> a rejoint le groupe « <Raw>{{ crewName }}</Raw> » 🎉</h1>
+                    <h1><Raw>{{ member.pseudo }}</Raw> a rejoint le groupe « <Raw>{{ crewName }}</Raw> » 🎉</h1>
 
                     <p>
                         Bonjour,
                     </p>
 
                     <p>
-                        <b><Raw>{{ member.fullName|title }}</Raw></b> fait maintenant partie du groupe <b>« <Raw>{{ crewName }}</Raw> »</b>.
+                        <b><Raw>{{ member.pseudo }}</Raw></b> fait maintenant partie du groupe <b>« <Raw>{{ crewName }}</Raw> »</b>.
                     </p>
 
                     <div class="my-6">
                         <UserCard
-                            name="{{ member.fullName|title }}"
+                            name="{{ member.pseudo }}"
                             avatar="{{ absolute_url(user_avatar_image_url(member)) }}"
                             to="{{ url('app_section_user_page', { id: member.id }) }}"
                         />

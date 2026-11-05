@@ -67,12 +67,12 @@
       <w:DontUseAdvancedTypographyReadingMail />
     </w:WordDocument>
   </xml>
-<![endif]--></span><div role="article" aria-roledescription="email" lang="en" dir="ltr" style="font-size: medium; font-size: max(16px, 1rem)"><!--[if mso]><table role="none" cellpadding="0" cellspacing="0" style="width: 576px" align="center"><tr><td style="padding: 40px 0"><![endif]--> <div class="sm-p-6" style="margin: 0 auto; max-width: 576px; padding: 40px 0;">{% set participantName = participant.isAnonymous ? participant.pseudoAnonyme : participant.participantUser.fullName %} <div class="email-card" style="border-radius: 8px; border-style: solid; border-width: 1px; padding: 24px;"><h1>Le participant {{ participantName }} a quitté le cadeau {{ ownerOf }} ! 🎁</h1> <p>
+<![endif]--></span><div role="article" aria-roledescription="email" lang="en" dir="ltr" style="font-size: medium; font-size: max(16px, 1rem)"><!--[if mso]><table role="none" cellpadding="0" cellspacing="0" style="width: 576px" align="center"><tr><td style="padding: 40px 0"><![endif]--> <div class="sm-p-6" style="margin: 0 auto; max-width: 576px; padding: 40px 0;">{% set participantName = participant.displayName %} <div class="email-card" style="border-radius: 8px; border-style: solid; border-width: 1px; padding: 24px;"><h1>Le participant {{ participantName }} a quitté le cadeau {{ ownerOf }} ! 🎁</h1> <p>
                         Bonjour,
                     </p> {% if participant.isAnonymous %} <p><b>{{ participant.pseudoAnonyme }}</b> a quitté le cadeau <b>{{ gift.title }}</b>.
                         </p> <p>
                             Mais, qui était cette personne mystérieuse ? 🧐
-                        </p> {% else %} <p><b>{{ participant.participantUser.fullName|title }}</b> a quitté le cadeau <b>{{ gift.title }}</b>.
+                        </p> {% else %} <p><b>{{ participant.displayName }}</b> a quitté le cadeau <b>{{ gift.title }}</b>.
                         </p> {% endif %} <p>
                       Vous pouvez consulter les détails du cadeau {{ ownerOf }} en cliquant sur le bouton ci-dessous.
                     </p> <div style="margin-top: 24px; margin-bottom: 24px; text-align: center;"><a href="{{ url }}" class="accent-button" style="display: inline-block; padding: 10px 16px; text-align: center; font-size: 14px; line-height: 24px; font-weight: 600; text-decoration: none;"><!--[if mso]><i style="mso-font-width: 150%; mso-text-raise: 30px;" hidden>&emsp;</i><![endif]--> <span style="mso-text-raise:16px;">Voir la progression du cadeau {{ ownerOf }}</span> <!--[if mso]><i style="mso-font-width: 150%;" hidden>&emsp;&#8203;</i><![endif]--></a></div></div></div> <!--[if mso]></td></tr></table><![endif]--></div></body></div></body></html>

@@ -1,6 +1,6 @@
 {# Inside the blocks, title, class and id are the props of Modal: the props of this
    component go by other names, so they stay in reach. #}
-<twig:Modal :title="label ~ ' ' ~ user.firstname" :class="'friend_' ~ action" :id="user.id">
+<twig:Modal :title="label ~ ' ' ~ user.pseudo" :class="'friend_' ~ action" :id="user.id">
     <twig:block name="handlerButton">
         {% if withTrigger %}
             <button type="button" class="btn btn-sm btn-ghost" onclick="modal_friend_{{ action }}_{{ user.id }}.showModal()">

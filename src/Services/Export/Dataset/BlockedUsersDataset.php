@@ -18,8 +18,9 @@ final class BlockedUsersDataset
 
     public function of(User $user): ExportedDatasetDto
     {
-        return ExportedDatasetDto::table('Bloqués', ['Prénom', 'Nom'], array_map(
-            fn (User $blocked) => ['Prénom' => $blocked->getFirstname(), 'Nom' => $blocked->getLastname()],
+        // The pseudo only: a blocked user is no friend, whose full name stays theirs.
+        return ExportedDatasetDto::table('Bloqués', ['Pseudo'], array_map(
+            fn (User $blocked) => ['Pseudo' => $blocked->getPseudo()],
             $this->friendBookRepository->of($user)->getBlockedUsers()->getValues(),
         ));
     }

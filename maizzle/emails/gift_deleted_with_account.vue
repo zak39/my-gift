@@ -20,7 +20,7 @@ import CardStyle from '../components/styles/CardStyle.vue'
                     </p>
 
                     <p>
-                        <b><Raw>{{ ownerName|title }}</Raw></b> a supprimé son compte My Gift. Son cadeau <b>« <Raw>{{ giftTitle }}</Raw> »</b>, auquel vous participiez, a disparu avec lui.
+                        <b><Raw>{{ ownerName }}</Raw></b> a supprimé son compte My Gift. Son cadeau <b>« <Raw>{{ giftTitle }}</Raw> »</b>, auquel vous participiez, a disparu avec lui.
                     </p>
 
                     <Raw>{% if pooled %}</Raw>

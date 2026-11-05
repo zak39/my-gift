@@ -17,7 +17,7 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
         <Body class="email-bg">
             <Container class="max-w-xl p-0 py-10 sm:p-6">
                 <Raw>
-                  {% set participantName = participant.isAnonymous ? participant.pseudoAnonyme : participant.participantUser.fullName %}
+                  {% set participantName = participant.displayName %}
                 </Raw>
                 <div class="email-card border rounded-lg p-6">
                     <h1>Le participant <Raw>{{ participantName }}</Raw> a quitté le cadeau <Raw>{{ ownerOf }}</Raw> ! 🎁</h1>
@@ -35,7 +35,7 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
                         </p>
                     <Raw>{% else %}</Raw>
                         <p>
-                          <b><Raw>{{ participant.participantUser.fullName|title }}</Raw></b> a quitté le cadeau <b><Raw>{{ gift.title }}</Raw></b>.
+                          <b><Raw>{{ participant.displayName }}</Raw></b> a quitté le cadeau <b><Raw>{{ gift.title }}</Raw></b>.
                         </p>
                     <Raw>{% endif %}</Raw>
 

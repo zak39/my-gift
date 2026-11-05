@@ -12,7 +12,7 @@
                 <h1 class="text-2xl leading-tight font-bold wrap-anywhere sm:text-3xl">{{ crew.name }}</h1>
                 <p class="mt-2 flex items-center gap-2 text-sm text-muted">
                     <twig:ux:icon name="lucide:users" class="size-4 shrink-0" />
-                    <span>Sections communes de {{ members|map(member => member.firstname)|join(', ', ' et ') }}</span>
+                    <span>Sections communes de {{ members|map(member => member.pseudo)|join(', ', ' et ') }}</span>
                 </p>
                 {% if giftCount > 0 %}
                     <p class="mt-1 flex items-center gap-2 text-sm text-muted">

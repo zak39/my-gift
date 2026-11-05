@@ -16,6 +16,7 @@ class UserProfileType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('pseudo', PseudoType::class)
             ->add('firstname', TextType::class, [
                 // RGAA 11.13: the field's purpose, for autofill and assistive technologies.
                 'attr' => ['class' => 'input', 'autocomplete' => 'given-name'],

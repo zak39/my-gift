@@ -51,7 +51,7 @@ class FriendNotificationSubscriber implements EventSubscriberInterface
 
         $email = (new TemplatedEmail())
             ->to($recipient->getEmail())
-            ->subject(\sprintf('%s souhaite vous ajouter à ses ami·es 🎁', ucfirst($sender->getFirstname())))
+            ->subject(\sprintf('%s souhaite vous ajouter à ses ami·es 🎁', $sender->getPseudo()))
             ->htmlTemplate('emails/friend_request.html.twig')
             ->context([
                 'sender' => $sender,

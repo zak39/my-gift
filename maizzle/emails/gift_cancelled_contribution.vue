@@ -17,13 +17,13 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
         <Body class="email-bg">
             <Container class="max-w-xl p-0 py-10 sm:p-6">
                 <Raw>
-                  {% set participantName = participant.isAnonymous ? participant.pseudoAnonyme : participant.participantUser.fullName %}
+                  {% set participantName = participant.participantUser.firstname %}
                 </Raw>
                 <div class="email-card border rounded-lg p-6">
                     <h1>Vous étiez le dernier à participer au cadeau <Raw>{{ ownerOf }}</Raw> ! 🎁</h1>
 
                     <p>
-                        Bonjour <Raw>{{ participantName }}</Raw>,
+                        Bonjour <Raw>{{ participantName|title }}</Raw>,
                     </p>
 
                     <p>

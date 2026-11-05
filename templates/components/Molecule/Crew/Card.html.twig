@@ -9,7 +9,7 @@
         <div class="min-w-0">
             <h2 class="card-title line-clamp-2 wrap-anywhere" title="{{ crew.name }}">{{ crew.name }}</h2>
             <p class="mt-1 text-sm text-muted">
-                {{ members|map(member => member.firstname)|join(', ', ' et ') }}
+                {{ members|map(member => member.pseudo)|join(', ', ' et ') }}
             </p>
         </div>
 

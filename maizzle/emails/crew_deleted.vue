@@ -26,12 +26,12 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
                     </p>
 
                     <p>
-                        <b><Raw>{{ owner.fullName|title }}</Raw></b>, propriétaire du groupe <b>« <Raw>{{ crewName }}</Raw> »</b>, vient de le supprimer.
+                        <b><Raw>{{ owner.pseudo }}</Raw></b>, propriétaire du groupe <b>« <Raw>{{ crewName }}</Raw> »</b>, vient de le supprimer.
                     </p>
 
                     <div class="my-6">
                         <UserCard
-                            name="{{ owner.fullName|title }}"
+                            name="{{ owner.pseudo }}"
                             avatar="{{ absolute_url(user_avatar_image_url(owner)) }}"
                             to="{{ url('app_section_user_page', { id: owner.id }) }}"
                         />

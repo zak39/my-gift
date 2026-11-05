@@ -34,7 +34,7 @@ class FriendBook
     #[ORM\JoinTable(name: 'user_friend')]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'owner_id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'friend_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    #[ORM\OrderBy(['firstname' => 'ASC'])]
+    #[ORM\OrderBy(['pseudo' => 'ASC'])]
     private Collection $friends;
 
     /**

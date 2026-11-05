@@ -2,7 +2,7 @@
 {% set source = user_avatar_url(user) %}
 {% if source %}
     <twig:Turbo:Stream:Replace target="#user_avatar_header">
-        <twig:Atomic:Image id="user_avatar_header" :source="source" alt="Photo de profil {{ user.fullname }}" />
+        <twig:Atomic:Image id="user_avatar_header" :source="source" alt="Photo de profil {{ user.pseudo }}" />
     </twig:Turbo:Stream:Replace>
 {% endif %}
 

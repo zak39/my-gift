@@ -14,8 +14,9 @@ final class ProfileDataset
 {
     public function of(User $user): ExportedDatasetDto
     {
-        return ExportedDatasetDto::table('Profil', ['Email', 'Prénom', 'Nom', 'Inscrit le', 'Email vérifié', 'Dernière activité'], [[
+        return ExportedDatasetDto::table('Profil', ['Email', 'Pseudo', 'Prénom', 'Nom', 'Inscrit le', 'Email vérifié', 'Dernière activité'], [[
             'Email' => $user->getEmail(),
+            'Pseudo' => $user->getPseudo(),
             'Prénom' => $user->getFirstname(),
             'Nom' => $user->getLastname(),
             'Inscrit le' => $user->getCreatedAt(),

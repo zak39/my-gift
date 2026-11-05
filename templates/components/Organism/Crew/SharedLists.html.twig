@@ -4,10 +4,10 @@
     <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
             <h2 id="shared-lists-title" class="text-xl font-bold">
-                {{ ownerView ? 'Mes groupes' : 'Les groupes de ' ~ user.firstname }}
+                {{ ownerView ? 'Mes groupes' : 'Les groupes de ' ~ user.pseudo }}
             </h2>
             <p class="mt-1 text-sm text-muted">
-                {{ ownerView ? 'Les sections de cadeaux que vous tenez à plusieurs.' : 'Les sections de cadeaux que ' ~ user.firstname ~ ' tient à plusieurs.' }}
+                {{ ownerView ? 'Les sections de cadeaux que vous tenez à plusieurs.' : 'Les sections de cadeaux que ' ~ user.pseudo ~ ' tient à plusieurs.' }}
             </p>
         </div>
         {% if ownerView %}

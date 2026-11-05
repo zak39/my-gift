@@ -61,7 +61,7 @@ final class UserAvatar
         $this->imageAttributes = array_filter(
             [
                 'source' => $this->avatarUrlGenerator->url($this->user),
-                'alt' => 'Photo de profil '.$this->user->getFullname(),
+                'alt' => 'Photo de profil '.$this->user->getPseudo(),
                 'id' => $this->id,
             ],
             fn (?string $value) => null !== $value,

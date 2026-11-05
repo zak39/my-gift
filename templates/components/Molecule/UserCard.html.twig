@@ -5,7 +5,10 @@
             <twig:Molecule:UserAvatar
                 :user="user"
                 sizeClass="h-14 w-14 shrink-0 rounded-full ring-2 ring-base-300 ring-offset-2 ring-offset-base-100" />
-            <h2 class="card-title min-w-0 line-clamp-2 wrap-anywhere" title="{{ user.fullname }}">{{ user.fullname }}</h2>
+            {# The title reads the pseudo that line-clamp may cut. #}
+            <h2 class="card-title min-w-0 flex-col items-start gap-0" title="{{ user.pseudo }}">
+                <twig:Molecule:User:Name :user="user" class="line-clamp-2" />
+            </h2>
         </div>
 
         {# "Voir son profil" stays for everyone: for a non-friend, it leads to the private list page.

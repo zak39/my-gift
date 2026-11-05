@@ -134,7 +134,7 @@ final class CrewController extends AbstractController
 
         try {
             $crewLifecycle->transfer($crew, $newOwner);
-            $this->addFlash('success', "{$newOwner->getFirstname()} est maintenant propriétaire du groupe « {$crew->getName()} ». Vous en restez membre, et pouvez désormais le quitter.");
+            $this->addFlash('success', "{$newOwner->getPseudo()} est maintenant propriétaire du groupe « {$crew->getName()} ». Vous en restez membre, et pouvez désormais le quitter.");
         } catch (\LogicException $exception) {
             $this->addFlash('error', $exception->getMessage());
         }

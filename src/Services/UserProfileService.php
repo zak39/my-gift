@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Entity\User;
 use App\Services\Security\CheckCurrentPassword;
+use App\Services\User\SaveUserPseudo;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -19,6 +20,7 @@ final class UserProfileService
         private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly TokenStorageInterface $tokenStorage,
         private readonly CheckCurrentPassword $checkCurrentPassword,
+        private readonly SaveUserPseudo $saveUserPseudo,
     ) {
     }
 
@@ -27,11 +29,13 @@ final class UserProfileService
         $this->validatePasswordChange($form, $user);
 
         if (!$form->isValid()) {
-            return new ProfileUpdateResult(ProfileUpdateResult::INVALID, ProfileUpdateResult::DO_NOT_USE_TURBO, $user);
+            return $this->refused($user);
         }
 
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        // False when another took the same pseudo meanwhile: the form shows it, as UniqueEntity does.
+        if (!($this->saveUserPseudo)($user, $form->get('pseudo'))) {
+            return $this->refused($user);
+        }
 
         $updatedUser = $this->refreshAuthenticatedUser($user);
 
@@ -40,6 +44,18 @@ final class UserProfileService
             $this->isTurboRequest($request) ? ProfileUpdateResult::USE_TURBO : ProfileUpdateResult::DO_NOT_USE_TURBO,
             $updatedUser
         );
+    }
+
+    /**
+     * The form wrote what was typed onto the logged-in user before it was refused: read back
+     * as saved, so that the page's header and navbar do not show a pseudo or a name that was
+     * never kept. The form itself keeps what was typed, to show it again with its errors.
+     */
+    private function refused(User $user): ProfileUpdateResult
+    {
+        $this->entityManager->refresh($user);
+
+        return new ProfileUpdateResult(ProfileUpdateResult::INVALID, ProfileUpdateResult::DO_NOT_USE_TURBO, $user);
     }
 
     private function validatePasswordChange(FormInterface $form, User $user): void

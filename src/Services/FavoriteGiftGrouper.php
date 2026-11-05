@@ -39,7 +39,7 @@ class FavoriteGiftGrouper
             $grouped[$listKey] ??= [
                 'crew' => $crew,
                 'user' => null !== $crew ? null : $gift->getCreatedBy(),
-                'name' => null !== $crew ? $crew->getName() : $gift->getCreatedBy()->getFullname(),
+                'name' => null !== $crew ? $crew->getName() : $gift->getCreatedBy()->getPseudo(),
                 'sections' => [],
             ];
 

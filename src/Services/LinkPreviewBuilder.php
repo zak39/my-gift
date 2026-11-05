@@ -101,7 +101,7 @@ final class LinkPreviewBuilder
         $crew = $gift->getCrew();
         $description = null !== $crew
             ? "Une idée cadeau du groupe « {$crew->getName()} »"
-            : "Une idée cadeau de {$gift->getCreatedBy()->getFullname()}"
+            : "Une idée cadeau de {$gift->getCreatedBy()->getPseudo()}"
         ;
 
         if (null !== $gift->getPrice()) {
@@ -129,10 +129,10 @@ final class LinkPreviewBuilder
         }
 
         return new LinkPreviewDto(
-            "Les cadeaux de {$user->getFullname()}",
+            "Les cadeaux de {$user->getPseudo()}",
             $this->giftCount($this->giftRepository->countPublishedPersonalOf($user), 'sur sa liste'),
             $url,
-            $this->image($this->avatarUrlGenerator->url($user), $user->getFullname()),
+            $this->image($this->avatarUrlGenerator->url($user), $user->getPseudo()),
         );
     }
 
@@ -145,12 +145,12 @@ final class LinkPreviewBuilder
             return null;
         }
 
-        $firstnames = array_values(array_filter(array_map(static fn (User $member) => $member->getFirstname(), $crew->getMembers())));
-        $last = array_pop($firstnames);
+        $pseudos = array_map(static fn (User $member) => $member->getPseudo(), $crew->getMembers());
+        $last = array_pop($pseudos);
         $where = 'dans les sections communes';
 
         if (null !== $last) {
-            $where .= ' de '.([] === $firstnames ? $last : implode(', ', $firstnames)." et $last");
+            $where .= ' de '.([] === $pseudos ? $last : implode(', ', $pseudos)." et $last");
         }
 
         return new LinkPreviewDto(

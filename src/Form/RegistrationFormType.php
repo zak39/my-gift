@@ -25,6 +25,7 @@ class RegistrationFormType extends AbstractType
                     'class' => 'label',
                 ],
             ])
+            ->add('pseudo', PseudoType::class)
             ->add('lastname', TextType::class, [
                 'required' => false,
                 // RGAA 11.10: an optional field says it in its label.

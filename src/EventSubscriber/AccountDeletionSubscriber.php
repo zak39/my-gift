@@ -98,7 +98,7 @@ class AccountDeletionSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $ownerName = $gift->getCreatedBy()->getFirstname();
+        $ownerName = $gift->getCreatedBy()->getPseudo();
 
         $email = (new TemplatedEmail())
             ->to(...array_map(fn (Participant $participant) => $participant->getParticipantUser()->getEmail(), $recipients))

@@ -7,7 +7,7 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
 
 <template>
     <Layout>
-        <TwigPreheader><Raw>{{ sender.firstname|title }}</Raw> souhaite vous ajouter à ses ami·es</TwigPreheader>
+        <TwigPreheader><Raw>{{ sender.pseudo }}</Raw> souhaite vous ajouter à ses ami·es</TwigPreheader>
 
         <BodyStyle />
         <CardStyle />
@@ -24,17 +24,17 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
                     </p>
 
                     <p>
-                        <b><Raw>{{ sender.fullName|title }}</Raw></b> souhaite vous ajouter à ses ami·es.
+                        <b><Raw>{{ sender.pseudo }}</Raw></b> souhaite vous ajouter à ses ami·es.
                     </p>
 
                     <p>
-                        En acceptant, vous découvrirez chacun·e les envies de l'autre : <Raw>{{ sender.firstname|title }}</Raw> pourra voir vos cadeaux, et vous les siens, pour faire plaisir sans jamais offrir deux fois la même chose.
+                        En acceptant, vous découvrirez chacun·e les envies de l'autre : <Raw>{{ sender.pseudo }}</Raw> pourra voir vos cadeaux, et vous les siens, pour faire plaisir sans jamais offrir deux fois la même chose.
                     </p>
 
                     <!-- No `to`: not friends yet. -->
                     <div class="my-6">
                         <UserCard
-                            name="{{ sender.fullName|title }}"
+                            name="{{ sender.pseudo }}"
                             avatar="{{ absolute_url(user_avatar_image_url(sender)) }}"
                         />
                     </div>

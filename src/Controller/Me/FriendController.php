@@ -43,8 +43,8 @@ final class FriendController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $senderName = $friendRequest->getSender()->getOwner()->getFirstname();
-        $recipientName = $friendRequest->getRecipient()->getOwner()->getFirstname();
+        $senderName = $friendRequest->getSender()->getOwner()->getPseudo();
+        $recipientName = $friendRequest->getRecipient()->getOwner()->getPseudo();
 
         try {
             match ($transition) {

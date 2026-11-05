@@ -24,7 +24,7 @@
             <Raw>{% else %}</Raw>
               <img
                 src="{{ absolute_url(user_avatar_image_url(contributor.participantUser)) }}"
-                alt="Photo de profil {{ contributor.participantUser.fullName }}"
+                alt="Photo de profil {{ contributor.participantUser.pseudo }}"
                 width="32"
                 height="32"
                 class="block rounded-full object-cover"
@@ -32,7 +32,7 @@
             <Raw>{% endif %}</Raw>
           </td>
           <td class="py-1 pl-3 align-middle text-sm">
-            <span class="font-semibold"><Raw>{{ contributor.isAnonymous or contributor.isFromDeletedUser ? contributor.displayName : contributor.participantUser.fullName|title }}</Raw></span>
+            <span class="font-semibold"><Raw>{{ contributor.isAnonymous or contributor.isFromDeletedUser ? contributor.displayName : contributor.participantUser.pseudo }}</Raw></span>
           </td>
           <td v-if="showAmount" class="py-1 text-right align-middle text-sm font-semibold"><Raw>{{ contributor.amount|format_currency('EUR') }}</Raw></td>
         </tr>

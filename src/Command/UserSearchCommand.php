@@ -33,7 +33,7 @@ class UserSearchCommand extends Command
             return Command::FAILURE;
         }
 
-        $users = $this->userRepository->findByFullNamePattern($pattern);
+        $users = $this->userRepository->findBySearchPattern($pattern);
 
         if (empty($users)) {
             $io->error(sprintf('User with name matching "%s" not found.', $pattern));
@@ -42,9 +42,10 @@ class UserSearchCommand extends Command
         }
 
         $io->table(
-            ['ID', 'Nom', 'Email', 'Admin'],
+            ['ID', 'Pseudo', 'Nom', 'Email', 'Admin'],
             array_map(fn (User $user) => [
                 $user->getId(),
+                $user->getPseudo(),
                 $user->getFullname(),
                 $user->getEmail(),
                 in_array('ROLE_ADMIN', $user->getRoles()) ? 'Yes' : 'No',

@@ -4,9 +4,9 @@
     <twig:Molecule:UserAvatar :user="invitee" sizeClass="w-10" />
 
     <div class="min-w-0">
-        <p class="font-medium wrap-anywhere">{{ invitee.fullname }}</p>
+        <p class="font-medium"><twig:Molecule:User:Name :user="invitee" /></p>
         <p class="text-xs text-muted">
-            Invité·e par {{ invitation.invitedBy is same as(app.user) ? 'vous' : invitation.invitedBy.firstname }}
+            Invité·e par {{ invitation.invitedBy is same as(app.user) ? 'vous' : invitation.invitedBy.pseudo }}
             le {{ invitation.createdAt|date('d/m/Y') }}
         </p>
     </div>

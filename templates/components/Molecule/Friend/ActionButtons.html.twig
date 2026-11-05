@@ -2,7 +2,7 @@
 {% set Relation = enum('App\\Enum\\FriendRelation') %}
 {% set relation = this.relation %}
 {% set pendingRequest = this.pendingRequest %}
-{% set blockQuestion = 'Bloquer ' ~ user.firstname ~ ' ? Tout lien entre vous sera supprimé, et ' ~ user.firstname ~ ' ne pourra plus vous envoyer de demande.' %}
+{% set blockQuestion = 'Bloquer ' ~ user.pseudo ~ ' ? Tout lien entre vous sera supprimé, et ' ~ user.pseudo ~ ' ne pourra plus vous envoyer de demande.' %}
 
 <div {{ attributes.defaults({ class: 'flex flex-wrap items-center gap-2' }) }}>
     {% if relation is same as(Relation.FRIEND) %}
@@ -14,7 +14,7 @@
            own below the other buttons, each entry opening the modal of its UnlinkButton below; the focus
            comes back to "…" when it closes. #}
         <div class="dropdown dropdown-end order-last flex basis-full justify-end" data-controller="dropdown">
-            <div tabindex="0" role="button" class="btn btn-sm btn-ghost btn-square" aria-label="Plus d'actions pour {{ user.firstname }}" data-dropdown-target="trigger">
+            <div tabindex="0" role="button" class="btn btn-sm btn-ghost btn-square" aria-label="Plus d'actions pour {{ user.pseudo }}" data-dropdown-target="trigger">
                 <twig:ux:icon name="lucide:ellipsis" class="size-4" />
             </div>
             <ul tabindex="-1" class="dropdown-content menu menu-sm bg-base-100 rounded-box mt-1 w-40 shadow">
@@ -33,7 +33,7 @@
             </ul>
         </div>
         <twig:Molecule:Friend:UnlinkButton :user="user" action="remove" label="Retirer" icon="lucide:user-minus" :withTrigger="false"
-            question="Retirer {{ user.firstname }} de vos ami·es ? Vous ne verrez plus vos sections respectives." />
+            question="Retirer {{ user.pseudo }} de vos ami·es ? Vous ne verrez plus vos sections respectives." />
         <twig:Molecule:Friend:UnlinkButton :user="user" action="block" label="Bloquer" icon="lucide:ban" :withTrigger="false" :question="blockQuestion" />
 
     {% elseif relation is same as(Relation.BLOCKED) %}

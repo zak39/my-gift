@@ -33,7 +33,7 @@ final class OwnerName
         return match (true) {
             null !== $item->getCrew() => self::crew($item->getCrew()),
             $author === $viewer => self::me(),
-            default => $author->getFullname(),
+            default => $author->getPseudo(),
         };
     }
 }

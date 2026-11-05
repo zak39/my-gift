@@ -5,7 +5,7 @@ namespace App\Services\Gift;
 use App\Entity\Gift;
 
 /**
- * Whose gift it is, as its givers' emails say it: its author's first name, or its crew for
+ * Whose gift it is, as its givers' emails say it: its author's pseudo, or its crew for
  * a crew's gift, whoever added it (the author may be gone, GiftOwnership).
  *
  * Plain text worked out when the email is queued: the worker renders it later, once the
@@ -25,7 +25,7 @@ final class GiftOwnerLabel
 
         return null !== $crew
             ? "le groupe « {$crew->getName()} »"
-            : ucwords($gift->getCreatedBy()->getFirstname())
+            : $gift->getCreatedBy()->getPseudo()
         ;
     }
 

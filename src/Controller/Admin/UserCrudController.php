@@ -97,6 +97,7 @@ class UserCrudController extends AbstractCrudController
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
+            ->add('pseudo')
             ->add('firstname')
             ->add('lastname')
             ->add('email')
@@ -125,6 +126,8 @@ class UserCrudController extends AbstractCrudController
             ->setFormType(VichImageType::class)
             ->onlyWhenUpdating()
         ;
+
+        yield TextField::new('pseudo');
 
         yield TextField::new('firstname');
 

@@ -133,7 +133,7 @@ class Crew
     }
 
     /**
-     * The members by first name, as the pages list them. A copy: add or remove one through
+     * The members by pseudo, as the pages list them. A copy: add or remove one through
      * addMember() and removeMember().
      *
      * @return list<User>
@@ -141,7 +141,7 @@ class Crew
     public function getMembers(): array
     {
         $members = $this->memberships->map(fn (CrewMember $membership) => $membership->getUser())->getValues();
-        usort($members, fn (User $a, User $b) => strnatcasecmp($a->getFirstname() ?? '', $b->getFirstname() ?? ''));
+        usort($members, fn (User $a, User $b) => strnatcasecmp($a->getPseudo(), $b->getPseudo()));
 
         return $members;
     }
@@ -235,11 +235,11 @@ class Crew
         }
 
         if ($this->hasMember($invitee)) {
-            throw new \LogicException(\sprintf('%s fait déjà partie du groupe.', $invitee->getFirstname()));
+            throw new \LogicException(\sprintf('%s fait déjà partie du groupe.', $invitee->getPseudo()));
         }
 
         if (null !== $this->getInvitationFor($invitee)) {
-            throw new \LogicException(\sprintf('%s a déjà été invité·e dans le groupe.', $invitee->getFirstname()));
+            throw new \LogicException(\sprintf('%s a déjà été invité·e dans le groupe.', $invitee->getPseudo()));
         }
 
         $invitation = new CrewInvitation($this, $invitedBy, $invitee);
@@ -301,7 +301,7 @@ class Crew
         }
 
         if ($member === $this->owner) {
-            throw new \LogicException(\sprintf('%s est déjà propriétaire du groupe.', $member->getFirstname()));
+            throw new \LogicException(\sprintf('%s est déjà propriétaire du groupe.', $member->getPseudo()));
         }
 
         $this->owner = $member;

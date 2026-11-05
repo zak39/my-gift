@@ -44,7 +44,7 @@ final class ClaimGift
                 $author = $gift->getCreatedBy();
                 $reason = match (true) {
                     $author === $member => 'Ce cadeau est déjà le vôtre.',
-                    null !== $author => \sprintf('%s a déjà repris ce cadeau.', ucfirst($author->getFirstname())),
+                    null !== $author => \sprintf('%s a déjà repris ce cadeau.', $author->getPseudo()),
                     default => 'Vous ne pouvez pas reprendre ce cadeau.',
                 };
 

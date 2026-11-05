@@ -9,7 +9,7 @@ use App\Form\ResetPasswordRequestFormType;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
 use App\Services\Security\ResendEmailConfirmation;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Services\User\SaveUserPseudo;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,7 +28,7 @@ class RegistrationController extends AbstractController
 
     #[IsGranted('PUBLIC_ACCESS')]
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EventDispatcherInterface $dispatcher, EntityManagerInterface $entityManager): Response
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EventDispatcherInterface $dispatcher, SaveUserPseudo $saveUserPseudo): Response
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -42,8 +42,12 @@ class RegistrationController extends AbstractController
             $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
             $user->setCreatedAt(new \DateTimeImmutable());
 
-            $entityManager->persist($user);
-            $entityManager->flush();
+            // False when another took the same pseudo meanwhile: the form shows it, as UniqueEntity does.
+            if (!$saveUserPseudo($user, $form->get('pseudo'))) {
+                return $this->render('registration/register.html.twig', [
+                    'registrationForm' => $form,
+                ], new Response(null, Response::HTTP_UNPROCESSABLE_ENTITY));
+            }
 
             $dispatcher->dispatch(new UserCreatedEvent($user));
 
