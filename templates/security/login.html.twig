@@ -4,7 +4,7 @@
 
 {% block body %}
 <div class="hero bg-base-200 min-h-screen">
-    <div class="flex flex-col-reverse">
+    <div class="flex w-full max-w-4xl flex-col-reverse">
         {% if emailUnverified %}
             <div role="alert" class="alert alert-warning">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
@@ -20,25 +20,17 @@
                 <span>{{ error.messageKey|trans(error.messageData, 'security') }}</span>
             </div>
         {% endif %}
-        <div class="hero-content flex-col lg:flex-row-reverse gap-16">
+        <div class="hero-content w-full flex-col gap-12 py-16">
             {% if app.user %}
                 <div class="card mb-3">
                     <p>Vous êtes déjà connecté en tant que {{ app.user.userIdentifier }}.</p>
                     <a class="btn btn-outline my-4" href="{{ logout_path() }}">Se déconnecter</a>
                 </div>
             {% else %}
-                <div class="text-center lg:text-left">
-                    <h1 class="text-5xl font-bold">Connectez-vous !</h1>
-                    {# A link shared with "Partager", opened while logged out (SharedLinkPreviewListener). #}
-                    <p class="py-6">
-                        {% if linkPreview is defined %}
-                            On vous partage « {{ linkPreview.title }} » : connectez-vous pour le découvrir 🎁
-                        {% else %}
-                            Connectez-vous pour regarder qui vous a offert un joli cadeau 🎁
-                        {% endif %}
-                    </p>
-                </div>
-                {{ include('security/_login_form.html.twig') }}
+                {# One card in two halves: the login, and the way to an account. #}
+                <twig:Molecule:Auth:SplitCard page="login">
+                    {{ include('security/_login_form.html.twig', { joined: true }) }}
+                </twig:Molecule:Auth:SplitCard>
             {% endif %}
         </div>
     </div>

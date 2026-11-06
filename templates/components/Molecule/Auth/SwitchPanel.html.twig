@@ -1,0 +1,32 @@
+{# <aside>: a complement of the page, with its own heading (RGAA 9.1, 9.2). Under the card on a phone,
+   beside it from lg. The accent colour is on the icons only: text keeps base-content for contrast. #}
+{% set titleId = 'auth-switch-' ~ page ~ '-title' %}
+<aside {{ attributes.defaults({ 'aria-labelledby': titleId, class: 'flex flex-col justify-center gap-8 bg-base-300 p-8 sm:p-12 lg:w-96 lg:shrink-0' }) }}>
+    <twig:ux:icon name="lucide:gift" class="size-10 text-accent" aria-hidden="true" />
+    {% if page == 'login' %}
+        <h2 id="{{ titleId }}" class="text-2xl font-bold">Nouveau sur My Gift ?</h2>
+        <ul class="flex flex-col gap-4">
+            {% for promise in ['Une section par occasion, seul·e ou en groupe', 'Vos ami·es réservent ou cagnottent, sans doublon', 'Gratuit, sans publicité'] %}
+                <li class="flex items-start gap-2">
+                    <twig:ux:icon name="lucide:check" class="mt-1 size-4 shrink-0 text-accent" aria-hidden="true" />
+                    <span>{{ promise }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+        <twig:Atomic:ButtonLink :to="path('app_register')" style="outline" class="mt-2">
+            <twig:block name="icon">
+                <twig:ux:icon name="lucide:user-round-plus" class="size-5" aria-hidden="true" />
+            </twig:block>
+            <twig:block name="name">Créer un compte</twig:block>
+        </twig:Atomic:ButtonLink>
+    {% else %}
+        <h2 id="{{ titleId }}" class="text-2xl font-bold">Déjà un compte ?</h2>
+        <p>Retrouvez vos sections, vos cadeaux réservés et vos cagnottes.</p>
+        <twig:Atomic:ButtonLink :to="path('app_login')" style="outline" class="mt-2">
+            <twig:block name="icon">
+                <twig:ux:icon name="lucide:key-round" class="size-5" aria-hidden="true" />
+            </twig:block>
+            <twig:block name="name">Se connecter</twig:block>
+        </twig:Atomic:ButtonLink>
+    {% endif %}
+</aside>
