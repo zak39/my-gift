@@ -11,4 +11,6 @@ final class GiftTabPanel
     public array $gifts = [];
     public string $emptyMessage = 'Aucun cadeau à afficher.';
     public string $seeAllRoute = '';
+    /** Label of a centered button to `seeAllRoute`, shown instead of "Voir tout" while empty. */
+    public string $emptyActionLabel = '';
 }
