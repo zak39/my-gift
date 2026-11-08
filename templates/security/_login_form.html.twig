@@ -1,15 +1,35 @@
-{# The login card, shared by the login page and the landing page. autofocus defaults to true. #}
+{# The login card, shared by the login page and the landing page. autofocus defaults to true.
+   joined (false by default): the card is the left half of a wider card, whose shadow and width the
+   login page gives (Molecule:Auth:SwitchPanel on its right), and it is given more room. #}
 {% set autofocus = autofocus ?? true %}
+{% set joined = joined ?? false %}
+{% set bodyClass = joined ? 'card-body gap-6 p-8 sm:p-12' : 'card-body' %}
+{% set fieldsetClass = joined ? 'fieldset gap-5' : 'fieldset' %}
 
-<div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-    <div class="card-body">
+<div class="card bg-base-100 w-full {{ joined ? 'lg:flex-1 rounded-none' : 'max-w-sm shrink-0 shadow-2xl' }}">
+    <div class="{{ bodyClass }}">
+        {# On the login page, the page's heading is the card's, as on the registration page. The landing
+           page has its own above its card. #}
+        {% if joined %}
+            <div class="card-title">
+                <h1>Connectez-vous !</h1>
+            </div>
+            {# A link shared with "Partager", opened while logged out (SharedLinkPreviewListener). #}
+            <p>
+                {% if linkPreview is defined %}
+                    On vous partage « {{ linkPreview.title }} » : connectez-vous pour le découvrir 🎁
+                {% else %}
+                    Connectez-vous pour regarder qui vous a offert un joli cadeau 🎁
+                {% endif %}
+            </p>
+        {% endif %}
         {% for flash_success in app.flashes('success') %}
             <div class="alert alert-success" role="alert">{{ flash_success }}</div>
         {% endfor %}
 
         <form method="post" action="{{ path('app_login') }}">
-            <fieldset class="fieldset">
-            <label class="input">
+            <fieldset class="{{ fieldsetClass }}">
+            <label class="input w-full">
                 <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <g
                     stroke-linejoin="round"
@@ -29,7 +49,7 @@
                 <input type="text" value="{{ last_username|default('') }}" name="_username" id="username" autocomplete="username" required {{ autofocus ? 'autofocus' : '' }} placeholder="Email ou pseudo" />
             </label>
             <div data-controller="password-toggle">
-                <label class="input">
+                <label class="input w-full">
                     <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <g
                         stroke-linejoin="round"

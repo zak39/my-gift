@@ -3,8 +3,8 @@
 {% block title %}My Gift | Créer un compte{% endblock %}
 
 {% block body %}
-    <div class="hero bg-base-200 min-h-screen">
-        <div class="flex flex-col justify-center items-center">
+    <div class="hero bg-base-200 min-h-screen px-4 py-8 lg:py-4">
+        <div class="flex w-full max-w-4xl flex-col justify-center items-center">
             {% if registrationForm.vars.errors|length > 0 %}
                 <div class="alert alert-error alert-soft my-4 w-full">
                     {{ form_errors(registrationForm) }}
@@ -19,161 +19,168 @@
                     <span>{{ message }}</span>
                 </div>                
             {% endfor %}
-            <div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-                <div class="card-body">
-                    <div class="card-title">
-                        <h1>Créer un compte</h1>
-                    </div>
-                    <fieldset class="fieldset">
-                        {{ form_start(registrationForm) }}
-                            <div>
-                                {{ form_label(registrationForm.email) }}
-                                <label class="input md:input-md input-xl w-full">
-                                    <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                        <g
-                                        stroke-linejoin="round"
-                                        stroke-linecap="round"
-                                        stroke-width="2.5"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        >
-                                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-                                        <circle cx="12" cy="7" r="4"></circle>
-                                        </g>
-                                    </svg>
-                                    {{ form_widget(registrationForm.email) }}
-                                </label>
-                                {% if registrationForm.email.vars.errors|length > 0 %}
-                                    <div class="alert alert-error alert-soft my-2">{{ form_errors(registrationForm.email) }}</div>
-                                {% endif %}
-                            </div>
-                            <div>
-                                {% set pseudoId = registrationForm.pseudo.vars.id %}
-                                {% set pseudoInvalid = registrationForm.pseudo.vars.errors|length > 0 %}
-                                {{ form_label(registrationForm.pseudo) }}
-                                <label class="input md:input-md input-xl w-full">
-                                    <twig:ux:icon name="lucide:at-sign" class="h-[1em] opacity-50" />
-                                    {# RGAA 11.10: form_row would tie the help and the errors to the field, and mark
-                                       it invalid; form_widget alone does none of it. #}
-                                    {{ form_widget(registrationForm.pseudo, { attr: {
-                                        'aria-describedby': pseudoId ~ '_help' ~ (pseudoInvalid ? ' ' ~ pseudoId ~ '_errors' : ''),
-                                    }|merge(pseudoInvalid ? { 'aria-invalid': 'true' } : {}) }) }}
-                                </label>
-                                {# Its id is the field's aria-describedby (RGAA 11.10). #}
-                                <small id="{{ registrationForm.pseudo.vars.id }}_help" class="mt-1 mb-2 flex items-start gap-1 text-xs text-muted">
-                                    <twig:ux:icon name="lucide:info" class="mt-px size-3.5 shrink-0" aria-hidden="true" />
-                                    <span>{{ registrationForm.pseudo.vars.help }}</span>
-                                </small>
-                                {% if registrationForm.pseudo.vars.errors|length > 0 %}
-                                    <div class="alert alert-error alert-soft my-2">
-                                        {# One child: daisyUI's alert is a grid, which would set the error and the suggestion side by side.
-                                           Its id is in the field's aria-describedby: the error and the suggestions are read with it. #}
-                                        <div id="{{ pseudoId }}_errors">
-                                            {{ form_errors(registrationForm.pseudo) }}
-                                            <twig:Molecule:Form:PseudoSuggestion :field="registrationForm.pseudo" />
+            {# One card in two halves: the registration, and the way back to the login. #}
+            <twig:Molecule:Auth:SplitCard page="register">
+                <div class="card bg-base-100 w-full rounded-none lg:flex-1">
+                    {# Roomy on a phone, compact from lg so the whole form fits a laptop screen. #}
+                    <div class="card-body gap-6 p-8 lg:gap-4">
+                        <div class="card-title">
+                            <h1>Créer un compte</h1>
+                        </div>
+                        <fieldset class="fieldset">
+                            {{ form_start(registrationForm, { attr: { class: 'flex flex-col gap-5 lg:gap-3' } }) }}
+                                <div>
+                                    {{ form_label(registrationForm.email) }}
+                                    <label class="input md:input-md input-xl w-full">
+                                        <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                            <g
+                                            stroke-linejoin="round"
+                                            stroke-linecap="round"
+                                            stroke-width="2.5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            >
+                                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="12" cy="7" r="4"></circle>
+                                            </g>
+                                        </svg>
+                                        {{ form_widget(registrationForm.email) }}
+                                    </label>
+                                    {% if registrationForm.email.vars.errors|length > 0 %}
+                                        <div class="alert alert-error alert-soft my-2">{{ form_errors(registrationForm.email) }}</div>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    {% set pseudoId = registrationForm.pseudo.vars.id %}
+                                    {% set pseudoInvalid = registrationForm.pseudo.vars.errors|length > 0 %}
+                                    {{ form_label(registrationForm.pseudo) }}
+                                    <label class="input md:input-md input-xl w-full">
+                                        <twig:ux:icon name="lucide:at-sign" class="h-[1em] opacity-50" />
+                                        {# RGAA 11.10: form_row would tie the help and the errors to the field, and mark
+                                           it invalid; form_widget alone does none of it. #}
+                                        {{ form_widget(registrationForm.pseudo, { attr: {
+                                            'aria-describedby': pseudoId ~ '_help' ~ (pseudoInvalid ? ' ' ~ pseudoId ~ '_errors' : ''),
+                                        }|merge(pseudoInvalid ? { 'aria-invalid': 'true' } : {}) }) }}
+                                    </label>
+                                    {# Its id is the field's aria-describedby (RGAA 11.10). #}
+                                    <small id="{{ registrationForm.pseudo.vars.id }}_help" class="mt-1 mb-2 flex items-start gap-1 text-xs text-muted">
+                                        <twig:ux:icon name="lucide:info" class="mt-px size-3.5 shrink-0" aria-hidden="true" />
+                                        <span>{{ registrationForm.pseudo.vars.help }}</span>
+                                    </small>
+                                    {% if registrationForm.pseudo.vars.errors|length > 0 %}
+                                        <div class="alert alert-error alert-soft my-2">
+                                            {# One child: daisyUI's alert is a grid, which would set the error and the suggestion side by side.
+                                               Its id is in the field's aria-describedby: the error and the suggestions are read with it. #}
+                                            <div id="{{ pseudoId }}_errors">
+                                                {{ form_errors(registrationForm.pseudo) }}
+                                                <twig:Molecule:Form:PseudoSuggestion :field="registrationForm.pseudo" />
+                                            </div>
                                         </div>
+                                    {% endif %}
+                                </div>
+                                <div data-controller="password-toggle">
+                                    {{ form_label(registrationForm.plainPassword.first) }}
+                                    <label class="input md:input-md input-xl w-full">
+                                        <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                            <g
+                                            stroke-linejoin="round"
+                                            stroke-linecap="round"
+                                            stroke-width="2.5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            >
+                                            <path
+                                                d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"
+                                            ></path>
+                                            <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
+                                            </g>
+                                        </svg>
+                                        {{ form_widget(registrationForm.plainPassword.first, {
+                                            attr: {
+                                                'data-password-toggle-target': 'field'
+                                            }
+                                        }) }}
+                                        <button type="button" data-password-toggle-target="button" data-action="password-toggle#toggle" class="btn btn-sm btn-ghost absolute top-1/2 right-2 -translate-y-1/2" aria-label="Afficher le mot de passe">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M11.83 9L15 12.16V12a3 3 0 0 0-3-3zm-4.3.8l1.55 1.55c-.05.21-.08.42-.08.65a3 3 0 0 0 3 3c.22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53a5 5 0 0 1-5-5c0-.79.2-1.53.53-2.2M2 4.27l2.28 2.28l.45.45C3.08 8.3 1.78 10 1 12c1.73 4.39 6 7.5 11 7.5c1.55 0 3.03-.3 4.38-.84l.43.42L19.73 22L21 20.73L3.27 3M12 7a5 5 0 0 1 5 5c0 .64-.13 1.26-.36 1.82l2.93 2.93c1.5-1.25 2.7-2.89 3.43-4.75c-1.73-4.39-6-7.5-11-7.5c-1.4 0-2.74.25-4 .7l2.17 2.15C10.74 7.13 11.35 7 12 7"/></svg>
+                                        </button>
+                                    </label>
+                                    {% if registrationForm.plainPassword.first.vars.errors|length > 0 %}
+                                        <div class="alert alert-error alert-soft my-2">{{ form_errors(registrationForm.plainPassword.first) }}</div>
+                                    {% endif %}
+                                </div>
+                                <div data-controller="password-toggle">
+                                    {{ form_label(registrationForm.plainPassword.second) }}
+                                    <label class="input md:input-md input-xl w-full">
+                                        <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                            <g
+                                            stroke-linejoin="round"
+                                            stroke-linecap="round"
+                                            stroke-width="2.5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            >
+                                            <path
+                                                d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"
+                                            ></path>
+                                            <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
+                                            </g>
+                                        </svg>
+                                        {{ form_widget(registrationForm.plainPassword.second, {
+                                            attr: {
+                                                'data-password-toggle-target': 'field'
+                                            }
+                                        }) }}
+                                        <button type="button" data-password-toggle-target="button" data-action="password-toggle#toggle" class="btn btn-sm btn-ghost absolute top-1/2 right-2 -translate-y-1/2" aria-label="Afficher le mot de passe">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M11.83 9L15 12.16V12a3 3 0 0 0-3-3zm-4.3.8l1.55 1.55c-.05.21-.08.42-.08.65a3 3 0 0 0 3 3c.22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53a5 5 0 0 1-5-5c0-.79.2-1.53.53-2.2M2 4.27l2.28 2.28l.45.45C3.08 8.3 1.78 10 1 12c1.73 4.39 6 7.5 11 7.5c1.55 0 3.03-.3 4.38-.84l.43.42L19.73 22L21 20.73L3.27 3M12 7a5 5 0 0 1 5 5c0 .64-.13 1.26-.36 1.82l2.93 2.93c1.5-1.25 2.7-2.89 3.43-4.75c-1.73-4.39-6-7.5-11-7.5c-1.4 0-2.74.25-4 .7l2.17 2.15C10.74 7.13 11.35 7 12 7"/></svg>
+                                        </button>
+                                    </label>
+                                    {% if registrationForm.plainPassword.second.vars.errors|length > 0 %}
+                                        <div class="alert alert-error alert-soft my-2">{{ form_errors(registrationForm.plainPassword.second) }}</div>
+                                    {% endif %}
+                                </div>
+                                {# Side by side from sm. #}
+                                <div class="grid gap-5 sm:grid-cols-2 lg:gap-3">
+                                    <div>
+                                        {{ form_label(registrationForm.firstname) }}
+                                        <label class="input md:input-md input-xl w-full">
+                                            {{ form_widget(registrationForm.firstname) }}
+                                        </label>
+                                        {% if registrationForm.firstname.vars.errors|length > 0 %}
+                                            <div class="alert alert-error alert-soft my-2">{{ form_errors(registrationForm.firstname) }}</div>
+                                        {% endif %}
                                     </div>
-                                {% endif %}
-                            </div>
-                            <div data-controller="password-toggle">
-                                {{ form_label(registrationForm.plainPassword.first) }}
-                                <label class="input md:input-md input-xl w-full">
-                                    <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                        <g
-                                        stroke-linejoin="round"
-                                        stroke-linecap="round"
-                                        stroke-width="2.5"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        >
-                                        <path
-                                            d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"
-                                        ></path>
-                                        <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
-                                        </g>
-                                    </svg>
-                                    {{ form_widget(registrationForm.plainPassword.first, {
-                                        attr: {
-                                            'data-password-toggle-target': 'field'
-                                        }
-                                    }) }}
-                                    <button type="button" data-password-toggle-target="button" data-action="password-toggle#toggle" class="btn btn-sm btn-ghost absolute top-1/2 right-2 -translate-y-1/2" aria-label="Afficher le mot de passe">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M11.83 9L15 12.16V12a3 3 0 0 0-3-3zm-4.3.8l1.55 1.55c-.05.21-.08.42-.08.65a3 3 0 0 0 3 3c.22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53a5 5 0 0 1-5-5c0-.79.2-1.53.53-2.2M2 4.27l2.28 2.28l.45.45C3.08 8.3 1.78 10 1 12c1.73 4.39 6 7.5 11 7.5c1.55 0 3.03-.3 4.38-.84l.43.42L19.73 22L21 20.73L3.27 3M12 7a5 5 0 0 1 5 5c0 .64-.13 1.26-.36 1.82l2.93 2.93c1.5-1.25 2.7-2.89 3.43-4.75c-1.73-4.39-6-7.5-11-7.5c-1.4 0-2.74.25-4 .7l2.17 2.15C10.74 7.13 11.35 7 12 7"/></svg>
-                                    </button>
-                                </label>
-                                {% if registrationForm.plainPassword.first.vars.errors|length > 0 %}
-                                    <div class="alert alert-error alert-soft my-2">{{ form_errors(registrationForm.plainPassword.first) }}</div>
-                                {% endif %}
-                            </div>
-                            <div data-controller="password-toggle">
-                                {{ form_label(registrationForm.plainPassword.second) }}
-                                <label class="input md:input-md input-xl w-full">
-                                    <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                        <g
-                                        stroke-linejoin="round"
-                                        stroke-linecap="round"
-                                        stroke-width="2.5"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        >
-                                        <path
-                                            d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"
-                                        ></path>
-                                        <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
-                                        </g>
-                                    </svg>
-                                    {{ form_widget(registrationForm.plainPassword.second, {
-                                        attr: {
-                                            'data-password-toggle-target': 'field'
-                                        }
-                                    }) }}
-                                    <button type="button" data-password-toggle-target="button" data-action="password-toggle#toggle" class="btn btn-sm btn-ghost absolute top-1/2 right-2 -translate-y-1/2" aria-label="Afficher le mot de passe">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M11.83 9L15 12.16V12a3 3 0 0 0-3-3zm-4.3.8l1.55 1.55c-.05.21-.08.42-.08.65a3 3 0 0 0 3 3c.22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53a5 5 0 0 1-5-5c0-.79.2-1.53.53-2.2M2 4.27l2.28 2.28l.45.45C3.08 8.3 1.78 10 1 12c1.73 4.39 6 7.5 11 7.5c1.55 0 3.03-.3 4.38-.84l.43.42L19.73 22L21 20.73L3.27 3M12 7a5 5 0 0 1 5 5c0 .64-.13 1.26-.36 1.82l2.93 2.93c1.5-1.25 2.7-2.89 3.43-4.75c-1.73-4.39-6-7.5-11-7.5c-1.4 0-2.74.25-4 .7l2.17 2.15C10.74 7.13 11.35 7 12 7"/></svg>
-                                    </button>
-                                </label>
-                                {% if registrationForm.plainPassword.second.vars.errors|length > 0 %}
-                                    <div class="alert alert-error alert-soft my-2">{{ form_errors(registrationForm.plainPassword.second) }}</div>
-                                {% endif %}
-                            </div>
-                            <div>
-                                {{ form_label(registrationForm.firstname) }}
-                                <label class="input md:input-md input-xl w-full">
-                                    {{ form_widget(registrationForm.firstname) }}
-                                </label>
-                                {% if registrationForm.firstname.vars.errors|length > 0 %}
-                                    <div class="alert alert-error alert-soft my-2">{{ form_errors(registrationForm.firstname) }}</div>
-                                {% endif %}
-                            </div>
-                            <div>
-                                {{ form_label(registrationForm.lastname) }}
-                                <label class="input md:input-md input-xl w-full">
-                                    {{ form_widget(registrationForm.lastname) }}
-                                </label>
-                                {% if registrationForm.lastname.vars.errors|length > 0 %}
-                                    <div class="alert alert-error alert-soft my-2">{{ form_errors(registrationForm.lastname) }}</div>
-                                {% endif %}
-                            </div>
-                            <div class="my-4">
-                                {# daisyUI's label does not wrap (white-space: nowrap): this sentence would widen the card. #}
-                                <label class="label mr-4 whitespace-normal">
-                                    <span>
-                                        J'accepte les
-                                        {# A new tab, so the form half filled is not lost. #}
-                                        <twig:Molecule:Link newWindow :href="path('app_terms')" class="link link-primary">conditions d'utilisation</twig:Molecule:Link>
-                                        et déclare avoir au moins 15 ans
-                                    </span>
-                                    {{ form_widget(registrationForm.agreeTerms) }}
-                                </label>
-                                {% if registrationForm.agreeTerms.vars.errors|length > 0 %}
-                                    <div class="alert alert-error alert-soft my-2">{{ form_errors(registrationForm.agreeTerms) }}</div>
-                                {% endif %}
-                            </div>
-                            {{ form_rest(registrationForm) }}
-                            <button type="submit" class="btn btn-primary w-full">Créer un compte</button>
-                        {{ form_end(registrationForm) }}
-                    </fieldset>
+                                    <div>
+                                        {{ form_label(registrationForm.lastname) }}
+                                        <label class="input md:input-md input-xl w-full">
+                                            {{ form_widget(registrationForm.lastname) }}
+                                        </label>
+                                        {% if registrationForm.lastname.vars.errors|length > 0 %}
+                                            <div class="alert alert-error alert-soft my-2">{{ form_errors(registrationForm.lastname) }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div>
+                                    {# daisyUI's label does not wrap (white-space: nowrap): this sentence would widen the card. #}
+                                    <label class="label mr-4 whitespace-normal">
+                                        <span>
+                                            J'accepte les
+                                            {# A new tab, so the form half filled is not lost. #}
+                                            <twig:Molecule:Link newWindow :href="path('app_terms')" class="link link-primary">conditions d'utilisation</twig:Molecule:Link>
+                                            et déclare avoir au moins 15 ans
+                                        </span>
+                                        {{ form_widget(registrationForm.agreeTerms) }}
+                                    </label>
+                                    {% if registrationForm.agreeTerms.vars.errors|length > 0 %}
+                                        <div class="alert alert-error alert-soft my-2">{{ form_errors(registrationForm.agreeTerms) }}</div>
+                                    {% endif %}
+                                </div>
+                                {{ form_rest(registrationForm) }}
+                                <button type="submit" class="btn btn-primary w-full">Créer un compte</button>
+                            {{ form_end(registrationForm) }}
+                        </fieldset>
+                    </div>
                 </div>
-            </div>
+            </twig:Molecule:Auth:SplitCard>
         </div>
     </div>
 {% endblock %}

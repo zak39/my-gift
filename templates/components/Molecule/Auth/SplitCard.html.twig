@@ -1,0 +1,4 @@
+<div {{ attributes.defaults({ class: 'flex w-full max-w-4xl flex-col overflow-hidden rounded-box shadow-2xl lg:flex-row' }) }}>
+    {% block content %}{% endblock %}
+    <twig:Molecule:Auth:SwitchPanel :page="page" />
+</div>
