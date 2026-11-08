@@ -17,13 +17,16 @@ class UserProfileType extends AbstractType
     {
         $builder
             ->add('firstname', TextType::class, [
-                'attr' => ['class' => 'input'],
+                // RGAA 11.13: the field's purpose, for autofill and assistive technologies.
+                'attr' => ['class' => 'input', 'autocomplete' => 'given-name'],
                 'label' => 'Prénom',
                 'label_attr' => ['class' => 'label'],
             ])
             ->add('lastname', TextType::class, [
-                'attr' => ['class' => 'input'],
-                'label' => 'Nom',
+                'required' => false,
+                'attr' => ['class' => 'input', 'autocomplete' => 'family-name'],
+                // RGAA 11.10: an optional field says it in its label.
+                'label' => 'Nom (facultatif)',
                 'label_attr' => ['class' => 'label'],
             ])
             ->add('oldPassword', PasswordType::class, [

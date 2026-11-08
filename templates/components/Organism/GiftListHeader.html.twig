@@ -10,7 +10,7 @@
 
             <div class="min-w-0">
                 <h1 class="text-2xl leading-tight font-bold wrap-anywhere sm:text-3xl">
-                    {{ ownerView ? 'Mes cadeaux' : ('Les cadeaux de ' ~ user.firstname ~ ' ' ~ user.lastname) }}
+                    {{ ownerView ? 'Mes cadeaux' : ('Les cadeaux de ' ~ user.fullname) }}
                 </h1>
                 {% if this.total > 0 %}
                     <p class="mt-2 flex items-center gap-2 text-sm text-muted">

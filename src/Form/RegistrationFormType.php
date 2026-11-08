@@ -26,13 +26,19 @@ class RegistrationFormType extends AbstractType
                 ],
             ])
             ->add('lastname', TextType::class, [
-                'label' => 'Nom',
+                'required' => false,
+                // RGAA 11.10: an optional field says it in its label.
+                'label' => 'Nom (facultatif)',
+                // RGAA 11.13: the field's purpose, for autofill and assistive technologies.
+                'attr' => ['autocomplete' => 'family-name'],
                 'label_attr' => [
                     'class' => 'label',
                 ],
             ])
             ->add('firstname', TextType::class, [
                 'label' => 'Prénom',
+                // RGAA 11.13: the field's purpose, for autofill and assistive technologies.
+                'attr' => ['autocomplete' => 'given-name'],
                 'label_attr' => [
                     'class' => 'label',
                 ],

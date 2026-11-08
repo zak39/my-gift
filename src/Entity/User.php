@@ -56,11 +56,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[Assert\NotBlank(message: 'Il faut renseigner un nom de famille')]
-    #[ORM\Column(length: 255)]
+    /** Optional: only the first name is required. */
+    #[Assert\Length(max: 255, maxMessage: 'Le nom est trop long ({{ limit }} caractères maximum)')]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $lastname = null;
 
     #[Assert\NotBlank(message: 'Il faut renseigner un prénom')]
+    #[Assert\Length(max: 255, maxMessage: 'Le prénom est trop long ({{ limit }} caractères maximum)')]
     #[ORM\Column(length: 255)]
     private ?string $firstname = null;
 
@@ -252,7 +254,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->lastname;
     }
 
-    public function setLastname(string $lastname): static
+    public function setLastname(?string $lastname): static
     {
         $this->lastname = $lastname;
 
@@ -273,7 +275,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getFullname(): string
     {
-        return "$this->firstname $this->lastname";
+        // Trimmed: without a last name, no trailing space.
+        return trim("$this->firstname $this->lastname");
     }
 
     public function getAvatar(): ?string
