@@ -7,7 +7,7 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
 
 <template>
     <Layout>
-        <TwigPreheader>Mince ! <Raw>{{ participantName|title }}</Raw> a retiré sa réservation ! 😢</TwigPreheader>
+        <TwigPreheader>Mince ! <Raw>{{ participantName }}</Raw> a retiré sa réservation ! 😢</TwigPreheader>
 
         <BodyStyle />
         <CardStyle />
@@ -17,14 +17,14 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
         <Body class="email-bg">
             <Container class="max-w-xl p-0 py-10 sm:p-6">
                 <div class="email-card border rounded-lg p-6">
-                    <h1>Mince ! <Raw>{{ participantName|title }}</Raw> a retiré sa réservation ! 😢</h1>
+                    <h1>Mince ! <Raw>{{ participantName }}</Raw> a retiré sa réservation ! 😢</h1>
 
                     <p>
-                        Bonjour<Raw>{% if recipientName %} {{ recipientName }}{% endif %}</Raw>,
+                        Bonjour<Raw>{% if recipientName %} {{ recipientName|title }}{% endif %}</Raw>,
                     </p>
 
                     <p>
-                        Malheureusement, votre cadeau <GiftTitle /> n'est plus réservé par <b><Raw>{{ participantName|title }}</Raw></b>.
+                        Malheureusement, votre cadeau <GiftTitle /> n'est plus réservé par <b><Raw>{{ participantName }}</Raw></b>.
                     </p>
                     <Raw>{% if participant.isAnonymous %}</Raw>
                         <p>

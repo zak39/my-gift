@@ -55,7 +55,7 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
         /** @var Participant $participant */
         $participant = $event->getContext()['participant'];
 
-        $participantName = ucwords($participant->getDisplayName());
+        $participantName = $participant->getDisplayName();
 
         $this->sendToOwners($gift, "Mince ! $participantName a retiré sa réservation ! 😢", 'emails/gift_disengaged.html.twig', [
             'participant' => $participant,
@@ -180,7 +180,7 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
             'gift' => $gift,
             // Null from the admin: the email names My Gift's team.
             'deleter' => null === $deletedBy ? null : [
-                'name' => $deletedBy->getFullname(),
+                'name' => $deletedBy->getPseudo(),
                 'avatar' => $this->avatarUrlGenerator->imageUrl($deletedBy),
                 // A crew's givers may only be friends of another member: their list is not
                 // this member's to show them (user.can_see_gifts).
@@ -239,8 +239,9 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
             ->context([
                 'gift' => $gift,
                 // Plain values: the worker renders the email later. A crew's members are
-                // greeted together, the crew named after the gift (Maizzle's GiftTitle).
-                'recipientName' => null !== $crew ? null : $this->giftOwnerLabel->name($gift),
+                // greeted together, the crew named after the gift (Maizzle's GiftTitle); the
+                // author of a personal gift by their first name, as every greeting does.
+                'recipientName' => null !== $crew ? null : $gift->getCreatedBy()?->getFirstname(),
                 'crewOf' => null !== $crew ? $this->giftOwnerLabel->of($gift) : null,
                 'url' => $this->urlGenerator->generate('app_gift_show', ['id' => $gift->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
                 ...$context,

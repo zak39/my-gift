@@ -1,0 +1,6 @@
+{% if suggestions %}
+    <p {{ attributes.defaults({ class: 'mt-1' }) }}>
+        Ceux-ci sont libres :
+        {{ suggestions|map(suggestion => '<strong class="font-semibold">' ~ suggestion|e ~ '</strong>')|join(', ', ' ou ')|raw }}
+    </p>
+{% endif %}

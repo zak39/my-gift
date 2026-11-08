@@ -9,12 +9,24 @@ use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
- * Who may see a user's gifts: the user themselves and their friends, like a LinkedIn
- * connection. Named after what it grants rather than how it decides, so that a new
- * circle (family...) only changes this voter, not its callers.
+ * What of a user others may see, granted to the user themselves and their friends, like a
+ * LinkedIn connection:
+ * - user.can_see_gifts: their sections and gifts;
+ * - user.can_see_fullname: their full name next to their pseudo (a crew member who is no
+ *   friend sees the pseudo only).
+ *
+ * One attribute per thing granted rather than per way of deciding, so that a new circle
+ * (family...) or a rule of its own for one of them only changes this voter, not its callers.
+ * Two queries hold the same circle and must follow it: the search on full names
+ * (UserRepository::search()) and the favourites (GiftRepository::findFavoritesGifts()).
  */
-final class UserGiftsVisibilityVoter extends Voter
+final class UserVisibilityVoter extends Voter
 {
+    private const REFUSALS = [
+        'user.can_see_gifts' => 'Seuls les amis peuvent voir ces sections.',
+        'user.can_see_fullname' => 'Seuls les amis voient le nom complet.',
+    ];
+
     public function __construct(
         private FriendBookRepository $friendBookRepository,
     ) {
@@ -22,7 +34,7 @@ final class UserGiftsVisibilityVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return 'user.can_see_gifts' === $attribute
+        return isset(self::REFUSALS[$attribute])
             && $subject instanceof User
         ;
     }
@@ -43,7 +55,7 @@ final class UserGiftsVisibilityVoter extends Voter
             return true;
         }
 
-        $vote?->addReason('Seuls les amis peuvent voir ces sections.');
+        $vote?->addReason(self::REFUSALS[$attribute]);
 
         return false;
     }

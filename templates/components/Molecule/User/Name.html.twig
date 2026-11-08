@@ -1,0 +1,4 @@
+<span {{ attributes.defaults({ class: 'wrap-anywhere' }) }}>{{ user.pseudo }}</span>
+{%- if is_granted('user.can_see_fullname', user) %}
+    <small class="block text-sm font-normal text-muted wrap-anywhere">{{ user.fullname }}</small>
+{%- endif %}

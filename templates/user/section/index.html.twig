@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}My Gift | Sections de {{ user.fullname }} {% endblock %}
+{% block title %}My Gift | Sections de {{ user.pseudo }} {% endblock %}
 
 {% block body %}
 {# The controller only sends public gifts without section, and only to the owner. #}
@@ -66,7 +66,7 @@
         </div>
     {% else %}
         <twig:Molecule:EmptyContent class="mt-6"
-            title="Mince ! {{ user.firstname }} n'a pas encore de cadeau à offrir 😥"
+            title="Mince ! {{ user.pseudo }} n'a pas encore de cadeau à offrir 😥"
             description="Revenez plus tard pour lui offrir un joli cadeau 😉" />
 
         <twig:Organism:Crew:SharedLists class="mt-10" :crews="crews" :user="user" />

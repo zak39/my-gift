@@ -173,7 +173,7 @@ class Participant
         return match (true) {
             $this->isAnonymous() => $this->getPseudoAnonyme(),
             $this->isFromDeletedUser() => 'Utilisateur supprimé',
-            default => $this->getParticipantUser()->getFullname(),
+            default => $this->getParticipantUser()->getPseudo(),
         };
     }
 }

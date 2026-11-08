@@ -36,7 +36,7 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
                         </p>
                     <Raw>{% else %}</Raw>
                         <p>
-                          <b><Raw>{{ participant.participantUser.fullName|title }}</Raw></b> a rejoint en tant que participant pour le cadeau <b><Raw>{{ gift.title }}</Raw></b>.
+                          <b><Raw>{{ participant.participantUser.pseudo }}</Raw></b> a rejoint en tant que participant pour le cadeau <b><Raw>{{ gift.title }}</Raw></b>.
                         </p>
                     <Raw>{% endif %}</Raw>
 

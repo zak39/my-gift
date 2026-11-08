@@ -7,9 +7,9 @@ security:
     providers:
         # used to reload user from session & other features (e.g. switch_user)
         app_user_provider:
+            # No property: UserRepository::loadUserByIdentifier() takes an email or a pseudo.
             entity:
                 class: App\Entity\User
-                property: email
 
     firewalls:
         dev:
@@ -27,6 +27,8 @@ security:
                 enable_csrf: true
             # The login form's guesses, per username and IP, as the password_check limiter
             # does for the forms re-asking the password (config/packages/rate_limiter.yaml).
+            # Per identifier typed: an account's email and pseudo get 5 each. Counting them
+            # together would tell which pseudo an email belongs to, the first one found locked.
             login_throttling:
                 max_attempts: 5
                 interval: '15 minutes'

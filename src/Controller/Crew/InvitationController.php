@@ -47,7 +47,7 @@ final class InvitationController extends AbstractController
 
         try {
             $crewLifecycle->invite($crew, $user, $invitee);
-            $this->addFlash('success', "Votre invitation a été envoyée à {$invitee->getFirstname()}.");
+            $this->addFlash('success', "Votre invitation a été envoyée à {$invitee->getPseudo()}.");
         } catch (\LogicException $exception) {
             $this->addFlash('error', $exception->getMessage());
         }
@@ -70,7 +70,7 @@ final class InvitationController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $inviteeName = $invitation->getInvitee()->getFirstname();
+        $inviteeName = $invitation->getInvitee()->getPseudo();
 
         try {
             $crewLifecycle->cancel($invitation);

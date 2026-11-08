@@ -6,6 +6,7 @@ use App\Entity\Crew;
 use App\Entity\User;
 use App\Repository\FriendBookRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -21,6 +22,7 @@ class CrewInvitationType extends AbstractType
 {
     public function __construct(
         private readonly FriendBookRepository $friendBookRepository,
+        private readonly Security $security,
     ) {
     }
 
@@ -37,7 +39,10 @@ class CrewInvitationType extends AbstractType
             ->add('invitee', EntityType::class, [
                 'class' => User::class,
                 'choices' => $candidates->getValues(),
-                'choice_label' => 'fullname',
+                // The full name next to the pseudo for whoever may see it, as on the pages.
+                'choice_label' => fn (User $friend) => $this->security->isGranted('user.can_see_fullname', $friend)
+                    ? "{$friend->getPseudo()} ({$friend->getFullname()})"
+                    : $friend->getPseudo(),
                 'label' => 'Inviter un·e ami·e',
                 'placeholder' => 'Choisissez parmi vos ami·es',
                 'constraints' => [

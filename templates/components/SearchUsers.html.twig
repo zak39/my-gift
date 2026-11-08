@@ -2,10 +2,10 @@
     <div class="rounded-box border border-base-300 bg-base-100 p-4 shadow-sm sm:p-5">
         <label class="input w-full" data-controller="reset-searchbar">
             <twig:ux:icon name="lucide:search" class="size-4 shrink-0 opacity-50" />
-            <span class="sr-only">Chercher un ami par son prénom ou son nom</span>
+            <span class="sr-only">Chercher un pseudo, ou le nom d'un·e ami·e</span>
             <input type="search"
                 class="grow"
-                placeholder="Chercher un ami par son prénom ou son nom"
+                placeholder="Chercher un pseudo, ou le nom d'un·e ami·e"
                 data-reset-searchbar-target="field"
                 data-model="debounce(300)|query" />
             <button type="button"

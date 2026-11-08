@@ -64,7 +64,7 @@ final class BreadcrumbBuilder
     {
         return [
             $this->findFriends(),
-            $this->currentItem($user->getFullname()),
+            $this->currentItem($user->getPseudo()),
         ];
     }
 

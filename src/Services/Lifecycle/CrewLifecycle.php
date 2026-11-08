@@ -52,7 +52,7 @@ class CrewLifecycle
             $this->entityManager->flush();
         } catch (UniqueConstraintViolationException) {
             // Another member invited them in the meantime: Crew::invite() could not see it.
-            throw new \LogicException(\sprintf('%s a déjà été invité·e dans le groupe.', $invitee->getFirstname()));
+            throw new \LogicException(\sprintf('%s a déjà été invité·e dans le groupe.', $invitee->getPseudo()));
         }
 
         $this->eventDispatcher->dispatch(new CrewInvitationSentEvent($invitation));

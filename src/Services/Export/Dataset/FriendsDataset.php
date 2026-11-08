@@ -18,8 +18,8 @@ final class FriendsDataset
 
     public function of(User $user): ExportedDatasetDto
     {
-        return ExportedDatasetDto::table('Amis', ['Prénom', 'Nom'], array_map(
-            fn (User $friend) => ['Prénom' => $friend->getFirstname(), 'Nom' => $friend->getLastname()],
+        return ExportedDatasetDto::table('Amis', ['Pseudo', 'Prénom', 'Nom'], array_map(
+            fn (User $friend) => ['Pseudo' => $friend->getPseudo(), 'Prénom' => $friend->getFirstname(), 'Nom' => $friend->getLastname()],
             $this->friendBookRepository->of($user)->getFriends()->getValues(),
         ));
     }

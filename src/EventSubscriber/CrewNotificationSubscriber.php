@@ -39,7 +39,7 @@ class CrewNotificationSubscriber implements EventSubscriberInterface
 
         $email = (new TemplatedEmail())
             ->to($invitation->getInvitee()->getEmail())
-            ->subject(\sprintf('%s vous invite à rejoindre le groupe « %s » 🎁', ucfirst($inviter->getFirstname()), $crewName))
+            ->subject(\sprintf('%s vous invite à rejoindre le groupe « %s » 🎁', $inviter->getPseudo(), $crewName))
             ->htmlTemplate('emails/crew_invitation.html.twig')
             ->context([
                 'crewName' => $crewName,
@@ -94,7 +94,7 @@ class CrewNotificationSubscriber implements EventSubscriberInterface
             ->context([
                 'crewName' => $crew->getName(),
                 // A name only: on an account deletion, theirs is about to go.
-                'previousOwnerName' => $previousOwner->getFullname(),
+                'previousOwnerName' => $previousOwner->getPseudo(),
                 'newOwner' => $newOwner,
                 'accountDeleted' => $event->isAccountDeleted(),
                 'url' => $this->urlGenerator->generate('app_crew_show', ['id' => $crew->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
@@ -114,7 +114,7 @@ class CrewNotificationSubscriber implements EventSubscriberInterface
             '%s a quitté le groupe « %s »',
             'emails/crew_member_left.html.twig',
             // Past the return above: the previous owner deleted their account.
-            ['accountDeleted' => true, 'newOwnerName' => $newOwner->getFullname()],
+            ['accountDeleted' => true, 'newOwnerName' => $newOwner->getPseudo()],
         );
     }
 
@@ -199,7 +199,7 @@ class CrewNotificationSubscriber implements EventSubscriberInterface
      * handed over may leave nobody to tell but its new owner, told apart.
      *
      * @param list<User>           $recipients
-     * @param string               $subject    a sprintf() pattern receiving the member's first name and the crew's name
+     * @param string               $subject    a sprintf() pattern receiving the member's pseudo and the crew's name
      * @param array<string, mixed> $context    added to the template's
      */
     private function tellMembers(array $recipients, Crew $crew, User $member, string $subject, string $template, array $context = []): void
@@ -210,7 +210,7 @@ class CrewNotificationSubscriber implements EventSubscriberInterface
 
         $email = (new TemplatedEmail())
             ->to(...array_map(fn (User $user) => $user->getEmail(), $recipients))
-            ->subject(\sprintf($subject, ucfirst($member->getFirstname()), $crew->getName()))
+            ->subject(\sprintf($subject, $member->getPseudo(), $crew->getName()))
             ->htmlTemplate($template)
             ->context([
                 'crewName' => $crew->getName(),

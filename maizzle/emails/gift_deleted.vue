@@ -27,14 +27,14 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
 
                     <Raw>{% if deleter %}</Raw>
                         <p>
-                            <b><Raw>{{ deleter.name|title }}</Raw></b> a supprimé <Raw>{% if crewOf %}le{% else %}son{% endif %}</Raw> cadeau <GiftTitle />, auquel vous participiez : il n'apparaît plus sur My Gift.
+                            <b><Raw>{{ deleter.name }}</Raw></b> a supprimé <Raw>{% if crewOf %}le{% else %}son{% endif %}</Raw> cadeau <GiftTitle />, auquel vous participiez : il n'apparaît plus sur My Gift.
                         </p>
 
                         <div class="my-6">
                             <Raw>{% if deleter.profileUrl %}</Raw>
-                                <UserCard name="{{ deleter.name|title }}" avatar="{{ absolute_url(deleter.avatar) }}" to="{{ deleter.profileUrl }}" />
+                                <UserCard name="{{ deleter.name }}" avatar="{{ absolute_url(deleter.avatar) }}" to="{{ deleter.profileUrl }}" />
                             <Raw>{% else %}</Raw>
-                                <UserCard name="{{ deleter.name|title }}" avatar="{{ absolute_url(deleter.avatar) }}" />
+                                <UserCard name="{{ deleter.name }}" avatar="{{ absolute_url(deleter.avatar) }}" />
                             <Raw>{% endif %}</Raw>
                         </div>
                     <Raw>{% else %}</Raw>

@@ -23,15 +23,15 @@ import CardStyle from '../components/styles/CardStyle.vue'
 
                     <Raw>{% if accountDeleted %}</Raw>
                         <p>
-                            <b><Raw>{{ previousOwnerName|title }}</Raw></b>, propriétaire du groupe <b>« <Raw>{{ crewName }}</Raw> »</b>, a supprimé son compte My Gift. Comme vous en êtes le membre le plus ancien, c'est vous qui reprenez le groupe.
+                            <b><Raw>{{ previousOwnerName }}</Raw></b>, propriétaire du groupe <b>« <Raw>{{ crewName }}</Raw> »</b>, a supprimé son compte My Gift. Comme vous en êtes le membre le plus ancien, c'est vous qui reprenez le groupe.
                         </p>
 
                         <p>
-                            Les cadeaux que <Raw>{{ previousOwnerName|title }}</Raw> y avait ajoutés restent dans le groupe, à votre nom, avec leurs réservations et leurs cagnottes.
+                            Les cadeaux que <Raw>{{ previousOwnerName }}</Raw> y avait ajoutés restent dans le groupe, à votre nom, avec leurs réservations et leurs cagnottes.
                         </p>
                     <Raw>{% else %}</Raw>
                         <p>
-                            <b><Raw>{{ previousOwnerName|title }}</Raw></b> vous a confié le groupe <b>« <Raw>{{ crewName }}</Raw> »</b> : vous en êtes maintenant propriétaire. Il ou elle en reste membre.
+                            <b><Raw>{{ previousOwnerName }}</Raw></b> vous a confié le groupe <b>« <Raw>{{ crewName }}</Raw> »</b> : vous en êtes maintenant propriétaire. Il ou elle en reste membre.
                         </p>
                     <Raw>{% endif %}</Raw>
 

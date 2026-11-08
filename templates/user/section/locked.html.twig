@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}My Gift | {{ user.fullname }}{% endblock %}
+{% block title %}My Gift | {{ user.pseudo }}{% endblock %}
 
 {% block body %}
 {# What a non-friend sees on /users/{id}/sections, LinkedIn-style: the header stays,
@@ -13,8 +13,8 @@
     <twig:Organism:GiftListHeader :user="user" />
 
     <twig:Molecule:EmptyContent class="mt-6"
-        title="Les sections de {{ user.firstname }} sont réservées à ses ami·es 🔒"
-        description="Dès que votre demande sera acceptée, vous verrez ses cadeaux et {{ user.firstname }} verra les vôtres.">
+        title="Les sections de {{ user.pseudo }} sont réservées à ses ami·es 🔒"
+        description="Dès que votre demande sera acceptée, vous verrez ses cadeaux et {{ user.pseudo }} verra les vôtres.">
         <twig:block name="action_buttons">
             <twig:Molecule:Friend:ActionButtons class="mt-6 justify-center" :user="user" />
         </twig:block>

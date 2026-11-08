@@ -22,7 +22,11 @@
                     <circle cx="12" cy="7" r="4"></circle>
                     </g>
                 </svg>
-                <input type="email" value="{{ last_username|default('') }}" name="_username" id="username" autocomplete="email" required {{ autofocus ? 'autofocus' : '' }} placeholder="Email" />
+                {# An email or a pseudo (UserRepository::loadUserByIdentifier()): a text field, and
+                   "username", the autocomplete token for a login identifier (RGAA 11.13). RGAA 11.1:
+                   a placeholder is no label, the sr-only text gives the field its name. #}
+                <span class="sr-only">Email ou pseudo</span>
+                <input type="text" value="{{ last_username|default('') }}" name="_username" id="username" autocomplete="username" required {{ autofocus ? 'autofocus' : '' }} placeholder="Email ou pseudo" />
             </label>
             <div data-controller="password-toggle">
                 <label class="input">

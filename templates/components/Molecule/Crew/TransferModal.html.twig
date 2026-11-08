@@ -1,9 +1,9 @@
 {# Inside the Modal blocks, id, title and class are those of Modal: crew and member stay in
    reach, under names Modal does not use. #}
-<twig:Modal :id="member.id" :title="'Confier le groupe à ' ~ member.firstname" class="crew_transfer">
+<twig:Modal :id="member.id" :title="'Confier le groupe à ' ~ member.pseudo" class="crew_transfer">
     <twig:block name="message">
         <p class="py-4">
-            {{ member.firstname }} deviendra propriétaire de « {{ crew.name }} » : la seule personne qui peut supprimer le groupe. Vous en resterez membre, et pourrez alors le quitter.
+            {{ member.pseudo }} deviendra propriétaire de « {{ crew.name }} » : la seule personne qui peut supprimer le groupe. Vous en resterez membre, et pourrez alors le quitter.
         </p>
     </twig:block>
     <twig:block name="actionButtons">

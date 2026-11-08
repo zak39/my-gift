@@ -19,7 +19,12 @@ use Vich\UploaderBundle\Mapping\Attribute\UploadableField;
 #[Uploadable]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_PSEUDO', fields: ['pseudo'])]
 #[UniqueEntity(fields: ['email'], message: 'Il existe déjà un compte avec cette adresse email')]
+// "Jean" and "jean" are the same pseudo: the repository compares them case-insensitively.
+// {{ value }} comes quoted already: Le pseudo "jean" est déjà pris. SaveUserPseudo runs it
+// again under a lock, for two saves of the same pseudo at once.
+#[UniqueEntity(fields: ['pseudo'], message: 'Le pseudo {{ value }} est déjà pris', repositoryMethod: 'findByPseudoIgnoringCase')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -27,10 +32,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
+    public const PSEUDO_MIN_LENGTH = 3;
+    public const PSEUDO_MAX_LENGTH = 30;
+
     #[Assert\Email(message: 'L\'adresse email "{{ value }}" n\'est pas valide')]
     #[Assert\NotBlank(message: 'Il faut renseigner une adresse email')]
     #[ORM\Column(length: 180)]
     private ?string $email = null;
+
+    /**
+     * What other users know this one by, and a login identifier next to the email. Never an
+     * "@" in it, so that it cannot be taken for someone else's email at login.
+     */
+    #[Assert\NotBlank(message: 'Il faut renseigner un pseudo')]
+    #[Assert\Length(
+        min: self::PSEUDO_MIN_LENGTH,
+        max: self::PSEUDO_MAX_LENGTH,
+        minMessage: 'Le pseudo est trop court ({{ limit }} caractères minimum)',
+        maxMessage: 'Le pseudo est trop long ({{ limit }} caractères maximum)'
+    )]
+    // Words of letters, digits and - _ #, one space between them ("El Diablo"): none at
+    // either end, never two in a row, which would look like one ("El  Diablo"). D: a final
+    // line break does not slip past $.
+    #[Assert\Regex(
+        pattern: '/^[A-Za-z0-9_#-]+( [A-Za-z0-9_#-]+)*$/D',
+        message: 'Le pseudo ne peut contenir que des lettres sans accent, des chiffres, des espaces seuls entre les mots et les caractères - _ #'
+    )]
+    #[ORM\Column(length: self::PSEUDO_MAX_LENGTH)]
+    private ?string $pseudo = null;
 
     /**
      * @var list<string> The user roles
@@ -156,6 +185,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getPseudo(): ?string
+    {
+        return $this->pseudo;
+    }
+
+    /**
+     * Nullable as the form gives it: an emptied field comes as null, which NotBlank then
+     * refuses with its message, rather than a type error before validation runs.
+     */
+    public function setPseudo(?string $pseudo): static
+    {
+        $this->pseudo = $pseudo;
+
+        return $this;
+    }
+
     /**
      * A visual identifier that represents this user.
      *
@@ -266,7 +311,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->firstname;
     }
 
-    public function setFirstname(string $firstname): static
+    /** Nullable for the same reason as setPseudo(): NotBlank refuses an emptied field. */
+    public function setFirstname(?string $firstname): static
     {
         $this->firstname = $firstname;
 

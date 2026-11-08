@@ -8,7 +8,7 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
 
 <template>
     <Layout>
-        <TwigPreheader><Raw>{{ inviter.firstname|title }}</Raw> vous invite à rejoindre le groupe « <Raw>{{ crewName }}</Raw> »</TwigPreheader>
+        <TwigPreheader><Raw>{{ inviter.pseudo }}</Raw> vous invite à rejoindre le groupe « <Raw>{{ crewName }}</Raw> »</TwigPreheader>
 
         <BodyStyle />
         <CardStyle />
@@ -26,7 +26,7 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
                     </p>
 
                     <p>
-                        <b><Raw>{{ inviter.fullName|title }}</Raw></b> vous invite à rejoindre le groupe <b>« <Raw>{{ crewName }}</Raw> »</b>.
+                        <b><Raw>{{ inviter.pseudo }}</Raw></b> vous invite à rejoindre le groupe <b>« <Raw>{{ crewName }}</Raw> »</b>.
                     </p>
 
                     <p>
@@ -35,7 +35,7 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
 
                     <div class="my-6">
                         <UserCard
-                            name="{{ inviter.fullName|title }}"
+                            name="{{ inviter.pseudo }}"
                             avatar="{{ absolute_url(user_avatar_image_url(inviter)) }}"
                             to="{{ url('app_section_user_page', { id: inviter.id }) }}"
                         />

@@ -29,7 +29,7 @@ final class FriendshipController extends AbstractController
 
         /** @var User $user */
         $user = $this->getUser();
-        $name = $other->getFirstname();
+        $name = $other->getPseudo();
 
         try {
             match ($action) {

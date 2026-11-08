@@ -26,7 +26,7 @@ final class CrewsDataset
                 'Membre depuis' => $crew->getJoinedAt($user),
                 'Créé le' => $crew->getCreatedAt(),
                 'Créé par vous' => $crew->getCreatedBy() === $user ? 'Oui' : 'Non',
-                'Membres' => implode(', ', array_map(fn (User $member) => $member->getFullname(), $crew->getMembers())),
+                'Membres' => implode(', ', array_map(fn (User $member) => $member->getPseudo(), $crew->getMembers())),
             ],
             $this->crewRepository->findForMember($user),
         ));
