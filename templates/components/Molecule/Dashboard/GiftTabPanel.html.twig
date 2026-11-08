@@ -1,4 +1,6 @@
 <div{{ attributes }} class="tab-content bg-base-100 border-base-300 p-4">
+    {% set emptyAction = gifts is empty and emptyActionLabel and seeAllRoute %}
+
     {% if gifts is empty %}
         <p class="text-sm text-muted py-4">{{ emptyMessage }}</p>
     {% else %}
@@ -9,7 +11,14 @@
         </div>
     {% endif %}
 
-    {% if seeAllRoute %}
+    {% if emptyAction %}
+        {# The empty tab offers its one next step, centered, instead of "Voir tout". #}
+        <div class="flex justify-center pb-4">
+            <twig:Atomic:ButtonLink :to="seeAllRoute" color="primary">
+                <twig:block name="name">{{ emptyActionLabel }}</twig:block>
+            </twig:Atomic:ButtonLink>
+        </div>
+    {% elseif seeAllRoute %}
         <div class="flex justify-end mt-4">
             <twig:Atomic:ButtonLink
                 class="btn-sm"
