@@ -26,14 +26,18 @@ class EmailVerifier
 
     /**
      * At registration, and again on request (ResendEmailConfirmation).
+     *
+     * @param string|null $invitation the slug of the invitation link the account was created
+     *                                from: the link carries it, signed with the rest, so that
+     *                                the login leads back to it (none: left out)
      */
-    public function sendEmailConfirmation(User $user): void
+    public function sendEmailConfirmation(User $user, ?string $invitation = null): void
     {
         $signatureComponents = $this->verifyEmailHelper->generateSignature(
             'app_verify_email',
             (string) $user->getId(),
             (string) $user->getEmail(),
-            ['id' => $user->getId()],
+            ['id' => $user->getId(), 'invitation' => $invitation],
         );
 
         $email = (new TemplatedEmail())

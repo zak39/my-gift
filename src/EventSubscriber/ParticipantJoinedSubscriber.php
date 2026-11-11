@@ -10,6 +10,7 @@ use App\Event\GiftReadyEvent;
 use App\Event\ParticipantJoinedEvent;
 use App\Event\ParticipantLeftEvent;
 use App\Services\Gift\GiftOwnerLabel;
+use App\Services\Url\ProfileUrlGenerator;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -21,6 +22,7 @@ class ParticipantJoinedSubscriber implements EventSubscriberInterface
         private MailerInterface $mailer,
         private UrlGeneratorInterface $urlGenerator,
         private GiftOwnerLabel $giftOwnerLabel,
+        private ProfileUrlGenerator $profileUrlGenerator,
     ) {
     }
 
@@ -81,37 +83,45 @@ class ParticipantJoinedSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param string       $subject  a sprintf() pattern receiving whose gift it is: « de Jon », « du groupe … »
-     * @param ?Participant $excluded left out of the recipients, such as the newcomer being announced
+     * One email per participant: the card of $announced links to their sections only for a
+     * reader who is their friend (ProfileUrlGenerator).
+     *
+     * @param string       $subject   a sprintf() pattern receiving whose gift it is: « de Jon », « du groupe … »
+     * @param ?Participant $announced the newcomer the email shows on a card (none for an
+     *                                anonymous one: the template's ParticipantUserCard), left
+     *                                out of the recipients
      */
-    private function sendEmailToParticipants(Gift $gift, string $subject, string $template, array $context = [], ?Participant $excluded = null): void
+    private function sendEmailToParticipants(Gift $gift, string $subject, string $template, array $context = [], ?Participant $announced = null): void
     {
         $recipients = array_filter(
             $gift->getParticipantsToNotify(),
-            fn (Participant $participant) => $participant !== $excluded,
+            fn (Participant $participant) => $participant !== $announced,
         );
 
-        // Nobody else in the pool: its first contributor joining, or its last one leaving.
-        if (!$recipients) {
-            return;
-        }
-
-        $participantsMail = array_map(fn ($participant) => $participant->getParticipantUser()->getEmail(), $recipients);
         $ownerOf = $this->giftOwnerLabel->of($gift);
+        $subject = \sprintf($subject, $ownerOf);
+        $url = $this->urlGenerator->generate('app_gift_show', ['id' => $gift->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        $email = (new TemplatedEmail())
-            ->to(...$participantsMail)
-            ->subject(\sprintf($subject, $ownerOf))
-            ->htmlTemplate($template)
-            ->context([
-                'gift' => $gift,
-                'ownerOf' => $ownerOf,
-                'url' => $this->urlGenerator->generate('app_gift_show', ['id' => $gift->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
-                ...$context,
-            ])
-        ;
+        // None at all when nobody else is in the pool: its first contributor joining, or its
+        // last one leaving.
+        foreach ($recipients as $recipient) {
+            $reader = $recipient->getParticipantUser();
 
-        $this->mailer->send($email);
+            $email = (new TemplatedEmail())
+                ->to($reader->getEmail())
+                ->subject($subject)
+                ->htmlTemplate($template)
+                ->context([
+                    'gift' => $gift,
+                    'ownerOf' => $ownerOf,
+                    'profileUrl' => $this->profileUrlGenerator->forReader($reader, $announced?->getParticipantUser()),
+                    'url' => $url,
+                    ...$context,
+                ])
+            ;
+
+            $this->mailer->send($email);
+        }
     }
 
     public static function getSubscribedEvents(): array

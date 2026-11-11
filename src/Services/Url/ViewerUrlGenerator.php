@@ -4,6 +4,7 @@ namespace App\Services\Url;
 
 use App\Entity\Crew;
 use App\Entity\Gift;
+use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Attribute\AsTwigFunction;
@@ -29,26 +30,26 @@ final class ViewerUrlGenerator
 
     /**
      * The list a gift is part of: its crew's page, or else its creator's. A participant may
-     * no longer see a crew's list (an ended friendship must not trap them, see
-     * GiftVisibilityVoter): the creator's page then tells them so, where the crew's would
-     * answer 403. A crew gift whose creator is gone (an account deleted) leads to their
-     * friends' search instead, where a giver's way to a gift starts (BreadcrumbBuilder).
+     * no longer see either (an ended friendship must not trap them, see GiftVisibilityVoter),
+     * where both would answer an error: they go back to « Mes ami·es » instead, where a
+     * giver's way to a gift starts (BreadcrumbBuilder), as for a crew gift whose creator is
+     * gone (an account deleted).
      */
     #[AsTwigFunction('gift_viewer_list_url')]
     public function list(Gift $gift): string
     {
         $crew = $this->listCrew($gift);
-        $creator = $gift->getCreatedBy();
+        $creator = $this->listCreator($gift);
 
         return match (true) {
             null !== $crew => $this->urlGenerator->generate('app_crew_show', ['id' => $crew->getId()]),
             null !== $creator => $this->urlGenerator->generate('app_section_user_page', ['id' => $creator->getId()]),
-            default => $this->urlGenerator->generate('app_user'),
+            default => $this->urlGenerator->generate('app_friend'),
         };
     }
 
     /**
-     * The crew whose list the viewer goes back to, or null for the creator's page: the
+     * The crew whose list the viewer goes back to, or null when they may not see it: the
      * one rule for list() and for the gift page's breadcrumb (BreadcrumbBuilder::gift()).
      */
     public function listCrew(Gift $gift): ?Crew
@@ -56,5 +57,16 @@ final class ViewerUrlGenerator
         $crew = $gift->getCrew();
 
         return null !== $crew && $this->security->isGranted('crew.can_see_list', $crew) ? $crew : null;
+    }
+
+    /**
+     * The creator whose list the viewer goes back to, or null when they may not see it (a
+     * friendship ended) or the creator is gone: the same rule for list() and the breadcrumb.
+     */
+    public function listCreator(Gift $gift): ?User
+    {
+        $creator = $gift->getCreatedBy();
+
+        return null !== $creator && $this->security->isGranted('user.can_see_gifts', $creator) ? $creator : null;
     }
 }

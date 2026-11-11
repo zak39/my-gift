@@ -7,22 +7,62 @@ use App\Repository\FriendBookRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * The social side of a user: friends, blocked users and pending requests. User knows
- * nothing about it, so the friendship never changes User.
+ * The social side of a user: friends, blocked users, pending requests and the invitation
+ * link that lets someone ask them as a friend. User knows nothing about it, so the
+ * friendship never changes User.
  *
  * The book reuses the id of its owner (derived identity): the book of user 42 is the
  * book 42, so FriendBookRepository::of() is a find() that the identity map answers
  * after the first call, and getReference() needs no query at all.
  */
 #[ORM\Entity(repositoryClass: FriendBookRepository::class)]
+#[ORM\UniqueConstraint(name: 'UNIQ_FRIEND_BOOK_INVITATION_SLUG', fields: ['invitationSlug'])]
+#[UniqueEntity(fields: ['invitationSlug'], message: 'Ce lien est déjà pris : choisissez-en un autre')]
 class FriendBook
 {
+    /**
+     * Words of lowercase letters and digits joined by single dashes: what AsciiSlugger gives,
+     * and the random slugs too (InvitationSlugGenerator). Without anchors, for the route's
+     * requirement; INVITATION_SLUG_REGEXP anchors it for a whole value.
+     */
+    public const INVITATION_SLUG_PATTERN = '[a-z0-9]+(?:-[a-z0-9]+)*';
+
+    /** D: a final line break does not slip past $, as for User's pseudo. */
+    public const INVITATION_SLUG_REGEXP = '/^'.self::INVITATION_SLUG_PATTERN.'$/D';
+
+    // Not 3, like a pseudo: the slug is the link's only secret, and a few thousand short ones
+    // are all tried in minutes.
+    public const INVITATION_SLUG_MIN_LENGTH = 8;
+    public const INVITATION_SLUG_MAX_LENGTH = 50;
+
     #[ORM\Id]
     #[ORM\OneToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'owner_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     private User $owner;
+
+    /**
+     * The end of the owner's invitation link, /invitation/{slug}: random at first, or one
+     * they chose. Whoever holds the link may ask the owner as a friend, so changing it ends
+     * the previous one at once: the slug is the link's only secret. The one given up is free
+     * again, for anyone to choose: the page names whoever the link leads to, and each
+     * request waits for their answer.
+     */
+    #[Assert\Length(
+        min: self::INVITATION_SLUG_MIN_LENGTH,
+        max: self::INVITATION_SLUG_MAX_LENGTH,
+        minMessage: 'Le lien est trop court ({{ limit }} caractères minimum)',
+        maxMessage: 'Le lien est trop long ({{ limit }} caractères maximum)',
+    )]
+    #[Assert\Regex(
+        pattern: self::INVITATION_SLUG_REGEXP,
+        message: 'Le lien ne peut contenir que des lettres sans accent, des chiffres et des tirets entre les mots',
+    )]
+    #[ORM\Column(length: self::INVITATION_SLUG_MAX_LENGTH)]
+    private string $invitationSlug;
 
     /**
      * Both ways: befriend() and unfriend() update the two books together, so
@@ -61,9 +101,13 @@ class FriendBook
     #[ORM\OrderBy(['createdAt' => 'DESC'])]
     private Collection $receivedRequests;
 
-    public function __construct(User $owner)
+    /**
+     * @param string $invitationSlug a free one, from InvitationSlugGenerator
+     */
+    public function __construct(User $owner, string $invitationSlug)
     {
         $this->owner = $owner;
+        $this->invitationSlug = $invitationSlug;
         $this->friends = new ArrayCollection();
         $this->blockedUsers = new ArrayCollection();
         $this->sentRequests = new ArrayCollection();
@@ -73,6 +117,18 @@ class FriendBook
     public function getOwner(): User
     {
         return $this->owner;
+    }
+
+    public function getInvitationSlug(): string
+    {
+        return $this->invitationSlug;
+    }
+
+    public function setInvitationSlug(string $invitationSlug): static
+    {
+        $this->invitationSlug = $invitationSlug;
+
+        return $this;
     }
 
     public function relationWith(User $user): FriendRelation

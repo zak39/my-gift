@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Gift | {{ owner.pseudo }} vous invite{% endblock %}
+
+{% block body %}
+{% set ownLink = is_granted('user.is_owner', owner) %}
+
+<div class="mx-auto w-full max-w-xl py-6 pb-12">
+    {# The answer of « Envoyer une demande » comes back here. #}
+    <twig:Molecule:Flashes />
+
+    <section class="overflow-hidden rounded-box border border-base-300 bg-base-100 shadow-sm" aria-labelledby="invitation-title">
+        {# The gift-wrap strip of the list headers: an invitation opens on someone's gifts. #}
+        <twig:Atomic:GiftRibbon />
+
+        <div class="flex flex-col items-center gap-6 p-6 text-center sm:p-10">
+            <twig:Molecule:UserAvatar :user="owner" sizeClass="w-24 rounded-full ring-2 ring-base-300 ring-offset-2 ring-offset-base-100" />
+
+            {# The words of the link's card (LinkPreviewBuilder::forInvitation()): the page says
+               what the messenger showed. #}
+            <div>
+                <h1 id="invitation-title" class="text-2xl leading-tight font-bold text-balance wrap-anywhere sm:text-3xl">{{ linkPreview.title }}</h1>
+                <p class="mt-3 text-muted">{{ linkPreview.description }}</p>
+            </div>
+
+            {% if ownLink %}
+                <p class="text-sm text-muted">
+                    C'est votre lien d'invitation : envoyez-le à vos proches. En l'ouvrant, ils pourront vous demander en ami·e.
+                </p>
+                <twig:Atomic:ButtonLink :to="path('app_friend')" style="outline">
+                    <twig:block name="icon">
+                        <twig:ux:icon name="lucide:users" class="size-4" />
+                    </twig:block>
+                    <twig:block name="name">
+                        <span>Mes ami·es</span>
+                    </twig:block>
+                </twig:Atomic:ButtonLink>
+            {% elseif app.user %}
+                {# Where the visitor stands with the owner, as « Mes ami·es » shows it. #}
+                <twig:Molecule:Friend:ActionButtons class="justify-center" :user="owner">
+                    {# The one way to ask: this link, a POST since messengers and browsers
+                       prefetch links (InvitationController). #}
+                    <twig:block name="stranger">
+                        <form method="post" action="{{ path('app_invitation_send', { slug: slug }) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('invitation-send-' ~ slug) }}">
+                            <button type="submit" class="btn btn-sm btn-primary">
+                                <twig:ux:icon name="lucide:user-plus" class="size-4" />
+                                Envoyer une demande
+                            </button>
+                        </form>
+                    </twig:block>
+                </twig:Molecule:Friend:ActionButtons>
+                <p class="text-sm text-muted">{{ owner.pseudo }} accepte ou non chaque demande reçue.</p>
+            {% else %}
+                {# A newcomer first: the invitation follows them through the registration and the
+                   confirmation email, then the login brings them back here (SecurityController). #}
+                <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+                    <twig:Atomic:ButtonLink :to="path('app_register', { invitation: slug })" color="primary" style="">
+                        <twig:block name="icon">
+                            <twig:ux:icon name="lucide:user-round-plus" class="size-4" />
+                        </twig:block>
+                        <twig:block name="name">
+                            <span>Créer un compte</span>
+                        </twig:block>
+                    </twig:Atomic:ButtonLink>
+                    <twig:Atomic:ButtonLink :to="path('app_login', { invitation: slug })" style="outline">
+                        <twig:block name="icon">
+                            <twig:ux:icon name="lucide:key-round" class="size-4" />
+                        </twig:block>
+                        <twig:block name="name">
+                            <span>Se connecter</span>
+                        </twig:block>
+                    </twig:Atomic:ButtonLink>
+                </div>
+                <p class="text-sm text-muted">Une fois connecté·e, vous pourrez envoyer votre demande à {{ owner.pseudo }}.</p>
+            {% endif %}
+        </div>
+    </section>
+</div>
+{% endblock %}

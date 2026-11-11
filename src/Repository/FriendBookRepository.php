@@ -27,4 +27,20 @@ class FriendBookRepository extends ServiceEntityRepository
             ?? throw new \LogicException(\sprintf('User %d has no friend book: CreateFriendBookListener creates one at registration.', $user->getId()))
         ;
     }
+
+    /**
+     * The book behind an invitation link, with its owner, whom the invitation page shows:
+     * one query rather than two.
+     */
+    public function findOneBySlug(string $slug): ?FriendBook
+    {
+        return $this->createQueryBuilder('book')
+            ->addSelect('owner')
+            ->join('book.owner', 'owner')
+            ->andWhere('book.invitationSlug = :slug')
+            ->setParameter('slug', $slug)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 }

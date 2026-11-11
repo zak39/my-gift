@@ -17,8 +17,8 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  *
  * One attribute per thing granted rather than per way of deciding, so that a new circle
  * (family...) or a rule of its own for one of them only changes this voter, not its callers.
- * Two queries hold the same circle and must follow it: the search on full names
- * (UserRepository::search()) and the favourites (GiftRepository::findFavoritesGifts()).
+ * Two queries hold the same circle and must follow it: the friends' search, on full names
+ * too (UserRepository::searchFriends()), and the favourites (GiftRepository::findFavoritesGifts()).
  */
 final class UserVisibilityVoter extends Voter
 {

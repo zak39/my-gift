@@ -3,10 +3,12 @@
 {% block title %}My Gift | Mes ami·es{% endblock %}
 
 {% block body %}
-{# Pending requests first when there are some: that is what the avatar dot points to. #}
-{% set openTab = book.receivedRequests is empty ? 'friends' : 'received' %}
+{# Pending requests first when there are some: that is what the navbar's badge points to. A search
+   or a page of the friends, kept in the URL by Organism:FriendSearch, reopens their tab. #}
+{% set searching = app.request.query.has('query') or app.request.query.has('page') %}
+{% set openTab = book.receivedRequests is empty or searching ? 'friends' : 'received' %}
 
-<div class="mx-auto w-full max-w-6xl py-6 pb-12">
+<div class="mx-auto w-full max-w-3xl py-6 pb-12">
     <header>
         <h1 class="text-2xl leading-tight font-bold sm:text-3xl">Mes ami·es</h1>
         <p class="mt-2 flex items-center gap-2 text-sm text-muted">
@@ -17,9 +19,12 @@
 
     <twig:Molecule:Flashes alertClass="mt-4" />
 
+    {# The only way in: nobody finds anyone by searching the app's users. #}
+    <twig:Molecule:Friend:InvitationLink class="mt-6" :slug="book.invitationSlug" />
+
     <div class="tabs tabs-box mt-6">
         {% for key, tab in {
-            friends: { label: 'Ami·es', users: book.friends, empty: "Vous n'avez pas encore d'ami·e." },
+            friends: { label: 'Ami·es', users: book.friends, empty: "Vous n'avez pas encore d'ami·e : envoyez votre lien d'invitation à vos proches." },
             received: { label: 'Demandes reçues', users: book.receivedRequests|map(request => request.sender.owner), empty: 'Aucune demande en attente.' },
             sent: { label: 'Demandes envoyées', users: book.sentRequests|map(request => request.recipient.owner), empty: 'Aucune demande envoyée.' },
             blocked: { label: 'Bloqué·es', users: book.blockedUsers, empty: "Vous n'avez bloqué personne." },
@@ -28,12 +33,15 @@
             <div class="tab-content border-base-300 bg-base-100 p-4">
                 {% if tab.users is empty %}
                     <p class="py-4 text-sm text-muted">{{ tab.empty }}</p>
+                {% elseif key == 'friends' %}
+                    {# Searched and paged: the one list of the page that keeps growing. #}
+                    <twig:Organism:FriendSearch />
                 {% else %}
-                    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                    <ul class="list">
                         {% for person in tab.users %}
-                            <twig:Molecule:UserCard :user="person" />
+                            <twig:Molecule:Friend:Row :user="person" />
                         {% endfor %}
-                    </div>
+                    </ul>
                 {% endif %}
             </div>
         {% endfor %}

@@ -11,17 +11,24 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 /**
- * The friendship buttons for one person, from the logged-in user's side: add, answer
- * a request, cancel one, remove, block or unblock.
+ * The friendship buttons for one person, from the logged-in user's side: ask them as a
+ * friend (the caller's `stranger` block), answer a request, cancel one, see a friend's
+ * sections, remove, block or unblock.
  *
  * The relationship comes from the logged-in user's book, which the identity map keeps
- * for the whole request: twelve cards in the search load it once.
+ * for the whole request: twelve rows in the search load it once.
  */
 #[AsTwigComponent]
 final class ActionButtons
 {
     /** The other person. */
     public User $user;
+
+    /**
+     * Classes for a friend's "…" menu, for a caller that places it: Molecule:Friend:Row pins
+     * it to the row's corner on a phone, beside the name rather than on a line of its own.
+     */
+    public string $menuClass = '';
 
     public function __construct(
         private Security $security,

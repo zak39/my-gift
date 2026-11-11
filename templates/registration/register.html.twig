@@ -20,7 +20,7 @@
                 </div>                
             {% endfor %}
             {# One card in two halves: the registration, and the way back to the login. #}
-            <twig:Molecule:Auth:SplitCard page="register">
+            <twig:Molecule:Auth:SplitCard page="register" :invitation="invitation">
                 <div class="card bg-base-100 w-full rounded-none lg:flex-1">
                     {# Roomy on a phone, compact from lg so the whole form fits a laptop screen. #}
                     <div class="card-body gap-6 p-8 lg:gap-4">

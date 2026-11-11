@@ -28,7 +28,8 @@
                 </div>
             {% else %}
                 {# One card in two halves: the login, and the way to an account. #}
-                <twig:Molecule:Auth:SplitCard page="login">
+                {# invitation: none on a shared link's login page (SharedLinkPreviewListener). #}
+                <twig:Molecule:Auth:SplitCard page="login" :invitation="invitation ?? null">
                     {{ include('security/_login_form.html.twig', { joined: true }) }}
                 </twig:Molecule:Auth:SplitCard>
             {% endif %}

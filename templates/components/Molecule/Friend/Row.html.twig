@@ -1,0 +1,18 @@
+{# On a phone, the avatar faces the name, not the middle of the name and the buttons below it. #}
+<li {{ attributes.defaults({ class: 'list-row items-start sm:items-center' }) }}>
+    <twig:Molecule:UserAvatar :user="user" sizeClass="w-10" />
+
+    {# The name and the buttons share the list's second column, the one taking the room left:
+       the buttons under the name on a phone, beside it from sm. In a column of their own, an
+       auto one the grid widens first, the buttons would crush the name to a letter per line. #}
+    <div class="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+        {# Room on a phone for a friend's "…", pinned to the row's corner beside the name. #}
+        <p class="min-w-0 font-medium max-sm:pr-10">
+            <twig:Molecule:User:Name :user="user" />
+        </p>
+
+        {# On the right at every width. A friend's "…" goes to the row's top right corner on a
+           phone (list-row is relative), its menu opening down and to the left. #}
+        <twig:Molecule:Friend:ActionButtons class="justify-end sm:shrink-0" :user="user" menuClass="max-sm:absolute max-sm:top-3 max-sm:right-3" />
+    </div>
+</li>

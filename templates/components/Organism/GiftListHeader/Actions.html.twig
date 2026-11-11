@@ -15,12 +15,14 @@
     {% else %}
         {# Distinct from ownerView: the owner previewing their own public profile is the
            owner, but is not in the management view. #}
+        {# Shared by its owner only: the link is their invitation (own_invitation_url()). A
+           friend has no link to give: the list is a 404 to anyone else. #}
         {% if is_granted('user.is_owner', user) %}
             <a href="{{ path('app_section_new') }}" class="btn btn-primary">
                 <twig:ux:icon name="lucide:folder-plus" class="size-4" />
                 Créer une section
             </a>
+            <twig:Molecule:ShareLinkButton :url="own_invitation_url()" label="Partager le profil" />
         {% endif %}
-        <twig:Molecule:ShareLinkButton :url="user_list_share_url(user)" label="Partager le profil" />
     {% endif %}
 </div>

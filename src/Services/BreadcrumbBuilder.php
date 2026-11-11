@@ -26,19 +26,20 @@ final class BreadcrumbBuilder
 
     /**
      * The gift's page as a friend who may offer it sees it, reached from the list it is
-     * part of: its crew's, or its creator's once the crew's is out of their sight (an ended
-     * friendship), as ViewerUrlGenerator::listCrew() decides; the friends' search alone for a
-     * crew gift whose creator is gone. Its owners have their own pages below.
+     * part of: its crew's, or its creator's once the crew's is out of their sight, as
+     * ViewerUrlGenerator::listCrew() and listCreator() decide; « Mes ami·es » alone when
+     * neither is in sight any more (an ended friendship) or the creator is gone. Its owners
+     * have their own pages below.
      */
     public function gift(Gift $gift): array
     {
         $crew = $this->viewerUrlGenerator->listCrew($gift);
-        $creator = $gift->getCreatedBy();
+        $creator = $this->viewerUrlGenerator->listCreator($gift);
 
         $list = match (true) {
             null !== $crew => [$this->crewItem($crew)],
-            null !== $creator => [$this->findFriends(), $this->userListItem($creator)],
-            default => [$this->findFriends()],
+            null !== $creator => [$this->myFriends(), $this->userListItem($creator)],
+            default => [$this->myFriends()],
         };
 
         return [...$list, $this->currentItem($gift->getTitle())];
@@ -63,8 +64,16 @@ final class BreadcrumbBuilder
     public function userList(User $user): array
     {
         return [
-            $this->findFriends(),
+            $this->myFriends(),
             $this->currentItem($user->getPseudo()),
+        ];
+    }
+
+    public function editInvitationLink(): array
+    {
+        return [
+            $this->myFriends(),
+            $this->currentItem('Personnaliser le lien'),
         ];
     }
 
@@ -169,9 +178,9 @@ final class BreadcrumbBuilder
         return $this->item('Mes groupes', 'app_crew');
     }
 
-    private function findFriends(): array
+    private function myFriends(): array
     {
-        return $this->item('Trouver vos amis', 'app_user');
+        return $this->item('Mes ami·es', 'app_friend');
     }
 
     private function userListItem(User $user): array

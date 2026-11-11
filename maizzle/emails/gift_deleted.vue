@@ -31,11 +31,7 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
                         </p>
 
                         <div class="my-6">
-                            <Raw>{% if deleter.profileUrl %}</Raw>
-                                <UserCard name="{{ deleter.name }}" avatar="{{ absolute_url(deleter.avatar) }}" to="{{ deleter.profileUrl }}" />
-                            <Raw>{% else %}</Raw>
-                                <UserCard name="{{ deleter.name }}" avatar="{{ absolute_url(deleter.avatar) }}" />
-                            <Raw>{% endif %}</Raw>
+                            <UserCard name="{{ deleter.name }}" avatar="{{ absolute_url(deleter.avatar) }}" with-profile />
                         </div>
                     <Raw>{% else %}</Raw>
                         <p>

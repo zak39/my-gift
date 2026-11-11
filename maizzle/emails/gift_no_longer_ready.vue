@@ -18,7 +18,7 @@ import CardStyle from '../components/styles/CardStyle.vue'
                     <h1>Votre cadeau n'est plus prêt</h1>
 
                     <p>
-                        Bonjour<Raw>{% if recipientName %} {{ recipientName|title }}{% endif %}</Raw>,
+                        Bonjour <Raw>{{ recipientName|title }}</Raw>,
                     </p>
 
                     <p>

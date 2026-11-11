@@ -3,14 +3,15 @@
 namespace App\Services;
 
 use App\Entity\Crew;
+use App\Entity\FriendBook;
 use App\Entity\Gift;
 use App\Entity\User;
 use App\Repository\CrewRepository;
 use App\Repository\GiftRepository;
-use App\Repository\UserRepository;
 use App\Services\Dto\LinkPreviewDto;
 use App\Services\Dto\LinkPreviewImageDto;
 use App\Services\Url\AvatarUrlGenerator;
+use App\Services\Url\ShareUrlGenerator;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\UriSigner;
@@ -23,26 +24,26 @@ use function Symfony\Component\String\u;
 /**
  * The card of a link copied with "Partager" (ShareUrlGenerator), for whoever opens it
  * without being logged in: a link-preview bot, or a friend about to log in. One method per
- * page that can be shared, as BreadcrumbBuilder has, and the app's own card for any other.
+ * page that can be shared, as BreadcrumbBuilder has, an invitation link's, and the app's
+ * own card for any other.
  */
 final class LinkPreviewBuilder
 {
     private const APP_TAGLINE = 'My Gift, des cadeaux qui ne font jamais doublon';
 
     private const GIFT_ROUTE = 'app_gift_show';
-    private const USER_LIST_ROUTE = 'app_section_user_page';
     private const CREW_ROUTE = 'app_crew_show';
 
     public function __construct(
         private readonly UriSigner $uriSigner,
         private readonly GiftRepository $giftRepository,
-        private readonly UserRepository $userRepository,
         private readonly CrewRepository $crewRepository,
         private readonly UploaderHelper $uploaderHelper,
         private readonly UrlHelper $urlHelper,
         private readonly Packages $packages,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly AvatarUrlGenerator $avatarUrlGenerator,
+        private readonly ShareUrlGenerator $shareUrlGenerator,
     ) {
     }
 
@@ -60,11 +61,29 @@ final class LinkPreviewBuilder
     }
 
     /**
+     * The card of an invitation link (Invitation\InvitationController), public as the page:
+     * the owner's pseudo and avatar only, what anyone holding the link sees there. Neither
+     * their full name, for their friends only (user.can_see_fullname), nor their gifts.
+     */
+    public function forInvitation(FriendBook $book): LinkPreviewDto
+    {
+        $owner = $book->getOwner();
+        $pseudo = $owner->getPseudo();
+
+        return new LinkPreviewDto(
+            "$pseudo vous invite sur My Gift",
+            "Devenez ami·es : vous verrez les sections de cadeaux de $pseudo, et $pseudo verra les vôtres.",
+            $this->shareUrlGenerator->invitation($book->getInvitationSlug()),
+            $this->image($this->avatarUrlGenerator->url($owner), "Photo de profil $pseudo"),
+        );
+    }
+
+    /**
      * One of the pages "Partager" links to (ShareUrlGenerator), whose card this builder makes.
      */
     public function isSharedPage(Request $request): bool
     {
-        return \in_array($request->attributes->get('_route'), [self::GIFT_ROUTE, self::USER_LIST_ROUTE, self::CREW_ROUTE], true);
+        return \in_array($request->attributes->get('_route'), [self::GIFT_ROUTE, self::CREW_ROUTE], true);
     }
 
     /**
@@ -82,7 +101,6 @@ final class LinkPreviewBuilder
 
         return match ($request->attributes->get('_route')) {
             self::GIFT_ROUTE => $this->gift($this->giftRepository->find($id), $url),
-            self::USER_LIST_ROUTE => $this->userList($this->userRepository->find($id), $url),
             self::CREW_ROUTE => $this->crew($this->crewRepository->find($id), $url),
             default => null,
         };
@@ -119,20 +137,6 @@ final class LinkPreviewBuilder
             $description,
             $url,
             $this->image($this->uploaderHelper->asset($gift, 'imageFile'), $gift->getTitle()),
-        );
-    }
-
-    private function userList(?User $user, string $url): ?LinkPreviewDto
-    {
-        if (null === $user) {
-            return null;
-        }
-
-        return new LinkPreviewDto(
-            "Les cadeaux de {$user->getPseudo()}",
-            $this->giftCount($this->giftRepository->countPublishedPersonalOf($user), 'sur sa liste'),
-            $url,
-            $this->image($this->avatarUrlGenerator->url($user), $user->getPseudo()),
         );
     }
 

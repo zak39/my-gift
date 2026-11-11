@@ -23,9 +23,12 @@ final class ResendEmailConfirmation
     }
 
     /**
+     * @param string|null $invitation the slug of the invitation link the account was created
+     *                                from, which the new link carries on (EmailVerifier)
+     *
      * @return string|null why nothing was sent, or null: sent if the account awaits it
      */
-    public function __invoke(string $email, ?string $clientIp): ?string
+    public function __invoke(string $email, ?string $clientIp, ?string $invitation = null): ?string
     {
         $attempt = $this->verifyEmailResendLimiter->create($clientIp ?? 'unknown')->consume();
         if (!$attempt->isAccepted()) {
@@ -36,7 +39,7 @@ final class ResendEmailConfirmation
 
         $user = $this->userRepository->findOneBy(['email' => $email]);
         if (null !== $user && !$user->isVerified()) {
-            $this->emailVerifier->sendEmailConfirmation($user);
+            $this->emailVerifier->sendEmailConfirmation($user, $invitation);
         }
 
         return null;

@@ -1,12 +1,17 @@
 <?php
 
-namespace App\Twig\Components\Molecule;
+namespace App\Twig\Components\Molecule\Friend;
 
 use App\Entity\User;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
+/**
+ * One person in a list of « Mes ami·es », a friend, a request or a blocked user: their face,
+ * their name, the friendship buttons, and the way to their sections for whoever may open
+ * them. A row of a daisyUI list, as Molecule:Crew:MemberRow is in a crew's.
+ */
 #[AsTwigComponent]
-final class UserCard
+final class Row
 {
     public User $user;
 

@@ -13,7 +13,7 @@
                 </li>
             {% endfor %}
         </ul>
-        <twig:Atomic:ButtonLink :to="path('app_register')" style="outline" class="mt-2">
+        <twig:Atomic:ButtonLink :to="path('app_register', { invitation: invitation })" style="outline" class="mt-2">
             <twig:block name="icon">
                 <twig:ux:icon name="lucide:user-round-plus" class="size-5" aria-hidden="true" />
             </twig:block>
@@ -22,7 +22,7 @@
     {% else %}
         <h2 id="{{ titleId }}" class="text-2xl font-bold">Déjà un compte ?</h2>
         <p>Retrouvez vos sections, vos cadeaux réservés et vos cagnottes.</p>
-        <twig:Atomic:ButtonLink :to="path('app_login')" style="outline" class="mt-2">
+        <twig:Atomic:ButtonLink :to="path('app_login', { invitation: invitation })" style="outline" class="mt-2">
             <twig:block name="icon">
                 <twig:ux:icon name="lucide:key-round" class="size-5" aria-hidden="true" />
             </twig:block>

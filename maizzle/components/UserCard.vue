@@ -8,10 +8,15 @@
       type: String,
       required: true
     },
-    // Left out where the reader may not see their profile: no link then.
-    to: {
-      type: String,
-      default: null
+    /*
+     * Where the reader may meet this user again: their sections, or a warning that only
+     * friends see them. Twig chooses when rendering, on the `profileUrl` of the email's
+     * context (ProfileUrlGenerator, null for a reader who is no friend): one email per
+     * reader, then. Left out where the email itself is about becoming friends.
+     */
+    withProfile: {
+      type: Boolean,
+      default: false
     }
   })
 </script>
@@ -31,9 +36,22 @@
           </tr>
         </table>
 
-        <p v-if="to" class="m-0 mt-4 text-right text-sm font-semibold">
-          <a :href="to" class="accent-link no-underline">&rarr; Voir son profil</a>
-        </p>
+        <template v-if="withProfile">
+          <Raw>{% if profileUrl %}</Raw>
+            <p class="m-0 mt-4 text-right text-sm font-semibold">
+              <a href="{{ profileUrl }}" class="accent-link no-underline">&rarr; Voir son profil</a>
+            </p>
+          <Raw>{% else %}</Raw>
+            <!--
+              Said rather than left out: a reader comparing with another, who has the link,
+              would take its absence for a bug. The words carry the warning, not the colour
+              alone (RGAA 3.1).
+            -->
+            <p class="profile-notice m-0 mt-4 rounded-lg border p-3 text-sm">
+              &#9888;&#65039; Vous n'êtes pas encore ami·e avec <b>{{ name }}</b> : demandez-lui son lien d'invitation pour voir ses sections.
+            </p>
+          <Raw>{% endif %}</Raw>
+        </template>
       </td>
     </tr>
   </table>

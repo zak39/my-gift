@@ -15,7 +15,7 @@
         {% if form.invitee.vars.choices is empty %}
             <p class="text-sm text-muted">
                 Toutes vos ami·es font déjà partie du groupe ou ont déjà été invité·es.
-                <a href="{{ path('app_user') }}" class="link">Trouver d'autres ami·es</a>
+                <a href="{{ path('app_friend') }}" class="link">Inviter d'autres ami·es</a>
             </p>
         {% else %}
             {{ form_start(form, { attr: { class: 'flex flex-col gap-3 sm:flex-row sm:items-end' } }) }}

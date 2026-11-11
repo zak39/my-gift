@@ -9,7 +9,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
@@ -32,7 +31,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function __construct(
         ManagerRegistry $registry,
         private PaginatorInterface $paginator,
-        private Security $security,
     ) {
         parent::__construct($registry, User::class);
     }
@@ -126,44 +124,37 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ;
     }
 
-    public function search(?string $query = null, int $page = 1): PaginationInterface
+    /**
+     * The user's friends whose pseudo or full name contain $query, all of them without one,
+     * by pseudo as FriendBook::$friends: nobody else, so that no page lists the users of the
+     * app. A friend sees the full name (user.can_see_fullname), so it may match too.
+     */
+    public function searchFriends(User $user, ?string $query = null, int $page = 1): PaginationInterface
     {
-        /** @var User|null */
-        $user = $this->security->getUser();
-
-        $queryBuilder = $this->createSearchQueryBuilder((string) $query);
-
-        if ($user instanceof User) {
-            // The full name among the viewer's friends only, the ones who see it
-            // (user.can_see_fullname): a match on it would tell a stranger whose pseudo it
-            // is. The friends are read through a join, not MEMBER OF, which Doctrine cannot
+        $queryBuilder = $this->createSearchQueryBuilder((string) $query)
+            // The friends are read through a join, not MEMBER OF, which Doctrine cannot
             // translate on a book whose id is its owner (derived identity).
-            $queryBuilder
-                ->orWhere('('.self::FULL_NAME_MATCHES.<<<'DQL'
-                     AND EXISTS (
-                        SELECT viewerFriend.id
-                        FROM App\Entity\FriendBook viewerBook
-                        JOIN viewerBook.friends viewerFriend
-                        WHERE viewerBook.owner = :currentUser AND viewerFriend = u
-                    ))
-                    DQL)
-                ->andWhere('u.id != :currentUser')
-                ->setParameter('currentUser', $user)
-            ;
-        }
-
-        return $this->paginator
-            ->paginate(
-                $queryBuilder,
-                $page,
-                self::MAX_PER_PAGE
-            )
+            ->andWhere(<<<'DQL'
+                EXISTS (
+                    SELECT friend.id
+                    FROM App\Entity\FriendBook book
+                    JOIN book.friends friend
+                    WHERE book.owner = :user AND friend = u
+                )
+                DQL)
+            ->setParameter('user', $user)
+            ->orderBy('u.pseudo')
         ;
+
+        // The page comes from the URL (FriendSearch): below 1 the paginator throws (past the
+        // last one, knp_paginator.yaml). One row per user, nothing joined: no ids query needed
+        // to keep a page distinct.
+        return $this->paginator->paginate($queryBuilder, max(1, $page), self::MAX_PER_PAGE, ['distinct' => false]);
     }
 
     /**
      * Finds users whose pseudo or full name match the given pattern, any full name: for the
-     * console's admin, not for a viewer (see search()).
+     * console's admin, not for a viewer (see searchFriends()).
      *
      * @param string $pattern The pattern to search for in user pseudos and full names
      *
@@ -172,21 +163,20 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function findBySearchPattern(string $pattern): array
     {
         return $this->createSearchQueryBuilder($pattern)
-            ->orWhere(self::FULL_NAME_MATCHES)
             ->getQuery()
             ->getResult()
         ;
     }
 
     /**
-     * The users whose pseudo contains $query, case-insensitive: shared by the front search
-     * (search()) and the console's (findBySearchPattern()), each adding the full names it
-     * may search with FULL_NAME_MATCHES on the same :query.
+     * The users whose pseudo or full name contain $query, case-insensitive: shared by the
+     * friends' search (searchFriends()) and the console's (findBySearchPattern()).
      */
     private function createSearchQueryBuilder(string $query): QueryBuilder
     {
         return $this->createQueryBuilder('u')
             ->where('LOWER(u.pseudo) LIKE :query')
+            ->orWhere(self::FULL_NAME_MATCHES)
             // "_" may be in a pseudo, but is a LIKE wildcard, as "%": both escaped, "jean_1"
             // finds jean_1, not jeanx1 (PostgreSQL's LIKE escapes with a backslash).
             ->setParameter('query', '%'.addcslashes(mb_strtolower($query), '%_\\').'%')

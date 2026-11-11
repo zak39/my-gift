@@ -3,7 +3,6 @@
 namespace App\Controller\User;
 
 use App\Entity\User;
-use App\Repository\FriendBookRepository;
 use App\Services\Lifecycle\FriendRequestLifecycle;
 use App\Services\RefererRedirector;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,18 +12,25 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
- * What the user does to another one: ask them as a friend, unfriend, block. Answering a
- * request is Me\FriendController's.
+ * What the user does to another one they are linked to: unfriend, block, unblock. Asking
+ * someone as a friend goes through their invitation link (Invitation\InvitationController),
+ * never by id; answering a request is Me\FriendController's.
  */
 #[IsGranted('IS_AUTHENTICATED')]
 #[Route('/users/{id}', requirements: ['id' => '\d+'])]
 final class FriendshipController extends AbstractController
 {
-    #[Route('/friend/{action}', name: 'app_friend_action', requirements: ['action' => 'send|remove|block|unblock'], methods: ['POST'])]
-    public function act(User $other, string $action, Request $request, FriendRequestLifecycle $friendRequestLifecycle, FriendBookRepository $friendBookRepository, RefererRedirector $refererRedirector): Response
+    #[Route('/friend/{action}', name: 'app_friend_action', requirements: ['action' => 'remove|block|unblock'], methods: ['POST'])]
+    public function act(int $id, ?User $other, string $action, Request $request, FriendRequestLifecycle $friendRequestLifecycle, RefererRedirector $refererRedirector): Response
     {
-        if (!$this->isCsrfTokenValid("friend-$action-{$other->getId()}", $request->request->get('_token'))) {
+        // The token before the user, as SectionController does with its voter: a missing id
+        // must not answer otherwise than an existing one, to whoever has no token for it.
+        if (!$this->isCsrfTokenValid("friend-$action-$id", $request->request->get('_token'))) {
             throw $this->createAccessDeniedException();
+        }
+
+        if (null === $other) {
+            throw $this->createNotFoundException();
         }
 
         /** @var User $user */
@@ -33,14 +39,12 @@ final class FriendshipController extends AbstractController
 
         try {
             match ($action) {
-                'send' => $friendRequestLifecycle->send($user, $other),
                 'remove' => $friendRequestLifecycle->removeFriend($user, $other),
                 'block' => $friendRequestLifecycle->block($user, $other),
                 'unblock' => $friendRequestLifecycle->unblock($user, $other),
             };
 
             $this->addFlash('success', match ($action) {
-                'send' => $friendBookRepository->of($user)->hasFriend($other) ? "Vous êtes maintenant ami·es avec $name !" : "Votre demande a été envoyée à $name.",
                 'remove' => "$name ne fait plus partie de vos ami·es.",
                 'block' => "$name a été bloqué·e.",
                 'unblock' => "$name a été débloqué·e.",

@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Gift | Personnaliser votre lien d'invitation{% endblock %}
+
+{% block body %}
+{% form_theme form 'form/daisyui_layout.html.twig' %}
+{# The link's beginning from its route, whatever the app's address: what the slug ends. Inside
+   the field, whole from sm; on a phone its path only, or the slug would get no room to show. #}
+{% set currentLink = invitation_url(book.invitationSlug) %}
+{% set linkStartPath = path('app_invitation', { slug: book.invitationSlug })|u.beforeLast('/', true) %}
+{% set linkStart %}
+    <span class="label max-sm:hidden">{{ absolute_url(linkStartPath) }}</span>
+    <span class="label sm:hidden">{{ linkStartPath }}</span>
+{% endset %}
+
+<div class="mx-auto w-full max-w-2xl pb-12">
+    <twig:Molecule:Breadcrumbs :items="breadcrumbs" />
+
+    <twig:Organism:Form:Card icon="lucide:link" title="Personnaliser votre lien d'invitation"
+        description="Choisissez la fin de votre lien, par exemple les-caribous-et-les-petits. L'ancien lien ne fonctionnera plus : envoyez le nouveau à vos ami·es.">
+        <twig:block name="meta">
+            <p class="text-sm">
+                <span class="text-muted">Lien actuel :</span>
+                <span class="font-mono wrap-anywhere">{{ currentLink }}</span>
+            </p>
+        </twig:block>
+
+        {{ form_start(form) }}
+            <div class="flex flex-col gap-4 border-t border-base-300 p-5 sm:p-7">
+                {{ form_errors(form) }}
+                {# RGAA 11.1: the field's name is its label and the link's beginning shown inside it,
+                   both labels of the input. #}
+                {{ form_row(form.invitationSlug, { prefix: linkStart }) }}
+            </div>
+
+            <twig:Molecule:Form:Actions
+                :cancelUrl="path('app_friend')"
+                submitLabel="Enregistrer" />
+        {{ form_end(form) }}
+    </twig:Organism:Form:Card>
+</div>
+{% endblock %}

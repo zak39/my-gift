@@ -37,7 +37,7 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
                         <UserCard
                             name="{{ inviter.pseudo }}"
                             avatar="{{ absolute_url(user_avatar_image_url(inviter)) }}"
-                            to="{{ url('app_section_user_page', { id: inviter.id }) }}"
+                            with-profile
                         />
                     </div>
 

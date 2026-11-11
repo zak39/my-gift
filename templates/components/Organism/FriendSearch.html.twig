@@ -1,0 +1,65 @@
+{% set friends = this.friends %}
+
+<div {{ attributes.defaults({ class: 'flex flex-col gap-2' }) }}>
+    <label class="input w-full" data-controller="reset-searchbar">
+        <twig:ux:icon name="lucide:search" class="size-4 shrink-0 opacity-50" />
+        {# RGAA 11.1: a placeholder is no label, the sr-only text gives the field its name. #}
+        <span class="sr-only">Chercher parmi vos ami·es, par pseudo ou par nom</span>
+        <input type="search"
+            class="grow"
+            placeholder="Chercher parmi vos ami·es"
+            data-reset-searchbar-target="field"
+            data-model="debounce(300)|query" />
+        <button type="button"
+            class="btn btn-ghost btn-xs btn-circle"
+            aria-label="Effacer la recherche"
+            data-action="reset-searchbar#reset">
+            <twig:ux:icon name="lucide:x" class="size-4" />
+        </button>
+    </label>
+
+    {% if query is not empty %}
+        {% set total = friends.getTotalItemCount() %}
+        <p class="text-sm text-muted">
+            <span class="tabular-nums">{{ total }}</span>
+            ami·e{{ total > 1 ? 's' }} trouvé·e{{ total > 1 ? 's' }} pour « {{ query }} »
+        </p>
+    {% endif %}
+
+    {# The skeletons take the row's shape, so a search never collapses the list. min-loading
+       keeps them up for a minimum time: a local response is so fast that plain `data-loading`
+       would only flash them for a frame. #}
+    <div class="group" data-controller="min-loading" data-min-loading-duration-value="500">
+        <p class="sr-only hidden group-data-searching:block" role="status">Recherche parmi vos ami·es en cours…</p>
+        <ul class="list hidden group-data-searching:flex" aria-hidden="true">
+            {% for i in 1..4 %}
+                <li class="list-row items-center">
+                    <div class="skeleton size-10 shrink-0 rounded-full"></div>
+                    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div class="flex flex-col gap-2">
+                            <div class="skeleton h-4 w-32"></div>
+                            <div class="skeleton h-3 w-24"></div>
+                        </div>
+                        <div class="skeleton h-8 w-32 max-sm:self-end"></div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+
+        {% if friends|length > 0 %}
+            <ul class="list group-data-searching:hidden">
+                {% for friend in friends %}
+                    <twig:Molecule:Friend:Row :user="friend" />
+                {% endfor %}
+            </ul>
+
+            <div class="mt-4 flex justify-center group-data-searching:hidden">
+                {{ knp_pagination_render(friends, 'components/pagination.html.twig') }}
+            </div>
+        {% else %}
+            <p class="py-4 text-sm text-muted group-data-searching:hidden">
+                {{ query is empty ? "Vous n'avez pas encore d'ami·e." : 'Aucun·e ami·e ne correspond à « ' ~ query ~ ' ».' }}
+            </p>
+        {% endif %}
+    </div>
+</div>

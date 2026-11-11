@@ -98,7 +98,7 @@ paired with a template at the mirrored path under `templates/components/...`
 `templates/components/Molecule/Breadcrumbs.html.twig`). Components are organized loosely by
 atomic-design tiers (`Atomic/`, `Molecule/`, `Organism/`), with feature groupings inside a
 tier where several components share one (`Molecule/Gift/`, `Molecule/Navbar/`…); a few
-older ones (`Alert`, `CardGift`, `Modal`, `SearchUsers`) still sit at the root. When adding
+older ones (`Alert`, `CardGift`, `Modal`) still sit at the root. When adding
 a new component, follow this class+template pairing.
 
 Live/reactive UI where needed uses `symfony/ux-live-component`; page transitions use
@@ -143,8 +143,14 @@ voter guards it:
   favorites, crews, received invitations). No user id in the URL; nested resource ids
   still get their voter (`section.is_owner`, `gift.is_owner`…), and a crew's section or
   gift is not found there
-- `User/` — `/users/{id}/...`, another user: search, their list (`user.can_see_gifts`),
-  friendship actions
+- `User/` — `/users/{id}/...`, another user: their list (`user.can_see_gifts`, a 404 for
+  anyone but them and their friends: the ids follow each other), unfriend / block. No page
+  lists the users, and nobody is asked as a friend by id
+- `Invitation/` — `/invitation/{slug}`, a user's invitation link, the only way to ask
+  someone as a friend: public (its Open Graph card, `LinkPreviewBuilder::forInvitation()`),
+  the request a POST. The slug lives on `FriendBook`, random (`InvitationSlugGenerator`) or
+  chosen; changing it ends the old link (404). A newcomer keeps it through the registration
+  and the signed confirmation link (`?invitation=`), then the login leads back to it
 - `Crew/` — `/crews/{id}/...`, one crew run by its members (`crew.is_member`); a nested
   section or gift must belong to that crew
 - `Gift/` — `/gift/{id}/...`, a gift from the giver's side: its page, favorites,
@@ -177,8 +183,8 @@ crew's list or its author's own), `SectionUrlGenerator`, `ViewerUrlGenerator` (a
 (`gift_owner_show_url()`, `gift_edit_url()`, `section_edit_url()`…); only a component
 shared by owners' and givers' pages (`Molecule:Gift:ShowButton`) chooses, with
 `is_granted('gift.is_owner')`. The "Partager" buttons copy links from `ShareUrlGenerator`
-(`gift_share_url()`, `user_list_share_url()`, `crew_share_url()`), signed for 6 months
-for whoever may see what they show: a visitor who is not logged in, a messenger's preview
+(`gift_share_url()`, `crew_share_url()`, signed for 6 months for whoever may see what they
+show; `own_invitation_url()`, a user's own list as they share it, public): a visitor who is not logged in, a messenger's preview
 bot, gets on a signed link the login page carrying its Open Graph card (`SharedLinkPreviewListener`,
 `LinkPreviewBuilder`); any other page carries the app's own card (`Molecule:LinkPreview`).
 The paths linked from
