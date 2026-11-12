@@ -22,7 +22,7 @@
                                     }
                                 }) }}
                                 {% if form.anonymous.vars.required %}
-                                    <span class="badge badge-accent badge-xs">Requis</span>
+                                    <twig:Atomic:RequiredBadge />
                                 {% endif %}
                             </label>
                             {% if form.anonymous.vars.errors|length > 0 %}
@@ -39,7 +39,7 @@
                                     }
                                 }) }}
                                 {% if form.pseudoAnonyme.vars.required %}
-                                    <span class="badge badge-accent badge-xs">Requis</span>
+                                    <twig:Atomic:RequiredBadge />
                                 {% endif %}
                             </label>
                             {% if form.pseudoAnonyme.vars.errors|length > 0 %}
