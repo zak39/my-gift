@@ -1,17 +1,22 @@
 {% set members = crew.members %}
 {% set giftCount = this.giftCount %}
+{% set canLeave = is_granted('crew.can_leave', crew) %}
+{% set canDelete = is_granted('crew.can_delete', crew) %}
+{# Once for both renderings: each call signs a new link. #}
+{% set shareUrl = crew_share_url(crew) %}
 
-{# No overflow-hidden: it would clip the avatars' tooltips. The ribbon rounds its own corners. #}
+{# No overflow-hidden on the card: it would clip the avatars' tooltips and the "…" menu of the
+   actions. The ribbon rounds its own corners. #}
 <section {{ attributes.defaults({ class: 'relative rounded-box border border-base-300 bg-base-100 shadow-sm' }) }}>
-    <twig:Atomic:GiftRibbon class="rounded-t-box" />
+    <twig:Atomic:GiftRibbon />
 
-    <div class="flex flex-col gap-5 p-5 sm:p-7 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
-        <div class="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
-            <twig:Molecule:UserAvatarGroup class="shrink-0" :users="members" :max="4" sizeClass="w-14 sm:w-16" />
+    <div class="flex flex-col gap-4 p-4 sm:gap-5 sm:p-7 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
+        <div class="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
+            <twig:Molecule:UserAvatarGroup class="shrink-0" :users="members" :max="4" sizeClass="w-12 sm:w-16" />
 
             <div class="min-w-0">
                 <h1 class="text-2xl leading-tight font-bold wrap-anywhere sm:text-3xl">{{ crew.name }}</h1>
-                <p class="mt-2 flex items-center gap-2 text-sm text-muted">
+                <p class="mt-1 flex items-center gap-2 text-sm text-muted sm:mt-2">
                     <twig:ux:icon name="lucide:users" class="size-4 shrink-0" />
                     <span>Sections communes de {{ members|map(member => member.pseudo)|join(', ', ' et ') }}</span>
                 </p>
@@ -26,23 +31,88 @@
 
         <div class="flex flex-wrap items-center gap-2 lg:shrink-0 lg:justify-end">
             {% if ownerView %}
-                <a href="{{ path('app_crew_section_new', { id: crew.id }) }}" class="btn btn-primary">
+                <a href="{{ path('app_crew_section_new', { id: crew.id }) }}" class="btn btn-primary max-sm:flex-1">
                     <twig:ux:icon name="lucide:folder-plus" class="size-4" />
                     Créer une section
                 </a>
-                <a href="{{ path('app_crew_edit', { id: crew.id }) }}" class="btn btn-outline">
-                    <twig:ux:icon name="lucide:pencil" class="size-4" />
-                    Renommer
-                </a>
-            {% endif %}
-            {# The members and their friends alike: one page for both, one link. #}
-            <twig:Molecule:ShareLinkButton :url="crew_share_url(crew)" label="Partager le groupe" />
-            {% if is_granted('crew.can_leave', crew) %}
-                <twig:Molecule:Crew:LeaveButton :crew="crew" />
-            {% endif %}
-            {% if is_granted('crew.can_delete', crew) %}
-                <twig:Molecule:Crew:DeleteButton :crew="crew" />
+
+                {# The leave and delete buttons open their modal, rendered at the bottom of the
+                   header: inside this hidden row, a <dialog> would never show on a phone. #}
+                <div class="contents max-sm:hidden">
+                    <a href="{{ path('app_crew_edit', { id: crew.id }) }}" class="btn btn-outline">
+                        <twig:ux:icon name="lucide:pencil" class="size-4" />
+                        Renommer
+                    </a>
+                    <twig:Molecule:ShareLinkButton :url="shareUrl" label="Partager le groupe" />
+                    {% if canLeave %}
+                        <button type="button" class="btn btn-ghost" data-controller="dialog" data-dialog-id-value="modal_crew_leave_{{ crew.id }}" data-action="dialog#open">
+                            <twig:ux:icon name="lucide:log-out" class="size-4" />
+                            Quitter le groupe
+                        </button>
+                    {% endif %}
+                    {% if canDelete %}
+                        <button type="button" class="btn btn-ghost text-error" data-controller="dialog" data-dialog-id-value="modal_crew_delete_{{ crew.id }}" data-action="dialog#open">
+                            <twig:ux:icon name="lucide:trash-2" class="size-4" />
+                            Supprimer le groupe
+                        </button>
+                    {% endif %}
+                </div>
+
+                {# On a phone, one row: the same actions go behind "…", as on a member's row
+                   (Molecule:Crew:MemberRow), each with its icon and its label.
+                   No z-1 on the menu: it would lower daisyUI's z-index (999) to that of a
+                   section's collapse checkbox further down, which would take the taps.
+                   RGAA 11.9: the icon-only trigger is named by its aria-label.
+                   RGAA 10.8: the buttons above and this menu are hidden with display:none, so
+                   assistive technologies announce each action once, never twice. #}
+                <div class="dropdown dropdown-end sm:hidden" data-controller="dropdown">
+                    <div tabindex="0" role="button" class="btn btn-ghost btn-square" aria-label="Plus d'actions" data-dropdown-target="trigger">
+                        <twig:ux:icon name="lucide:ellipsis" class="size-5" />
+                    </div>
+                    <ul tabindex="-1" class="dropdown-content menu mt-1 w-64 text-base rounded-box border border-base-300 bg-base-200 shadow-lg">
+                        <li>
+                            <a href="{{ path('app_crew_edit', { id: crew.id }) }}">
+                                <twig:ux:icon name="lucide:pencil" class="size-5" />
+                                Renommer
+                            </a>
+                        </li>
+                        <li>
+                            <button type="button" data-controller="copy" data-copy-text-value="{{ shareUrl }}" data-action="copy#copy">
+                                <span data-copy-target="icon" class="contents">
+                                    <twig:ux:icon name="lucide:share" class="size-5" />
+                                </span>
+                                <span data-copy-target="label">Partager le groupe</span>
+                            </button>
+                        </li>
+                        {% if canLeave %}
+                            <li>
+                                <button type="button" data-controller="dialog" data-dialog-id-value="modal_crew_leave_{{ crew.id }}" data-action="dialog#open">
+                                    <twig:ux:icon name="lucide:log-out" class="size-5" />
+                                    Quitter le groupe
+                                </button>
+                            </li>
+                        {% endif %}
+                        {% if canDelete %}
+                            <li>
+                                <button type="button" class="text-error" data-controller="dialog" data-dialog-id-value="modal_crew_delete_{{ crew.id }}" data-action="dialog#open">
+                                    <twig:ux:icon name="lucide:trash-2" class="size-5" />
+                                    Supprimer le groupe
+                                </button>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            {% else %}
+                {# A friend of a member has this one action: no menu. #}
+                <twig:Molecule:ShareLinkButton :url="shareUrl" label="Partager le groupe" />
             {% endif %}
         </div>
     </div>
+
+    {% if canLeave %}
+        <twig:Molecule:Crew:LeaveModal :crew="crew" />
+    {% endif %}
+    {% if canDelete %}
+        <twig:Molecule:Crew:DeleteModal :crew="crew" />
+    {% endif %}
 </section>

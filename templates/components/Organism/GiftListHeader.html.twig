@@ -1,7 +1,7 @@
 {# No overflow-hidden on the card: it would clip the "…" menu of the actions, so the
    ribbon rounds its own corners. #}
 <section {{ attributes.defaults({ class: 'relative rounded-box border border-base-300 bg-base-100 shadow-sm' }) }}>
-    <twig:Atomic:GiftRibbon class="rounded-t-box" />
+    <twig:Atomic:GiftRibbon />
 
     <div class="flex flex-col gap-4 p-4 sm:gap-5 sm:p-7 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
         <div class="flex items-center gap-4 sm:gap-6">
