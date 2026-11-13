@@ -6,7 +6,9 @@
    same page, which folds the sections back; the browser only scrolls.
    z-9: above the sections, below daisyUI's drawer (z-10), the phone's main menu.
    A page of other Molecule:Section blocks fills the `entries` block with its own
-   Molecule:SectionNav:Link, and names the nav through `aria-label`. #}
+   Molecule:SectionNav:Link, and names the nav through `aria-label`. A page with blocks
+   besides its sections (a crew's members) adds its own entries in `more_entries`, after
+   the sections'. #}
 <nav {{ attributes.defaults({
     class: 'sticky top-3 z-9 min-w-0 lg:top-6',
     'aria-label': 'Sections',
@@ -82,6 +84,7 @@
                     {% endfor %}
                 {% endif %}
                 {% endblock %}
+                {% block more_entries %}{% endblock %}
             </ul>
         </div>
     </div>

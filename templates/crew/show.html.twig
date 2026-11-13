@@ -16,39 +16,61 @@
 
     <twig:Organism:Crew:Header :crew="crew" :ownerView="ownerView" />
 
-    {# Members only, right under the header: running the crew should not take a scroll. #}
-    {% if ownerView %}
-        <div class="mt-6 grid items-start gap-6 lg:grid-cols-2">
-            <twig:Organism:Crew:MemberList :crew="crew" />
-            <twig:Organism:Crew:InvitePanel :crew="crew" :form="inviteForm" id="invite" />
-        </div>
-    {% endif %}
-
-    {% if sections is not empty %}
-        <div class="mt-6 flex flex-col gap-6 lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:items-start">
+    {# The members run the crew, and have their own entries in the Sommaire, so that its panels
+       sit in the column of the sections: a sticky element cannot leave its parent. #}
+    {% set hasNav = sections is not empty %}
+    <div class="mt-6 flex flex-col gap-6 {{ hasNav ? 'lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:items-start' : '' }}">
+        {% if hasNav %}
             <twig:Molecule:SectionNav
                 :sections="sections"
-                :includeDrafts="ownerView" />
+                :includeDrafts="ownerView">
+                <twig:block name="more_entries">
+                    {% if ownerView %}
+                        <li class="menu-title mt-2">Groupe</li>
+                        <twig:Molecule:SectionNav:Link
+                            anchor="crew-members"
+                            icon="lucide:users"
+                            label="Membres"
+                            :count="crew.memberships|length" />
+                        <twig:Molecule:SectionNav:Link
+                            anchor="invite"
+                            icon="lucide:user-plus"
+                            label="Inviter des ami·es" />
+                    {% endif %}
+                </twig:block>
+            </twig:Molecule:SectionNav>
+        {% endif %}
 
-            <div class="flex min-w-0 flex-col gap-5">
+        <div class="flex min-w-0 flex-col gap-5">
+            {% if sections is not empty %}
                 <twig:Organism:Section:Listing :sections="sections" :ownerView="ownerView" />
-            </div>
+            {% elseif ownerView %}
+                <twig:Molecule:EmptyContent
+                    title="Le groupe n'a pas encore de section"
+                    description="Créez une première section, « Jouets » ou « Livres » par exemple, puis ajoutez-y des cadeaux : chaque membre peut le faire.">
+                    <twig:block name="action_buttons">
+                        <a href="{{ path('app_crew_section_new', { id: crew.id }) }}" class="btn btn-primary mt-6">
+                            <twig:ux:icon name="lucide:folder-plus" class="size-4" />
+                            Créer une section
+                        </a>
+                    </twig:block>
+                </twig:Molecule:EmptyContent>
+            {% else %}
+                <twig:Molecule:EmptyContent
+                    title="Pas encore de cadeau dans « {{ crew.name }} » 😥"
+                    description="Revenez plus tard pour leur faire plaisir 😉" />
+            {% endif %}
+
+            {# Members only, after the gifts: they come for the gifts, running the crew is
+               occasional. Moved in the markup, not with a CSS order, so reading and tab order
+               follow what is shown (RGAA 10.3, 12.8). #}
+            {% if ownerView %}
+                <div class="grid items-start gap-6 {{ hasNav ? '' : 'lg:grid-cols-2' }}">
+                    <twig:Organism:Crew:MemberList :crew="crew" id="crew-members" class="scroll-mt-6" />
+                    <twig:Organism:Crew:InvitePanel :crew="crew" :form="inviteForm" id="invite" class="scroll-mt-6" />
+                </div>
+            {% endif %}
         </div>
-    {% elseif ownerView %}
-        <twig:Molecule:EmptyContent class="mt-6"
-            title="Le groupe n'a pas encore de section"
-            description="Créez une première section, « Jouets » ou « Livres » par exemple, puis ajoutez-y des cadeaux : chaque membre peut le faire.">
-            <twig:block name="action_buttons">
-                <a href="{{ path('app_crew_section_new', { id: crew.id }) }}" class="btn btn-primary mt-6">
-                    <twig:ux:icon name="lucide:folder-plus" class="size-4" />
-                    Créer une section
-                </a>
-            </twig:block>
-        </twig:Molecule:EmptyContent>
-    {% else %}
-        <twig:Molecule:EmptyContent class="mt-6"
-            title="Pas encore de cadeau dans « {{ crew.name }} » 😥"
-            description="Revenez plus tard pour leur faire plaisir 😉" />
-    {% endif %}
+    </div>
 </div>
 {% endblock %}
