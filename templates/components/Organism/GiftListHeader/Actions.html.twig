@@ -1,17 +1,42 @@
 <div {{ attributes.defaults({ class: 'flex flex-wrap items-center gap-2 lg:shrink-0 lg:justify-end' }) }}>
     {% if ownerView %}
-        <a href="{{ path('app_gift_create') }}" class="btn btn-primary">
+        <a href="{{ path('app_gift_create') }}" class="btn btn-primary max-sm:flex-1">
             <twig:ux:icon name="lucide:plus" class="size-4" />
             Ajouter un cadeau
         </a>
-        <a href="{{ path('app_section_new') }}" class="btn btn-outline">
-            <twig:ux:icon name="lucide:folder-plus" class="size-4" />
-            Créer une section
-        </a>
-        <a href="{{ path('app_section_user_page', { id: user.id }) }}" class="btn btn-ghost">
-            <twig:ux:icon name="lucide:eye" class="size-4" />
-            Voir mon profil public
-        </a>
+        {# Declared once for both renderings below, so they cannot drift apart. #}
+        {% set secondaryActions = [
+            { href: path('app_section_new'), icon: 'lucide:folder-plus', label: 'Créer une section', style: 'btn-outline' },
+            { href: path('app_section_user_page', { id: user.id }), icon: 'lucide:eye', label: 'Voir mon profil public', style: 'btn-ghost' },
+        ] %}
+
+        {% for action in secondaryActions %}
+            <a href="{{ action.href }}" class="btn {{ action.style }} max-sm:hidden">
+                <twig:ux:icon :name="action.icon" class="size-4" />
+                {{ action.label }}
+            </a>
+        {% endfor %}
+
+        {# On a phone, one row: the two secondary actions go behind "…", like a friend's
+           card, each with its icon and its label (an icon alone was ambiguous).
+           RGAA 11.9: the icon-only trigger is named by its aria-label.
+           RGAA 10.8: the buttons above and this menu are hidden with display:none, so
+           assistive technologies announce each link once, never twice. #}
+        <div class="dropdown dropdown-end sm:hidden" data-controller="dropdown">
+            <div tabindex="0" role="button" class="btn btn-ghost btn-square" aria-label="Plus d'actions" data-dropdown-target="trigger">
+                <twig:ux:icon name="lucide:ellipsis" class="size-5" />
+            </div>
+            <ul tabindex="-1" class="dropdown-content menu z-1 mt-1 w-64 text-base rounded-box border border-base-300 bg-base-200 shadow-lg">
+                {% for action in secondaryActions %}
+                    <li>
+                        <a href="{{ action.href }}">
+                            <twig:ux:icon :name="action.icon" class="size-5" />
+                            {{ action.label }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
     {% else %}
         {# Distinct from ownerView: the owner previewing their own public profile is the
            owner, but is not in the management view. #}
