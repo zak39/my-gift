@@ -78,6 +78,7 @@ class Crew
      * @var Collection<int, Section>
      */
     #[ORM\OneToMany(targetEntity: Section::class, mappedBy: 'crew')]
+    #[ORM\OrderBy(['id' => 'ASC'])]
     private Collection $sections;
 
     public function __construct(User $creator)
@@ -265,11 +266,7 @@ class Crew
         $count = 0;
 
         foreach ($this->sections as $section) {
-            foreach ($section->getGifts() as $gift) {
-                if ($includeDrafts || $gift->isPublic()) {
-                    ++$count;
-                }
-            }
+            $count += count($section->getVisibleGifts($includeDrafts));
         }
 
         return $count;

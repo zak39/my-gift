@@ -6,7 +6,8 @@ use App\Entity\User;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 /**
- * Overlapping avatars, then a "+N" for the people beyond $max.
+ * Overlapping avatars, then a "+N" for the people beyond $max. Hovering an avatar shows its
+ * pseudo; hovering the "+N", the first of the people it stands for.
  */
 #[AsTwigComponent]
 final class UserAvatarGroup

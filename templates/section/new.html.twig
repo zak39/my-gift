@@ -15,6 +15,7 @@
             ? 'Dans le groupe « ' ~ section.crew.name ~ ' », la section est partagée : chaque membre peut y ranger des cadeaux.'
             : 'Rangez vos idées par thème, comme « Geek » ou « Sport » : vos amis verront vos cadeaux regroupés sous ce titre.'">
         {{ form_start(form) }}
+            <twig:Atomic:BackField :url="back ?? null" />
             <div class="flex flex-col gap-4 border-t border-base-300 p-5 sm:p-7">
                 {{ form_errors(form) }}
                 {{ form_row(form.title, { attr: { autofocus: true } }) }}

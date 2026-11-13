@@ -22,7 +22,7 @@
             {% endif %}
         </twig:block>
 
-        <twig:Organism:Gift:Form :form="form" :initialFormData="gift" :cancelUrl="cancelUrl" />
+        <twig:Organism:Gift:Form :form="form" :initialFormData="gift" :cancelUrl="cancelUrl" :back="back ?? null" />
     </twig:Organism:Form:Card>
 </div>
 {% endblock %}

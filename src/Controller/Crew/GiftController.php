@@ -47,9 +47,12 @@ final class GiftController extends AbstractController
         Request $request,
         CreateGift $createGift,
         BreadcrumbBuilder $breadcrumbBuilder,
+        RefererRedirector $refererRedirector,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
+        // Back where it was asked from: the crew's page, or a member's list.
+        $back = $refererRedirector->origin($request) ?? $this->generateUrl('app_crew_show', ['id' => $crew->getId()]);
         $gift = new Gift();
         $gift->setSection($section);
 
@@ -59,13 +62,14 @@ final class GiftController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $createGift($gift, $user, $form->get('openGraphImageUrl')->getData());
 
-            return $this->redirectToRoute('app_crew_show', ['id' => $crew->getId()]);
+            return $this->redirect($back);
         }
 
         return $this->render('gift/create.html.twig', [
             'form' => $form,
             'gift' => $gift,
-            'cancelUrl' => $this->generateUrl('app_crew_show', ['id' => $crew->getId()]),
+            'back' => $back,
+            'cancelUrl' => $back,
             'breadcrumbs' => $breadcrumbBuilder->newCrewGift($crew),
         ]);
     }
@@ -82,10 +86,10 @@ final class GiftController extends AbstractController
     }
 
     #[Route('/{gift}/edit', name: 'app_crew_gift_edit', requirements: ['gift' => '\d+'])]
-    public function edit(Crew $crew, #[MapEntity(expr: 'repository.findOneInCrew(gift, id)')] Gift $gift, Request $request, UpdateGift $updateGift, EntityManagerInterface $entityManager, GiftOwnerUrlGenerator $giftOwnerUrlGenerator, BreadcrumbBuilder $breadcrumbBuilder): Response
+    public function edit(Crew $crew, #[MapEntity(expr: 'repository.findOneInCrew(gift, id)')] Gift $gift, Request $request, UpdateGift $updateGift, EntityManagerInterface $entityManager, GiftOwnerUrlGenerator $giftOwnerUrlGenerator, BreadcrumbBuilder $breadcrumbBuilder, RefererRedirector $refererRedirector): Response
     {
-        // $crew is unused here, yet required: it is the subject of the class's
-        // #[IsGranted('crew.is_member', subject: 'crew')], found by its argument name.
+        // The page it was edited from: the crew's, a member's list, the gift's own.
+        $back = $refererRedirector->origin($request);
 
         /** @var User $user */
         $user = $this->getUser();
@@ -98,8 +102,11 @@ final class GiftController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $updateGift($gift);
 
-            // Its author may have moved it to their own list, or to another crew's.
-            return $this->redirect($giftOwnerUrlGenerator->list($gift));
+            // Its author may have moved it to their own list, or to another crew's: the page
+            // it was edited from may no longer show it, its new list does.
+            $stillInCrew = $gift->getSection()?->getCrew() === $crew;
+
+            return $this->redirect(($stillInCrew ? $back : null) ?? $giftOwnerUrlGenerator->list($gift));
         }
 
         if ($form->isSubmitted()) {
@@ -111,6 +118,7 @@ final class GiftController extends AbstractController
         return $this->render('gift/edit.html.twig', [
             'form' => $form,
             'gift' => $gift,
+            'back' => $back,
             'breadcrumbs' => $breadcrumbBuilder->editCrewGift($gift),
         ]);
     }
@@ -149,7 +157,7 @@ final class GiftController extends AbstractController
     }
 
     #[Route('/{gift}/delete', name: 'app_crew_gift_delete', requirements: ['gift' => '\d+'], methods: ['DELETE'])]
-    public function delete(Crew $crew, #[MapEntity(expr: 'repository.findOneInCrew(gift, id)')] Gift $gift, Request $request, DeleteGift $deleteGift): Response
+    public function delete(Crew $crew, #[MapEntity(expr: 'repository.findOneInCrew(gift, id)')] Gift $gift, Request $request, DeleteGift $deleteGift, RefererRedirector $refererRedirector): Response
     {
         if (!$this->isCsrfTokenValid("gift-delete-{$gift->getId()}", $request->request->get('_token'))) {
             throw $this->createAccessDeniedException();
@@ -165,6 +173,8 @@ final class GiftController extends AbstractController
             $this->addFlash('error', $exception->getMessage());
         }
 
-        return $this->redirectToRoute('app_crew_show', ['id' => $crew->getId()]);
+        // The list its card sat on (Molecule:Gift:DeleteButton's back); from the gift's own
+        // page, gone now, the crew's.
+        return $this->redirect($refererRedirector->origin($request) ?? $this->generateUrl('app_crew_show', ['id' => $crew->getId()]));
     }
 }

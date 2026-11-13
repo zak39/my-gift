@@ -32,6 +32,10 @@ final class Form
     #[LiveProp]
     public string $cancelUrl = '';
 
+    /** The page the form was opened from, to go back to once the gift is created (Atomic:BackField). */
+    #[LiveProp]
+    public ?string $back = null;
+
     public function __construct(
         private FormFactoryInterface $formFactory,
         private OpenGraphApi $openGraphApi,

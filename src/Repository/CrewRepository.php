@@ -46,19 +46,49 @@ class CrewRepository extends ServiceEntityRepository
      */
     public function findForMemberWithGifts(User $user): array
     {
-        $crews = $this->findForMember($user);
+        return $this->loadGifts($this->findForMember($user), false);
+    }
 
-        if ($crews) {
-            $this->createQueryBuilder('c')
-                ->leftJoin('c.sections', 's')
-                ->leftJoin('s.gifts', 'g')
-                ->addSelect('s', 'g')
-                ->where('c IN (:crews)')
-                ->setParameter('crews', $crews)
-                ->getQuery()
-                ->getResult()
+    /**
+     * The same, ready for their sections' gift cards (Organism:Section:Listing): each gift's
+     * givers too. Still one query: each join follows the one before (a crew's sections,
+     * their gifts, their givers), so no row is multiplied by a sibling collection.
+     *
+     * @return list<Crew>
+     */
+    public function findForMemberWithGiftCards(User $user): array
+    {
+        return $this->loadGifts($this->findForMember($user), true);
+    }
+
+    /**
+     * @param list<Crew> $crews
+     *
+     * @return list<Crew>
+     */
+    private function loadGifts(array $crews, bool $withGivers): array
+    {
+        if (!$crews) {
+            return $crews;
+        }
+
+        $query = $this->createQueryBuilder('c')
+            ->leftJoin('c.sections', 's')
+            ->leftJoin('s.gifts', 'g')
+            ->addSelect('s', 'g')
+            ->where('c IN (:crews)')
+            ->setParameter('crews', $crews)
+        ;
+
+        if ($withGivers) {
+            $query
+                ->leftJoin('g.participants', 'p')
+                ->leftJoin('p.participantUser', 'pu')
+                ->addSelect('p', 'pu')
             ;
         }
+
+        $query->getQuery()->getResult();
 
         return $crews;
     }

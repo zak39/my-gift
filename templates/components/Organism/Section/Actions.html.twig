@@ -54,6 +54,7 @@
             <form method="post" action="{{ section_delete_url(section) }}">
                 <input type="hidden" name="_method" value="DELETE">
                 <input type="hidden" name="_token" value="{{ csrf_token('section-delete-' ~ section.id) }}">
+                <twig:Atomic:BackField :url="app.request.uri" />
                 <button type="submit" class="btn btn-outline btn-secondary">
                     <twig:ux:icon name="heroicons:trash-16-solid" />
                     Supprimer

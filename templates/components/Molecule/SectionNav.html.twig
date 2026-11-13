@@ -1,44 +1,83 @@
-<nav {{ attributes.defaults({ class: 'min-w-0' }) }} aria-label="Sections">
-    <ul class="menu menu-horizontal w-full flex-nowrap overflow-x-auto rounded-box border border-base-300 bg-base-100 lg:menu-vertical lg:flex-wrap lg:overflow-visible">
-        <li class="menu-title hidden lg:block">Sections</li>
+{# Sticky on every size. On a phone, folded at the top of the screen to see where one is
+   (app.css leaves room for it when a link leads to a section); its parent lays it out as a
+   flex column there, not a grid: a sticky grid item cannot leave its cell. The section-nav
+   controller (assets/controllers/section_nav_controller.js) marks the section being read.
+   data-turbo="false": Turbo 8 fetches and renders the page again even for an anchor on the
+   same page, which folds the sections back; the browser only scrolls.
+   z-9: above the sections, below daisyUI's drawer (z-10), the phone's main menu. #}
+<nav {{ attributes.defaults({
+    class: 'sticky top-3 z-9 min-w-0 lg:top-6',
+    'data-controller': 'section-nav',
+    'data-action': 'focusin@window->section-nav#outside click@window->section-nav#outside keydown.esc->section-nav#escape turbo:before-cache@document->section-nav#reset',
+    'data-turbo': 'false',
+}) }} aria-label="Sections">
+    {# One list for both sizes. On a phone, a summary folded at the top of the page, opened
+       with a tap; on a wide screen, always open beside the sections, its toggle hidden. The
+       checkbox carries the toggle's name and state for screen readers (RGAA 7.1).
+       On a phone the list drops down over the page (absolute, below the bar) rather than
+       push it: the bar keeps its height, so a link's target does not move as the list folds
+       back, and app.css's room above the sections fits it. #}
+    <div class="collapse collapse-arrow rounded-box border border-base-300 bg-base-100 shadow-lg max-lg:overflow-visible lg:collapse-open lg:shadow-none">
+        <input type="checkbox" class="peer lg:hidden" aria-label="Afficher ou masquer le sommaire" data-section-nav-target="toggle" />
+        <div class="collapse-title flex items-center gap-2 font-semibold lg:hidden">
+            <twig:ux:icon name="lucide:list" class="size-4 shrink-0" />
+            Sommaire
+        </div>
 
-        {% for section in sections %}
-            <li>
-                <a href="#section-{{ section.id }}"
-                    class="whitespace-nowrap lg:whitespace-normal"
-                    onclick="document.getElementById('section-{{ section.id }}-toggle').checked = true">
-                    <twig:ux:icon name="lucide:tag" class="size-4 shrink-0" />
-                    <span class="min-w-0 lg:wrap-anywhere">{{ section.title }}</span>
-                    <span class="badge badge-sm badge-ghost tabular-nums">{{ this.giftCount(section.gifts) }}</span>
-                </a>
-            </li>
-        {% endfor %}
+        <div class="collapse-content px-0 pb-0 max-lg:absolute max-lg:inset-x-0 max-lg:top-full max-lg:row-start-auto max-lg:mt-2 max-lg:hidden max-lg:rounded-box max-lg:border max-lg:border-base-300 max-lg:bg-base-100 max-lg:shadow-lg max-lg:peer-checked:block">
+            {# The section being read in the app's purple (menu-active), not daisyUI's neutral. The
+               list scrolls on its own rather than run past the screen; flex-nowrap, or daisyUI's
+               menu would wrap its entries into columns instead. #}
+            <ul class="menu w-full max-h-[65dvh] flex-nowrap overflow-y-auto [--menu-active-bg:var(--color-primary)] [--menu-active-fg:var(--color-primary-content)] lg:max-h-[calc(100dvh-3rem)]">
+                {# A list of crews' sections only: no heading over nothing. #}
+                {% if sections is not empty or this.hasGiftsWithoutSection %}
+                    <li class="menu-title">Sections</li>
+                {% endif %}
 
-        {% if this.hasGiftsWithoutSection %}
-            <li>
-                <a href="#section-sans-section"
-                    class="whitespace-nowrap lg:whitespace-normal"
-                    onclick="document.getElementById('section-sans-section-toggle').checked = true">
-                    <twig:ux:icon name="lucide:package-open" class="size-4 shrink-0" />
-                    <span class="min-w-0 lg:wrap-anywhere">Cadeaux sans section</span>
-                    <span class="badge badge-sm badge-ghost tabular-nums">{{ this.giftCount(giftsWithoutSection) }}</span>
-                </a>
-            </li>
-        {% endif %}
+                {% for section in sections %}
+                    <twig:Molecule:SectionNav:Link
+                        :anchor="'section-' ~ section.id"
+                        icon="lucide:tag"
+                        :label="section.title"
+                        :count="section.visibleGifts(includeDrafts)|length" />
+                {% endfor %}
 
-        {# Anchors to the cards of Organism:Crew:SharedLists, below the sections. #}
-        {% if crews is not empty %}
-            <li class="menu-title hidden lg:mt-2 lg:block">Groupes</li>
+                {% if this.hasGiftsWithoutSection %}
+                    <twig:Molecule:SectionNav:Link
+                        anchor="section-sans-section"
+                        icon="lucide:package-open"
+                        label="Cadeaux sans section"
+                        :count="this.giftCount(giftsWithoutSection)" />
+                {% endif %}
 
-            {% for crew in crews %}
-                <li>
-                    <a href="#crew-{{ crew.id }}" class="whitespace-nowrap lg:whitespace-normal">
-                        <twig:ux:icon name="lucide:users" class="size-4 shrink-0" />
-                        <span class="min-w-0 lg:wrap-anywhere">{{ crew.name }}</span>
-                        <span class="badge badge-sm badge-ghost tabular-nums">{{ crew.giftCount }}</span>
-                    </a>
-                </li>
-            {% endfor %}
-        {% endif %}
-    </ul>
+                {# Anchors to the crews of Organism:Crew:SharedLists, below the sections. #}
+                {% if crews is not empty %}
+                    <li class="menu-title mt-2">Groupes</li>
+
+                    {% for crew in crews %}
+                        {# A crew's members count its drafts, as Organism:Crew:SharedLists shows them. #}
+                        {% set crewDrafts = includeDrafts or is_granted('crew.is_member', crew) %}
+                        <twig:Molecule:SectionNav:Link
+                            :anchor="'crew-' ~ crew.id"
+                            icon="lucide:users"
+                            :label="crew.name"
+                            :count="crew.giftCount(crewDrafts)">
+                            {% if crew.sections is not empty %}
+                                {# daisyUI keeps a submenu on one line (nowrap): long titles wrap as above. #}
+                                <ul class="whitespace-normal">
+                                    {% for section in crew.sections %}
+                                        <twig:Molecule:SectionNav:Link
+                                            :anchor="'section-' ~ section.id"
+                                            icon="lucide:tag"
+                                            :label="section.title"
+                                            :count="section.visibleGifts(crewDrafts)|length" />
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </twig:Molecule:SectionNav:Link>
+                    {% endfor %}
+                {% endif %}
+            </ul>
+        </div>
+    </div>
 </nav>

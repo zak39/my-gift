@@ -89,6 +89,15 @@
     --color-ribbon-blue: oklch(61.302% 0.202 261.294);
 }
 
+/* On a phone, Molecule:SectionNav floats at the top of the screen, folded (top-3, about 4.5rem
+   tall): what a link or the focus scrolls to comes out below it, on top of its own
+   scroll-margin. On a wide screen it sits beside the sections, out of their way. */
+html:has([data-controller~="section-nav"]) {
+    @variant max-lg {
+        scroll-padding-top: 4.5rem;
+    }
+}
+
 /* The theme switch's cross-fade (theme_controller.js), a touch slower than the browser's
    0.25s default so the eye follows it. The app's only view transition. */
 ::view-transition-old(root),

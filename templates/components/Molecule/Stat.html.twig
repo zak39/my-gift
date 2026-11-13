@@ -6,7 +6,10 @@
     </div>
     <div class="stat-title">{{ title }}</div>
     <div class="stat-value tabular-nums {{ highlight ? 'text-primary' : '' }}">{{ value }}</div>
-    {% if description %}
-        <div class="stat-desc">{{ description }}</div>
-    {% endif %}
+    {# A caller may write its own line of context, with markup (Organism:GiftListHeader). #}
+    {% block description %}
+        {% if description %}
+            <div class="stat-desc">{{ description }}</div>
+        {% endif %}
+    {% endblock %}
 </div>

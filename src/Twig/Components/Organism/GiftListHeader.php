@@ -2,6 +2,7 @@
 
 namespace App\Twig\Components\Organism;
 
+use App\Entity\Crew;
 use App\Entity\Gift;
 use App\Entity\Section;
 use App\Entity\User;
@@ -18,6 +19,14 @@ final class GiftListHeader
 
     /** @var iterable<Gift> */
     public iterable $giftsWithoutSection = [];
+
+    /**
+     * The user's crews: their gifts stay out of the figures, which speak of the user's own
+     * list, but the published ones are named beside them.
+     *
+     * @var iterable<Crew>
+     */
+    public iterable $crews = [];
 
     /**
      * The owner manages their own list: unpublished gifts count too, and the
@@ -42,11 +51,7 @@ final class GiftListHeader
         $gifts = [];
 
         foreach ($this->sections as $section) {
-            foreach ($section->getGifts() as $gift) {
-                if ($this->ownerView || $gift->isPublic()) {
-                    $gifts[] = $gift;
-                }
-            }
+            array_push($gifts, ...$section->getVisibleGifts($this->ownerView));
         }
 
         foreach ($this->giftsWithoutSection as $gift) {
@@ -56,6 +61,18 @@ final class GiftListHeader
         }
 
         return $this->gifts = $gifts;
+    }
+
+    /** The crews' gifts their friends see, as the page lists them below the user's own. */
+    public function getCrewPublishedCount(): int
+    {
+        $count = 0;
+
+        foreach ($this->crews as $crew) {
+            $count += $crew->getGiftCount(false);
+        }
+
+        return $count;
     }
 
     public function getTotal(): int

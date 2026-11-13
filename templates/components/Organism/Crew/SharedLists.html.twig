@@ -23,10 +23,43 @@
             Pas encore de groupe : créez-en un pour tenir des sections avec vos proches, pour votre enfant par exemple.
         </p>
     {% else %}
-        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div class="flex flex-col gap-8">
             {% for crew in crews %}
+                {% set members = crew.members %}
                 {# The anchor of the crew's entry in Molecule:SectionNav. #}
-                <twig:Molecule:Crew:Card :crew="crew" id="crew-{{ crew.id }}" class="scroll-mt-6" />
+                <section id="crew-{{ crew.id }}" class="flex scroll-mt-6 flex-col gap-4" aria-labelledby="crew-{{ crew.id }}-title">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div class="flex min-w-0 items-center gap-3">
+                            <twig:Molecule:UserAvatarGroup class="shrink-0" :users="members" :max="4" sizeClass="w-10" />
+                            <div class="min-w-0">
+                                <h3 id="crew-{{ crew.id }}-title" class="text-lg font-semibold wrap-anywhere">{{ crew.name }}</h3>
+                                <p class="text-sm text-muted">{{ members|map(member => member.pseudo)|join(', ', ' et ') }}</p>
+                            </div>
+                        </div>
+                        {# RGAA 6.1: one such link per crew, the crew's name tells them apart out of context. #}
+                        <twig:Atomic:ButtonLink
+                            class="btn-sm self-start sm:self-auto"
+                            style="ghost"
+                            :to="path('app_crew_show', { id: crew.id })">
+                            <twig:block name="name">
+                                <span>Voir le groupe<span class="sr-only"> {{ crew.name }}</span></span>
+                            </twig:block>
+                            <twig:block name="icon">
+                                <twig:ux:icon name="lucide:arrow-right" class="size-4" />
+                            </twig:block>
+                        </twig:Atomic:ButtonLink>
+                    </div>
+
+                    {% if crew.sections is empty %}
+                        <p class="text-sm text-muted">
+                            {{ ownerView ? "Ce groupe n'a pas encore de section." : 'Pas encore de cadeau dans ce groupe.' }}
+                        </p>
+                    {% else %}
+                        {# Under the crew's h3, below the h2 of this block (RGAA 9.1). #}
+                        {# Its members run it, on a friend's page too: drafts show, as the actions do. #}
+                        <twig:Organism:Section:Listing :sections="crew.sections" :ownerView="is_granted('crew.is_member', crew)" :headingLevel="4" />
+                    {% endif %}
+                </section>
             {% endfor %}
         </div>
     {% endif %}

@@ -65,6 +65,7 @@ class Gift
      * @var Collection<int, Participant>
      */
     #[ORM\OneToMany(targetEntity: Participant::class, mappedBy: 'gift', orphanRemoval: true)]
+    #[ORM\OrderBy(['id' => 'ASC'])]
     private Collection $participants;
 
     /**

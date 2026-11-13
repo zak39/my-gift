@@ -1,0 +1,8 @@
+<li>
+    <a href="#{{ anchor }}" data-section-nav-target="link" data-action="section-nav#follow">
+        <twig:ux:icon :name="icon" class="size-4 shrink-0" />
+        <span class="min-w-0 wrap-anywhere">{{ label }}</span>
+        <span class="badge badge-sm badge-ghost tabular-nums">{{ count }}</span>
+    </a>
+    {% block content %}{% endblock %}
+</li>
