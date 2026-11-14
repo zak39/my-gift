@@ -1,10 +1,11 @@
 <section {{ attributes.defaults({ class: 'relative scroll-mt-6 overflow-hidden rounded-box border border-base-300 bg-base-100 shadow-sm' }
-    |merge(anchor ? {id: anchor} : {})) }}>
+    |merge(anchor ? {id: anchor, 'data-controller': 'section-anchor'} : {})) }}>
     {# Ribbon on the edge of the section, echoing the gift wrap of the list header. #}
     <span aria-hidden="true" class="absolute inset-y-0 start-0 w-1.5 bg-primary"></span>
 
     <div class="collapse collapse-arrow">
         <input type="checkbox"
+            {% if anchor %}data-section-anchor-target="toggle"{% endif %}
             {{ checked ? 'checked' : '' }}
             aria-label="Afficher ou masquer les cadeaux de la section {{ title }}" />
 
