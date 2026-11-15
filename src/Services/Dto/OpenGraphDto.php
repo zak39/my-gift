@@ -35,15 +35,16 @@ final class OpenGraphDto
         ];
     }
 
-    public function hasData(): bool
+    /**
+     * Whether the page gives anything a gift's card is filled with. Its other tags
+     * (type, url, site name) fill nothing: a page with only those is not readable.
+     */
+    public function hasGiftData(): bool
     {
         return
-            '' !== $this->title
-            || '' !== $this->type
-            || '' !== $this->url
-            || '' !== $this->siteName
-            || '' !== $this->description
-            || '' !== $this->image
+            null !== $this->title
+            || null !== $this->description
+            || null !== $this->image
         ;
     }
 }

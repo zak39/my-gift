@@ -70,12 +70,15 @@ final class Form
             return;
         }
 
-        if ($dto->hasData()) {
-            $this->formValues['title'] = $dto->title;
-            $this->formValues['description'] = $dto->description;
-            $this->formValues['openGraphImageUrl'] = $dto->image;
-        } else {
+        if (!$dto->hasGiftData()) {
             $this->openGraphFailed = true;
+
+            return;
         }
+
+        // A tag the page lacks keeps what the user typed.
+        $this->formValues['title'] = $dto->title ?? $this->formValues['title'] ?? null;
+        $this->formValues['description'] = $dto->description ?? $this->formValues['description'] ?? null;
+        $this->formValues['openGraphImageUrl'] = $dto->image ?? $this->formValues['openGraphImageUrl'] ?? null;
     }
 }
