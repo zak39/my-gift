@@ -5,7 +5,7 @@ namespace App\Services\Dto;
 /**
  * The card a messenger (Telegram, WhatsApp, Slack…) unfolds a link into, published as Open
  * Graph tags by Molecule:LinkPreview: a shared link's, or the app's own for any other page.
- * Built by LinkPreviewBuilder; not to be confused with OpenGraphDto, what the app reads from
+ * Built by LinkPreviewBuilder; not to be confused with ProductPageDto, what the app reads from
  * a product page.
  */
 final class LinkPreviewDto

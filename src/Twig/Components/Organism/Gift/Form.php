@@ -4,7 +4,8 @@ namespace App\Twig\Components\Organism\Gift;
 
 use App\Entity\Gift;
 use App\Form\GiftType;
-use App\Services\OpenGraphApi;
+use App\Services\Dto\ProductPageDto;
+use App\Services\ProductPage\ProductPageReader;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -28,6 +29,15 @@ final class Form
     #[LiveProp]
     public bool $openGraphFailed = false;
 
+    /**
+     * What the last link filled in, to tell it from what the user typed: a field still
+     * holding it is the next link's to fill, or to empty.
+     *
+     * @var array<string, ?string>
+     */
+    #[LiveProp]
+    public array $prefilled = [];
+
     /** Back to the list the gift is created in: the user's own, or a crew's. */
     #[LiveProp]
     public string $cancelUrl = '';
@@ -38,7 +48,7 @@ final class Form
 
     public function __construct(
         private FormFactoryInterface $formFactory,
-        private OpenGraphApi $openGraphApi,
+        private ProductPageReader $productPageReader,
     ) {
     }
 
@@ -67,22 +77,31 @@ final class Form
         $url = str_starts_with($this->link, 'http') ? $this->link : 'https://'.$this->link;
 
         try {
-            $dto = $this->openGraphApi->getData($url);
+            $product = $this->productPageReader->read($url);
         } catch (\Exception $e) {
             $this->openGraphFailed = true;
 
-            return;
+            // What the previous link filled in is not this page's
+            $product = new ProductPageDto();
         }
 
-        if (!$dto->hasGiftData()) {
-            $this->openGraphFailed = true;
+        // Never typed: the image always is the page's, or none
+        $this->formValues['openGraphImageUrl'] = $product->image;
 
-            return;
+        $fields = [
+            'title' => $product->title,
+            'description' => $product->description,
+            // As the field shows it in French: 49,99
+            'price' => null === $product->price ? null : number_format($product->price, 2, ',', ''),
+        ];
+
+        foreach ($fields as $field => $value) {
+            $current = $this->formValues[$field] ?? null;
+            $typed = null !== $current && '' !== $current && $current !== ($this->prefilled[$field] ?? null);
+
+            // A field the page lacks keeps what the user typed
+            $this->formValues[$field] = $value ?? ($typed ? $current : null);
+            $this->prefilled[$field] = $value;
         }
-
-        // A tag the page lacks keeps what the user typed.
-        $this->formValues['title'] = $dto->title ?? $this->formValues['title'] ?? null;
-        $this->formValues['description'] = $dto->description ?? $this->formValues['description'] ?? null;
-        $this->formValues['openGraphImageUrl'] = $dto->image ?? $this->formValues['openGraphImageUrl'] ?? null;
     }
 }
