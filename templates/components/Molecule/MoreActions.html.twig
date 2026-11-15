@@ -1,0 +1,15 @@
+{# RGAA 11.9: the icon-only trigger is named by its aria-label.
+   The entries render in this component's context: label, this, attributes and computed
+   are this component's inside them; the caller's own are reached through outerScope.
+   The menu is hidden while shut, so a dialog opened from an entry is rendered by the
+   caller after this component, out of the menu. The entry opens it through the dialog
+   controller, whose dialog:closed bubbles up to the dropdown controller on close, which
+   gives the focus back to "…". #}
+<div {{ attributes.defaults({ class: 'dropdown dropdown-end', 'data-controller': 'dropdown' }) }}>
+    <div tabindex="0" role="button" class="btn btn-sm btn-ghost btn-square" aria-label="{{ label }}" data-dropdown-target="trigger">
+        <twig:ux:icon name="lucide:ellipsis" class="size-4" />
+    </div>
+    <ul tabindex="-1" class="dropdown-content menu menu-sm z-1 mt-1 w-52 rounded-box bg-base-100 shadow">
+        {% block content %}{% endblock %}
+    </ul>
+</div>
