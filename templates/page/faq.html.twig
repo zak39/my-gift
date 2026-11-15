@@ -76,8 +76,27 @@
         </twig:Molecule:FaqItem>
         <twig:Molecule:FaqItem question="Puis-je ajouter un cadeau depuis un site marchand ?">
             <p>
-                Oui : collez le lien du produit, son titre, son image et sa description se
-                remplissent tout seuls. Vous pouvez ensuite les modifier.
+                Oui, sur la plupart des sites : collez le lien du produit, son titre, son image
+                et sa description se remplissent tout seuls, en tout ou en partie. Ce qui manque,
+                vous le complétez à la main, et tout reste modifiable ensuite.
+            </p>
+        </twig:Molecule:FaqItem>
+        {# Every failure shows the alert: see Organism/Gift/Form::fetchOpenGraphData(). #}
+        <twig:Molecule:FaqItem question="Pourquoi les champs ne se remplissent-ils pas toujours ?">
+            <p>
+                Pour remplir la fiche, My Gift va lire la page du produit à votre place. Pour le
+                site marchand, cette visite automatique ressemble à celle d'un robot. Or beaucoup
+                de boutiques se protègent des robots (aspiration des prix, trafic abusif) et
+                refusent ces visites : la page ne peut alors pas être lue.
+            </p>
+            <p>
+                D'autres pages ne publient tout simplement pas leur titre, leur image et leur
+                description dans un format lisible par d'autres sites. Une page trop lente à
+                répondre peut aussi échouer : collez à nouveau le lien un peu plus tard.
+            </p>
+            <p>
+                Si rien ne se remplit, complétez les champs à la main : le lien est quand même
+                enregistré.
             </p>
         </twig:Molecule:FaqItem>
     </div>

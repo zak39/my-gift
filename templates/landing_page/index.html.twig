@@ -257,12 +257,12 @@
             </h2>
             <p class="text-muted mt-8 text-lg leading-relaxed">
                 My Gift lit les métadonnées Open Graph de la page marchande et reprend le titre,
-                l'image et la description. Vous n'ajoutez que le prix.
+                l'image et la description. Il ne reste souvent que le prix.
             </p>
             {% set pasteBenefits = [
-                "Fonctionne avec n'importe quelle boutique en ligne",
+                'Fonctionne avec la plupart des sites marchands',
                 'Les champs restent modifiables après récupération',
-                'Si la page ne répond pas, vous complétez à la main',
+                'Si la page ne peut pas être lue, vous complétez à la main',
             ] %}
             <twig:Molecule:CheckList :items="pasteBenefits" iconClass="bg-success/15 text-success" class="mt-12" />
         </div>
@@ -274,7 +274,7 @@
             <twig:Molecule:Form:FieldGroup
                 :stacked="true"
                 title="Le lien"
-                description="Le plus rapide : on récupère le titre, la description et l'image pour vous.">
+                description="Le plus rapide : sur la plupart des sites, on récupère le titre, la description et l'image pour vous.">
                 <div class="fieldset">
                     <span class="label text-sm font-medium text-base-content">
                         Lien du produit

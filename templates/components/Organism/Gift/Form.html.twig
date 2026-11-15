@@ -8,7 +8,7 @@
 
         <twig:Molecule:Form:FieldGroup
             title="Le lien"
-            description="Le plus rapide : on récupère le titre, la description et l'image pour vous.">
+            description="Le plus rapide : sur la plupart des sites, on récupère le titre, la description et l'image pour vous.">
             {% set fetchingIndicator %}
                 <span class="loading loading-spinner loading-sm" data-loading="show" data-loading-delay="200" aria-hidden="true"></span>
             {% endset %}
@@ -16,7 +16,7 @@
             {{ form_row(form.link, {
                 attr: { 'data-model': 'on(change)|link' },
                 suffix: fetchingIndicator,
-                help: 'Collez l’adresse de la page du produit : les champs se remplissent dès que vous quittez celui-ci.',
+                help: 'Collez l’adresse de la page du produit : sur la plupart des sites, les champs se remplissent dès que vous quittez celui-ci.',
             }) }}
 
             {% if openGraphFailed %}
