@@ -2,20 +2,30 @@
     ? { class: 'tooltip', 'data-tip': label }
     : { class: 'contents' } %}
 
-<div {{ attributes.defaults(wrapper) }}>
+<div {{ attributes.defaults(wrapper|merge({
+        'data-controller': 'copy',
+        'data-copy-text-value': url,
+        'data-copy-label-value': label,
+    })) }}>
     <twig:Atomic:Button :style="style"
         class="{{ iconOnly ? 'btn-circle' : '' }}"
-        data-controller="copy"
-        data-copy-text-value="{{ url }}"
         data-action="click->copy#copy">
         <twig:block name="icon">
-            {# The size of the icons next to it: other icon buttons, or labelled ones. #}
-            <span data-copy-target="icon">
-                <twig:ux:icon name="lucide:share" class="{{ iconOnly ? '' : 'size-4' }}" />
-            </span>
+            {# The size of the icons next to it: other icon buttons, or labelled ones.
+               One icon per state (data-state), copy_controller shows the one it reached. #}
+            {% for state, icon in { idle: 'lucide:share', copied: 'lucide:check', failed: 'lucide:circle-x' } %}
+                <span data-copy-target="icon" data-state="{{ state }}" {{ state != 'idle' ? 'hidden' }}>
+                    <twig:ux:icon :name="icon"
+                        class="{{ [iconOnly ? null : 'size-4', state == 'failed' ? 'text-error']|filter(c => c)|join(' ') }}" />
+                </span>
+            {% endfor %}
         </twig:block>
         <twig:block name="name">
             <span class="{{ iconOnly ? 'sr-only' : '' }}" data-copy-target="label">{{ label }}</span>
         </twig:block>
     </twig:Atomic:Button>
+    {# RGAA 7.5: a button whose label changes is not announced. This status message tells
+       screen readers whether the link was copied. It is in the page from the start, empty:
+       a live region added together with its text is often not read. #}
+    <span class="sr-only" role="status" data-copy-target="status"></span>
 </div>
