@@ -3,6 +3,7 @@
 namespace App\Controller\Me;
 
 use App\Enum\ParticipantStatus;
+use App\Enum\ParticipationPeriod;
 use App\Repository\GiftRepository;
 use App\Repository\ParticipantRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,14 +26,18 @@ final class DashboardController extends AbstractController
         $myLastFavoritesGifts = $giftRepository->findFavoritesGifts($user, 5);
 
         $myLastParticipationGifts = $giftRepository->findGiftByParticipant($user, null);
-        $myLastReservedParticipationGifts = $giftRepository->findGiftByParticipant($user, ParticipantStatus::RESERVED);
-        $myLastParticipatingParticipationGifts = $giftRepository->findGiftByParticipant($user, ParticipantStatus::PARTICIPATING);
+        // The tabs and figures say « en cours »: the gifts given or archived stay out, as on
+        // /me/participations, where their « Voir tout » leads.
+        $ongoing = ParticipationPeriod::ONGOING->giftStatuses();
+        $myLastReservedParticipationGifts = $giftRepository->findGiftByParticipant($user, ParticipantStatus::RESERVED, $ongoing);
+        $myLastParticipatingParticipationGifts = $giftRepository->findGiftByParticipant($user, ParticipantStatus::PARTICIPATING, $ongoing);
 
         $myGiftsCount = $giftRepository->countPersonalOf($user);
 
         $myParticipationGiftsCount = $participantRepository->count(['participantUser' => $user]);
-        $myReservedParticipationGiftsCount = $participantRepository->count(['participantUser' => $user, 'status' => ParticipantStatus::RESERVED]);
-        $myContributingParticipationGiftsCount = $participantRepository->count(['participantUser' => $user, 'status' => ParticipantStatus::PARTICIPATING]);
+        // The lists above carry no limit: their length is the figure.
+        $myReservedParticipationGiftsCount = \count($myLastReservedParticipationGifts);
+        $myContributingParticipationGiftsCount = \count($myLastParticipatingParticipationGifts);
 
         return $this->render('me/dashboard/index.html.twig', [
             'myLastGifts' => $myLastGifts,

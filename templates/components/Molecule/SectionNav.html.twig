@@ -4,13 +4,16 @@
    controller (assets/controllers/section_nav_controller.js) marks the section being read.
    data-turbo="false": Turbo 8 fetches and renders the page again even for an anchor on the
    same page, which folds the sections back; the browser only scrolls.
-   z-9: above the sections, below daisyUI's drawer (z-10), the phone's main menu. #}
+   z-9: above the sections, below daisyUI's drawer (z-10), the phone's main menu.
+   A page of other Molecule:Section blocks fills the `entries` block with its own
+   Molecule:SectionNav:Link, and names the nav through `aria-label`. #}
 <nav {{ attributes.defaults({
     class: 'sticky top-3 z-9 min-w-0 lg:top-6',
+    'aria-label': 'Sections',
     'data-controller': 'section-nav',
     'data-action': 'focusin@window->section-nav#outside click@window->section-nav#outside keydown.esc->section-nav#escape turbo:before-cache@document->section-nav#reset',
     'data-turbo': 'false',
-}) }} aria-label="Sections">
+}) }}>
     {# One list for both sizes. On a phone, a summary folded at the top of the page, opened
        with a tap; on a wide screen, always open beside the sections, its toggle hidden. The
        checkbox carries the toggle's name and state for screen readers (RGAA 7.1).
@@ -29,6 +32,7 @@
                list scrolls on its own rather than run past the screen; flex-nowrap, or daisyUI's
                menu would wrap its entries into columns instead. #}
             <ul class="menu w-full max-h-[65dvh] flex-nowrap overflow-y-auto [--menu-active-bg:var(--color-primary)] [--menu-active-fg:var(--color-primary-content)] lg:max-h-[calc(100dvh-3rem)]">
+                {% block entries %}
                 {# A list of crews' sections only: no heading over nothing. #}
                 {% if sections is not empty or this.hasGiftsWithoutSection %}
                     <li class="menu-title">Sections</li>
@@ -77,6 +81,7 @@
                         </twig:Molecule:SectionNav:Link>
                     {% endfor %}
                 {% endif %}
+                {% endblock %}
             </ul>
         </div>
     </div>

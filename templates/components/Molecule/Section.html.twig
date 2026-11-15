@@ -4,13 +4,19 @@
     <span aria-hidden="true" class="absolute inset-y-0 start-0 w-1.5 bg-primary"></span>
 
     <div class="collapse collapse-arrow">
+        {# RGAA 7.1: the toggle names what it shows without calling it a section, which a block of
+           /me/participations (« En cours », « Offerts »…) is not. Read by screen readers only. #}
         <input type="checkbox"
             {% if anchor %}data-section-anchor-target="toggle"{% endif %}
             {{ checked ? 'checked' : '' }}
-            aria-label="Afficher ou masquer les cadeaux de la section {{ title }}" />
+            aria-label="Afficher ou masquer les cadeaux : {{ title }}" />
 
         <div class="collapse-title ps-6">
             <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                {# Decorative: the title names the section (ux:icon sets aria-hidden). #}
+                {% if icon %}
+                    <twig:ux:icon :name="icon" class="size-5 shrink-0" />
+                {% endif %}
                 <h{{ headingLevel }} class="min-w-0 text-base font-semibold wrap-anywhere sm:text-lg">{{ title }}</h{{ headingLevel }}>
                 {% if giftCount is not null %}
                     <span class="badge badge-sm badge-ghost tabular-nums">

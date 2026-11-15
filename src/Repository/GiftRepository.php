@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Gift;
 use App\Entity\Section;
 use App\Entity\User;
+use App\Enum\GiftStatus;
 use App\Enum\ParticipantStatus;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\LockMode;
@@ -245,7 +246,15 @@ class GiftRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
-    public function findGiftByParticipant(User $user, ?ParticipantStatus $status = null): array
+    /**
+     * The gifts the user takes part in, as $status if given, and whose status is one of
+     * $giftStatuses if any.
+     *
+     * @param list<GiftStatus> $giftStatuses
+     *
+     * @return list<Gift>
+     */
+    public function findGiftByParticipant(User $user, ?ParticipantStatus $status = null, array $giftStatuses = []): array
     {
         $queryBuilder = $this->createQueryBuilder('g')
             ->innerJoin('g.participants', 'p')
@@ -259,7 +268,49 @@ class GiftRepository extends ServiceEntityRepository
             ;
         }
 
+        if ([] !== $giftStatuses) {
+            $queryBuilder
+                ->andWhere('g.status IN (:giftStatuses)')
+                ->setParameter('giftStatuses', $giftStatuses)
+            ;
+        }
+
         return $queryBuilder->getQuery()->getResult();
+    }
+
+    /**
+     * The gifts the user reserved or contributes to whose status is one of $statuses,
+     * newest first, with the author, section, crew and participants their cards display.
+     * No friendship rule: a participant always sees their gift (GiftVisibilityVoter).
+     *
+     * @param list<GiftStatus> $statuses
+     *
+     * @return list<Gift>
+     */
+    public function findParticipatedBy(User $user, array $statuses): array
+    {
+        return $this->createQueryBuilder('g')
+            // The user's own participation filters; selecting it would hydrate the gift's
+            // collection with that row alone, the pool's total with it.
+            ->innerJoin('g.participants', 'mine', 'WITH', 'mine.participantUser = :user')
+            // Left: a crew's gift may have lost its author, a gift its section.
+            ->leftJoin('g.createdBy', 'c')
+            ->leftJoin('g.section', 's')
+            ->leftJoin('s.crew', 'crew')
+            // Every participant, read by each card (pool, avatars, buttons): one query.
+            ->leftJoin('g.participants', 'p')
+            ->leftJoin('p.participantUser', 'pu')
+            ->addSelect('c', 's', 'crew', 'p', 'pu')
+            ->where('g.status IN (:statuses)')
+            ->setParameter('user', $user)
+            ->setParameter('statuses', $statuses)
+            ->orderBy('g.createdAt', 'DESC')
+            ->addOrderBy('g.id', 'DESC')
+            // The participants in the order they joined.
+            ->addOrderBy('p.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     //    /**

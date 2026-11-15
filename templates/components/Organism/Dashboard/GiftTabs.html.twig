@@ -18,11 +18,13 @@
     <twig:Molecule:Dashboard:GiftTabPanel
         :gifts="myLastReservedParticipationGifts"
         emptyMessage="Aucun cadeau réservé."
+        seeAllRoute="{{ path('app_participation', { _fragment: constant('App\\Enum\\ParticipationPeriod::ONGOING').anchor }) }}"
     />
 
     <input type="radio" name="dashboard_tabs" class="tab" aria-label="Mes participations à des cadeaux en cours ({{ myLastParticipatingParticipationGifts|length }})" />
     <twig:Molecule:Dashboard:GiftTabPanel
         :gifts="myLastParticipatingParticipationGifts"
         emptyMessage="Aucune participation à un cadeau."
+        seeAllRoute="{{ path('app_participation', { _fragment: constant('App\\Enum\\ParticipationPeriod::ONGOING').anchor }) }}"
     />
 </div>
