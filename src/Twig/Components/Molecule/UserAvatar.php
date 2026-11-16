@@ -24,8 +24,14 @@ final class UserAvatar
      */
     public string $sizeClass = '';
 
-    /** Turbo Stream target, for the pages that swap the avatar in place after an upload. */
-    public ?string $id = null;
+    /**
+     * Marks the face as the logged-in user's with `data-current-user-avatar`, so that
+     * `turbo/avatar.turbo_stream.twig` swaps it after an upload: only for `app.user`, since every
+     * marked face gets their new photo. An attribute rather than an id: a page may show the face
+     * more than once (the navbar does, desktop dropdown and phone drawer), and an id must be
+     * unique (RGAA 8.2).
+     */
+    public bool $currentUser = false;
 
     /**
      * Attributes for the frame and the image, spread by the template.
@@ -40,9 +46,9 @@ final class UserAvatar
     public array $frameAttributes = [];
 
     /**
-     * Without a `source`, the template shows the placeholder with the same `alt` and `id`.
+     * Without a `source`, the template shows the placeholder with the same `alt` and mark.
      *
-     * @var array<string, string>
+     * @var array<string, string|true>
      */
     public array $imageAttributes = [];
 
@@ -57,14 +63,16 @@ final class UserAvatar
         // `.avatar img` is `width/height: 100%` — so the frame alone carries the size.
         $this->frameAttributes = ['class' => '' !== $this->sizeClass ? $this->sizeClass : 'w-10'];
 
-        // Without a source (no avatar) or an id, the key is left out rather than null.
-        $this->imageAttributes = array_filter(
-            [
-                'source' => $this->avatarUrlGenerator->url($this->user),
-                'alt' => 'Photo de profil '.$this->user->getPseudo(),
-                'id' => $this->id,
-            ],
-            fn (?string $value) => null !== $value,
-        );
+        $this->imageAttributes = ['alt' => 'Photo de profil '.$this->user->getPseudo()];
+
+        // Without a source (no avatar), the key is left out rather than null.
+        $source = $this->avatarUrlGenerator->url($this->user);
+        if (null !== $source) {
+            $this->imageAttributes['source'] = $source;
+        }
+
+        if ($this->currentUser) {
+            $this->imageAttributes['data-current-user-avatar'] = true;
+        }
     }
 }

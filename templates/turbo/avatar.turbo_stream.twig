@@ -1,8 +1,10 @@
-{# The navbar's face: without an avatar, the placeholder already there stays. #}
+{# The user's faces (Molecule:UserAvatar currentUser): without an avatar, the placeholder already
+   there stays. `target` is a CSS selector, matching every copy (the navbar has two): an attribute,
+   since an id would be duplicated (RGAA 8.2). #}
 {% set source = user_avatar_url(user) %}
 {% if source %}
-    <twig:Turbo:Stream:Replace target="#user_avatar_header">
-        <twig:Atomic:Image id="user_avatar_header" :source="source" alt="Photo de profil {{ user.pseudo }}" />
+    <twig:Turbo:Stream:Replace target="[data-current-user-avatar]">
+        <twig:Atomic:Image data-current-user-avatar :source="source" alt="Photo de profil {{ user.pseudo }}" />
     </twig:Turbo:Stream:Replace>
 {% endif %}
 

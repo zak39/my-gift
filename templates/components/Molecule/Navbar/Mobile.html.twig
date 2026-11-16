@@ -14,7 +14,7 @@
     <div class="menu bg-base-200 min-h-full w-80 p-4">
         <!-- Sidebar content here -->
         <div class="flex gap-4 items-center mb-6">
-            <twig:Molecule:UserAvatar :user="app.user" sizeClass="w-16" id="user_avatar_header" />
+            <twig:Molecule:UserAvatar :user="app.user" sizeClass="w-16" currentUser />
             <span class="text-2xl">
                 {{ app.user.pseudo }}
             </span>
