@@ -12,7 +12,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 /**
  * Who may see a gift at all. Its owners always do, drafts included: its creator, or
  * every member of the crew whose list it is filed in. Anyone else only sees the gifts
- * shared with friends: public, filed under a section, and the viewer may see that
+ * shared with friends: public, filed in a section or not, and the viewer may see that
  * list, `user.can_see_gifts` on the creator of a personal list, `crew.can_see_list`
  * on a crew. The favourites query applies the same friendship rule.
  *

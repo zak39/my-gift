@@ -1,0 +1,6 @@
+{# Static content: no role="alert", which a screen reader would announce on every load
+   (RGAA 7.5); the text, not the colour, carries it (RGAA 3.1). #}
+<div {{ attributes.defaults({ class: 'alert alert-info alert-soft' }) }}>
+    <twig:ux:icon name="lucide:folder-input" class="size-5 shrink-0" />
+    <span>Rangez ces cadeaux dans des sections pour mieux les classer.</span>
+</div>

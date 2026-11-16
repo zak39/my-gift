@@ -245,12 +245,13 @@ class Gift
     }
 
     /**
-     * What its owners' friends may see of it: published, and filed in a section. Who those
-     * friends are is GiftVisibilityVoter's call.
+     * What its owners' friends may see of it: published, filed in a section or not. Who
+     * those friends are is GiftVisibilityVoter's call. The one place for this rule, even
+     * though it now matches isPublic(): the voter and the link previews read it here.
      */
     public function isSharedWithFriends(): bool
     {
-        return true === $this->isPublic && null !== $this->section;
+        return true === $this->isPublic;
     }
 
     public function getSlug(): ?string

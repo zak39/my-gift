@@ -36,10 +36,13 @@ final class SectionController extends AbstractController
         $user = $this->getUser();
 
         return $this->render('me/section/index.html.twig', [
-            'giftsWithoutSection' => $giftRepository->findBy([
-                'createdBy' => $user,
-                'section' => null,
-            ]),
+            'giftsWithoutSection' => $giftRepository->findBy(
+                [
+                    'createdBy' => $user,
+                    'section' => null,
+                ],
+                ['createdAt' => 'DESC'],
+            ),
             'sections' => $sectionRepository->findPersonalOf($user),
             'crews' => $crewRepository->findForMemberWithGiftCards($user),
             'user' => $user,
