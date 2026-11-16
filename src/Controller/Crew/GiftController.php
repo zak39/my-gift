@@ -21,9 +21,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityNotFoundException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -128,13 +130,10 @@ final class GiftController extends AbstractController
      * on the route: ClaimGift asks it under its lock, and a refusal (a page left open) is
      * a flash rather than a 403.
      */
+    #[IsCsrfTokenValid(new Expression('"gift-claim-" ~ args["gift"].getId()'))]
     #[Route('/{gift}/claim', name: 'app_crew_gift_claim', requirements: ['gift' => '\d+'], methods: ['POST'])]
-    public function claim(Crew $crew, #[MapEntity(expr: 'repository.findOneInCrew(gift, id)')] Gift $gift, Request $request, ClaimGift $claimGift, GiftOwnerUrlGenerator $giftOwnerUrlGenerator): Response
+    public function claim(Crew $crew, #[MapEntity(expr: 'repository.findOneInCrew(gift, id)')] Gift $gift, ClaimGift $claimGift, GiftOwnerUrlGenerator $giftOwnerUrlGenerator): Response
     {
-        if (!$this->isCsrfTokenValid("gift-claim-{$gift->getId()}", $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         /** @var User $user */
         $user = $this->getUser();
 
@@ -156,13 +155,10 @@ final class GiftController extends AbstractController
         return $this->redirect($giftOwnerUrlGenerator->show($gift));
     }
 
+    #[IsCsrfTokenValid(new Expression('"gift-delete-" ~ args["gift"].getId()'))]
     #[Route('/{gift}/delete', name: 'app_crew_gift_delete', requirements: ['gift' => '\d+'], methods: ['DELETE'])]
     public function delete(Crew $crew, #[MapEntity(expr: 'repository.findOneInCrew(gift, id)')] Gift $gift, Request $request, DeleteGift $deleteGift, RefererRedirector $refererRedirector): Response
     {
-        if (!$this->isCsrfTokenValid("gift-delete-{$gift->getId()}", $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         /** @var User $user */
         $user = $this->getUser();
 

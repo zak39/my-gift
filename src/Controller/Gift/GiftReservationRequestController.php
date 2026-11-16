@@ -10,9 +10,11 @@ use App\Services\Exception\GiftActionRefusedException;
 use App\Services\Lifecycle\GiftLifecycle;
 use App\Services\Url\ViewerUrlGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -49,13 +51,10 @@ final class GiftReservationRequestController extends AbstractController
         ]);
     }
 
+    #[IsCsrfTokenValid(new Expression('"disengage-gift-" ~ args["gift"].getId()'))]
     #[Route('/disengage', name: 'app_gift_disengage', methods: ['POST'])]
-    public function disengage(Gift $gift, Request $request, GiftLifecycle $giftLifecycle, ViewerUrlGenerator $viewerUrlGenerator): Response
+    public function disengage(Gift $gift, GiftLifecycle $giftLifecycle, ViewerUrlGenerator $viewerUrlGenerator): Response
     {
-        if (!$this->isCsrfTokenValid('disengage-gift-'.$gift->getId(), $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         /** @var User $user */
         $user = $this->getUser();
 

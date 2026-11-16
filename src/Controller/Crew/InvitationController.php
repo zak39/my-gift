@@ -9,9 +9,11 @@ use App\Form\CrewInvitationType;
 use App\Services\Lifecycle\CrewLifecycle;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -59,17 +61,13 @@ final class InvitationController extends AbstractController
      * No voter on the route: the lifecycle checks can(), which runs the workflow guards,
      * which ask CrewInvitationVoter. A forged request ends in an error message.
      */
+    #[IsCsrfTokenValid(new Expression('"crew-invitation-cancel-" ~ args["invitation"].getId()'))]
     #[Route('/invitations/{invitation}/cancel', name: 'app_crew_invitation_cancel', requirements: ['invitation' => '\d+'], methods: ['POST'])]
     public function cancel(
         Crew $crew,
         #[MapEntity(expr: 'repository.findOneBy({"id": invitation, "crew": id})')] CrewInvitation $invitation,
-        Request $request,
         CrewLifecycle $crewLifecycle,
     ): Response {
-        if (!$this->isCsrfTokenValid("crew-invitation-cancel-{$invitation->getId()}", $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         $inviteeName = $invitation->getInvitee()->getPseudo();
 
         try {

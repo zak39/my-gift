@@ -7,8 +7,8 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -20,13 +20,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class FavoriteController extends AbstractController
 {
     #[IsGranted('gift.can_see', subject: 'gift')]
+    #[IsCsrfTokenValid('gift-favorite')]
     #[Route('', name: 'app_gift_add_favorite', methods: ['POST'])]
-    public function add(Gift $gift, Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function add(Gift $gift, EntityManagerInterface $entityManager): JsonResponse
     {
-        if (!$this->isCsrfTokenValid('gift-favorite', $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         /** @var User $user */
         $user = $this->getUser();
 
@@ -38,13 +35,10 @@ final class FavoriteController extends AbstractController
         ]);
     }
 
+    #[IsCsrfTokenValid('gift-favorite')]
     #[Route('/remove', name: 'app_gift_remove_favorite', methods: ['POST'])]
-    public function remove(Gift $gift, Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function remove(Gift $gift, EntityManagerInterface $entityManager): JsonResponse
     {
-        if (!$this->isCsrfTokenValid('gift-favorite', $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         /** @var User $user */
         $user = $this->getUser();
 

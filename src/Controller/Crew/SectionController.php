@@ -13,9 +13,11 @@ use App\Services\Section\DeleteSection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -88,13 +90,10 @@ final class SectionController extends AbstractController
         ]);
     }
 
+    #[IsCsrfTokenValid(new Expression('"section-delete-" ~ args["section"].getId()'))]
     #[Route('/{section}/delete', name: 'app_crew_section_delete', requirements: ['section' => '\d+'], methods: ['DELETE'])]
     public function delete(Crew $crew, #[MapEntity(expr: 'repository.findOneBy({"id": section, "crew": id})')] Section $section, Request $request, DeleteSection $deleteSection, RefererRedirector $refererRedirector): Response
     {
-        if (!$this->isCsrfTokenValid("section-delete-{$section->getId()}", $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         $deleteSection($section);
 
         // Out of any section, a gift is its author's: those of a crew's list leave it.

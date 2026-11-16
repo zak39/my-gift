@@ -171,6 +171,12 @@ workflow guards, and answer with a flash. Nor is an optional query parameter, wh
 nested resource: `/me/gifts/new?section=` ignores a section that is not the user's own (the
 gift is created unfiled) instead of answering 404.
 
+A POST action checks its CSRF token with `#[IsCsrfTokenValid]` (an `Expression` on `args[...]`
+for an id built from an entity or route argument, the same id as the template's `csrf_token()`),
+not by hand. Symfony runs it before `#[IsGranted]` and answers a refused token by redirecting to
+the login page; `App\EventListener\RefuseInvalidCsrfTokenListener` decorates its listener to run it
+after `#[IsGranted]` (so the `/me` 404 still comes first) and to answer 403, app-wide.
+
 The same resource may have a controller per folder (`Me/SectionController`,
 `User/SectionController`, `Crew/SectionController`), one per point of view. What two of
 them do alike lives in a service, one class per action with a single `__invoke()`
