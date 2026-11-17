@@ -11,8 +11,8 @@ class FavoriteGiftGrouper
      * their crew, whoever added them (their author may even be gone), any other under the
      * friend who offers it.
      *
-     * Every gift must belong to a section: callers
-     * filter out the others (see `GiftRepository::findFavoritesGifts()`).
+     * A friend's gifts filed in no section come under a null section: a crew's gift always
+     * has one.
      *
      * Everything comes back as lists: the template only ever iterates, and entity ids
      * as array keys made Twig walk an extra level for nothing.
@@ -23,7 +23,7 @@ class FavoriteGiftGrouper
      *     crew: ?\App\Entity\Crew,
      *     user: ?\App\Entity\User,
      *     name: string,
-     *     sections: list<array{section: \App\Entity\Section, gifts: list<Gift>}>,
+     *     sections: list<array{section: ?\App\Entity\Section, gifts: list<Gift>}>,
      * }>
      */
     public function groupedByList(iterable $gifts): array
@@ -43,7 +43,8 @@ class FavoriteGiftGrouper
                 'sections' => [],
             ];
 
-            $sectionId = $section->getId();
+            // A string key for the gifts filed in no section: no section id can take it.
+            $sectionId = null !== $section ? $section->getId() : 'none';
             $grouped[$listKey]['sections'][$sectionId] ??= [
                 'section' => $section,
                 'gifts' => [],
@@ -51,8 +52,10 @@ class FavoriteGiftGrouper
             $grouped[$listKey]['sections'][$sectionId]['gifts'][] = $gift;
         }
 
-        // Section ids served only to group; the template just iterates.
+        // Section ids served only to group; the template just iterates. The gifts filed in
+        // no section come last, as on the friend's own page (uksort keeps the others' order).
         foreach ($grouped as $listKey => $group) {
+            uksort($group['sections'], static fn (int|string $a, int|string $b) => ('none' === $a) <=> ('none' === $b));
             $grouped[$listKey]['sections'] = array_values($group['sections']);
         }
 

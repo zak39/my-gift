@@ -34,17 +34,15 @@ final class SectionController extends AbstractController
     #[Route('/sections', name: 'app_section_user_page')]
     public function index(?User $user, GiftRepository $giftRepository, SectionRepository $sectionRepository, CrewRepository $crewRepository, BreadcrumbBuilder $breadcrumbBuilder, RefererRedirector $refererRedirector, Request $request): Response
     {
-        $giftsWithoutSection = [];
-        if ($this->isGranted('user.is_owner', $user)) {
-            $giftsWithoutSection = $giftRepository->findBy([
-                'createdBy' => $user,
-                'section' => null,
-                'isPublic' => true,
-            ]);
-        }
-
         return $this->render('user/section/index.html.twig', [
-            'giftsWithoutSection' => $giftsWithoutSection,
+            'giftsWithoutSection' => $giftRepository->findBy(
+                [
+                    'createdBy' => $user,
+                    'section' => null,
+                    'isPublic' => true,
+                ],
+                ['createdAt' => 'DESC'],
+            ),
             'sections' => $sectionRepository->findPersonalOf($user),
             // Seeing the user's gifts, the viewer sees their crews' lists too: a member's
             // friends see the list.

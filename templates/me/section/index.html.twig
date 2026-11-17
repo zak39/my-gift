@@ -32,11 +32,12 @@
                 {% if giftsWithoutSection|length > 0 %}
                     <twig:Molecule:Section
                         title="Cadeaux sans section"
-                        description="Les cadeaux qui ne sont pas encore rangés dans une section."
+                        description="Les cadeaux qui n'ont pas encore été rangés dans une section."
                         anchor="section-sans-section"
                         :checked="true"
                         :giftCount="giftsWithoutSection|length">
                         <twig:block name="gifts">
+                            <twig:Molecule:Gift:UnfiledHint />
                             {% for gift in giftsWithoutSection %}
                                 <twig:CardGift :gift="gift" />
                             {% endfor %}

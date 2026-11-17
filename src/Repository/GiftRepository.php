@@ -190,11 +190,11 @@ class GiftRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('g')
             ->innerJoin('g.favoritedBy', 'u')
-            // The inner join on section drops gifts left outside one; the joins also load
-            // the creator, section and crew the favourites page and the data export display.
-            // Left on the creator: a crew's gift may have lost its author.
+            // The joins load the creator, section and crew the favourites page and the data
+            // export display. Left on the creator: a crew's gift may have lost its author;
+            // left on the section: a gift outside one is shared with friends too.
             ->leftJoin('g.createdBy', 'c')
-            ->innerJoin('g.section', 's')
+            ->leftJoin('g.section', 's')
             ->leftJoin('s.crew', 'crew')
             ->addSelect('c', 's', 'crew')
             ->where('u.id = :userId')

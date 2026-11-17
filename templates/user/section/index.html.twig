@@ -3,7 +3,7 @@
 {% block title %}My Gift | Sections de {{ user.pseudo }} {% endblock %}
 
 {% block body %}
-{# The controller only sends public gifts without section, and only to the owner. #}
+{# The controller only sends public gifts without section. #}
 {# The crews count too, below the user's own sections, once they show the viewer a gift. #}
 {% set hasContent = sections|length > 0 or giftsWithoutSection|length > 0
     or crews|filter(crew => crew.giftCount(is_granted('crew.is_member', crew)) > 0)|length > 0 %}
@@ -25,16 +25,24 @@
                 :giftsWithoutSection="giftsWithoutSection"
                 :crews="crews" />
 
+            {# Open the first block a friend has something to see in: a section with a published
+               gift, or else the gifts filed in none. #}
+            {% set openSection = sections|filter(section => section.visibleGifts(false)|length > 0)|first %}
             <div class="flex min-w-0 flex-col gap-5">
-                <twig:Organism:Section:Listing :sections="sections" />
+                <twig:Organism:Section:Listing :sections="sections" :unfoldFirst="false" :unfolded="openSection" />
 
                 {% if giftsWithoutSection|length > 0 %}
                     <twig:Molecule:Section
                         title="Cadeaux sans section"
                         description="Les cadeaux qui n'ont pas encore été rangés dans une section."
                         anchor="section-sans-section"
+                        :checked="openSection is empty"
                         :giftCount="giftsWithoutSection|length">
                         <twig:block name="gifts">
+                            {# The owner previewing their page; their friends see the gifts alone. #}
+                            {% if is_granted('user.is_owner', user) %}
+                                <twig:Molecule:Gift:UnfiledHint />
+                            {% endif %}
                             {% for gift in giftsWithoutSection %}
                                 <twig:CardGift :gift="gift" />
                             {% endfor %}

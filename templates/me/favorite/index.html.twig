@@ -49,12 +49,13 @@
                         </twig:Atomic:ButtonLink>
                     </div>
 
+                    {# A null section holds the friend's gifts filed in none (FavoriteGiftGrouper). #}
                     {% for entry in group.sections %}
                         <twig:Molecule:Section
-                            :title="entry.section.title"
-                            :description="entry.section.description"
+                            :title="entry.section ? entry.section.title : 'Cadeaux sans section'"
+                            :description="entry.section ? entry.section.description : 'Les cadeaux qui n\'ont pas encore été rangés dans une section.'"
                             :checked="loop.first"
-                            :anchor="'favoris-' ~ entry.section.id"
+                            :anchor="entry.section ? 'favoris-' ~ entry.section.id : 'favoris-sans-section-' ~ group.user.id"
                             :giftCount="entry.gifts|length">
                             <twig:block name="gifts">
                                 {% for gift in entry.gifts %}

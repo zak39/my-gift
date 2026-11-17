@@ -9,8 +9,9 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
  * Whether a page addressed by a user id is that very user's: on /users/{id}/sections, the
- * owner previewing their own public page gets its owner actions (User\SectionController,
- * Organism:GiftListHeader:Actions).
+ * owner previewing their own public page gets its owner actions
+ * (Organism:GiftListHeader:Actions) and the hint on its gifts filed in no section
+ * (Molecule:Gift:UnfiledHint).
  */
 final class UserOwnerVoter extends Voter
 {
