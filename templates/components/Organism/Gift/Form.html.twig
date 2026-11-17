@@ -9,7 +9,7 @@
 
         <twig:Molecule:Form:FieldGroup
             title="Le lien"
-            description="Le plus rapide : sur la plupart des sites, on récupère le titre, la description et l'image pour vous.">
+            description="Le plus rapide : sur la plupart des sites, on récupère le titre, la description, l'image et le prix pour vous.">
             {% set fetchingIndicator %}
                 <span class="loading loading-spinner loading-sm" data-loading="show" data-loading-delay="200" aria-hidden="true"></span>
             {% endset %}
@@ -33,7 +33,7 @@
             description="Ce que vos amis verront en premier dans vos sections.">
             <div class="grid gap-4 sm:grid-cols-[minmax(0,1fr)_11rem]">
                 {{ form_row(form.title, { attr: { 'data-loading': 'addAttribute(disabled)' } }) }}
-                {{ form_row(form.price) }}
+                {{ form_row(form.price, { attr: { 'data-loading': 'addAttribute(disabled)' } }) }}
             </div>
             {{ form_row(form.description, { attr: { 'data-loading': 'addAttribute(disabled)' } }) }}
         </twig:Molecule:Form:FieldGroup>

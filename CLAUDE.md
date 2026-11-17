@@ -127,8 +127,10 @@ a deleted crew's folder: copied on flush, the original removed once the database
 (`vich_uploader.pre_upload`) rewrites the file in place through `App\Services\WebpConverter`
 (Imagick, `ext-imagick`), capped per mapping (`App\Vich\UploadedImage`, which also holds the accepted formats and pixel limit, and checks a file with `accepts()`), before
 `SmartUniqueNamer` names it from its content. `App\Services\DicebearAvatarGenerator` generates default
-avatars; `App\Services\ImageDownloader` + `App\Services\OpenGraphApi` fetch Open Graph metadata
-to prefill gift fields from a pasted product URL.
+avatars; `App\Services\ProductPage\ProductPageReader` reads a pasted product URL to prefill
+gift fields (title, description, image, price) with the first of its sources the page supports
+(`ProductPage/Source/`: Open Graph, else JSON-LD `schema.org/Product`, Twitter Card, `<title>`),
+and `App\Services\ImageDownloader` fetches its image.
 
 ### Routing
 
