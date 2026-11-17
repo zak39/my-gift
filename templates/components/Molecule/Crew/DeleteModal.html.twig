@@ -1,12 +1,6 @@
 {# Inside the Modal blocks, id, title, class and even attributes are those of Modal: crew
    stays in reach, under a name Modal does not use. #}
 <twig:Modal :id="crew.id" title="Supprimer le groupe" class="crew_delete">
-    <twig:block name="handlerButton">
-        <button type="button" class="btn btn-ghost text-error" onclick="modal_crew_delete_{{ crew.id }}.showModal()">
-            <twig:ux:icon name="lucide:trash-2" class="size-4" />
-            Supprimer le groupe
-        </button>
-    </twig:block>
     <twig:block name="message">
         <p class="py-4">
             Le groupe « {{ crew.name }} » et ses sections disparaîtront pour tous ses membres.

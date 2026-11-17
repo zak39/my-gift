@@ -1,12 +1,6 @@
 {# Inside the Modal blocks, id, title, class and even attributes are those of Modal: crew
    stays in reach, under a name Modal does not use. #}
 <twig:Modal :id="crew.id" title="Quitter le groupe" class="crew_leave">
-    <twig:block name="handlerButton">
-        <button type="button" class="btn btn-ghost" onclick="modal_crew_leave_{{ crew.id }}.showModal()">
-            <twig:ux:icon name="lucide:log-out" class="size-4" />
-            Quitter le groupe
-        </button>
-    </twig:block>
     <twig:block name="message">
         <p class="py-4">
             Vous ne pourrez plus gérer les sections de « {{ crew.name }} ». Les cadeaux que vous y avez ajoutés restent dans les sections du groupe.
