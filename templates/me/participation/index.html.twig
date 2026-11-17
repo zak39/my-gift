@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Gift | Mes participations{% endblock %}
+
+{% block body %}
+{# Mostly someone else's gifts; a crew's gift the user joined after taking part in it shows
+   its owners' buttons too, as anywhere else. #}
+{% set participationCount = periods|reduce((count, entry) => count + entry.gifts|length, 0) %}
+
+<div class="mx-auto w-full max-w-6xl py-6 pb-12">
+    <header>
+        <h1 class="text-2xl leading-tight font-bold sm:text-3xl">Mes participations</h1>
+        <p class="mt-2 flex items-center gap-2 text-sm text-muted">
+            <twig:ux:icon name="lucide:hand-heart" class="size-4 shrink-0" />
+            <span class="tabular-nums">
+                {% if participationCount > 0 %}
+                    {{ participationCount }} cadeau{{ participationCount > 1 ? 'x auxquels' : ' auquel' }} vous avez participé
+                {% else %}
+                    Les cadeaux que vous avez réservés ou auxquels vous contribuez.
+                {% endif %}
+            </span>
+        </p>
+    </header>
+
+    <twig:Molecule:Flashes alertClass="mt-4" />
+
+    {% if participationCount > 0 %}
+        <div class="mt-6 flex flex-col gap-6 lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:items-start">
+            {# The Sommaire of "Mes cadeaux": folded at the top on a phone, beside the periods on
+               a wide screen, the period being read in purple. #}
+            <twig:Molecule:SectionNav aria-label="Périodes">
+                <twig:block name="entries">
+                    <li class="menu-title">Participations</li>
+                    {% for entry in periods %}
+                        <twig:Molecule:SectionNav:Link
+                            :anchor="entry.period.anchor"
+                            :icon="entry.period.icon"
+                            :label="entry.period.label"
+                            :count="entry.gifts|length" />
+                    {% endfor %}
+                </twig:block>
+            </twig:Molecule:SectionNav>
+
+            <div class="flex min-w-0 flex-col gap-5">
+                {% for entry in periods %}
+                    {# What is still running unfolded; the history stays folded until asked for. #}
+                    <twig:Molecule:Section
+                        :title="entry.period.label"
+                        :icon="entry.period.icon"
+                        :description="entry.period.description"
+                        :checked="loop.first"
+                        :anchor="entry.period.anchor"
+                        :giftCount="entry.gifts|length">
+                        <twig:block name="gifts">
+                            {% for gift in entry.gifts %}
+                                <twig:CardGift :gift="gift" />
+                            {% else %}
+                                <p class="py-4 text-sm text-muted">{{ entry.period.emptyMessage }}</p>
+                            {% endfor %}
+                        </twig:block>
+                    </twig:Molecule:Section>
+                {% endfor %}
+            </div>
+        </div>
+    {% else %}
+        <twig:Molecule:EmptyContentHero class="mt-6"
+            title="Vous n'avez encore réservé aucun cadeau"
+            description="Parcourez les sections de vos amis pour réserver un cadeau ou contribuer à une cagnotte.">
+            <twig:block name="action_buttons">
+                {# Solid primary: the single call to action of an otherwise empty page. #}
+                <twig:Atomic:ButtonLink
+                    color="primary"
+                    style=""
+                    :to="path('app_user')">
+                    <twig:block name="icon">
+                        <twig:ux:icon name="lucide:users" class="size-4" />
+                    </twig:block>
+                    <twig:block name="name">
+                        <span>Commencez par trouver vos amis</span>
+                    </twig:block>
+                </twig:Atomic:ButtonLink>
+            </twig:block>
+        </twig:Molecule:EmptyContentHero>
+    {% endif %}
+</div>
+{% endblock %}

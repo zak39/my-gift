@@ -14,6 +14,9 @@ final class Section
     public ?string $anchor = null;
     public ?int $giftCount = null;
 
+    /** Decorative icon before the title. */
+    public ?string $icon = null;
+
     /**
      * Level of the section's title: 2 under the page's title, deeper when the section sits
      * under a crew's heading (RGAA 9.1: the headings outline the page).
