@@ -1,14 +1,17 @@
 <!--
   Copy of the built-in <Layout> of @maizzle/framework 6.1.3, which it overrides in every email.
-  Two changes: Inter is loaded from the app (assets/fonts/inter/inter.css, through AssetMapper)
+  Three changes: Inter is loaded from the app (assets/fonts/inter/inter.css, through AssetMapper)
   instead of Google Fonts, so opening an email does not send the reader's IP address to Google;
-  and the default language is French, the emails' own (RGAA 8.3), instead of English.
+  the default language is French, the emails' own (RGAA 8.3), instead of English; and the
+  emails' background (BodyStyle, .email-bg) is laid on <body>, to fill the window, and on the
+  article wrapper too, since Gmail drops <body> and its classes.
   When upgrading Maizzle, compare with node_modules/@maizzle/framework/dist/components/Layout.vue.
 -->
 <script setup>
 import { computed, useAttrs, createStaticVNode } from 'vue'
 import { twMerge } from 'tailwind-merge'
 import { useOutlookFallback } from '@maizzle/framework'
+import BodyStyle from './styles/BodyStyle.vue'
 
 defineOptions({ inheritAttrs: false })
 
@@ -42,8 +45,8 @@ const props = defineProps({
 const outlookFallback = useOutlookFallback(props.outlookFallback)
 
 const attrs = useAttrs()
-const bodyMergedClass = computed(() => twMerge('m-0 p-0 size-full [word-break:break-word]', props.bodyClass))
-const articleMergedClass = computed(() => twMerge('[font-size:max(16px,1rem)] font-inter', attrs.class))
+const bodyMergedClass = computed(() => twMerge('m-0 p-0 size-full [word-break:break-word] email-bg', props.bodyClass))
+const articleMergedClass = computed(() => twMerge('[font-size:max(16px,1rem)] font-inter email-bg', attrs.class))
 
 const EmptyHead = () => createStaticVNode('<head></head>', 1)
 
@@ -95,6 +98,7 @@ const htmlXmlns = computed(() => outlookFallback ? {
     </style>
   </head>
   <body :xml:lang="outlookFallback ? lang : null" :class="bodyMergedClass">
+    <BodyStyle />
     <span v-if="outlookFallback" style="display: none" v-html="msoBody"></span>
     <div
       role="article"

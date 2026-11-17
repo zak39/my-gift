@@ -1,6 +1,5 @@
 <script setup>
 import AccentButtonStyle from '../components/styles/AccentButtonStyle.vue'
-import BodyStyle from '../components/styles/BodyStyle.vue'
 import CardStyle from '../components/styles/CardStyle.vue'
 import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
 </script>
@@ -9,39 +8,36 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
     <Layout>
         <Preheader>Confirmez votre adresse e-mail pour activer votre compte My Gift</Preheader>
 
-        <BodyStyle />
         <CardStyle />
         <AccentButtonStyle />
         <AccentLinkStyle />
 
-        <Body class="email-bg">
-            <Container class="max-w-xl p-0 py-10 sm:p-6">
-                <div class="email-card border rounded-lg p-6">
-                    <h1>Bienvenue <Raw>{{ fullName }}</Raw>!</h1>
+        <Container class="max-w-xl p-0 py-10 sm:p-6">
+            <div class="email-card border rounded-2xl p-6">
+                <h1>Bienvenue <Raw>{{ fullName }}</Raw>!</h1>
 
-                    <p>
-                        Merci de vous être inscrit sur My Gift.
-                    </p>
+                <p>
+                    Merci de vous être inscrit sur My Gift.
+                </p>
 
-                    <p>
-                        Encore une étape, il faut confirmer votre adresse e-mail pour activer votre compte et commencer à utiliser toutes les fonctionnalités.
-                    </p>
+                <p>
+                    Encore une étape, il faut confirmer votre adresse e-mail pour activer votre compte et commencer à utiliser toutes les fonctionnalités.
+                </p>
 
-                    <p>
-                        Cliquez sur le bouton ci-dessous pour activer votre compte.
-                    </p>
+                <p>
+                    Cliquez sur le bouton ci-dessous pour activer votre compte.
+                </p>
 
-                    <div class="text-center my-6">
-                        <AccentButton label="Activer mon compte" to="{{ signedUrl }}" />
-                    </div>
-                    <p>
-                        S'il vous plaît, confirmez votre adresse e-mail avant que le lien n'expire dans <b><Raw>{{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}</Raw></b> à compter de la réception du mail.
-                    </p>
-                    <p>
-                        À bientôt sur My Gift!
-                    </p>
+                <div class="text-center my-6">
+                    <AccentButton label="Activer mon compte" to="{{ signedUrl }}" />
                 </div>
-            </Container>
-        </Body>
+                <p>
+                    S'il vous plaît, confirmez votre adresse e-mail avant que le lien n'expire dans <b><Raw>{{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}</Raw></b> à compter de la réception du mail.
+                </p>
+                <p>
+                    À bientôt sur My Gift!
+                </p>
+            </div>
+        </Container>
     </Layout>
 </template>
