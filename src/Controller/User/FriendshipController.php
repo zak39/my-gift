@@ -6,9 +6,11 @@ use App\Entity\User;
 use App\Services\Lifecycle\FriendRequestLifecycle;
 use App\Services\RefererRedirector;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -20,15 +22,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/users/{id}', requirements: ['id' => '\d+'])]
 final class FriendshipController extends AbstractController
 {
+    // The token before the user, as SectionController does with its voter: a missing id
+    // must not answer otherwise than an existing one, to whoever has no token for it.
+    #[IsCsrfTokenValid(new Expression('"friend-" ~ args["action"] ~ "-" ~ args["id"]'))]
     #[Route('/friend/{action}', name: 'app_friend_action', requirements: ['action' => 'remove|block|unblock'], methods: ['POST'])]
     public function act(int $id, ?User $other, string $action, Request $request, FriendRequestLifecycle $friendRequestLifecycle, RefererRedirector $refererRedirector): Response
     {
-        // The token before the user, as SectionController does with its voter: a missing id
-        // must not answer otherwise than an existing one, to whoever has no token for it.
-        if (!$this->isCsrfTokenValid("friend-$action-$id", $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         if (null === $other) {
             throw $this->createNotFoundException();
         }

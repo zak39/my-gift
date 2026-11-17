@@ -17,9 +17,11 @@ use App\Services\Url\GiftOwnerUrlGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -107,13 +109,10 @@ final class GiftController extends AbstractController
     }
 
     #[IsGranted('gift.is_owner', subject: 'gift', statusCode: 404)]
+    #[IsCsrfTokenValid(new Expression('"gift-delete-" ~ args["gift"].getId()'))]
     #[Route('/{id}/delete', name: 'app_gift_delete', requirements: ['id' => '\d+'], methods: ['DELETE'])]
-    public function delete(#[MapEntity(expr: 'repository.findOnePersonal(id)')] Gift $gift, Request $request, DeleteGift $deleteGift): Response
+    public function delete(#[MapEntity(expr: 'repository.findOnePersonal(id)')] Gift $gift, DeleteGift $deleteGift): Response
     {
-        if (!$this->isCsrfTokenValid("gift-delete-{$gift->getId()}", $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         /** @var User $user */
         $user = $this->getUser();
 

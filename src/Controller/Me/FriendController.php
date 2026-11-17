@@ -13,10 +13,12 @@ use App\Services\Lifecycle\FriendRequestLifecycle;
 use App\Services\RefererRedirector;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -92,13 +94,10 @@ final class FriendController extends AbstractController
      * A new random slug, for a link that leaked: the previous one answers 404 at once. The
      * requests already received stay, to refuse or block as any other.
      */
+    #[IsCsrfTokenValid('invitation-regenerate')]
     #[Route('/friends/invitation/regenerate', name: 'app_friend_invitation_regenerate', methods: ['POST'])]
-    public function regenerateInvitation(Request $request, FriendBookRepository $friendBookRepository, InvitationSlugGenerator $invitationSlugGenerator, EntityManagerInterface $entityManager): Response
+    public function regenerateInvitation(FriendBookRepository $friendBookRepository, InvitationSlugGenerator $invitationSlugGenerator, EntityManagerInterface $entityManager): Response
     {
-        if (!$this->isCsrfTokenValid('invitation-regenerate', $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         /** @var User $user */
         $user = $this->getUser();
 
@@ -117,13 +116,10 @@ final class FriendController extends AbstractController
      * $friendRequest nullable, the token checked first: without it, a 403 whether the id
      * exists or not, as FriendshipController::act().
      */
+    #[IsCsrfTokenValid(new Expression('"friend-request-" ~ args["transition"] ~ "-" ~ args["id"]'))]
     #[Route('/friend-requests/{id}/{transition}', name: 'app_friend_request', requirements: ['id' => '\d+', 'transition' => 'accept|refuse|cancel'], methods: ['POST'])]
     public function answer(int $id, ?FriendRequest $friendRequest, string $transition, Request $request, FriendRequestLifecycle $friendRequestLifecycle, RefererRedirector $refererRedirector): Response
     {
-        if (!$this->isCsrfTokenValid("friend-request-$transition-$id", $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         if (null === $friendRequest) {
             throw $this->createNotFoundException();
         }

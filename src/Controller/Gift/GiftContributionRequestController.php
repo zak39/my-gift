@@ -14,6 +14,7 @@ use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -53,13 +54,10 @@ final class GiftContributionRequestController extends AbstractController
         ]);
     }
 
+    #[IsCsrfTokenValid(new Expression('"cancelled-contribution-gift-" ~ args["gift"].getId()'))]
     #[Route('/cancelled-contribution', name: 'app_gift_cancelled_contribution', methods: ['POST'])]
-    public function cancelContribution(Gift $gift, GiftLifecycle $giftLifecycle, ViewerUrlGenerator $viewerUrlGenerator, Request $request): Response
+    public function cancelContribution(Gift $gift, GiftLifecycle $giftLifecycle, ViewerUrlGenerator $viewerUrlGenerator): Response
     {
-        if (!$this->isCsrfTokenValid('cancelled-contribution-gift-'.$gift->getId(), $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         /** @var User $user */
         $user = $this->getUser();
 

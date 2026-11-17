@@ -14,6 +14,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/me')]
@@ -65,13 +66,10 @@ final class ProfileController extends AbstractController
     }
 
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    #[IsCsrfTokenValid('avatar-reset')]
     #[Route('/profile/avatar/reset', name: 'app_user_profile_avatar_reset', methods: ['POST'])]
-    public function resetAvatar(Request $request, ResetAvatar $resetAvatar): Response
+    public function resetAvatar(ResetAvatar $resetAvatar): Response
     {
-        if (!$this->isCsrfTokenValid('avatar-reset', $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         /** @var User $user */
         $user = $this->getUser();
 
@@ -89,6 +87,7 @@ final class ProfileController extends AbstractController
      * computer is not enough to destroy an account.
      */
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    #[IsCsrfTokenValid('account-delete')]
     #[Route('/profile/delete', name: 'app_user_profile_delete', methods: ['POST'])]
     public function delete(
         Request $request,
@@ -97,10 +96,6 @@ final class ProfileController extends AbstractController
         Security $security,
         LoggerInterface $logger,
     ): Response {
-        if (!$this->isCsrfTokenValid('account-delete', $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         /** @var User $user */
         $user = $this->getUser();
 

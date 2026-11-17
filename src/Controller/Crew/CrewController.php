@@ -12,9 +12,11 @@ use App\Services\Lifecycle\CrewLifecycle;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -84,13 +86,10 @@ final class CrewController extends AbstractController
     }
 
     #[IsGranted('crew.can_leave', subject: 'crew')]
+    #[IsCsrfTokenValid(new Expression('"crew-leave-" ~ args["crew"].getId()'))]
     #[Route('/leave', name: 'app_crew_leave', methods: ['POST'])]
-    public function leave(Crew $crew, Request $request, CrewLifecycle $crewLifecycle): Response
+    public function leave(Crew $crew, CrewLifecycle $crewLifecycle): Response
     {
-        if (!$this->isCsrfTokenValid("crew-leave-{$crew->getId()}", $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         /** @var User $user */
         $user = $this->getUser();
 
@@ -113,24 +112,20 @@ final class CrewController extends AbstractController
      * member who is not, or no longer, its owner (a page left open) is told so, not refused.
      */
     #[IsGranted('crew.is_member', subject: 'crew')]
+    #[IsCsrfTokenValid(new Expression('"crew-transfer-" ~ args["crew"].getId() ~ "-" ~ args["membership"].getUser().getId()'))]
     #[Route('/members/{member}/transfer', name: 'app_crew_transfer', requirements: ['member' => '\d+'], methods: ['POST'])]
     public function transfer(
         Crew $crew,
         #[MapEntity(mapping: ['id' => 'crew', 'member' => 'user'])] CrewMember $membership,
-        Request $request,
         CrewLifecycle $crewLifecycle,
     ): Response {
-        $newOwner = $membership->getUser();
-
-        if (!$this->isCsrfTokenValid("crew-transfer-{$crew->getId()}-{$newOwner->getId()}", $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         if (!$this->isGranted('crew.can_transfer', $crew)) {
             $this->addFlash('error', 'Seule la personne propriétaire du groupe peut le confier à un autre membre.');
 
             return $this->redirectToRoute('app_crew_show', ['id' => $crew->getId()]);
         }
+
+        $newOwner = $membership->getUser();
 
         try {
             $crewLifecycle->transfer($crew, $newOwner);
@@ -143,13 +138,10 @@ final class CrewController extends AbstractController
     }
 
     #[IsGranted('crew.can_delete', subject: 'crew')]
+    #[IsCsrfTokenValid(new Expression('"crew-delete-" ~ args["crew"].getId()'))]
     #[Route('/delete', name: 'app_crew_delete', methods: ['POST'])]
-    public function delete(Crew $crew, Request $request, CrewLifecycle $crewLifecycle): Response
+    public function delete(Crew $crew, CrewLifecycle $crewLifecycle): Response
     {
-        if (!$this->isCsrfTokenValid("crew-delete-{$crew->getId()}", $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         $crewLifecycle->delete($crew);
 
         $this->addFlash('success', "Le groupe « {$crew->getName()} » a bien été supprimé. Ses cadeaux sont retournés dans les « Cadeaux sans section » de celles et ceux qui les avaient ajoutés.");

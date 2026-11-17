@@ -9,9 +9,11 @@ use App\Services\Friend\FindInvitation;
 use App\Services\Lifecycle\FriendRequestLifecycle;
 use App\Services\LinkPreviewBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -66,13 +68,10 @@ final class InvitationController extends AbstractController
      * not be, one's own link, a block, a request already there, with its message.
      */
     #[IsGranted('IS_AUTHENTICATED')]
+    #[IsCsrfTokenValid(new Expression('"invitation-send-" ~ args["slug"]'))]
     #[Route('', name: 'app_invitation_send', methods: ['POST'])]
-    public function send(string $slug, Request $request, FriendBookRepository $friendBookRepository, FriendRequestLifecycle $friendRequestLifecycle): Response
+    public function send(string $slug, FriendBookRepository $friendBookRepository, FriendRequestLifecycle $friendRequestLifecycle): Response
     {
-        if (!$this->isCsrfTokenValid("invitation-send-$slug", $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         // Its page was shown, the token says so: not found, the slug changed since.
         $book = $friendBookRepository->findOneBySlug($slug) ?? throw $this->createNotFoundException();
 

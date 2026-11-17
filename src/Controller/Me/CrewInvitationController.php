@@ -5,9 +5,10 @@ namespace App\Controller\Me;
 use App\Entity\CrewInvitation;
 use App\Services\Lifecycle\CrewLifecycle;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -22,13 +23,10 @@ final class CrewInvitationController extends AbstractController
      * No voter on the route: the lifecycle checks can(), which runs the workflow guards,
      * which ask CrewInvitationVoter. A forged request ends in an error message.
      */
+    #[IsCsrfTokenValid(new Expression('"crew-invitation-" ~ args["transition"] ~ "-" ~ args["invitation"].getId()'))]
     #[Route('/{id}/{transition}', name: 'app_crew_invitation', requirements: ['id' => '\d+', 'transition' => 'accept|refuse'], methods: ['POST'])]
-    public function answer(CrewInvitation $invitation, string $transition, Request $request, CrewLifecycle $crewLifecycle): Response
+    public function answer(CrewInvitation $invitation, string $transition, CrewLifecycle $crewLifecycle): Response
     {
-        if (!$this->isCsrfTokenValid("crew-invitation-$transition-{$invitation->getId()}", $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         $crew = $invitation->getCrew();
 
         try {
