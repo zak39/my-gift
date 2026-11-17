@@ -5,7 +5,7 @@
         {% if computed.pendingCrewInvitationCount > 0 %}
             <span class="indicator-item badge badge-secondary badge-xs" aria-hidden="true"></span>
         {% endif %}
-        <twig:Molecule:UserAvatar :user="app.user" id="user_avatar_header" />
+        <twig:Molecule:UserAvatar :user="app.user" currentUser />
     </div>
     <ul
         tabindex="-1"
