@@ -167,7 +167,9 @@ class CrewNotificationSubscriber implements EventSubscriberInterface
         }
 
         $email = (new TemplatedEmail())
-            ->to(...array_map(fn (Participant $participant) => $participant->getParticipantUser()->getEmail(), $recipients))
+            // In blind copy: the givers are friends of the owner, or of a crew member, not
+            // always of each other, and nobody's address shows to the others.
+            ->bcc(...array_map(fn (Participant $participant) => $participant->getParticipantUser()->getEmail(), $recipients))
             ->subject(\sprintf('Le cadeau « %s » du groupe « %s » n\'existe plus', $gift->getTitle(), $event->getCrewName()))
             ->htmlTemplate('emails/crew_gift_deleted.html.twig')
             ->context([

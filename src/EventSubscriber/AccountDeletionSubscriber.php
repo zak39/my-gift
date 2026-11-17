@@ -101,7 +101,9 @@ class AccountDeletionSubscriber implements EventSubscriberInterface
         $ownerName = $gift->getCreatedBy()->getPseudo();
 
         $email = (new TemplatedEmail())
-            ->to(...array_map(fn (Participant $participant) => $participant->getParticipantUser()->getEmail(), $recipients))
+            // In blind copy: the givers are friends of the owner, or of a crew member, not
+            // always of each other, and nobody's address shows to the others.
+            ->bcc(...array_map(fn (Participant $participant) => $participant->getParticipantUser()->getEmail(), $recipients))
             ->subject(\sprintf('Le cadeau « %s » de %s n\'existe plus', $gift->getTitle(), ucfirst($ownerName)))
             ->htmlTemplate('emails/gift_deleted_with_account.html.twig')
             ->context([
