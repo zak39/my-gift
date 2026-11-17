@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Lien d'invitation introuvable | My Gift{% endblock %}
+
+{% block body %}
+    {# Most often a link its owner changed since (InvitationController::show()): the visitor
+       learns who holds the new one. #}
+    <twig:Organism:ErrorPage :statusCode="404" title="Ce lien d'invitation est introuvable"
+        message="Il n'existe pas ou a été changé. Demandez le nouveau lien à la personne qui vous l'a envoyé." />
+{% endblock %}

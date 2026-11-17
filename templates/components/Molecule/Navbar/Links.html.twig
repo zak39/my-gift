@@ -1,3 +1,13 @@
+{# The friends' page, with the invitation link, the one way to new friends: its badge counts
+   the requests waiting there (the avatar's dot, the crew invitations only). #}
 <li{{ attributes }}>
-    <twig:Atomic:Router:Link link="{{ path('app_user') }}" name="Trouver vos amis" />
+    <a href="{{ path('app_friend') }}">
+        Mes ami·es
+        {% if computed.pendingFriendRequestCount > 0 %}
+            <span class="badge badge-sm badge-secondary">
+                {{ computed.pendingFriendRequestCount }}
+                <span class="sr-only">demande{{ computed.pendingFriendRequestCount > 1 ? 's' }} reçue{{ computed.pendingFriendRequestCount > 1 ? 's' }}</span>
+            </span>
+        {% endif %}
+    </a>
 </li>

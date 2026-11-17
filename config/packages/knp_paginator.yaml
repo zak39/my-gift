@@ -1,2 +1,6 @@
 knp_paginator:
     page_range: 8
+    default_options:
+        # A page past the last one (a URL kept, a friend removed since) shows the last,
+        # rather than an empty page read as « nothing here ».
+        page_out_of_range: fix

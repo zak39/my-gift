@@ -11,6 +11,7 @@ use App\Event\CrewHandedOverEvent;
 use App\Event\CrewInvitationSentEvent;
 use App\Event\CrewMemberJoinedEvent;
 use App\Event\CrewMemberLeftEvent;
+use App\Services\Url\ProfileUrlGenerator;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -28,6 +29,7 @@ class CrewNotificationSubscriber implements EventSubscriberInterface
     public function __construct(
         private MailerInterface $mailer,
         private UrlGeneratorInterface $urlGenerator,
+        private ProfileUrlGenerator $profileUrlGenerator,
     ) {
     }
 
@@ -45,6 +47,7 @@ class CrewNotificationSubscriber implements EventSubscriberInterface
                 'crewName' => $crewName,
                 'inviter' => $inviter,
                 'invitee' => $invitation->getInvitee(),
+                'profileUrl' => $this->profileUrlGenerator->forReader($invitation->getInvitee(), $inviter),
                 // The invitations wait on « Mes groupes », with their answer buttons.
                 'url' => $this->urlGenerator->generate('app_crew', [], UrlGeneratorInterface::ABSOLUTE_URL),
             ])
@@ -139,6 +142,7 @@ class CrewNotificationSubscriber implements EventSubscriberInterface
                     'crewName' => $event->getCrewName(),
                     'owner' => $owner,
                     'member' => $member,
+                    'profileUrl' => $this->profileUrlGenerator->forReader($member, $owner),
                     'url' => $this->urlGenerator->generate('app_section', [], UrlGeneratorInterface::ABSOLUTE_URL),
                 ])
             ;
@@ -197,8 +201,9 @@ class CrewNotificationSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * One email to the members about the one who joined or left, with their card. A crew
-     * handed over may leave nobody to tell but its new owner, told apart.
+     * One email per member about the one who joined or left, with their card: its link to
+     * their sections is only for a friend (ProfileUrlGenerator). A crew handed over may
+     * leave nobody to tell but its new owner, told apart.
      *
      * @param list<User>           $recipients
      * @param string               $subject    a sprintf() pattern receiving the member's pseudo and the crew's name
@@ -206,22 +211,24 @@ class CrewNotificationSubscriber implements EventSubscriberInterface
      */
     private function tellMembers(array $recipients, Crew $crew, User $member, string $subject, string $template, array $context = []): void
     {
-        if (!$recipients) {
-            return;
+        $subject = \sprintf($subject, $member->getPseudo(), $crew->getName());
+        $url = $this->urlGenerator->generate('app_crew_show', ['id' => $crew->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        foreach ($recipients as $recipient) {
+            $email = (new TemplatedEmail())
+                ->to($recipient->getEmail())
+                ->subject($subject)
+                ->htmlTemplate($template)
+                ->context([
+                    'crewName' => $crew->getName(),
+                    'member' => $member,
+                    'profileUrl' => $this->profileUrlGenerator->forReader($recipient, $member),
+                    'url' => $url,
+                    ...$context,
+                ])
+            ;
+
+            $this->mailer->send($email);
         }
-
-        $email = (new TemplatedEmail())
-            ->to(...array_map(fn (User $user) => $user->getEmail(), $recipients))
-            ->subject(\sprintf($subject, $member->getPseudo(), $crew->getName()))
-            ->htmlTemplate($template)
-            ->context([
-                'crewName' => $crew->getName(),
-                'member' => $member,
-                'url' => $this->urlGenerator->generate('app_crew_show', ['id' => $crew->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
-                ...$context,
-            ])
-        ;
-
-        $this->mailer->send($email);
     }
 }

@@ -73,7 +73,7 @@
             <div><a class="link link-hover" href="{{ path('app_forgot_password_request') }}">Mot de passe oublié ?</a></div>
             {# Only after a login refused for an unconfirmed address (SecurityController::login()). #}
             {% if emailUnverified ?? false %}
-                <div><a class="link link-hover" href="{{ path('app_verify_resend') }}">Pas reçu l'email de confirmation ?</a></div>
+                <div><a class="link link-hover" href="{{ path('app_verify_resend', { invitation: invitation ?? null }) }}">Pas reçu l'email de confirmation ?</a></div>
             {% endif %}
             <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
             {# A shared link opened while logged out (SharedLinkPreviewListener): back to it once logged in. #}

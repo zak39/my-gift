@@ -3,7 +3,7 @@
     <UserCard
       name="{{ participant.participantUser.pseudo }}"
       avatar="{{ absolute_url(user_avatar_image_url(participant.participantUser)) }}"
-      to="{{ url('app_section_user_page', { id: participant.participantUser.id }) }}"
+      with-profile
     />
   <Raw>{% endif %}</Raw>
 </template>

@@ -20,7 +20,7 @@ import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
                     <h1>Votre cadeau est prêt ! 🎁</h1>
 
                     <p>
-                        Bonjour<Raw>{% if recipientName %} {{ recipientName|title }}{% endif %}</Raw>,
+                        Bonjour <Raw>{{ recipientName|title }}</Raw>,
                     </p>
 
                     <p>

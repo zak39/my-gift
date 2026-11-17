@@ -1,0 +1,55 @@
+{% set link = invitation_url(slug) %}
+
+{# The panel of Organism:Crew:InvitePanel, its sibling on a crew's page. #}
+<section {{ attributes.defaults({ class: 'card border border-base-300 bg-base-100 shadow-sm' }) }} aria-labelledby="invitation-link-title">
+    <div class="card-body gap-4 p-5 sm:p-7">
+        <div>
+            <h2 id="invitation-link-title" class="card-title">
+                <twig:ux:icon name="lucide:link" class="size-5" />
+                Votre lien d'invitation
+            </h2>
+            <p class="mt-1 text-sm text-muted">
+                Envoyez-le à vos proches, par message ou par email. En l'ouvrant, ils vous demandent en ami·e, et vous acceptez ou non.
+            </p>
+        </div>
+
+        <p class="rounded-box bg-base-200 px-4 py-3 font-mono text-sm wrap-anywhere">{{ link }}</p>
+
+        <div class="flex flex-wrap items-center gap-2">
+            <twig:Molecule:ShareLinkButton :url="link" label="Copier le lien" />
+            <twig:Atomic:ButtonLink :to="path('app_friend_invitation_edit')" style="ghost">
+                <twig:block name="icon">
+                    <twig:ux:icon name="lucide:pencil" class="size-4" />
+                </twig:block>
+                <twig:block name="name">
+                    <span>Personnaliser</span>
+                </twig:block>
+            </twig:Atomic:ButtonLink>
+
+            {# A native dialog: closed, it gives the focus back to the button that opened it. #}
+            <twig:Modal title="Générer un nouveau lien ?" class="invitation_regenerate">
+                <twig:block name="handlerButton">
+                    <button type="button" class="btn btn-ghost" onclick="modal_invitation_regenerate.showModal()">
+                        <twig:ux:icon name="lucide:refresh-cw" class="size-4" />
+                        Générer un nouveau lien
+                    </button>
+                </twig:block>
+                <twig:block name="message">
+                    <p class="py-4">
+                        L'ancien lien ne fonctionnera plus : envoyez le nouveau à vos ami·es.
+                        Les demandes déjà reçues restent, à accepter ou refuser.
+                    </p>
+                </twig:block>
+                <twig:block name="actionButtons">
+                    <form method="post" action="{{ path('app_friend_invitation_regenerate') }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('invitation-regenerate') }}">
+                        <button type="submit" class="btn btn-primary">
+                            <twig:ux:icon name="lucide:refresh-cw" class="size-4" />
+                            Oui, générer un nouveau lien
+                        </button>
+                    </form>
+                </twig:block>
+            </twig:Modal>
+        </div>
+    </div>
+</section>

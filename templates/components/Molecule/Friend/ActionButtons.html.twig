@@ -1,7 +1,6 @@
 {# One branch per FriendRelation case, worked out once by the component class. #}
 {% set Relation = enum('App\\Enum\\FriendRelation') %}
 {% set relation = this.relation %}
-{% set pendingRequest = this.pendingRequest %}
 {% set blockQuestion = 'Bloquer ' ~ user.pseudo ~ ' ? Tout lien entre vous sera supprimé, et ' ~ user.pseudo ~ ' ne pourra plus vous envoyer de demande.' %}
 
 <div {{ attributes.defaults({ class: 'flex flex-wrap items-center gap-2' }) }}>
@@ -10,10 +9,21 @@
             <twig:ux:icon name="lucide:user-check" />
             Ami·e
         </span>
-        {# Removing and blocking are rare and final: they wait behind "…", on a row of its
-           own below the other buttons, each entry opening the modal of its UnlinkButton below; the focus
-           comes back to "…" when it closes. #}
-        <div class="dropdown dropdown-end order-last flex basis-full justify-end" data-controller="dropdown">
+        {# Their sections, under the rule of their page: anyone else gets a 404 there. #}
+        {% if is_granted('user.can_see_gifts', user) %}
+            <twig:Atomic:ButtonLink class="btn-sm" style="ghost" :to="path('app_section_user_page', { id: user.id })">
+                <twig:block name="name">
+                    <span>Voir ses sections</span>
+                </twig:block>
+                <twig:block name="icon">
+                    <twig:ux:icon name="lucide:arrow-right" class="size-4" />
+                </twig:block>
+            </twig:Atomic:ButtonLink>
+        {% endif %}
+        {# Removing and blocking are rare and final: they wait behind "…", last (RGAA 12.8: the
+           tab order follows the one on screen), each entry opening the modal of its
+           UnlinkButton below; the focus comes back to "…" when it closes. #}
+        <div class="dropdown dropdown-end {{ menuClass }}" data-controller="dropdown">
             <div tabindex="0" role="button" class="btn btn-sm btn-ghost btn-square" aria-label="Plus d'actions pour {{ user.pseudo }}" data-dropdown-target="trigger">
                 <twig:ux:icon name="lucide:ellipsis" class="size-4" />
             </div>
@@ -50,6 +60,7 @@
         </form>
 
     {% elseif relation is same as(Relation.REQUEST_RECEIVED) %}
+        {% set pendingRequest = this.pendingRequest %}
         <form method="post" action="{{ path('app_friend_request', { id: pendingRequest.id, transition: 'accept' }) }}">
             <input type="hidden" name="_token" value="{{ csrf_token('friend-request-accept-' ~ pendingRequest.id) }}">
             <button type="submit" class="btn btn-sm btn-primary">
@@ -68,6 +79,7 @@
         <twig:Molecule:Friend:UnlinkButton :user="user" action="block" label="Bloquer" icon="lucide:ban" :question="blockQuestion" />
 
     {% elseif relation is same as(Relation.REQUEST_SENT) %}
+        {% set pendingRequest = this.pendingRequest %}
         <span class="badge badge-info gap-1.5">
             <twig:ux:icon name="lucide:clock" />
             En attente
@@ -81,12 +93,7 @@
         </form>
 
     {% else %}
-        <form method="post" action="{{ path('app_friend_action', { id: user.id, action: 'send' }) }}">
-            <input type="hidden" name="_token" value="{{ csrf_token('friend-send-' ~ user.id) }}">
-            <button type="submit" class="btn btn-sm btn-primary">
-                <twig:ux:icon name="lucide:user-plus" class="size-4" />
-                Ajouter
-            </button>
-        </form>
+        {# A stranger: nothing here, but for a caller that may ask them, the invitation page. #}
+        {% block stranger %}{% endblock %}
     {% endif %}
 </div>

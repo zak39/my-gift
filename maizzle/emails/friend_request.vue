@@ -31,7 +31,7 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
                         En acceptant, vous découvrirez chacun·e les envies de l'autre : <Raw>{{ sender.pseudo }}</Raw> pourra voir vos cadeaux, et vous les siens, pour faire plaisir sans jamais offrir deux fois la même chose.
                     </p>
 
-                    <!-- No `to`: not friends yet. -->
+                    <!-- No profile: not friends yet, the very thing this email asks. -->
                     <div class="my-6">
                         <UserCard
                             name="{{ sender.pseudo }}"

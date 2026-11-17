@@ -80,8 +80,9 @@ class AccountDeletionSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * One email to all its givers, as the other gift emails: a reservation or a pool may
-     * have meant a purchase or money changing hands outside the app.
+     * One email to all its givers, with no card nor link a reader might not be allowed to
+     * follow: a reservation or a pool may have meant a purchase or money changing hands
+     * outside the app.
      */
     public function giftDeletedWithAccount(GiftDeletedWithAccountEvent $event): void
     {

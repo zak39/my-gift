@@ -24,7 +24,7 @@ import UserCardStyle from '../components/styles/UserCardStyle.vue'
                     <h1>Votre demande de cadeau a été réservée ! 🎁</h1>
 
                     <p>
-                        Bonjour<Raw>{% if recipientName %} {{ recipientName|title }}{% endif %}</Raw>,
+                        Bonjour <Raw>{{ recipientName|title }}</Raw>,
                     </p>
 
                     <Raw>{% if participant.isAnonymous %}</Raw>

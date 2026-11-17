@@ -11,6 +11,7 @@ use App\Event\GiftNoLongerReadyEvent;
 use App\Event\GiftReadyEvent;
 use App\Services\Gift\GiftOwnerLabel;
 use App\Services\Url\AvatarUrlGenerator;
+use App\Services\Url\ProfileUrlGenerator;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -28,6 +29,7 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
         private GiftOwnerLabel $giftOwnerLabel,
         private StorageInterface $storage,
         private AvatarUrlGenerator $avatarUrlGenerator,
+        private ProfileUrlGenerator $profileUrlGenerator,
     ) {
     }
 
@@ -37,10 +39,11 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
         $gift = $event->getSubject();
 
         $participant = $gift->getParticipants()->first();
+        $giver = $participant->getParticipantUser();
 
         $this->sendToOwners($gift, 'Votre demande de cadeau a été réservée ! 🎁', 'emails/gift_reserved.html.twig', [
             'participant' => $participant,
-        ], excluded: $participant->getParticipantUser());
+        ], excluded: $giver, carded: $giver);
     }
 
     /**
@@ -138,12 +141,12 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * One email to all the givers of a gift its owners deleted, as when it goes with its
+     * One email to each giver of a gift its owners deleted, as when it goes with its
      * author's account (AccountDeletionSubscriber) or with a crew's section
      * (CrewNotificationSubscriber). The worker renders it once the gift is gone: the Gift
      * travels serialized with the message, its own fields with it, but its crew is worded
      * now, its image, removed from the disk on flush, is embedded now, and whoever deleted
-     * it is told in plain values, without a link the reader may not be allowed to follow.
+     * it is told in plain values, the link to their sections for a friend only.
      */
     public function giftDeleted(GiftDeletedEvent $event): void
     {
@@ -162,8 +165,7 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
 
         $ownerOf = $this->giftOwnerLabel->of($gift);
 
-        $email = (new TemplatedEmail())
-            ->to(...array_map(fn (Participant $participant) => $participant->getParticipantUser()->getEmail(), $recipients))
+        $base = (new TemplatedEmail())
             ->subject(\sprintf('Le cadeau « %s » %s n\'existe plus', $gift->getTitle(), $ownerOf))
             ->htmlTemplate('emails/gift_deleted.html.twig')
         ;
@@ -172,28 +174,36 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
         $imagePath = $this->storage->resolvePath($gift, 'imageFile');
         if (null !== $imagePath && is_readable($imagePath)) {
             // Its contents, not its path: the file is gone when the worker sends the email.
-            $email->embed(file_get_contents($imagePath), 'gift-image', mime_content_type($imagePath));
+            $base->embed(file_get_contents($imagePath), 'gift-image', mime_content_type($imagePath));
             $giftImage = 'cid:gift-image';
         }
 
-        $email->context([
+        $context = [
             'gift' => $gift,
             // Null from the admin: the email names My Gift's team.
             'deleter' => null === $deletedBy ? null : [
                 'name' => $deletedBy->getPseudo(),
                 'avatar' => $this->avatarUrlGenerator->imageUrl($deletedBy),
-                // A crew's givers may only be friends of another member: their list is not
-                // this member's to show them (user.can_see_gifts).
-                'profileUrl' => null !== $gift->getCrew() ? null : $this->urlGenerator->generate('app_section_user_page', ['id' => $deletedBy->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
             ],
             'ownerOf' => $ownerOf,
             'crewOf' => null !== $gift->getCrew() ? $ownerOf : null,
             'giftImage' => $giftImage,
             // A ready gift may come from a reservation or from a pool.
             'pooled' => $gift->getPool()->isPooled(),
-        ]);
+        ];
 
-        $this->mailer->send($email);
+        // One email per giver, the same but for its address and its link to the deleter's
+        // sections; the image is read once, though each email queued carries its own copy.
+        foreach ($recipients as $recipient) {
+            $reader = $recipient->getParticipantUser();
+
+            $email = (clone $base)
+                ->to($reader->getEmail())
+                ->context([...$context, 'profileUrl' => $this->profileUrlGenerator->forReader($reader, $deletedBy)])
+            ;
+
+            $this->mailer->send($email);
+        }
     }
 
     public static function getSubscribedEvents(): array
@@ -213,42 +223,42 @@ class WorkflowGiftSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * One email to the gift's owners (GiftOwnership): its author for a personal gift, every
-     * member of its crew for a crew's, in one To:. Nothing sent when nobody is left to
-     * tell: a mail failing here would abort the workflow transition or the account
-     * deletion that triggered it.
+     * One email to each of the gift's owners (GiftOwnership): its author for a personal
+     * gift, every member of its crew for a crew's, the card of $carded linking to their
+     * sections only for a reader who is their friend (ProfileUrlGenerator). None at all when
+     * nobody is left to tell.
      *
      * @param array<string, mixed> $context  added to the template's
      * @param ?User                $excluded the giver behind the event, a member of the
      *                                       crew too when they joined it after taking part
+     * @param ?User                $carded   whose card the email shows, such as that giver
      */
-    private function sendToOwners(Gift $gift, string $subject, string $template, array $context = [], ?User $excluded = null): void
+    private function sendToOwners(Gift $gift, string $subject, string $template, array $context = [], ?User $excluded = null, ?User $carded = null): void
     {
         $owners = array_filter($gift->getOwnership()->owners(), fn (User $owner) => $owner !== $excluded);
+        $crewOf = null !== $gift->getCrew() ? $this->giftOwnerLabel->of($gift) : null;
+        $url = $this->urlGenerator->generate('app_gift_show', ['id' => $gift->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        if (!$owners) {
-            return;
+        foreach ($owners as $owner) {
+            $email = (new TemplatedEmail())
+                ->to($owner->getEmail())
+                ->subject($subject)
+                ->htmlTemplate($template)
+                ->context([
+                    'gift' => $gift,
+                    // Plain values: the worker renders the email later. Each owner greeted by
+                    // their first name, as every greeting does, a crew's gift with the crew
+                    // named after it (Maizzle's GiftTitle).
+                    'recipientName' => $owner->getFirstname(),
+                    'crewOf' => $crewOf,
+                    'profileUrl' => $this->profileUrlGenerator->forReader($owner, $carded),
+                    'url' => $url,
+                    ...$context,
+                ])
+            ;
+
+            $this->mailer->send($email);
         }
-
-        $crew = $gift->getCrew();
-
-        $email = (new TemplatedEmail())
-            ->to(...array_map(fn (User $owner) => $owner->getEmail(), $owners))
-            ->subject($subject)
-            ->htmlTemplate($template)
-            ->context([
-                'gift' => $gift,
-                // Plain values: the worker renders the email later. A crew's members are
-                // greeted together, the crew named after the gift (Maizzle's GiftTitle); the
-                // author of a personal gift by their first name, as every greeting does.
-                'recipientName' => null !== $crew ? null : $gift->getCreatedBy()?->getFirstname(),
-                'crewOf' => null !== $crew ? $this->giftOwnerLabel->of($gift) : null,
-                'url' => $this->urlGenerator->generate('app_gift_show', ['id' => $gift->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
-                ...$context,
-            ])
-        ;
-
-        $this->mailer->send($email);
     }
 
     /**

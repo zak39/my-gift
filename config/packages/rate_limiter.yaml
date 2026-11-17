@@ -21,3 +21,16 @@ framework:
             policy: 'fixed_window'
             limit: 1
             interval: '1 day'
+        # Invitation links missed (App\Services\Friend\FindInvitation), per caller's IP: a
+        # chosen slug may be a word, and guessing must stay slow. Only the misses count, so
+        # that a messenger's bot unfolding real links, one IP for many users, is not stopped.
+        invitation_lookup:
+            policy: 'fixed_window'
+            limit: 20
+            interval: '1 hour'
+        # The slugs a user tries for their own link (App\Services\Friend\CheckInvitationSlugAttempt),
+        # per user: the form tells a slug in use, as a link opened does.
+        invitation_slug_change:
+            policy: 'fixed_window'
+            limit: 10
+            interval: '1 hour'

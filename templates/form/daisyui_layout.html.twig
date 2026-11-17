@@ -3,6 +3,8 @@
 
    Extra variables understood by form_row() on text-like fields:
    - prefix_icon: an icon name drawn inside the field, before the value (URL fields get 'lucide:link')
+   - prefix: text or markup drawn inside the field, before the value (an invitation link's beginning,
+     before its slug); being in the field's wrapping <label>, it is part of the field's name
    - suffix: text or markup drawn inside the field, after the value (money fields get their currency) #}
 {% use 'form_div_layout.html.twig' %}
 
@@ -81,13 +83,14 @@
     {%- elseif type == 'file' -%}
         {%- set attr = attr|merge({ class: ('file-input w-full ' ~ (errors|length > 0 ? 'file-input-error ') ~ attr.class|default(''))|trim }) -%}
         {{- parent() -}}
-    {%- elseif prefix_icon is defined or suffix is defined -%}
-        {# The daisyUI `input` class moves to a wrapper so an icon or a unit can sit inside the field. #}
+    {%- elseif prefix_icon is defined or prefix is defined or suffix is defined -%}
+        {# The daisyUI `input` class moves to a wrapper so an icon, a text or a unit can sit inside the field. #}
         {%- set wrapper_class = errors|length > 0 ? 'input input-error w-full' : 'input w-full' -%}
         <label class="{{ wrapper_class }}">
             {%- if prefix_icon is defined -%}
                 {{ ux_icon(prefix_icon, { class: 'size-4 shrink-0 opacity-60', 'aria-hidden': 'true' }) }}
             {%- endif -%}
+            {{- prefix|default('') -}}
             {%- set attr = attr|merge({ class: ('grow ' ~ attr.class|default(''))|trim }) -%}
             {{- parent() -}}
             {{- suffix|default('') -}}

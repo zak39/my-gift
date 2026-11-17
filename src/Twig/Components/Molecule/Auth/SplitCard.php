@@ -14,6 +14,9 @@ final class SplitCard
     /** The page it sits on, one of SwitchPanel::PAGES. */
     public string $page;
 
+    /** The slug of the invitation link that led to the page, passed on to SwitchPanel. */
+    public ?string $invitation = null;
+
     /**
      * Required through mount(): a typed property left unset is skipped on its way to the
      * template, so a missing page would render an empty panel, with no error.

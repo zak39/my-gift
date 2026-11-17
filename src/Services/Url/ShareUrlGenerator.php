@@ -5,6 +5,7 @@ namespace App\Services\Url;
 use App\Entity\Crew;
 use App\Entity\Gift;
 use App\Entity\User;
+use App\Repository\FriendBookRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\UriSigner;
 use Symfony\Component\HttpFoundation\UrlHelper;
@@ -12,8 +13,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Attribute\AsTwigFunction;
 
 /**
- * The links the "Partager" buttons copy: a gift's page, a user's list, a crew's, as their
- * friends open them. Signed (`_hash`, `_expiration`) for whoever may see what the link
+ * The links the "Partager" buttons copy: a gift's page, a crew's list, as their friends open
+ * them, and a user's own invitation link. Signed (`_hash`, `_expiration`) for whoever may see what the link
  * shows, so that its card unfolds in a messenger: a link-preview bot is never logged in,
  * and only a signed link shows it more than the app's own card (SharedLinkPreviewListener).
  * Anyone else gets the bare link: guessing ids, or sharing a list one cannot see, unfolds
@@ -37,6 +38,7 @@ final class ShareUrlGenerator
         private readonly UrlHelper $urlHelper,
         private readonly UriSigner $uriSigner,
         private readonly Security $security,
+        private readonly FriendBookRepository $friendBookRepository,
     ) {
     }
 
@@ -46,10 +48,27 @@ final class ShareUrlGenerator
         return $this->share($this->urlHelper->getAbsoluteUrl($this->viewerUrlGenerator->show($gift)), 'gift.can_see', $gift);
     }
 
-    #[AsTwigFunction('user_list_share_url')]
-    public function userList(User $user): string
+    /**
+     * The logged-in user's list, as they share it (GiftListHeader:Actions): their invitation
+     * link, where their friends find « Voir ses sections », and anyone else a request to send,
+     * not the 404 of /users/{id}. Nobody else's: the slug is its owner's secret.
+     */
+    #[AsTwigFunction('own_invitation_url')]
+    public function ownInvitation(): string
     {
-        return $this->share($this->absoluteUrl('app_section_user_page', $user->getId()), 'user.can_see_gifts', $user);
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        return $this->invitation($this->friendBookRepository->of($user)->getInvitationSlug());
+    }
+
+    /**
+     * An invitation link, public: the slug is its secret, it needs no signature.
+     */
+    #[AsTwigFunction('invitation_url')]
+    public function invitation(string $slug): string
+    {
+        return $this->urlGenerator->generate('app_invitation', ['slug' => $slug], UrlGeneratorInterface::ABSOLUTE_URL);
     }
 
     #[AsTwigFunction('crew_share_url')]
@@ -61,7 +80,7 @@ final class ShareUrlGenerator
     /**
      * @param string $canSee the voter attribute telling who may see what the link shows
      */
-    private function share(string $url, string $canSee, Gift|User|Crew $subject): string
+    private function share(string $url, string $canSee, Gift|Crew $subject): string
     {
         return $this->security->isGranted($canSee, $subject)
             ? $this->uriSigner->sign($url, new \DateInterval(self::VALIDITY))
