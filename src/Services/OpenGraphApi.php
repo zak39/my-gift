@@ -42,6 +42,11 @@ class OpenGraphApi
 
     private function parseOpenGraph(string $html): array
     {
+        // DOMDocument::loadHTML('') throws a ValueError, an \Error no caller catches.
+        if ('' === trim($html)) {
+            throw new OpenGraphNotFoundException('Empty HTML content');
+        }
+
         libxml_use_internal_errors(true);
 
         $dom = new \DOMDocument();
