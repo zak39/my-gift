@@ -1,15 +1,15 @@
-<div {{ attributes.defaults({ class: 'stat content-start px-0 sm:px-6' }) }}>
+<div {{ attributes.defaults({ class: 'stat content-start @max-[48rem]:content-between @max-[48rem]:px-2 @max-[48rem]:first:pl-0' }) }}>
     {# Element opacity, not an alpha colour: with alpha the stroke is painted per
        sub-path, so overlapping segments compound into dark spots on the joints. #}
-    <div class="stat-figure text-base-content opacity-60">
+    <div class="stat-figure text-base-content opacity-60 @max-[48rem]:hidden">
         <twig:ux:icon :name="icon" class="size-8" />
     </div>
-    <div class="stat-title">{{ title }}</div>
-    <div class="stat-value tabular-nums {{ highlight ? 'text-primary' : '' }}">{{ value }}</div>
+    <div class="stat-title @max-[48rem]:whitespace-normal">{{ title }}</div>
+    <div class="stat-value tabular-nums @max-[48rem]:text-2xl {{ highlight ? 'text-primary' : '' }}">{{ value }}</div>
     {# A caller may write its own line of context, with markup (Organism:GiftListHeader). #}
     {% block description %}
         {% if description %}
-            <div class="stat-desc">{{ description }}</div>
+            <div class="stat-desc @max-[48rem]:sr-only">{{ description }}</div>
         {% endif %}
     {% endblock %}
 </div>

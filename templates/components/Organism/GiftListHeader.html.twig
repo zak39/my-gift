@@ -1,11 +1,13 @@
-<section {{ attributes.defaults({ class: 'relative overflow-hidden rounded-box border border-base-300 bg-base-100 shadow-sm' }) }}>
-    <twig:Atomic:GiftRibbon />
+{# No overflow-hidden on the card: it would clip the "…" menu of the actions, so the
+   ribbon rounds its own corners. #}
+<section {{ attributes.defaults({ class: 'relative rounded-box border border-base-300 bg-base-100 shadow-sm' }) }}>
+    <twig:Atomic:GiftRibbon class="rounded-t-box" />
 
-    <div class="flex flex-col gap-5 p-5 sm:p-7 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
+    <div class="flex flex-col gap-4 p-4 sm:gap-5 sm:p-7 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
         <div class="flex items-center gap-4 sm:gap-6">
             <twig:Molecule:UserAvatar
                 :user="user"
-                sizeClass="h-20 w-20 shrink-0 rounded-full ring-2 ring-base-300 ring-offset-2 ring-offset-base-100 sm:h-24 sm:w-24" />
+                sizeClass="h-14 w-14 shrink-0 rounded-full ring-2 ring-base-300 ring-offset-2 ring-offset-base-100 sm:h-24 sm:w-24" />
 
             <div class="min-w-0">
                 <h1 class="text-2xl leading-tight font-bold wrap-anywhere sm:text-3xl">
@@ -16,7 +18,7 @@
                     {% endif %}
                 </h1>
                 {% if this.total > 0 %}
-                    <p class="mt-2 flex items-center gap-2 text-sm text-muted">
+                    <p class="mt-1 flex items-center gap-2 text-sm text-muted sm:mt-2">
                         <twig:ux:icon name="lucide:gift" class="size-4 shrink-0" />
                         <span class="tabular-nums">{{ this.total }} cadeau{{ this.total > 1 ? 'x' : '' }}</span>
                     </p>
@@ -28,8 +30,10 @@
     </div>
 
     {% if this.total > 0 %}
-        <div class="border-t border-base-300 px-5 py-4 sm:px-7">
-            <div class="stats stats-vertical w-full bg-transparent sm:stats-horizontal">
+        {# Side by side from the smallest screen: stacked, the three figures pushed the
+           gifts below the fold on a phone. #}
+        <div class="border-t border-base-300 px-4 py-3 sm:px-7 sm:py-4">
+            <div class="stats @container w-full bg-transparent">
                 {% if ownerView %}
                     {# Read here: inside the block below, `this` is Molecule:Stat. #}
                     {% set crewPublished = this.crewPublishedCount %}
@@ -39,7 +43,7 @@
                         :value="this.publishedCount"
                         :highlight="true">
                         <twig:block name="description">
-                            <div class="stat-desc">
+                            <div class="stat-desc @max-[48rem]:sr-only">
                                 visibles sur votre profil public{% if crewPublished > 0 %},
                                     et <span class="font-semibold text-primary tabular-nums">{{ crewPublished }}</span>
                                     cadeau{{ crewPublished > 1 ? 'x' }} de vos groupes{% endif %}
