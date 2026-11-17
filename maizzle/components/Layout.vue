@@ -1,7 +1,8 @@
 <!--
   Copy of the built-in <Layout> of @maizzle/framework 6.1.3, which it overrides in every email.
-  Only change: Inter is loaded from the app (assets/fonts/inter/inter.css, through AssetMapper)
-  instead of Google Fonts, so opening an email does not send the reader's IP address to Google.
+  Two changes: Inter is loaded from the app (assets/fonts/inter/inter.css, through AssetMapper)
+  instead of Google Fonts, so opening an email does not send the reader's IP address to Google;
+  and the default language is French, the emails' own (RGAA 8.3), instead of English.
   When upgrading Maizzle, compare with node_modules/@maizzle/framework/dist/components/Layout.vue.
 -->
 <script setup>
@@ -18,7 +19,7 @@ const props = defineProps({
   },
   lang: {
     type: String,
-    default: 'en'
+    default: 'fr'
   },
   dir: {
     type: String,
