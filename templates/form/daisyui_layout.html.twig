@@ -36,7 +36,7 @@
 {%- block form_label_content -%}
     {{- parent() -}}
     {%- if required -%}
-        <span aria-hidden="true" class="badge badge-ghost badge-xs">Requis</span>
+        <twig:Atomic:RequiredBadge />
     {%- endif -%}
 {%- endblock form_label_content -%}
 

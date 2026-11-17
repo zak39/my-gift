@@ -1,0 +1,5 @@
+{# The theme's text colour as background, its page colour as text: the highest contrast
+   either theme offers (RGAA 3.2). Hidden from assistive technologies, which already read the
+   field's required attribute: the badge is not read twice (RGAA 11.10). #}
+<span aria-hidden="true"
+    {{ attributes.defaults({ class: 'badge badge-xs border-base-content bg-base-content text-base-100' }) }}>Requis</span>
