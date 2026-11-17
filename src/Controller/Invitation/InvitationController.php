@@ -36,7 +36,9 @@ final class InvitationController extends AbstractController
     {
         $book = $findInvitation($slug, $request->getClientIp());
 
-        $response = null === $book
+        // The card is for messengers, not search engines: NoIndexListener keeps a link posted
+        // in public from getting its owner indexed.
+        return null === $book
             ? $this->render('invitation/not_found.html.twig', response: new Response(status: Response::HTTP_NOT_FOUND))
             : $this->render('invitation/show.html.twig', [
                 'owner' => $book->getOwner(),
@@ -44,12 +46,6 @@ final class InvitationController extends AbstractController
                 'linkPreview' => $linkPreviewBuilder->forInvitation($book),
             ])
         ;
-
-        // The card is for messengers, not search engines: a link posted in public must not
-        // get its owner indexed, as SharedLinkPreviewListener does for the shared links.
-        $response->headers->set('X-Robots-Tag', 'noindex');
-
-        return $response;
     }
 
     /**

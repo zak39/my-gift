@@ -7,6 +7,14 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{% block title %}My Gift{% endblock %}</title>
+        {# The text under the title in search results: a public page (IndexablePages) tells its
+           own, about 150 characters, Google cutting the rest. #}
+        <meta name="description" content="{% block description %}{{ site.description }}{% endblock %}">
+        {# The URL search engines keep: the same without its query string (/login?invitation=…
+           is /login). #}
+        {% if is_indexable_route(app.current_route) %}
+            <link rel="canonical" href="{{ url(app.current_route) }}">
+        {% endif %}
         {# linkPreview: the card of a shared link opened while logged out (SharedLinkPreviewListener). #}
         <twig:Molecule:LinkPreview :preview="linkPreview ?? null" />
         {# The logo's gift. The SVG for the browsers that take one; sizes="32x32" keeps the

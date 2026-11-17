@@ -63,14 +63,14 @@ final class SharedLinkPreviewListener
             return;
         }
 
-        // The card is for messengers, not search engines: a signed link posted in public
-        // must not get the gift's details indexed.
+        // The card is for messengers, not search engines: NoIndexListener keeps a signed link
+        // posted in public from getting the gift's details indexed.
         $event->setResponse(new Response($this->twig->render('security/login.html.twig', [
             'last_username' => '',
             'error' => null,
             'linkPreview' => $linkPreview,
             'target_path' => $request->getRequestUri(),
-        ]), headers: ['X-Robots-Tag' => 'noindex']));
+        ])));
     }
 
     /**

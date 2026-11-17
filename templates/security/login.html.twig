@@ -2,6 +2,10 @@
 
 {% block title %}My Gift | Se connecter{% endblock %}
 
+{# A shared link opened while logged out shows this page with the card of what it shows
+   (SharedLinkPreviewListener): its description, as og:description. #}
+{% block description %}{{ linkPreview.description ?? 'Connectez-vous à My Gift pour retrouver vos sections de cadeaux, vos ami·es et vos groupes.' }}{% endblock %}
+
 {% block body %}
 <div class="hero bg-base-200 min-h-screen">
     <div class="flex w-full max-w-4xl flex-col-reverse">

@@ -1,0 +1,10 @@
+{# The pages to keep out of the index say it themselves (NoIndexListener), on the preprod
+   every one: a robot kept from a page never reads its noindex. The uploaded images go
+   straight from the web server, without it: an image has no page to carry one, a robot
+   following a shared link's card (og:image) must not take the gift's photo. #}
+User-agent: *
+Disallow: /data/
+{% if indexed %}
+
+Sitemap: {{ url('app_sitemap') }}
+{% endif %}

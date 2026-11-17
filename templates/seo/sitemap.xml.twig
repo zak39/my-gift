@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+{# No <lastmod>: no date tells when a page last changed, and search engines ignore a
+   wrong one. #}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{% for location in urls %}
+    <url>
+        <loc>{{ location }}</loc>
+    </url>
+{% endfor %}
+</urlset>
