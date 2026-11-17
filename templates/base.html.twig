@@ -36,6 +36,9 @@
         {# Outside the header block: a page without the navbar still says it is a test version. #}
         <twig:Molecule:TestBanner />
         {% block header %}{{ include('./_header.html.twig') }}{% endblock %}
+        {# RGAA 7.5: reads the success messages of each page, kept from page to page so that
+           filling it is read (flash-announcer controller). #}
+        <div id="flash-announcer" class="sr-only" role="status" data-turbo-permanent data-controller="flash-announcer"></div>
             {# tabindex="-1": the skip link moves the focus here, not only the scroll, where neither
                Turbo nor the browser does it (RGAA 12.7); not reached by Tab, no outline drawn. #}
             <main id="contenu" tabindex="-1" class="px-4 sm:px-6 lg:px-8 focus:outline-none">

@@ -1,14 +1,14 @@
-// assets/controllers/dialog_controller.js
 import { Controller } from '@hotwired/stimulus';
 
 /*
  * Opens a <dialog> rendered elsewhere on the page, found by its id: a missing dialog
- * does nothing. A button in a drawer closes it first, or it would stay open behind the
- * dialog and after it.
+ * does nothing.
  *
  * A closed menu hides the button that opened the dialog, so the browser cannot give it
- * the focus back: on close, the focus goes to the drawer's toggle, and the dialog:closed
- * event lets a dropdown controller give it to its trigger.
+ * the focus back. The menu takes care of it: dialog:open, sent before the dialog shows,
+ * lets a drawer controller shut its drawer (or it would stay open behind the dialog and
+ * after it), and dialog:closed lets a drawer or dropdown controller give the focus to its
+ * toggle or trigger.
  */
 export default class extends Controller {
     static values = {
@@ -22,18 +22,8 @@ export default class extends Controller {
             return;
         }
 
-        const drawerToggle = this.element.closest('.drawer')?.querySelector(':scope > .drawer-toggle');
-
-        if (drawerToggle) {
-            drawerToggle.checked = false;
-        }
-
+        this.dispatch('open');
         dialog.showModal();
-        dialog.addEventListener('close', () => this.#restoreFocus(drawerToggle), { once: true });
-    }
-
-    #restoreFocus(drawerToggle) {
-        drawerToggle?.focus();
-        this.dispatch('closed');
+        dialog.addEventListener('close', () => this.dispatch('closed'), { once: true });
     }
 }

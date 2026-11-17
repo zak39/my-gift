@@ -8,21 +8,14 @@
         <h1 class="sr-only">Mon profil</h1>
 
         {% for message in app.flashes('error') %}
-            <div class="alert alert-error mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>{{ message }}</span>
-            </div>
+            <twig:Alert type="error" :message="message" class="mb-6" />
         {% endfor %}
-        <div id="user_profile_flash">
+        {# RGAA 7.5: the success of a save made in the form's frame comes through
+           turbo/success_flash.turbo_stream.twig, which fills this region without replacing
+           it: a live region must already be on the page for its change to be read. #}
+        <div id="user_profile_flash" role="status">
             {% for message in app.flashes('success') %}
-                <div class="alert alert-success mb-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>{{ message }}</span>
-                </div>
+                <twig:Alert type="success" :message="message" class="mb-6" />
             {% endfor %}
         </div>
 
@@ -38,10 +31,12 @@
                 </div>
             </div>
             <div class="self-start">
+                {# RGAA 7.5: the form is sent within its frame, without a page load: each error
+                   block is an alert, read as soon as the frame shows it. #}
                 <turbo-frame id="user_profile_form">
                     {{ form_start(profileForm, {'attr': {'class': 'space-y-4'}, 'enctype': 'multipart/form-data'}) }}
                         {% if form_errors(profileForm) %}
-                            <div class="alert alert-error mb-4">
+                            <div role="alert" class="alert alert-error mb-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
@@ -70,7 +65,7 @@
                                 </small>
                                 {% if pseudoInvalid %}
                                     {# Its id is in the field's aria-describedby: the error and the suggestions are read with it. #}
-                                    <div id="{{ pseudoId }}_errors" class="text-error mt-2 p-2 text-sm">
+                                    <div id="{{ pseudoId }}_errors" role="alert" class="text-error mt-2 p-2 text-sm">
                                         {{ form_errors(profileForm.pseudo) }}
                                         <twig:Molecule:Form:PseudoSuggestion :field="profileForm.pseudo" class="text-base-content" />
                                     </div>
@@ -85,7 +80,7 @@
                                         },
                                     }) }}
                                     {% if form_errors(profileForm.firstname) %}
-                                        <div class="text-error mt-2 p-2 text-sm">
+                                        <div role="alert" class="text-error mt-2 p-2 text-sm">
                                             {{ form_errors(profileForm.firstname) }}
                                         </div>
                                     {% endif %}
@@ -98,7 +93,7 @@
                                         },
                                     }) }}
                                     {% if form_errors(profileForm.lastname) %}
-                                        <div class="text-error mt-2 p-2 text-sm">
+                                        <div role="alert" class="text-error mt-2 p-2 text-sm">
                                             {{ form_errors(profileForm.lastname) }}
                                         </div>
                                     {% endif %}
@@ -139,7 +134,7 @@
                                     </label>
                                 </div>
                                 {% if form_errors(profileForm.oldPassword) %}
-                                    <div class="alert alert-error alert-soft my-2">
+                                    <div role="alert" class="alert alert-error alert-soft my-2">
                                         {{ form_errors(profileForm.oldPassword) }}
                                     </div>
                                 {% endif %}
@@ -179,7 +174,7 @@
                                             </label>
                                         </div>
                                         {% if form_errors(profileForm.plainPassword.first) %}
-                                            <div class="alert alert-error alert-soft my-2">
+                                            <div role="alert" class="alert alert-error alert-soft my-2">
                                                 {{ form_errors(profileForm.plainPassword.first) }}
                                             </div>
                                         {% endif %}
@@ -215,14 +210,14 @@
                                             </label>
                                         </div>
                                         {% if form_errors(profileForm.plainPassword.second) %}
-                                            <div class="alert alert-error alert-soft my-2">
+                                            <div role="alert" class="alert alert-error alert-soft my-2">
                                                 {{ form_errors(profileForm.plainPassword.second) }}
                                             </div>
                                         {% endif %}
                                     </div>
                                 </div>
                                 {% if form_errors(profileForm.plainPassword) %}
-                                    <div class="alert alert-error mt-2 p-2 text-sm">
+                                    <div role="alert" class="alert alert-error mt-2 p-2 text-sm">
                                         {{ form_errors(profileForm.plainPassword) }}
                                     </div>
                                 {% endif %}
@@ -239,7 +234,7 @@
                                         },
                                     }) }}
                                     {% if form_errors(profileForm.avatarFile) %}
-                                        <div class="text-error mt-2 p-2 text-sm">
+                                        <div role="alert" class="text-error mt-2 p-2 text-sm">
                                             {{ form_errors(profileForm.avatarFile) }}
                                         </div>
                                     {% endif %}
