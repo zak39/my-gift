@@ -28,33 +28,28 @@
     {% set canSeeSections = is_granted('user.can_see_gifts', member) %}
     {% set canTransfer = is_granted('crew.can_transfer', membership.crew) %}
     {% if member is not same as(app.user) and (canSeeSections or canTransfer) %}
-        {# Behind "…" like a friend's row: the entry opening the modal goes through the dialog
-           controller, the modal itself rendered below, out of the menu. #}
-        <div class="dropdown dropdown-end" data-controller="dropdown">
-            <div tabindex="0" role="button" class="btn btn-sm btn-ghost btn-square" aria-label="Plus d'actions pour {{ member.pseudo }}" data-dropdown-target="trigger">
-                <twig:ux:icon name="lucide:ellipsis" class="size-4" />
-            </div>
-            <ul tabindex="-1" class="dropdown-content menu menu-sm z-1 mt-1 w-52 rounded-box bg-base-100 shadow">
-                {# The members of a crew are not all friends: their sections only for a friend,
-                   anyone else gets a 404 there. #}
-                {% if canSeeSections %}
-                    <li>
-                        <a href="{{ path('app_section_user_page', { id: member.id }) }}">
-                            <twig:ux:icon name="lucide:arrow-right" class="size-4" />
-                            Voir ses sections
-                        </a>
-                    </li>
-                {% endif %}
-                {% if canTransfer %}
-                    <li>
-                        <button type="button" data-controller="dialog" data-dialog-id-value="modal_crew_transfer_{{ member.id }}" data-action="dialog#open">
-                            <twig:ux:icon name="lucide:crown" class="size-4" />
-                            Nommer propriétaire
-                        </button>
-                    </li>
-                {% endif %}
-            </ul>
-        </div>
+        {# The entry opening the modal goes through the dialog controller, the modal itself
+           rendered below, out of the menu. #}
+        <twig:Molecule:MoreActions label="Plus d'actions pour {{ member.pseudo }}">
+            {# The members of a crew are not all friends: their sections only for a friend,
+               anyone else gets a 404 there. #}
+            {% if canSeeSections %}
+                <li>
+                    <a href="{{ path('app_section_user_page', { id: member.id }) }}">
+                        <twig:ux:icon name="lucide:arrow-right" class="size-4" />
+                        Voir ses sections
+                    </a>
+                </li>
+            {% endif %}
+            {% if canTransfer %}
+                <li>
+                    <button type="button" data-controller="dialog" data-dialog-id-value="modal_crew_transfer_{{ member.id }}" data-action="dialog#open">
+                        <twig:ux:icon name="lucide:crown" class="size-4" />
+                        Nommer propriétaire
+                    </button>
+                </li>
+            {% endif %}
+        </twig:Molecule:MoreActions>
         {% if canTransfer %}
             <twig:Molecule:Crew:TransferModal :crew="membership.crew" :member="member" />
         {% endif %}

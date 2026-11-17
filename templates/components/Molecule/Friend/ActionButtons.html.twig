@@ -22,26 +22,21 @@
         {% endif %}
         {# Removing and blocking are rare and final: they wait behind "…", last (RGAA 12.8: the
            tab order follows the one on screen), each entry opening the modal of its
-           UnlinkButton below; the focus comes back to "…" when it closes. #}
-        <div class="dropdown dropdown-end {{ menuClass }}" data-controller="dropdown">
-            <div tabindex="0" role="button" class="btn btn-sm btn-ghost btn-square" aria-label="Plus d'actions pour {{ user.pseudo }}" data-dropdown-target="trigger">
-                <twig:ux:icon name="lucide:ellipsis" class="size-4" />
-            </div>
-            <ul tabindex="-1" class="dropdown-content menu menu-sm bg-base-100 rounded-box mt-1 w-40 shadow">
-                <li>
-                    <button type="button" data-controller="dialog" data-dialog-id-value="modal_friend_remove_{{ user.id }}" data-action="dialog#open">
-                        <twig:ux:icon name="lucide:user-minus" class="size-4" />
-                        Retirer
-                    </button>
-                </li>
-                <li>
-                    <button type="button" class="text-error" data-controller="dialog" data-dialog-id-value="modal_friend_block_{{ user.id }}" data-action="dialog#open">
-                        <twig:ux:icon name="lucide:ban" class="size-4" />
-                        Bloquer
-                    </button>
-                </li>
-            </ul>
-        </div>
+           UnlinkButton below. #}
+        <twig:Molecule:MoreActions label="Plus d'actions pour {{ user.pseudo }}" class="{{ menuClass }}">
+            <li>
+                <button type="button" data-controller="dialog" data-dialog-id-value="modal_friend_remove_{{ user.id }}" data-action="dialog#open">
+                    <twig:ux:icon name="lucide:user-minus" class="size-4" />
+                    Retirer
+                </button>
+            </li>
+            <li>
+                <button type="button" class="text-error" data-controller="dialog" data-dialog-id-value="modal_friend_block_{{ user.id }}" data-action="dialog#open">
+                    <twig:ux:icon name="lucide:ban" class="size-4" />
+                    Bloquer
+                </button>
+            </li>
+        </twig:Molecule:MoreActions>
         <twig:Molecule:Friend:UnlinkButton :user="user" action="remove" label="Retirer" icon="lucide:user-minus" :withTrigger="false"
             question="Retirer {{ user.pseudo }} de vos ami·es ? Vous ne verrez plus vos sections respectives." />
         <twig:Molecule:Friend:UnlinkButton :user="user" action="block" label="Bloquer" icon="lucide:ban" :withTrigger="false" :question="blockQuestion" />
