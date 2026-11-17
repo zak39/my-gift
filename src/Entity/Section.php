@@ -41,6 +41,7 @@ class Section
      * @var Collection<int, Gift>
      */
     #[ORM\OneToMany(targetEntity: Gift::class, mappedBy: 'section')]
+    #[ORM\OrderBy(['id' => 'ASC'])]
     private Collection $gifts;
 
     #[ORM\Column(length: 255)]
@@ -101,6 +102,22 @@ class Section
     public function getGifts(): Collection
     {
         return $this->gifts;
+    }
+
+    /**
+     * The gifts its list shows: all of them to its owners, drafts included; the published
+     * ones to anyone else. A section's page, its menu entry and the list's header count
+     * from here, so they agree.
+     *
+     * @return list<Gift>
+     */
+    public function getVisibleGifts(bool $includeDrafts): array
+    {
+        if ($includeDrafts) {
+            return $this->gifts->getValues();
+        }
+
+        return $this->gifts->filter(fn (Gift $gift) => $gift->isPublic())->getValues();
     }
 
     public function addGift(Gift $gift): static

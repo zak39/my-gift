@@ -1,12 +1,37 @@
-<div {{ attributes.defaults({ class: 'avatar-group -space-x-4' }) }}>
+{# overflow-visible: daisyUI clips the group, and the tooltips have to stick out of it. #}
+<div {{ attributes.defaults({ class: 'avatar-group -space-x-4 overflow-visible' }) }}>
     {% for user in users|slice(0, max) %}
-        <twig:Molecule:UserAvatar :user="user" :sizeClass="sizeClass" />
+        {# The pseudo on hover. Screen readers already read it in the image's alt (RGAA 1.1):
+           hidden from them, or they would hear it twice. #}
+        <div class="tooltip flex">
+            <span class="tooltip-content" aria-hidden="true">{{ user.pseudo }}</span>
+            <twig:Molecule:UserAvatar :user="user" :sizeClass="sizeClass" />
+        </div>
     {% endfor %}
-    {% if users|length > max %}
-        <div class="avatar avatar-placeholder">
-            <div class="{{ sizeClass }} bg-neutral text-neutral-content">
-                <span class="text-sm">+{{ users|length - max }}</span>
+
+    {% set hiddenUsers = users|slice(max) %}
+    {% if hiddenUsers is not empty %}
+        {# The "+N" is a button so that the keyboard reaches it too: daisyUI shows the tooltip
+           when something inside has the focus (RGAA 10.13 / 7.1). The button takes its name
+           from the list, which screen readers would otherwise read a second time. #}
+        {% set hiddenListId = 'avatar-group-more-' ~ random() %}
+        <div class="tooltip flex">
+            <div id="{{ hiddenListId }}" class="tooltip-content text-start" aria-hidden="true">
+                <span class="sr-only">Et {{ hiddenUsers|length }} autre{{ hiddenUsers|length > 1 ? 's' }} :</span>
+                <ul>
+                    {% for user in hiddenUsers|slice(0, 6) %}
+                        <li>{{ user.pseudo }}</li>
+                    {% endfor %}
+                    {% if hiddenUsers|length > 6 %}
+                        <li aria-hidden="true">…</li>
+                    {% endif %}
+                </ul>
             </div>
+            <button type="button" class="avatar avatar-placeholder cursor-default" aria-labelledby="{{ hiddenListId }}">
+                <div class="{{ sizeClass }} bg-neutral text-neutral-content">
+                    <span class="text-sm" aria-hidden="true">+{{ hiddenUsers|length }}</span>
+                </div>
+            </button>
         </div>
     {% endif %}
 </div>

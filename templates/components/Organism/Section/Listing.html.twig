@@ -1,0 +1,25 @@
+{% for section in sections %}
+    {% set gifts = section.visibleGifts(ownerView) %}
+    <twig:Molecule:Section
+        :title="section.title"
+        :description="section.description"
+        :checked="loop.first"
+        :anchor="'section-' ~ section.id"
+        :giftCount="gifts|length"
+        :headingLevel="headingLevel">
+        <twig:block name="gifts">
+            {% for gift in gifts %}
+                <twig:CardGift :gift="gift" />
+            {% else %}
+                <p class="py-4 text-sm text-muted">
+                    {{ ownerView
+                        ? 'Cette section est vide. Ajoutez-y un cadeau depuis « Ajouter un cadeau ».'
+                        : 'Aucun cadeau publié dans cette section pour le moment.' }}
+                </p>
+            {% endfor %}
+        </twig:block>
+        <twig:block name="actionButtons">
+            <twig:Organism:Section:Actions :section="section" />
+        </twig:block>
+    </twig:Molecule:Section>
+{% endfor %}

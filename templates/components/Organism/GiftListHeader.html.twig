@@ -32,12 +32,21 @@
         <div class="border-t border-base-300 px-5 py-4 sm:px-7">
             <div class="stats stats-vertical w-full bg-transparent sm:stats-horizontal">
                 {% if ownerView %}
+                    {# Read here: inside the block below, `this` is Molecule:Stat. #}
+                    {% set crewPublished = this.crewPublishedCount %}
                     <twig:Molecule:Stat
                         icon="lucide:eye"
                         title="Publiés"
                         :value="this.publishedCount"
-                        description="visibles sur votre profil public"
-                        :highlight="true" />
+                        :highlight="true">
+                        <twig:block name="description">
+                            <div class="stat-desc">
+                                visibles sur votre profil public{% if crewPublished > 0 %},
+                                    et <span class="font-semibold text-primary tabular-nums">{{ crewPublished }}</span>
+                                    cadeau{{ crewPublished > 1 ? 'x' }} de vos groupes{% endif %}
+                            </div>
+                        </twig:block>
+                    </twig:Molecule:Stat>
                     <twig:Molecule:Stat
                         icon="lucide:eye-off"
                         title="Brouillons"

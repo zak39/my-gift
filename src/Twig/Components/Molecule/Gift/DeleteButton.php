@@ -12,4 +12,10 @@ final class DeleteButton
     public bool $iconOnly = false;
     public string $color = '';
     public string $style = 'outline';
+
+    /**
+     * The list the button sits on, to go back to once the gift is deleted. None on the
+     * gift's own page, which will be gone.
+     */
+    public ?string $back = null;
 }

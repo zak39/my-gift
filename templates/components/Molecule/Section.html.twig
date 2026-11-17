@@ -5,13 +5,12 @@
 
     <div class="collapse collapse-arrow">
         <input type="checkbox"
-            {% if anchor %}id="{{ anchor }}-toggle"{% endif %}
             {{ checked ? 'checked' : '' }}
             aria-label="Afficher ou masquer les cadeaux de la section {{ title }}" />
 
         <div class="collapse-title ps-6">
             <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-                <h2 class="min-w-0 text-base font-semibold wrap-anywhere sm:text-lg">{{ title }}</h2>
+                <h{{ headingLevel }} class="min-w-0 text-base font-semibold wrap-anywhere sm:text-lg">{{ title }}</h{{ headingLevel }}>
                 {% if giftCount is not null %}
                     <span class="badge badge-sm badge-ghost tabular-nums">
                         {{ giftCount }} cadeau{{ giftCount > 1 ? 'x' }}

@@ -48,7 +48,7 @@ final class SectionController extends AbstractController
             'sections' => $sectionRepository->findPersonalOf($user),
             // Seeing the user's gifts, the viewer sees their crews' lists too: a member's
             // friends see the list.
-            'crews' => $crewRepository->findForMemberWithGifts($user),
+            'crews' => $crewRepository->findForMemberWithGiftCards($user),
             'user' => $user,
             'breadcrumbs' => $breadcrumbBuilder->userList($user),
             'btnReturn' => $refererRedirector->localReferer($request) ?? $this->generateUrl('app_friend'),

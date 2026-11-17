@@ -4,7 +4,9 @@
 
 {% block body %}
 {# The user's own list (/me/sections): only its owner ever sees this page. #}
-{% set hasContent = sections|length > 0 or giftsWithoutSection|length > 0 %}
+{# The crews' sections count too: they show inline, below the user's own. #}
+{% set hasContent = sections|length > 0 or giftsWithoutSection|length > 0
+    or crews|filter(crew => crew.sections is not empty)|length > 0 %}
 
 <div class="mx-auto w-full max-w-6xl py-6 pb-12">
     <twig:Molecule:Flashes />
@@ -13,39 +15,19 @@
         :user="user"
         :sections="sections"
         :giftsWithoutSection="giftsWithoutSection"
+        :crews="crews"
         :ownerView="true" />
 
     {% if hasContent %}
-        <div class="mt-6 grid items-start gap-6 lg:grid-cols-[15rem_minmax(0,1fr)]">
+        <div class="mt-6 flex flex-col gap-6 lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:items-start">
             <twig:Molecule:SectionNav
-                class="lg:sticky lg:top-6"
                 :sections="sections"
                 :giftsWithoutSection="giftsWithoutSection"
                 :includeDrafts="true"
                 :crews="crews" />
 
             <div class="flex min-w-0 flex-col gap-5">
-                {% for section in sections %}
-                    <twig:Molecule:Section
-                        :title="section.title"
-                        :description="section.description"
-                        :checked="loop.first"
-                        :anchor="'section-' ~ section.id"
-                        :giftCount="section.gifts|length">
-                        <twig:block name="gifts">
-                            {% for gift in section.gifts %}
-                                <twig:CardGift :gift="gift" />
-                            {% else %}
-                                <p class="py-4 text-sm text-muted">
-                                    Cette section est vide. Ajoutez-y un cadeau depuis « Ajouter un cadeau ».
-                                </p>
-                            {% endfor %}
-                        </twig:block>
-                        <twig:block name="actionButtons">
-                            <twig:Organism:Section:Actions :section="section" />
-                        </twig:block>
-                    </twig:Molecule:Section>
-                {% endfor %}
+                <twig:Organism:Section:Listing :sections="sections" :ownerView="true" />
 
                 {% if giftsWithoutSection|length > 0 %}
                     <twig:Molecule:Section

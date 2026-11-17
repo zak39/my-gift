@@ -21,7 +21,8 @@ final class SectionNav
 
     /**
      * The crews of the list's owner, listed after the sections so they show without
-     * scrolling: anchors to their cards in Organism:Crew:SharedLists.
+     * scrolling: anchors to their blocks in Organism:Crew:SharedLists, then to their
+     * sections there.
      *
      * @var iterable<Crew>
      */

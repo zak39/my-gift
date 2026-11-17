@@ -39,7 +39,7 @@ final class SectionController extends AbstractController
                 'section' => null,
             ]),
             'sections' => $sectionRepository->findPersonalOf($user),
-            'crews' => $crewRepository->findForMemberWithGifts($user),
+            'crews' => $crewRepository->findForMemberWithGiftCards($user),
             'user' => $user,
         ]);
     }
