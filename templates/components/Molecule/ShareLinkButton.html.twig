@@ -1,9 +1,9 @@
 {% set wrapper = iconOnly
-    ? { class: 'tooltip', 'data-tip': label }
+    ? { class: 'inline-block', 'data-tooltip-text-value': label }
     : { class: 'contents' } %}
 
 <div {{ attributes.defaults(wrapper|merge({
-        'data-controller': 'copy',
+        'data-controller': iconOnly ? 'copy tooltip' : 'copy',
         'data-copy-text-value': url,
         'data-copy-label-value': label,
     })) }}>
