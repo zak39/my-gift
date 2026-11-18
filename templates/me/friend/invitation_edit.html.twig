@@ -9,8 +9,8 @@
 {% set currentLink = invitation_url(book.invitationSlug) %}
 {% set linkStartPath = path('app_invitation', { slug: book.invitationSlug })|u.beforeLast('/', true) %}
 {% set linkStart %}
-    <span class="label max-sm:hidden">{{ absolute_url(linkStartPath) }}</span>
-    <span class="label sm:hidden">{{ linkStartPath }}</span>
+    <span class="max-sm:hidden">{{ absolute_url(linkStartPath) }}</span>
+    <span class="sm:hidden">{{ linkStartPath }}</span>
 {% endset %}
 
 <div class="mx-auto w-full max-w-2xl pb-12">
@@ -28,8 +28,8 @@
         {{ form_start(form) }}
             <div class="flex flex-col gap-4 border-t border-base-300 p-5 sm:p-7">
                 {{ form_errors(form) }}
-                {# RGAA 11.1: the field's name is its label and the link's beginning shown inside it,
-                   both labels of the input. #}
+                {# RGAA 11.1, 11.2: the field's name is its label alone; the link's beginning shown
+                   inside it describes it, after the help (the theme's aria-describedby). #}
                 {{ form_row(form.invitationSlug, { prefix: linkStart }) }}
             </div>
 

@@ -20,7 +20,8 @@
                     <fieldset class="fieldset">
                         <div data-controller="password-toggle">
                             {{ form_label(resetForm.plainPassword.first) }}
-                            <label class="input md:input-md input-xl w-full">
+                            {# RGAA 11.1, 11.2: a <div>, not a <label> (see form/daisyui_layout.html.twig, form_widget_simple). #}
+                            <div class="input md:input-md input-xl w-full">
                                 <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                     <g
                                     stroke-linejoin="round"
@@ -42,14 +43,14 @@
                                     }
                                 }) }}
                                 <button type="button" data-password-toggle-target="button" data-action="password-toggle#toggle" class="btn btn-sm btn-ghost absolute top-1/2 right-2 -translate-y-1/2" aria-label="Afficher le mot de passe"></button>
-                            </label>
+                            </div>
                             {% if resetForm.plainPassword.first.vars.errors|length > 0 %}
                                 <div class="alert alert-error alert-soft my-2">{{ form_errors(resetForm.plainPassword.first) }}</div>
                             {% endif %}
                         </div>
                         <div data-controller="password-toggle">
                             {{ form_label(resetForm.plainPassword.second) }}
-                            <label class="input md:input-md input-xl w-full">
+                            <div class="input md:input-md input-xl w-full">
                                 <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                     <g
                                     stroke-linejoin="round"
@@ -70,7 +71,7 @@
                                     }
                                 }) }}
                                 <button type="button" data-password-toggle-target="button" data-action="password-toggle#toggle" class="btn btn-sm btn-ghost absolute top-1/2 right-2 -translate-y-1/2" aria-label="Afficher le mot de passe"></button>
-                            </label>
+                            </div>
                         </div>
                         {{ form_rest(resetForm) }}
                         <button type="submit" class="btn btn-primary mt-4">Enregistrer le mot de passe</button>

@@ -1,11 +1,13 @@
 {% set friends = this.friends %}
 
 <div {{ attributes.defaults({ class: 'flex flex-col gap-2' }) }}>
-    <label class="input w-full" data-controller="reset-searchbar">
+    <div class="input w-full" data-controller="reset-searchbar">
         <twig:ux:icon name="lucide:search" class="size-4 shrink-0 opacity-50" />
-        {# RGAA 11.1: a placeholder is no label, the sr-only text gives the field its name. #}
-        <span class="sr-only">Chercher parmi vos ami·es, par pseudo ou par nom</span>
+        {# RGAA 11.1: a placeholder is no label, the sr-only label gives the field its name. The
+           wrapper is no label, or the clear button inside would end that name (11.2). #}
+        <label for="friend_search" class="sr-only">Chercher parmi vos ami·es, par pseudo ou par nom</label>
         <input type="search"
+            id="friend_search"
             class="grow"
             placeholder="Chercher parmi vos ami·es"
             data-reset-searchbar-target="field"
@@ -16,7 +18,7 @@
             data-action="reset-searchbar#reset">
             <twig:ux:icon name="lucide:x" class="size-4" />
         </button>
-    </label>
+    </div>
 
     {% if query is not empty %}
         {% set total = friends.getTotalItemCount() %}

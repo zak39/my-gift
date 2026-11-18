@@ -19,13 +19,17 @@
         </div>
         <form id="account_delete_form" method="post" action="{{ path('app_user_profile_delete') }}">
             <input type="hidden" name="_token" value="{{ csrf_token('account-delete') }}">
-            <fieldset class="fieldset">
-                <legend class="fieldset-legend">Confirmez avec votre mot de passe</legend>
+            <div class="fieldset">
+                {# RGAA 11.1: a legend names a group, not its field; with no label, the field took the
+                   show-password button's name. A <label> instead, and the wrapper is no label (11.2).
+                   A <div>, not a <fieldset>: one field is no group, and a fieldset needs a legend (11.5). #}
+                <label for="account_delete_password" class="fieldset-legend">Confirmez avec votre mot de passe</label>
                 <div data-controller="password-toggle">
-                    <label class="input w-full">
+                    <div class="input w-full">
                         <twig:ux:icon name="lucide:key-round" class="size-4 opacity-50" />
                         <input
                             type="password"
+                            id="account_delete_password"
                             name="password"
                             required
                             autocomplete="current-password"
@@ -33,9 +37,9 @@
                             data-password-toggle-target="field">
                         {# Its icon comes from the password-toggle controller. #}
                         <button type="button" data-password-toggle-target="button" data-action="password-toggle#toggle" class="btn btn-sm btn-ghost" aria-label="Afficher le mot de passe"></button>
-                    </label>
+                    </div>
                 </div>
-            </fieldset>
+            </div>
         </form>
     </twig:block>
     <twig:block name="actionButtons">

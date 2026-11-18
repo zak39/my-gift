@@ -4,7 +4,7 @@
    Extra variables understood by form_row() on text-like fields:
    - prefix_icon: an icon name drawn inside the field, before the value (URL fields get 'lucide:link')
    - prefix: text or markup drawn inside the field, before the value (an invitation link's beginning,
-     before its slug); being in the field's wrapping <label>, it is part of the field's name
+     before its slug), in a daisyUI `label` the theme draws: pass the text, not a `.label` of its own
    - suffix: text or markup drawn inside the field, after the value (money fields get their currency) #}
 {% use 'form_div_layout.html.twig' %}
 
@@ -84,17 +84,41 @@
         {%- set attr = attr|merge({ class: ('file-input w-full ' ~ (errors|length > 0 ? 'file-input-error ') ~ attr.class|default(''))|trim }) -%}
         {{- parent() -}}
     {%- elseif prefix_icon is defined or prefix is defined or suffix is defined -%}
-        {# The daisyUI `input` class moves to a wrapper so an icon, a text or a unit can sit inside the field. #}
+        {# The daisyUI `input` class moves to a wrapper so an icon, a text or a unit can sit inside the field.
+           RGAA 11.1, 11.2: a <div>, not a <label>: form_label() already labels the field, and a wrapping
+           <label> would be a second one, its prefix or suffix added to the field's name. #}
         {%- set wrapper_class = errors|length > 0 ? 'input input-error w-full' : 'input w-full' -%}
-        <label class="{{ wrapper_class }}">
+        {# The prefix and the suffix, out of the name, describe the field instead (aria-describedby):
+           "Prix du cadeau", then "€". Only a text: a spinner (aria-hidden) has nothing to say. #}
+        {%- set prefix_id = id ~ '_prefix' -%}
+        {%- set suffix_id = id ~ '_suffix' -%}
+        {%- set has_prefix_text = prefix|default('')|striptags|trim is not empty -%}
+        {%- set has_suffix_text = suffix|default('')|striptags|trim is not empty -%}
+        {# After the help and the errors form_row already put there (RGAA 11.10). #}
+        {%- set describedby = [
+            attr['aria-describedby'] ?? '',
+            has_prefix_text ? prefix_id,
+            has_suffix_text ? suffix_id,
+        ]|filter(describer => describer is not empty) -%}
+        {%- if describedby is not empty -%}
+            {%- set attr = attr|merge({ 'aria-describedby': describedby|join(' ') }) -%}
+        {%- endif -%}
+        <div class="{{ wrapper_class }}">
             {%- if prefix_icon is defined -%}
                 {{ ux_icon(prefix_icon, { class: 'size-4 shrink-0 opacity-60', 'aria-hidden': 'true' }) }}
             {%- endif -%}
-            {{- prefix|default('') -}}
+            {%- if prefix|default('') is not empty -%}
+                {# The `label` itself carries the id: daisyUI only draws a `.label` that is a direct child
+                   of `.input`, and a hidden part inside it (a phone-only variant) is left out of the
+                   description, where a hidden element the id points at would be read. #}
+                <span id="{{ prefix_id }}" class="label">{{ prefix }}</span>
+            {%- endif -%}
             {%- set attr = attr|merge({ class: ('grow ' ~ attr.class|default(''))|trim }) -%}
             {{- parent() -}}
-            {{- suffix|default('') -}}
-        </label>
+            {%- if suffix|default('') is not empty -%}
+                <span id="{{ suffix_id }}">{{ suffix }}</span>
+            {%- endif -%}
+        </div>
     {%- else -%}
         {%- set attr = attr|merge({ class: ('input w-full ' ~ (errors|length > 0 ? 'input-error ') ~ attr.class|default(''))|trim }) -%}
         {{- parent() -}}

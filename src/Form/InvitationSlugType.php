@@ -26,7 +26,7 @@ final class InvitationSlugType extends AbstractType
     {
         $builder->add('invitationSlug', TextType::class, [
             // Short, on one line with its « Requis »: the link's beginning sits inside the field
-            // (the template's prefix), part of its name with this label (RGAA 11.1).
+            // (the template's prefix), which describes it; this label alone names it (RGAA 11.1, 11.2).
             'label' => 'Fin du lien',
             // RGAA 11.10: the expected format, tied to the field (aria-describedby).
             'help' => \sprintf(
