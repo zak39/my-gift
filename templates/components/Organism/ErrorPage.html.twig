@@ -6,7 +6,8 @@
            class="flex items-center font-brand text-8xl leading-none font-normal text-primary sm:text-9xl">
             {% for digit in statusCode|split('') %}
                 {% if digit == '0' %}
-                    <twig:ux:icon name="fluent-color:gift-24" class="size-[0.8em]" aria-hidden="true" />
+                    {# An <img>, as in Molecule:Brand: inline, its gradient ids would repeat. RGAA 8.2. #}
+                    <img src="{{ asset('icons/fluent-color/gift-24.svg') }}" alt="" class="size-[0.8em]">
                 {% else %}
                     <span aria-hidden="true">{{ digit }}</span>
                 {% endif %}
