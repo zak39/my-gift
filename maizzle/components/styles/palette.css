@@ -2,30 +2,36 @@
   Every colour of the emails, in hex for the mail clients: the only place they are written.
   Maizzle replaces each var() with its value when it builds (resolveProps), so no mail client
   ever reads a variable.
-  Dark is the app's dark theme (assets/styles/app.css): change it with the theme. Light takes
-  emerald's colours but keeps its stock greys (base-200 #e8e8e8, base-300 #d1d1d1), darker than
-  the app's overrides.
+  Both are the app's themes (assets/styles/app.css), copied by hand: change both. Light is
+  emerald with the app's greys (base-200 oklch(97.5% 0 0), base-300 oklch(90% 0 0)). A colour
+  differs from the app's only where the email draws it smaller or alone, to keep its contrast.
 */
 :root {
     --light-base-100: #ffffff;
-    --light-base-200: #e8e8e8;
-    --light-base-300: #d1d1d1;
+    --light-base-200: #f7f7f7;
+    --light-base-300: #dedede;
     --light-base-content: #333c4d;
     /* base-content at 80% on base-100, the app's --color-muted. */
     --light-muted: #5c6371;
-    /* The pool's box and its progress track, between base-100 and base-300. */
-    --light-pool: #f1f1f1;
-    --light-track: #cbcdd0;
+    /* The pool's box, as Molecule:Gift:ContributionBar: base-200 at 60% on base-100; its track
+       base-content at 20% on it, daisyUI's progress track. The muted text reads at 5.78:1 on it. */
+    --light-pool: #fafafa;
+    --light-track: #d2d4d7;
     --light-neutral: #333c4d;
     --light-neutral-content: #f9fafb;
     --light-primary: #7a47d9;
     --light-primary-content: #ffffff;
-    --light-secondary: #377cfb;
-    --light-secondary-content: #ffffff;
+    /* The initials of an anonymous or deleted contributor (12px): a grey under white, the same
+       in both themes, at 4.83:1 (RGAA 3.2), where the app's secondary read at 3.86:1 and 3.04:1. */
+    --light-initials: #6b7280;
+    --light-initials-content: #ffffff;
     --light-info: #00b5ff;
     --light-info-content: #000000;
     --light-warning: #ffbe00;
     --light-warning-content: #000000;
+    /* The pool's fill once exceeded, always at 100%: warning darkened to read at 4.55:1 on the
+       pool and 3.2:1 on the track (RGAA 3.3), where #ffbe00 is lost (1.59:1, 1.12:1). */
+    --light-warning-fill: #a36500;
     --light-success: #007840;
     --light-success-content: #effdf3;
     /* A soft warning (.profile-notice): a pale tint of warning behind dark text. */
@@ -43,8 +49,8 @@
     --dark-neutral-content: #e4e4e7;
     --dark-primary: #ab90f8;
     --dark-primary-content: #261547;
-    --dark-secondary: #f43098;
-    --dark-secondary-content: #f9e4f0;
+    --dark-initials: #6b7280;
+    --dark-initials-content: #ffffff;
     --dark-info: #00bafe;
     --dark-info-content: #042e49;
     --dark-warning: #fcb700;

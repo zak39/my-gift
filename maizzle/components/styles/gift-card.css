@@ -1,7 +1,7 @@
 /*
-  The badges and the pool's fill take the daisyUI colour of their name. In dark, the figure and
-  the pool are base-200, the pool's border base-300 and the track base-content at 20%: each fill
-  reads at 3:1 or more on it (RGAA 3.3). Not yet in light, where warning is lost on the track.
+  The badges and the pool's fill take the daisyUI colour of their name. The figure is base-200,
+  the pool's border base-300 and the track base-content at 20%: each fill reads at 3:1 or more on
+  the track and the pool (RGAA 3.3). In light, the warning fill is a darker amber than its badge's.
 */
 .gift-card-figure { background-color: var(--light-base-200); }
 .gift-card-muted { color: var(--light-muted); }
@@ -15,10 +15,11 @@
 
 .gift-card-neutral { background-color: var(--light-neutral); color: var(--light-neutral-content); }
 .gift-card-primary { background-color: var(--light-primary); color: var(--light-primary-content); }
-.gift-card-secondary { background-color: var(--light-secondary); color: var(--light-secondary-content); }
+.gift-card-initials { background-color: var(--light-initials); color: var(--light-initials-content); }
 .gift-card-info { background-color: var(--light-info); color: var(--light-info-content); }
 .gift-card-warning { background-color: var(--light-warning); color: var(--light-warning-content); }
 .gift-card-success { background-color: var(--light-success); color: var(--light-success-content); }
+.gift-card-warning-fill { background-color: var(--light-warning-fill); }
 
 @media (prefers-color-scheme: dark) {
     .gift-card-figure { background-color: var(--dark-base-200) !important; }
@@ -33,8 +34,9 @@
 
     .gift-card-neutral { background-color: var(--dark-neutral) !important; color: var(--dark-neutral-content) !important; }
     .gift-card-primary { background-color: var(--dark-primary) !important; color: var(--dark-primary-content) !important; }
-    .gift-card-secondary { background-color: var(--dark-secondary) !important; color: var(--dark-secondary-content) !important; }
+    .gift-card-initials { background-color: var(--dark-initials) !important; color: var(--dark-initials-content) !important; }
     .gift-card-info { background-color: var(--dark-info) !important; color: var(--dark-info-content) !important; }
     .gift-card-warning { background-color: var(--dark-warning) !important; color: var(--dark-warning-content) !important; }
     .gift-card-success { background-color: var(--dark-success) !important; color: var(--dark-success-content) !important; }
+    .gift-card-warning-fill { background-color: var(--dark-warning) !important; }
 }

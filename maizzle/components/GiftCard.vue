@@ -67,7 +67,7 @@
                   <table class="gift-card-track mt-2 w-full rounded-full" cellpadding="0" cellspacing="0" role="none">
                     <tr>
                       <Raw>{% if gift.pool.exceededAmount %}</Raw>
-                        <td width="{{ gift.pool.contributionPercent }}%" height="8" class="gift-card-warning rounded-full text-0">&nbsp;</td>
+                        <td width="{{ gift.pool.contributionPercent }}%" height="8" class="gift-card-warning-fill rounded-full text-0">&nbsp;</td>
                       <Raw>{% elseif gift.pool.complete %}</Raw>
                         <td width="{{ gift.pool.contributionPercent }}%" height="8" class="gift-card-success rounded-full text-0">&nbsp;</td>
                       <Raw>{% else %}</Raw>
