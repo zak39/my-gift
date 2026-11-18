@@ -13,6 +13,7 @@ use App\Services\Dto\LinkPreviewImageDto;
 use App\Services\Url\AvatarUrlGenerator;
 use App\Services\Url\ShareUrlGenerator;
 use Symfony\Component\Asset\Packages;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\UriSigner;
 use Symfony\Component\HttpFoundation\UrlHelper;
@@ -44,6 +45,8 @@ final class LinkPreviewBuilder
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly AvatarUrlGenerator $avatarUrlGenerator,
         private readonly ShareUrlGenerator $shareUrlGenerator,
+        #[Autowire('%app.description%')]
+        private readonly string $appDescription,
     ) {
     }
 
@@ -54,7 +57,7 @@ final class LinkPreviewBuilder
     {
         return new LinkPreviewDto(
             self::APP_TAGLINE,
-            'Créez une section par occasion, partagez le lien. Vos proches réservent un cadeau ou cagnottent ensemble, sans jamais se marcher dessus.',
+            $this->appDescription,
             $this->urlGenerator->generate('app_landing_page', [], UrlGeneratorInterface::ABSOLUTE_URL),
             $this->defaultImage(),
         );

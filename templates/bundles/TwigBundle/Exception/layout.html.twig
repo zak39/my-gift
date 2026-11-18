@@ -9,7 +9,7 @@
     {{ include('./_header.html.twig', { header_menus: status_code < 500 and app.token is not null }) }}
 {% endblock %}
 
-{% block title %}{{ title }} | My Gift{% endblock %}
+{% block title %}My Gift | {{ title }}{% endblock %}
 
 {% block body %}
     <twig:Organism:ErrorPage :statusCode="status_code" :title="title" :message="message" />

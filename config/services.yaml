@@ -33,6 +33,9 @@ parameters:
     # domain, or SPF and DKIM no longer match it and the emails land in spam.
     app.sender_email: 'noreply@zakode.dev'
     app.support_url: 'https://buymeacoffee.com/zakode'
+    # The app in two sentences: its own link card (LinkPreviewBuilder::forApp()), and the
+    # meta description of a page without its own (base.html.twig).
+    app.description: 'Créez une section par occasion, partagez le lien. Vos proches réservent un cadeau ou cagnottent ensemble, sans jamais se marcher dessus.'
     # The host the legal notice must name (LCEN, art. 6): name, address and phone.
     app.host:
         name: 'Moji'
