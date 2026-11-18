@@ -22,7 +22,7 @@
                             {{ form_label(resetForm.plainPassword.first) }}
                             {# RGAA 11.1, 11.2: a <div>, not a <label> (see form/daisyui_layout.html.twig, form_widget_simple). #}
                             <div class="input md:input-md input-xl w-full">
-                                <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <svg aria-hidden="true" class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                     <g
                                     stroke-linejoin="round"
                                     stroke-linecap="round"
@@ -51,7 +51,7 @@
                         <div data-controller="password-toggle">
                             {{ form_label(resetForm.plainPassword.second) }}
                             <div class="input md:input-md input-xl w-full">
-                                <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <svg aria-hidden="true" class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                     <g
                                     stroke-linejoin="round"
                                     stroke-linecap="round"
