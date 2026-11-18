@@ -3,11 +3,13 @@
   for light, dark's under prefers-color-scheme. Change them together.
 -->
 <template>
-    <style embed>
-        .accent-link { color: #7a47d9; }
+    <Teleport to="head">
+        <style>
+            .accent-link { color: #7a47d9; }
 
-        @media (prefers-color-scheme: dark) {
-            .accent-link { color: #ab90f8 !important; }
-        }
-    </style>
+            @media (prefers-color-scheme: dark) {
+                .accent-link { color: #ab90f8 !important; }
+            }
+        </style>
+    </Teleport>
 </template>
