@@ -1,0 +1,6 @@
+/* The app's primary. */
+.accent-link { color: var(--light-primary); }
+
+@media (prefers-color-scheme: dark) {
+    .accent-link { color: var(--dark-primary) !important; }
+}

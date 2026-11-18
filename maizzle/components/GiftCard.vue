@@ -16,7 +16,7 @@
 </script>
 
 <template>
-  <table class="gift-card w-full border rounded-2xl" cellpadding="0" cellspacing="0" role="none">
+  <table class="inner-card w-full border rounded-2xl" cellpadding="0" cellspacing="0" role="none">
     <tr>
       <td class="gift-card-figure rounded-t-2xl p-4 text-center">
         <img

@@ -1,16 +1,6 @@
-<script setup>
-import AccentButtonStyle from '../components/styles/AccentButtonStyle.vue'
-import CardStyle from '../components/styles/CardStyle.vue'
-import UserCardStyle from '../components/styles/UserCardStyle.vue'
-</script>
-
 <template>
     <Layout>
         <TwigPreheader><Raw>{{ sender.pseudo }}</Raw> souhaite vous ajouter à ses ami·es</TwigPreheader>
-
-        <CardStyle />
-        <AccentButtonStyle />
-        <UserCardStyle />
 
         <Container class="max-w-xl p-0 py-10 sm:p-6">
             <div class="email-card border rounded-2xl p-6">

@@ -1,0 +1,6 @@
+/* The page around the email: base-300 (light and dark). Layout puts .email-bg on <body> and its article wrapper. */
+.email-bg { background-color: var(--light-base-300); }
+
+@media (prefers-color-scheme: dark) {
+    .email-bg { background-color: var(--dark-base-300) !important; }
+}

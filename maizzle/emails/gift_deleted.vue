@@ -1,18 +1,6 @@
-<script setup>
-import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
-import CardStyle from '../components/styles/CardStyle.vue'
-import GiftCardStyle from '../components/styles/GiftCardStyle.vue'
-import UserCardStyle from '../components/styles/UserCardStyle.vue'
-</script>
-
 <template>
     <Layout>
         <Preheader>Un cadeau auquel vous participiez n'existe plus</Preheader>
-
-        <CardStyle />
-        <AccentLinkStyle />
-        <GiftCardStyle />
-        <UserCardStyle />
 
         <Container class="max-w-xl p-0 py-10 sm:p-6">
             <div class="email-card border rounded-2xl p-6">

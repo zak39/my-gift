@@ -1,18 +1,6 @@
-<script setup>
-import AccentButtonStyle from '../components/styles/AccentButtonStyle.vue'
-import CardStyle from '../components/styles/CardStyle.vue'
-import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
-import UserCardStyle from '../components/styles/UserCardStyle.vue'
-</script>
-
 <template>
     <Layout>
         <TwigPreheader><Raw>{{ member.pseudo }}</Raw> a quitté le groupe « <Raw>{{ crewName }}</Raw> »</TwigPreheader>
-
-        <CardStyle />
-        <AccentButtonStyle />
-        <AccentLinkStyle />
-        <UserCardStyle />
 
         <Container class="max-w-xl p-0 py-10 sm:p-6">
             <div class="email-card border rounded-2xl p-6">

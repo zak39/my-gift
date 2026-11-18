@@ -1,0 +1,31 @@
+/*
+  In dark, the app's own layers: the email's background is base-300 (body.css), .email-card is
+  the app's page (base-200, its text base-content, its border the same colour: none to see),
+  and a card inside it (UserCard, GiftCard) is the app's card, as Molecule:Crew:Card:
+  bg-base-100 border border-base-300 shadow-sm.
+*/
+.email-card {
+    background-color: var(--light-base-100);
+    border-color: var(--light-base-200);
+    color: var(--light-base-content);
+}
+
+/* Written out: Tailwind's shadow-sm would inline four empty ring layers. */
+.inner-card {
+    background-color: var(--light-base-100);
+    border-color: var(--light-base-300);
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+    .email-card {
+        background-color: var(--dark-base-200) !important;
+        border-color: var(--dark-base-200) !important;
+        color: var(--dark-base-content) !important;
+    }
+
+    .inner-card {
+        background-color: var(--dark-base-100) !important;
+        border-color: var(--dark-base-300) !important;
+    }
+}

@@ -1,14 +1,6 @@
-<script setup>
-import AccentButtonStyle from '../components/styles/AccentButtonStyle.vue'
-import CardStyle from '../components/styles/CardStyle.vue'
-</script>
-
 <template>
     <Layout>
         <Preheader>Votre cadeau n'est plus prêt à être offert</Preheader>
-
-        <CardStyle />
-        <AccentButtonStyle />
 
         <Container class="max-w-xl p-0 py-10 sm:p-6">
             <div class="email-card border rounded-2xl p-6">

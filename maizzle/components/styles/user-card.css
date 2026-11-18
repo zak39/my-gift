@@ -1,0 +1,22 @@
+/* The avatar's ring: base-300 as .inner-card's border in light; in dark, the track's grey, to show on the card. */
+.user-card-avatar { border-color: var(--light-base-300); }
+
+/*
+  The app's warning as a soft alert: its border, a pale tint behind dark text, for the contrast
+  (RGAA 3.2).
+*/
+.profile-notice {
+    background-color: var(--light-notice);
+    border-color: var(--light-warning);
+    color: var(--light-notice-content);
+}
+
+@media (prefers-color-scheme: dark) {
+    .user-card-avatar { border-color: var(--dark-track) !important; }
+
+    .profile-notice {
+        background-color: var(--dark-notice) !important;
+        border-color: var(--dark-warning) !important;
+        color: var(--dark-notice-content) !important;
+    }
+}

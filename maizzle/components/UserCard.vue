@@ -22,7 +22,7 @@
 </script>
 
 <template>
-  <table class="user-card w-full border rounded-2xl" cellpadding="0" cellspacing="0" role="none">
+  <table class="inner-card w-full border rounded-2xl" cellpadding="0" cellspacing="0" role="none">
     <tr>
       <td class="p-5">
         <table cellpadding="0" cellspacing="0" role="none">
