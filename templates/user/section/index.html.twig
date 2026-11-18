@@ -44,7 +44,7 @@
                                 <twig:Molecule:Gift:UnfiledHint />
                             {% endif %}
                             {% for gift in giftsWithoutSection %}
-                                <twig:CardGift :gift="gift" />
+                                <twig:CardGift :gift="gift" :headingLevel="3" />
                             {% endfor %}
                         </twig:block>
                     </twig:Molecule:Section>

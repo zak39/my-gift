@@ -56,10 +56,11 @@
                             :description="entry.section ? entry.section.description : 'Les cadeaux qui n\'ont pas encore été rangés dans une section.'"
                             :checked="loop.first"
                             :anchor="entry.section ? 'favoris-' ~ entry.section.id : 'favoris-sans-section-' ~ group.user.id"
-                            :giftCount="entry.gifts|length">
+                            :giftCount="entry.gifts|length"
+                            :headingLevel="3">
                             <twig:block name="gifts">
                                 {% for gift in entry.gifts %}
-                                    <twig:CardGift :gift="gift" />
+                                    <twig:CardGift :gift="gift" :headingLevel="4" />
                                 {% endfor %}
                             </twig:block>
                         </twig:Molecule:Section>
