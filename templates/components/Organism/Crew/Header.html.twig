@@ -5,8 +5,7 @@
 {# Once for both renderings: each call signs a new link. #}
 {% set shareUrl = crew_share_url(crew) %}
 
-{# No overflow-hidden on the card: it would clip the avatars' tooltips and the "…" menu of the
-   actions. The ribbon rounds its own corners. #}
+{# No overflow-hidden on the card: it would clip the "…" menu of the actions. The ribbon rounds its own corners. #}
 <section {{ attributes.defaults({ class: 'relative rounded-box border border-base-300 bg-base-100 shadow-sm' }) }}>
     <twig:Atomic:GiftRibbon />
 

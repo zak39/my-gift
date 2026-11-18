@@ -67,8 +67,8 @@ export default class extends Controller {
         this.iconTargets.forEach((icon) => icon.hidden = icon.dataset.state !== state);
         this.labelTarget.textContent = label;
         this.statusTarget.textContent = status;
-        if ('tip' in this.element.dataset) {
-            this.element.dataset.tip = status || label;
+        if ('tooltipTextValue' in this.element.dataset) {
+            this.element.dataset.tooltipTextValue = status || label;
         }
     }
 }

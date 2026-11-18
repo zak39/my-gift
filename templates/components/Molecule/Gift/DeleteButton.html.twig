@@ -1,12 +1,11 @@
-{% set wrapper = iconOnly
-    ? { class: 'tooltip', 'data-tip': 'Supprimer le cadeau' }
-    : { class: 'contents' } %}
-
-<div {{ attributes.defaults(wrapper) }}>
+<div {{ attributes.defaults({ class: 'contents' }) }}>
     <twig:Modal title="Supprimer un cadeau"
         class="remove_gift"
         :id="gift.id">
         <twig:block name="handlerButton">
+            {# The tooltip wraps the button only: the dialog is not inside it. #}
+            <span class="{{ iconOnly ? 'inline-block' : 'contents' }}"
+                {% if iconOnly %}data-controller="tooltip" data-tooltip-text-value="Supprimer le cadeau"{% endif %}>
             <twig:Atomic:Button :style="style"
                 class="{{ iconOnly ? 'btn-circle' : '' }}"
                 onclick="modal_remove_gift_{{ gift.id }}.showModal()"
@@ -18,6 +17,7 @@
                     <span class="{{ iconOnly ? 'sr-only' : '' }}">Supprimer</span>
                 </twig:block>
             </twig:Atomic:Button>
+            </span>
         </twig:block>
         <twig:block name="message">
             <p class="py-4">Est-ce que vous êtes sûr de supprimer le cadeau <b>{{ gift.title }}</b> ?</p>

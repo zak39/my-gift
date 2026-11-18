@@ -1,5 +1,5 @@
 {% set wrapper = iconOnly
-    ? { class: 'tooltip', 'data-tip': 'Aller sur la boutique' }
+    ? { class: 'inline-block', 'data-controller': 'tooltip', 'data-tooltip-text-value': 'Aller sur la boutique' }
     : { class: 'contents' } %}
 
 <div {{ attributes.defaults(wrapper) }}>
