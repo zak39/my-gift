@@ -1,16 +1,6 @@
-<script setup>
-import AccentButtonStyle from '../components/styles/AccentButtonStyle.vue'
-import CardStyle from '../components/styles/CardStyle.vue'
-import AccentLinkStyle from '../components/styles/AccentLinkStyle.vue'
-</script>
-
 <template>
     <Layout>
         <TwigPreheader>Un participant a quitté le cadeau <Raw>{{ ownerOf }}</Raw></TwigPreheader>
-
-        <CardStyle />
-        <AccentButtonStyle />
-        <AccentLinkStyle />
 
         <Container class="max-w-xl p-0 py-10 sm:p-6">
             <Raw>

@@ -1,17 +1,17 @@
 <!--
   Copy of the built-in <Layout> of @maizzle/framework 6.1.3, which it overrides in every email.
-  Three changes: Inter is loaded from the app (assets/fonts/inter/inter.css, through AssetMapper)
+  Four changes: Inter is loaded from the app (assets/fonts/inter/inter.css, through AssetMapper)
   instead of Google Fonts, so opening an email does not send the reader's IP address to Google;
-  the default language is French, the emails' own (RGAA 8.3), instead of English; and the
-  emails' background (BodyStyle, .email-bg) is laid on <body>, to fill the window, and on the
-  article wrapper too, since Gmail drops <body> and its classes.
+  the default language is French, the emails' own (RGAA 8.3), instead of English; the emails'
+  colours (components/styles/theme.css) are imported in its <style>; and their background
+  (.email-bg) is laid on <body>, to fill the window, and on the article wrapper too, since Gmail
+  drops <body> and its classes.
   When upgrading Maizzle, compare with node_modules/@maizzle/framework/dist/components/Layout.vue.
 -->
 <script setup>
 import { computed, useAttrs, createStaticVNode } from 'vue'
 import { twMerge } from 'tailwind-merge'
 import { useOutlookFallback } from '@maizzle/framework'
-import BodyStyle from './styles/BodyStyle.vue'
 
 defineOptions({ inheritAttrs: false })
 
@@ -91,6 +91,8 @@ const htmlXmlns = computed(() => outlookFallback ? {
     <link href="{{ absolute_url(asset('fonts/inter/inter.css')) }}" rel="stylesheet" media="screen">
     <style>
       @import "@maizzle/tailwindcss";
+      /* Resolved from the email's own folder (emails/), as Tailwind compiles it there. */
+      @import "../components/styles/theme.css";
 
       img {
         @apply max-w-full align-middle;
@@ -98,7 +100,6 @@ const htmlXmlns = computed(() => outlookFallback ? {
     </style>
   </head>
   <body :xml:lang="outlookFallback ? lang : null" :class="bodyMergedClass">
-    <BodyStyle />
     <span v-if="outlookFallback" style="display: none" v-html="msoBody"></span>
     <div
       role="article"

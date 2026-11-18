@@ -1,0 +1,14 @@
+/* The app's primary colours. Its radius is the emails' own: 0.5rem in light, a pill in dark. */
+.accent-button {
+    background-color: var(--light-primary);
+    color: var(--light-primary-content);
+    border-radius: 0.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    .accent-button {
+        background-color: var(--dark-primary) !important;
+        color: var(--dark-primary-content) !important;
+        border-radius: 2rem !important;
+    }
+}

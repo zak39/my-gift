@@ -1,0 +1,8 @@
+/* Every email's colours, imported by Layout's Tailwind <style>: the light rules are inlined, the dark ones stay in <head>; the purge drops what an email does not use. */
+@import "./palette.css";
+@import "./body.css";
+@import "./card.css";
+@import "./accent-button.css";
+@import "./accent-link.css";
+@import "./user-card.css";
+@import "./gift-card.css";
