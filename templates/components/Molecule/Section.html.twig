@@ -3,7 +3,11 @@
     {# Ribbon on the edge of the section, echoing the gift wrap of the list header. #}
     <span aria-hidden="true" class="absolute inset-y-0 start-0 w-1.5 bg-primary"></span>
 
-    <div class="collapse collapse-arrow">
+    {# RGAA 10.7: daisyUI draws the focus ring of the toggle 2px outside .collapse, which the
+       card's overflow-hidden clips. Pulled inside instead (-outline-offset-2), over the ribbon.
+       The variant repeats daisyUI's own focus selector: after a daisyUI upgrade, tab onto a
+       section again to check the ring is still drawn, and keeps 3:1 on the ribbon (RGAA 3.3). #}
+    <div class="collapse collapse-arrow has-[>input:focus-visible]:-outline-offset-2">
         {# RGAA 7.1: the toggle names what it shows without calling it a section, which a block of
            /me/participations (« En cours », « Offerts »…) is not. Read by screen readers only. #}
         <input type="checkbox"
