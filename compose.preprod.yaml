@@ -7,10 +7,19 @@
 # extra.runtime.prod_envs).
 name: mygift
 
+# Docker's default json-file driver never rotates: Monolog writes to stderr, so the logs would
+# grow until the disk is full. The local driver rotates and compresses: 3 files of 10 MB at most.
+x-logging: &logging
+  driver: local
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   php:
     build: .
     restart: always
+    logging: *logging
     env_file: .env.preprod.local
     environment:
       # HTTP only: the proxy holds the certificate.
@@ -37,6 +46,7 @@ services:
   messenger-worker:
     build: .
     restart: always
+    logging: *logging
     env_file: .env.preprod.local
     # The async queue (emails, avatars) and the scheduler (the inactive account purge).
     # --memory-limit stays below PHP's memory_limit (256M, Dockerfile): Messenger stops between
@@ -54,6 +64,7 @@ services:
   database:
     image: postgres:16-alpine
     restart: always
+    logging: *logging
     env_file: .env.preprod.local
     # php and the worker wait for it (depends_on): migrations and the queue need a ready
     # database, not just a started container. $$ leaves the variables to the container's

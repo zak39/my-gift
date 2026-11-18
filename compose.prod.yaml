@@ -4,10 +4,19 @@
 #   `castor deploy prod`: it checks out the latest tag and starts the containers.
 name: mygift
 
+# Docker's default json-file driver never rotates: Monolog writes to stderr, so the logs would
+# grow until the disk is full. The local driver rotates and compresses: 3 files of 10 MB at most.
+x-logging: &logging
+  driver: local
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   php:
     build: .
     restart: always
+    logging: *logging
     env_file: .env.prod.local
     environment:
       # The deployed tag, set by `castor deploy`. Not required (${APP_VERSION:?}): compose
@@ -28,6 +37,7 @@ services:
   messenger-worker:
     build: .
     restart: always
+    logging: *logging
     env_file: .env.prod.local
     # The async queue (emails, avatars) and the scheduler (the inactive account purge).
     # --memory-limit stays below PHP's memory_limit (256M, Dockerfile): Messenger stops between
@@ -45,6 +55,7 @@ services:
   database:
     image: postgres:16-alpine
     restart: always
+    logging: *logging
     env_file: .env.prod.local
     # php and the worker wait for it (depends_on): migrations and the queue need a ready
     # database, not just a started container. $$ leaves the variables to the container's
