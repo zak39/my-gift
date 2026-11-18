@@ -16,7 +16,7 @@
         <tr>
           <td class="w-8 py-1 align-middle">
             <Raw>{% if contributor.isAnonymous or contributor.isFromDeletedUser %}</Raw>
-              <table class="gift-card-secondary rounded-full" cellpadding="0" cellspacing="0" role="none">
+              <table class="gift-card-initials rounded-full" cellpadding="0" cellspacing="0" role="none">
                 <tr>
                   <td width="32" height="32" class="text-center text-xs font-semibold"><Raw>{{ contributor.isAnonymous ? contributor.pseudoAnonyme|u.truncate(2)|capitalize : '?' }}</Raw></td>
                 </tr>
