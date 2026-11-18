@@ -616,7 +616,12 @@
     },
     {
         question: "Qu'est-ce que My Gift, exactement ?",
-        answer: "Un projet personnel développé avec Symfony, ouvert à l'usage et sans modèle payant : pas d'abonnement, pas de publicité, pas de revente de données.",
+        answer: "Un projet personnel développé avec Symfony, par une seule personne, et dont le code est public.",
+    },
+    {
+        question: "My Gift est-il gratuit ?",
+        answer: "Oui, entièrement : pas d'abonnement, pas de publicité, pas de revente de données. My Gift a pourtant un coût (hébergement, maintenance, nouveautés). Si l'application vous rend service, un petit soutien aide à la faire vivre ; il reste facultatif, et rien n'est jamais bloqué sans lui.",
+        support: true,
     },
 ] %}
 <section class="bg-base-100 border-base-300 -mx-4 border-y px-4 py-24 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 lg:py-32">
@@ -628,7 +633,12 @@
                 <div class="collapse collapse-arrow bg-base-200">
                     <input type="radio" name="faq-landing" {{ loop.first ? 'checked' }} aria-label="{{ item.question }}" />
                     <div class="collapse-title text-lg font-semibold">{{ item.question }}</div>
-                    <div class="collapse-content text-muted leading-relaxed">{{ item.answer }}</div>
+                    <div class="collapse-content text-muted leading-relaxed">
+                        {{ item.answer }}
+                        {% if item.support|default(false) %}
+                            <div class="mt-4"><twig:Molecule:SupportButton /></div>
+                        {% endif %}
+                    </div>
                 </div>
             {% endfor %}
         </div>

@@ -16,6 +16,7 @@
         <li><a href="#recevoir"><twig:ux:icon name="lucide:party-popper" class="size-4" aria-hidden="true" />Recevoir</a></li>
         <li><a href="#groupes"><twig:ux:icon name="lucide:users" class="size-4" aria-hidden="true" />Groupes et amis</a></li>
         <li><a href="#compte"><twig:ux:icon name="lucide:user-round" class="size-4" aria-hidden="true" />Mon compte</a></li>
+        <li><a href="#apropos"><twig:ux:icon name="lucide:heart-handshake" class="size-4" aria-hidden="true" />À propos</a></li>
     </ul>
 {% endblock %}
 
@@ -175,6 +176,27 @@
                 par email. Seul un compte jamais vérifié et resté inutilisé part sans
                 avertissement. Les délais exacts sont dans la
                 <a href="{{ path('app_privacy') }}#duree" class="link">politique de confidentialité</a>.
+            </p>
+        </twig:Molecule:FaqItem>
+    </div>
+
+    <h2 id="apropos">À propos de My Gift</h2>
+    <div class="mt-4 space-y-2">
+        {# Shares its answer with the landing page FAQ: keep them in step. #}
+        <twig:Molecule:FaqItem question="My Gift est-il gratuit ?">
+            <p>
+                Oui, entièrement : pas d'abonnement, pas de publicité, pas de revente de
+                données. Toutes les fonctionnalités sont ouvertes à tout le monde.
+            </p>
+            <p>
+                My Gift a pourtant un coût : l'hébergement, la maintenance et les nouveautés
+                reposent sur une seule personne. Si l'application vous rend service, un petit
+                soutien aide à la faire vivre (voir
+                <a href="{{ path('app_about') }}#soutenir" class="link">À propos</a>). Il reste
+                facultatif, et rien n'est jamais bloqué sans lui.
+            </p>
+            <p>
+                <twig:Molecule:SupportButton />
             </p>
         </twig:Molecule:FaqItem>
     </div>
