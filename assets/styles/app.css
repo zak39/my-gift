@@ -45,10 +45,11 @@
     --color-success-content: oklch(25% 0.07 155);
 }
 
-/* daisyUI draws its muted text at 60% (a menu title at 40%) and a soft badge in the raw colour:
-   too pale (RGAA 3.2). daisyUI emits its rules in a sublayer of utilities; this one comes after
-   it, so it wins over daisyUI while a text utility on the same element (the form labels'
-   text-base-content) still wins over it. Rerun the contrast check after a daisyUI upgrade. */
+/* daisyUI draws its muted text at 60% (a menu title at 40%) and a soft badge or alert in the
+   raw colour: too pale (RGAA 3.2). daisyUI emits its rules in a sublayer of utilities; this one
+   comes after it, so it wins over daisyUI while a text utility on the same element (the form
+   labels' text-base-content) still wins over it. Rerun the contrast check after a daisyUI
+   upgrade. */
 @layer utilities.overrides {
     .stat-title,
     .stat-desc,
@@ -78,6 +79,14 @@
 
     .menu :is(a, button, summary).menu-active:focus-visible {
         outline-color: var(--menu-active-fg);
+    }
+
+    /* The raw colour on its own 8% tint: info reads at 2.1:1 and warning at 1.7:1 on the light
+       theme. Shaded 40% toward the text colour: 5.4:1 and 4.8:1 (a little lighter on dark, which
+       already passed). Error and success already read at 4.8:1 or more: left as they are. */
+    .alert-info.alert-soft,
+    .alert-warning.alert-soft {
+        color: color-mix(in oklab, var(--alert-color) 60%, var(--color-base-content));
     }
 }
 
