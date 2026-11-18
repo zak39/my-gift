@@ -24,6 +24,8 @@ class RegistrationFormType extends AbstractType
                 'label_attr' => [
                     'class' => 'label',
                 ],
+                // RGAA 11.13: the field's purpose, for autofill and assistive technologies.
+                'attr' => ['autocomplete' => 'email'],
             ])
             ->add('pseudo', PseudoType::class)
             ->add('lastname', TextType::class, [
