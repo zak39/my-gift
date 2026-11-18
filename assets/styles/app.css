@@ -64,6 +64,21 @@
     .badge-soft {
         color: var(--color-base-content);
     }
+
+    /* daisyUI shows a menu item's keyboard focus with a background alone (base-content at 10%,
+       1.19:1 on light, 1.34:1 on dark) and removes the outline: RGAA 3.3 asks 3:1 for a state,
+       10.7 a visible focus. An outline in base-content, drawn inside the item so a dropdown or
+       the drawer does not clip it. A .btn keeps its own ring (daisyUI leaves it out too); the
+       active item, filled in the app's purple, takes its text colour instead, which reads on
+       that fill. */
+    .menu :is(a, button, summary):not(.btn):focus-visible {
+        outline: 2px solid var(--color-base-content);
+        outline-offset: -2px;
+    }
+
+    .menu :is(a, button, summary).menu-active:focus-visible {
+        outline-color: var(--menu-active-fg);
+    }
 }
 
 /* The app's name (font-brand). Modak, served from assets/ rather than Google Fonts: no
