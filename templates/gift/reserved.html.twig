@@ -14,7 +14,8 @@
                     <div class="flex flex-col gap-8 w-full" data-controller="anonymous-participant">
                         <div class="flex flex-col">
                             {{ form_label(form.anonymous) }}
-                            <label class="">
+                            {# RGAA 11.1, 11.2: a <div>, not a <label> (see form/daisyui_layout.html.twig, form_widget_simple). #}
+                            <div>
                                 {{ form_widget(form.anonymous, {
                                     attr: {
                                         "data-anonymous-participant-target": "anonymous",
@@ -24,14 +25,14 @@
                                 {% if form.anonymous.vars.required %}
                                     <twig:Atomic:RequiredBadge />
                                 {% endif %}
-                            </label>
+                            </div>
                             {% if form.anonymous.vars.errors|length > 0 %}
                                 <div class="alert alert-error alert-soft my-2">{{ form_errors(form.anonymous) }}</div>
                             {% endif %}
                         </div>
                         <div class="flex flex-col">
                             {{ form_label(form.pseudoAnonyme) }}
-                            <label class="">
+                            <div>
                                 {{ form_widget(form.pseudoAnonyme, {
                                     attr: {
                                         'data-anonymous-participant-target': 'pseudo',
@@ -41,7 +42,7 @@
                                 {% if form.pseudoAnonyme.vars.required %}
                                     <twig:Atomic:RequiredBadge />
                                 {% endif %}
-                            </label>
+                            </div>
                             {% if form.pseudoAnonyme.vars.errors|length > 0 %}
                                 <div class="alert alert-error alert-soft my-2">{{ form_errors(form.pseudoAnonyme) }}</div>
                             {% endif %}

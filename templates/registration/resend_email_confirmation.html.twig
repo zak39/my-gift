@@ -28,7 +28,8 @@
                     {{ form_start(resendForm) }}
                         <fieldset class="fieldset">
                             {{ form_label(resendForm.email) }}
-                            <label class="input md:input-md input-xl w-full">
+                            {# RGAA 11.1, 11.2: a <div>, not a <label> (see form/daisyui_layout.html.twig, form_widget_simple). #}
+                            <div class="input md:input-md input-xl w-full">
                                 <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                     <g
                                     stroke-linejoin="round"
@@ -46,7 +47,7 @@
                                         autofocus: true
                                     }
                                 }) }}
-                            </label>
+                            </div>
                             {% if resendForm.email.vars.errors|length > 0 %}
                                 <div class="alert alert-error alert-soft my-2">{{ form_errors(resendForm.email) }}</div>
                             {% endif %}
