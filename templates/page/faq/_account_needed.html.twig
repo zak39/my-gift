@@ -1,0 +1,15 @@
+{# On the FAQ page and the landing page. group: the <details> name that keeps one answer open at a time; open: open on load. #}
+<twig:Molecule:FaqItem
+    question="Mes proches doivent-ils créer un compte pour réserver ?"
+    :name="group|default(false)"
+    :open="open|default(false)">
+    <p>
+        Oui. Un compte est nécessaire pour réserver ou contribuer, afin que My Gift sache qui
+        s'est positionné et empêche qu'un cadeau soit pris deux fois. L'inscription demande un
+        pseudo, votre prénom, une adresse email et un mot de passe, rien de plus : le nom est
+        facultatif.
+    </p>
+    <p>
+        Une fois votre demande d'ami·e acceptée, chacun voit les sections de l'autre.
+    </p>
+</twig:Molecule:FaqItem>

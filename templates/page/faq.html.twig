@@ -21,8 +21,10 @@
 {% endblock %}
 
 {% block content %}
+    {# The included questions are also on the landing page: one partial each, in page/faq/. #}
     <h2 id="offrir">Offrir</h2>
     <div class="mt-4 space-y-2">
+        {{ include('page/faq/_account_needed.html.twig', with_context = false) }}
         <twig:Molecule:FaqItem question="Réserver ou cagnotter : quelle différence ?">
             <p>
                 Réserver, c'est offrir le cadeau seul·e : il passe « Réservé » et personne
@@ -38,12 +40,7 @@
                 entre vous.
             </p>
         </twig:Molecule:FaqItem>
-        <twig:Molecule:FaqItem question="Puis-je changer d'avis ?">
-            <p>
-                Oui. Depuis la page du cadeau, vous annulez votre réservation ou retirez votre
-                participation à la cagnotte : le cadeau redevient disponible pour les autres.
-            </p>
-        </twig:Molecule:FaqItem>
+        {{ include('page/faq/_cancel.html.twig', with_context = false) }}
     </div>
 
     <h2 id="recevoir">Recevoir</h2>
@@ -133,9 +130,10 @@
         </twig:Molecule:FaqItem>
         <twig:Molecule:FaqItem question="Comment ajouter un·e ami·e ?">
             <p>
-                Cherchez la personne depuis la page Amis et envoyez-lui une demande. Une fois
-                acceptée, chacun voit les sections de l'autre et peut l'inviter dans un
-                groupe.
+                Envoyez-lui votre lien d'invitation, à copier depuis la page Amis. En l'ouvrant,
+                il ou elle vous envoie une demande d'ami·e, après s'être connecté·e ou inscrit·e.
+                Une fois que vous l'avez acceptée, chacun voit les sections de l'autre et peut
+                l'inviter dans un groupe.
             </p>
         </twig:Molecule:FaqItem>
     </div>
@@ -182,23 +180,8 @@
 
     <h2 id="apropos">À propos de My Gift</h2>
     <div class="mt-4 space-y-2">
-        {# Shares its answer with the landing page FAQ: keep them in step. #}
-        <twig:Molecule:FaqItem question="My Gift est-il gratuit ?">
-            <p>
-                Oui, entièrement : pas d'abonnement, pas de publicité, pas de revente de
-                données. Toutes les fonctionnalités sont ouvertes à tout le monde.
-            </p>
-            <p>
-                My Gift a pourtant un coût : l'hébergement, la maintenance et les nouveautés
-                reposent sur une seule personne. Si l'application vous rend service, un petit
-                soutien aide à la faire vivre (voir
-                <a href="{{ path('app_about') }}#soutenir" class="link">À propos</a>). Il reste
-                facultatif, et rien n'est jamais bloqué sans lui.
-            </p>
-            <p>
-                <twig:Molecule:SupportButton />
-            </p>
-        </twig:Molecule:FaqItem>
+        {{ include('page/faq/_what_is_my_gift.html.twig', with_context = false) }}
+        {{ include('page/faq/_free.html.twig', with_context = false) }}
     </div>
 
     <div class="card mt-12 bg-primary/10">

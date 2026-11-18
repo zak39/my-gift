@@ -1,0 +1,10 @@
+{# On the FAQ page and the landing page. group: the <details> name that keeps one answer open at a time; open: open on load. #}
+<twig:Molecule:FaqItem
+    question="Qu'est-ce que My Gift, exactement ?"
+    :name="group|default(false)"
+    :open="open|default(false)">
+    <p>
+        Un projet personnel développé avec Symfony, par une seule personne, et dont le code est
+        public.
+    </p>
+</twig:Molecule:FaqItem>

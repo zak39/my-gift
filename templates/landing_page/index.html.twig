@@ -9,7 +9,7 @@
 <twig:Molecule:Flashes alertClass="mx-auto mt-6 max-w-3xl" />
 
 {# ================================================================= HERO #}
-<section class="hero py-24 lg:py-32">
+<section class="hero py-16 lg:py-24">
   <div class="hero-content w-full max-w-6xl flex-col px-0 text-center">
     <div class="max-w-3xl">
         <span class="badge badge-lg badge-soft badge-accent gap-2">
@@ -17,21 +17,22 @@
             Gratuit, sans abonnement ni publicité
         </span>
 
-        <h1 class="mt-12 text-5xl leading-[1.05] font-bold text-balance lg:text-7xl">
+        <h1 class="mt-8 text-5xl leading-[1.05] font-bold text-balance lg:text-7xl">
             Des cadeaux qui ne font jamais doublon
         </h1>
 
-        <p class="text-muted mx-auto mt-10 max-w-2xl text-xl leading-relaxed">
+        <p class="text-muted mx-auto mt-8 max-w-2xl text-xl leading-relaxed">
             Créez une section par occasion, seul·e ou en groupe. Vos ami·es réservent un cadeau
             ou cagnottent ensemble, sans jamais se marcher dessus.
         </p>
 
-        <div class="mt-14 flex flex-col items-stretch justify-center gap-5 sm:flex-row sm:items-center">
+        <div class="mt-10 flex flex-col items-stretch justify-center gap-5 sm:flex-row sm:items-center">
+            {# RGAA 6.1: the label says where the link leads, in the registration page's own words. #}
             <twig:Atomic:ButtonLink :to="path('app_register')" color="primary" style="" class="btn-lg">
                 <twig:block name="icon">
-                    <twig:ux:icon name="lucide:gift" class="size-5" />
+                    <twig:ux:icon name="lucide:user-round-plus" class="size-5" />
                 </twig:block>
-                <twig:block name="name">Créer mes cadeaux</twig:block>
+                <twig:block name="name">Créer un compte</twig:block>
             </twig:Atomic:ButtonLink>
             <twig:Atomic:ButtonLink to="#comment-ca-marche" style="outline" class="btn-lg">
                 <twig:block name="name">
@@ -41,7 +42,7 @@
             </twig:Atomic:ButtonLink>
         </div>
 
-        <p class="text-muted mt-10 text-sm">
+        <p class="text-muted mt-8 text-sm">
             Une adresse email suffit. Aucune carte bancaire, aucun paiement dans l'application.
         </p>
 
@@ -52,7 +53,7 @@
     </div>
 
     {# --- Aperçu : fiche cadeau avec plusieurs contributeurs --- #}
-    <div class="mt-20 flex w-full justify-center text-left lg:mt-28">
+    <div class="mt-16 flex w-full justify-center text-left lg:mt-20">
         {{ include('landing_page/_gift_card.html.twig', {
             titleTag: 'p',
             gift: {
@@ -80,29 +81,24 @@
     {
         card: 'bg-secondary/10', icon: 'bg-secondary text-secondary-content', badge: 'badge-secondary',
         iconName: 'lucide:link', title: 'Ajoutez des cadeaux',
-        text: "Collez le lien du produit : le titre, l'image et la description arrivent tout seuls.",
+        text: "Collez le lien du produit : sur la plupart des sites, le titre, l'image et la description arrivent tout seuls. Sinon, vous complétez à la main.",
     },
     {
         card: 'bg-accent/10', icon: 'bg-accent text-accent-content', badge: 'badge-accent',
         iconName: 'lucide:user-plus', title: 'Invitez vos proches',
         text: 'Ajoutez-les en ami·es, puis envoyez le lien « Partager » dans la conversation de famille.',
     },
-    {
-        card: 'bg-success/10', icon: 'bg-success text-success-content', badge: 'badge-success',
-        iconName: 'lucide:party-popper', title: "Ils s'organisent",
-        text: 'Vos ami·es réservent ou cagnottent. Vos sections se mettent à jour toutes seules.',
-    },
 ] %}
-<section id="comment-ca-marche" class="bg-base-100 border-base-300 -mx-4 scroll-mt-20 border-y px-4 py-24 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 lg:py-32">
+<section id="comment-ca-marche" class="bg-base-100 border-base-300 -mx-4 scroll-mt-20 border-y px-4 py-16 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 lg:py-24">
     <div class="mx-auto max-w-6xl">
         <div class="mx-auto max-w-2xl text-center">
             <h2 class="text-4xl font-bold text-balance lg:text-5xl">Comment ça marche</h2>
             <p class="text-muted mt-6 text-lg leading-relaxed">
-                Quatre étapes, rien à installer.
+                Trois étapes, rien à installer.
             </p>
         </div>
 
-        <div class="mt-20 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3 lg:mt-16">
             {% for step in howItWorks %}
                 <div class="card {{ step.card }} h-full">
                     <div class="card-body gap-5">
@@ -119,42 +115,7 @@
     </div>
 </section>
 
-{# ====================================================== RÉSERVER seul #}
-<section class="py-24 lg:py-32">
-    <div class="mx-auto max-w-6xl">
-        <div class="mx-auto max-w-2xl text-center">
-            <span class="badge badge-lg badge-soft badge-primary gap-2">
-                <twig:ux:icon name="lucide:package" class="size-4" />
-                Réserver
-            </span>
-            <h2 class="mt-8 text-4xl font-bold text-balance lg:text-5xl">
-                Un cadeau réservé ne sera pas offert deux fois
-            </h2>
-            <p class="text-muted mt-6 text-lg leading-relaxed">
-                Le premier qui réserve bloque le cadeau. Il passe en « réservé » et vos autres
-                ami·es le voient pris. Un pseudonyme suffit pour rester discret
-                jusqu'au jour J.
-            </p>
-        </div>
-
-        {# --- Aperçu : fiche cadeau réservée par une seule personne --- #}
-        <div class="mt-20 flex justify-center">
-            {{ include('landing_page/_gift_card.html.twig', {
-                gift: {
-                    image: 'https://img.daisyui.com/images/stock/photo-1635805737707-575885ab0820.webp',
-                    alt: 'Salle de cinéma vue depuis les sièges',
-                    title: 'Carte cinéma, 5 séances — valable un an dans tout le réseau',
-                    price: 55,
-                    description: 'Cinq places non nominatives, utilisables quand on veut, séances 3D comprises. Celle que je rate toujours de peu quand elle est en promotion…',
-                    status: 'reserved',
-                },
-                reservedBy: { name: 'Sarah Lemoine', seed: 'Sarah' },
-            }, with_context = false) }}
-        </div>
-    </div>
-</section>
-
-{# ================================================== CAGNOTTER à plusieurs #}
+{# ============================================== RÉSERVER OU CAGNOTTER #}
 {% set pooledGift = { title: 'Vélo de ville 7 vitesses — cadre vert', price: 380 } %}
 {% set contributors = [
     { name: 'Camille', amount: 120 },
@@ -168,21 +129,42 @@
     { label: 'Offert', icon: 'lucide:party-popper' },
 ] %}
 {% set currentStep = 1 %}
-<section class="bg-base-100 border-base-300 -mx-4 border-y px-4 py-24 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 lg:py-32">
-    <div class="mx-auto grid max-w-6xl grid-cols-1 items-center gap-16 lg:grid-cols-2 lg:gap-24">
+<section class="py-16 lg:py-24">
+    <div class="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-24">
         <div class="lg:order-2">
-            <span class="badge badge-lg badge-soft badge-accent gap-2">
-                <twig:ux:icon name="lucide:hand-coins" class="size-4" />
-                Cagnotter
-            </span>
-            <h2 class="mt-8 text-4xl font-bold text-balance lg:text-5xl">
-                Pour les gros cadeaux, chacun met sa part
+            <h2 class="text-4xl font-bold text-balance lg:text-5xl">
+                Un cadeau ne sera jamais offert deux fois
             </h2>
-            <p class="text-muted mt-8 text-lg leading-relaxed">
-                My Gift additionne les montants et affiche le reste à couvrir. Le prix sert
-                d'objectif : s'il change, les contributeurs sont prévenus par email et revoient
-                leur part. Une fois le cadeau acheté, l'un d'eux le passe en « prêt à offrir ».
-            </p>
+
+            <div class="mt-10 flex flex-col gap-8">
+                <div class="flex items-start gap-4">
+                    <span class="bg-primary/15 text-primary rounded-box grid size-12 shrink-0 place-content-center">
+                        <twig:ux:icon name="lucide:package" class="size-6" />
+                    </span>
+                    <div>
+                        <h3 class="text-xl font-semibold">Réserver seul·e</h3>
+                        <p class="text-muted mt-2 text-lg leading-relaxed">
+                            Le premier qui réserve bloque le cadeau : vos autres ami·es le voient
+                            pris. Un pseudonyme suffit pour rester discret jusqu'au jour J.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-4">
+                    <span class="bg-accent/15 text-accent rounded-box grid size-12 shrink-0 place-content-center">
+                        <twig:ux:icon name="lucide:hand-coins" class="size-6" />
+                    </span>
+                    <div>
+                        <h3 class="text-xl font-semibold">Cagnotter à plusieurs</h3>
+                        <p class="text-muted mt-2 text-lg leading-relaxed">
+                            Pour les gros cadeaux, chacun met sa part et My Gift affiche le reste à
+                            couvrir. Si le prix change, les contributeurs sont prévenus par email.
+                            Une fois le cadeau acheté, l'un d'eux le passe en « prêt à offrir ».
+                        </p>
+                    </div>
+                </div>
+            </div>
+
             <p class="text-muted mt-8 text-sm">
                 Aucun paiement ne transite par l'application : vous vous arrangez entre vous.
             </p>
@@ -246,232 +228,6 @@
     </div>
 </section>
 
-{# ================================================= COLLEZ UNE ADRESSE #}
-<section class="py-24 lg:py-32">
-    <div class="mx-auto grid max-w-6xl grid-cols-1 items-center gap-16 lg:grid-cols-2 lg:gap-24">
-        <div>
-            <span class="badge badge-lg badge-soft badge-secondary gap-2">
-                <twig:ux:icon name="lucide:link" class="size-4" />
-                Ajouter un cadeau
-            </span>
-            <h2 class="mt-8 text-4xl font-bold text-balance lg:text-5xl">
-                Collez une adresse, la fiche se remplit
-            </h2>
-            <p class="text-muted mt-8 text-lg leading-relaxed">
-                My Gift lit les métadonnées Open Graph de la page marchande et reprend le titre,
-                l'image et la description. Il ne reste souvent que le prix.
-            </p>
-            {% set pasteBenefits = [
-                'Fonctionne avec la plupart des sites marchands',
-                'Les champs restent modifiables après récupération',
-                'Si la page ne peut pas être lue, vous complétez à la main',
-            ] %}
-            <twig:Molecule:CheckList :items="pasteBenefits" iconClass="bg-success/15 text-success" class="mt-12" />
-        </div>
-
-        {# Reprise de la mise en page de templates/components/Organism/Gift/Form.html.twig #}
-        <div class="overflow-hidden rounded-box border border-base-300 bg-base-100 shadow-sm">
-            <twig:Atomic:GiftRibbon />
-
-            <twig:Molecule:Form:FieldGroup
-                :stacked="true"
-                title="Le lien"
-                description="Le plus rapide : sur la plupart des sites, on récupère le titre, la description et l'image pour vous.">
-                <div class="fieldset">
-                    <span class="label text-sm font-medium text-base-content">
-                        Lien du produit
-                        <twig:Atomic:RequiredBadge />
-                    </span>
-                    <label class="input w-full">
-                        <twig:ux:icon name="lucide:link" class="size-4 shrink-0 opacity-60" />
-                        <input type="url" class="grow" value="https://boutique.example/velo-de-ville" readonly tabindex="-1" aria-label="Lien du produit, exemple" />
-                    </label>
-                </div>
-            </twig:Molecule:Form:FieldGroup>
-
-            <twig:Molecule:Form:FieldGroup
-                :stacked="true"
-                title="Le cadeau"
-                description="Rempli par My Gift à partir de la page du produit.">
-                <div class="grid gap-4 sm:grid-cols-[minmax(0,1fr)_9rem]">
-                    <div class="fieldset">
-                        <span class="label text-sm font-medium text-base-content">Titre</span>
-                        <input type="text" class="input w-full" value="Vélo de ville 7 vitesses — cadre vert" readonly tabindex="-1" aria-label="Titre récupéré automatiquement" />
-                    </div>
-                    <div class="fieldset">
-                        <span class="label text-sm font-medium text-base-content">Prix</span>
-                        <label class="input w-full">
-                            <input type="text" class="grow tabular-nums" value="380,00" readonly tabindex="-1" aria-label="Prix à compléter" />
-                            €
-                        </label>
-                    </div>
-                </div>
-                <div class="fieldset">
-                    <span class="label text-sm font-medium text-base-content">Description</span>
-                    <textarea class="textarea w-full" rows="3" readonly tabindex="-1" aria-label="Description récupérée automatiquement">Vélo de ville 7 vitesses, cadre acier vert, garde-boue et porte-bagages inclus. Livraison en 48 h ou retrait en magasin.</textarea>
-                </div>
-            </twig:Molecule:Form:FieldGroup>
-        </div>
-    </div>
-</section>
-
-{# ================================================= SECTIONS PAR OCCASION #}
-<section class="bg-base-100 border-base-300 -mx-4 border-y px-4 py-24 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 lg:py-32">
-    <div class="mx-auto max-w-6xl">
-        <div class="mx-auto max-w-2xl text-center">
-            <h2 class="text-4xl font-bold text-balance lg:text-5xl">Une section par occasion, ou par thème</h2>
-            <p class="text-muted mt-6 text-lg leading-relaxed">
-                Vos ami·es ouvrent votre page et parcourent vos sections. Chacune se replie,
-                garde ses propres cadeaux et son statut.
-            </p>
-        </div>
-
-        <div class="bg-base-200 rounded-box mt-16 p-6 lg:p-10">
-            <p class="text-muted mb-6 text-sm">Exemple : la page de Léa, vue par une amie</p>
-
-            <div class="flex flex-col gap-5">
-                <twig:Molecule:Section
-                    title="Sport"
-                    description="Pour pratiquer des activités physiques"
-                    :checked="true"
-                    :giftCount="2">
-                    <twig:block name="gifts">
-                        {{ include('landing_page/_gift_card.html.twig', {
-                            gift: {
-                                image: 'https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp',
-                                alt: 'Baskets de running vert fluo',
-                                title: 'Baskets de running, pointure 41 — modèle Zoom SuperRep',
-                                price: 129,
-                                description: "Les vertes, taille 41, pour remplacer celles que j'use depuis trois ans. Livraison rapide ou retrait en magasin…",
-                                status: 'created',
-                            },
-                        }, with_context = false) }}
-                        {{ include('landing_page/_gift_card.html.twig', {
-                            gift: {
-                                image: 'https://img.daisyui.com/images/stock/daisyui-hat-1.webp',
-                                alt: 'Casquette noire brodée portée de face',
-                                title: 'Casquette brodée, taille M — quatre coloris disponibles',
-                                price: 42,
-                                description: 'La noire avec le petit écusson brodé. Taille M, réglable, coton bio.',
-                                status: 'reserved',
-                            },
-                            reservedBy: { name: 'Yanis Brun', seed: 'Yanis' },
-                        }, with_context = false) }}
-                    </twig:block>
-                </twig:Molecule:Section>
-
-                <twig:Molecule:Section
-                    title="Gourmandises"
-                    description="Chocolats, épicerie fine et ateliers"
-                    :giftCount="2">
-                    <twig:block name="gifts">
-                        {{ include('landing_page/_gift_card.html.twig', {
-                            gift: {
-                                image: 'https://img.daisyui.com/images/stock/photo-1559703248-dcaaec9fab78.webp',
-                                alt: 'Cornet de glace sur fond bleu',
-                                title: 'Carte cadeau glacier artisanal — 10 parfums au choix',
-                                price: 130,
-                                description: 'Le glacier du coin fait des cartes valables toute la saison. À partager, forcément.',
-                                status: 'contributing',
-                            },
-                            pool: { total: 80, participants: ['Hugo', 'Maya'] },
-                        }, with_context = false) }}
-                        {{ include('landing_page/_gift_card.html.twig', {
-                            gift: {
-                                image: 'https://img.daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.webp',
-                                alt: 'Ananas sur fond clair',
-                                title: 'Panier de fruits exotiques, livraison hebdomadaire',
-                                price: 28,
-                                description: 'Un panier par semaine pendant un mois : ananas, mangues, fruits de la passion.',
-                                status: 'reserved',
-                            },
-                            reservedBy: { name: 'Inès Faure', seed: 'Ines' },
-                        }, with_context = false) }}
-                    </twig:block>
-                </twig:Molecule:Section>
-            </div>
-        </div>
-    </div>
-</section>
-
-{# ============================================================= GROUPES #}
-{# Julie created the crew and still owns it: she wears both badges. #}
-{% set crewMembers = [
-    { name: 'Julie Martin', owner: true },
-    { name: 'Thomas Martin', owner: false },
-] %}
-{% set crewRules = [
-    'Chaque membre peut ajouter et modifier des cadeaux dans le groupe.',
-    'Les sections du groupe sont visibles de ses membres et de leurs ami·es.',
-    'Un membre qui part laisse ses cadeaux au groupe.',
-] %}
-<section class="py-24 lg:py-32">
-    <div class="mx-auto grid max-w-6xl grid-cols-1 items-center gap-16 lg:grid-cols-2 lg:gap-24">
-        <div>
-            <span class="badge badge-lg badge-soft badge-info gap-2">
-                <twig:ux:icon name="lucide:users" class="size-4" />
-                Groupes
-            </span>
-            <h2 class="mt-8 text-4xl font-bold text-balance lg:text-5xl">
-                Des sections tenues à plusieurs
-            </h2>
-            <p class="text-muted mt-8 text-lg leading-relaxed">
-                Un couple, des parents pour leur enfant, une bande d'ami·es : créez un groupe,
-                invitez vos ami·es, et tenez ensemble les sections qui vous concernent tous.
-            </p>
-            <twig:Molecule:CheckList :items="crewRules" iconClass="bg-info/15 text-info" class="mt-12" />
-        </div>
-
-        {# Reprise de templates/crew/show.html.twig avec des données fixes : MemberRow demande un
-           CrewMember. Garder en phase avec templates/components/Molecule/Crew/MemberRow.html.twig. #}
-        <div class="card bg-base-100 border border-base-300 shadow-sm">
-            <div class="card-body gap-6">
-                <div>
-                    <h3 class="text-2xl leading-tight font-bold">Famille Martin</h3>
-                    <p class="text-muted mt-1 flex items-center gap-1.5 text-sm">
-                        <twig:ux:icon name="lucide:gift" class="size-4 shrink-0" />
-                        <span class="tabular-nums">2 sections, 9 cadeaux</span>
-                    </p>
-                </div>
-
-                <div class="flex flex-col gap-3">
-                    <h4 class="flex items-center gap-2 text-lg font-semibold">
-                        <twig:ux:icon name="lucide:users" class="size-5" />
-                        Membres
-                        <span class="badge badge-ghost badge-sm tabular-nums">{{ crewMembers|length }}</span>
-                    </h4>
-                    <ul class="list rounded-box border border-base-300">
-                        {% for member in crewMembers %}
-                            <li class="list-row items-center">
-                                <div class="avatar">
-                                    <div class="size-10 rounded-full">
-                                        <img src="https://api.dicebear.com/10.x/thumbs/svg?seed={{ member.name|url_encode }}" alt="Photo de profil {{ member.name }}" width="64" height="64" loading="lazy" />
-                                    </div>
-                                </div>
-                                <div class="min-w-0">
-                                    <p class="font-medium">{{ member.name }}</p>
-                                    <p class="text-xs text-muted">Membre depuis le 12/03/2026</p>
-                                    {% if member.owner %}
-                                        <div class="mt-1.5 flex flex-wrap gap-1.5">
-                                            <span class="badge badge-sm badge-accent">Propriétaire</span>
-                                            <span class="badge badge-sm">Créateur·rice</span>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-
-                <div class="rounded-box bg-base-200/60 flex items-center gap-3 p-4 text-sm">
-                    <twig:ux:icon name="lucide:mail-plus" class="text-info size-5 shrink-0" />
-                    <span>Invitation envoyée à <strong>Mamie Jo</strong>, en attente de réponse</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
 {# ======================================================= AMI·ES ET SURPRISE #}
 {# Six months: ShareUrlGenerator::VALIDITY. The export formats: the list in templates/me/profile/index.html.twig. #}
 {% set features = [
@@ -480,16 +236,16 @@
         text: "Vos sections ne sont visibles que de vos ami·es. Un cadeau que vous n'affichez pas reste un brouillon, que vous seul·e voyez, ou les membres de son groupe.",
     },
     {
-        iconName: 'lucide:share-2', title: 'Un lien à partager',
-        text: "« Partager » copie un lien dont l'aperçu s'affiche six mois dans les messageries.",
+        iconName: 'lucide:users', title: 'Des sections à plusieurs',
+        text: 'Un couple, des parents pour leur enfant : créez un groupe et tenez ses sections ensemble. Chaque membre y ajoute et modifie les cadeaux.',
     },
     {
         iconName: 'lucide:eye-off', title: 'La surprise gardée',
         text: "D'une cagnotte, vous ne voyez jamais les montants, et découvrez ses participants une fois le cadeau prêt à offrir.",
     },
     {
-        iconName: 'lucide:heart', title: 'Des favoris',
-        text: 'Mettez de côté les cadeaux de vos ami·es qui vous tentent, pour y revenir à la prochaine occasion.',
+        iconName: 'lucide:share-2', title: 'Un lien à partager',
+        text: "« Partager » copie un lien dont l'aperçu s'affiche six mois dans les messageries.",
     },
     {
         iconName: 'lucide:mail', title: 'Prévenu au bon moment',
@@ -500,7 +256,7 @@
         text: 'Exportez vos sections en CSV, ODS, Excel ou JSON, et supprimez votre compte quand vous le souhaitez.',
     },
 ] %}
-<section class="bg-base-100 border-base-300 -mx-4 border-y px-4 py-24 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 lg:py-32">
+<section class="bg-base-100 border-base-300 -mx-4 border-y px-4 py-16 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 lg:py-24">
     <div class="mx-auto max-w-6xl">
         <div class="mx-auto max-w-2xl text-center">
             <h2 class="text-4xl font-bold text-balance lg:text-5xl">Entre ami·es, sans gâcher la surprise</h2>
@@ -509,7 +265,7 @@
             </p>
         </div>
 
-        <div class="mt-20 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:mt-16 lg:grid-cols-3">
             {% for feature in features %}
                 <div class="card bg-base-200/60 h-full">
                     <div class="card-body gap-4">
@@ -525,121 +281,22 @@
     </div>
 </section>
 
-{# ================================================ PARCOURS D'UN CADEAU #}
-{# Statuses follow the gift_request workflow; badges come from GiftStatus via Molecule:Gift:StatusBadge. #}
-{% set lifecycle = [
-    {
-        card: 'bg-base-100 border-base-300 border shadow-sm', icon: 'bg-base-300 text-base-content',
-        iconName: 'lucide:list-plus', statuses: ['CREATED'],
-        text: "Le cadeau est ajouté, personne ne s'est encore positionné.",
-    },
-    {
-        card: 'bg-info/10', icon: 'bg-info text-info-content',
-        iconName: 'lucide:bookmark-check', statuses: ['RESERVED', 'CONTRIBUTING'],
-        text: "Un proche l'a bloqué pour lui seul, ou plusieurs remplissent la cagnotte.",
-    },
-    {
-        card: 'bg-warning/10', icon: 'bg-warning text-warning-content',
-        iconName: 'lucide:package-check', statuses: ['READY'],
-        text: "Le cadeau est acheté : celui qui l'a réservé, ou l'un des contributeurs une fois la cagnotte complète, le déclare prêt. La personne fêtée découvre qui a cagnotté.",
-    },
-    {
-        card: 'bg-success/10', icon: 'bg-success text-success-content',
-        iconName: 'lucide:party-popper', statuses: ['GIVEN'],
-        text: "Le cadeau a été remis, il ne reste plus qu'à dire merci.",
-    },
-    {
-        card: 'bg-base-100 border-base-300 border shadow-sm', icon: 'bg-base-300 text-base-content',
-        iconName: 'lucide:archive', statuses: ['ARCHIVED'],
-        text: 'Rangé à part, gardé pour se souvenir.',
-    },
-] %}
-<section class="py-24 lg:py-32">
-    <div class="mx-auto max-w-6xl">
-        <div class="mx-auto max-w-2xl text-center">
-            <h2 class="text-4xl font-bold text-balance lg:text-5xl">Le parcours d'un cadeau</h2>
-            <p class="text-muted mt-6 text-lg leading-relaxed">
-                Le statut est écrit sur la fiche. Personne n'a besoin de demander
-                « alors, quelqu'un l'a pris ? ».
-            </p>
-        </div>
-
-        <ol class="mt-20 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
-            {% for stage in lifecycle %}
-                <li class="card {{ stage.card }} h-full">
-                    <div class="card-body gap-4">
-                        <span class="{{ stage.icon }} rounded-box grid size-12 place-content-center">
-                            <twig:ux:icon :name="stage.iconName" class="size-6" />
-                        </span>
-                        <div class="flex flex-col items-start gap-2">
-                            {% for status in stage.statuses %}
-                                <twig:Molecule:Gift:StatusBadge
-                                    :status="constant('App\\Enum\\GiftStatus::' ~ status)"
-                                    size="{{ stage.statuses|length > 1 ? 'badge-sm' : 'badge-md' }}"
-                                    class="whitespace-nowrap" />
-                            {% endfor %}
-                        </div>
-                        <p class="text-muted leading-relaxed">{{ stage.text }}</p>
-                    </div>
-                </li>
-            {% endfor %}
-        </ol>
-    </div>
-</section>
-
 {# ================================================================ FAQ #}
-{# Shares answers with templates/page/faq.html.twig, the full FAQ: keep the common ones in step. #}
+{# Each question is a partial of templates/page/faq/, shared with the full FAQ page so the two
+   never drift apart. Sharing one name, the landing's answers open one at a time. #}
 {% set faq = [
-    {
-        question: 'Mes proches doivent-ils créer un compte pour réserver ?',
-        answer: "Oui. Un compte est nécessaire pour réserver ou contribuer, afin que My Gift sache qui s'est positionné et empêche qu'un cadeau soit pris deux fois. L'inscription demande votre nom, une adresse email et un mot de passe, rien de plus. Une fois votre demande d'ami·e acceptée, chacun voit les sections de l'autre.",
-    },
-    {
-        question: 'À quoi sert un groupe ?',
-        answer: "À tenir des sections à plusieurs : un couple, ou des parents pour leur enfant. Tous les membres y ajoutent et modifient les cadeaux, et la surprise reste entière pour chacun.",
-    },
-    {
-        question: "My Gift encaisse-t-il l'argent des cagnottes ?",
-        answer: "Non. My Gift tient les comptes — qui met combien, ce qu'il reste à couvrir — mais aucun paiement ne transite par l'application. Vous vous arrangez entre vous pour le versement.",
-    },
-    {
-        question: 'Et si le prix du cadeau change en cours de cagnotte ?',
-        answer: "Le prix d'une cagnotte est un objectif : il peut monter ou baisser. Chaque contributeur est prévenu par email pour revoir sa part. Si le cadeau était déjà prêt à offrir, la cagnotte se rouvre le temps de rééquilibrer les comptes.",
-    },
-    {
-        question: 'Puis-je annuler une réservation ou une contribution ?',
-        answer: "Oui. Une réservation annulée rend le cadeau disponible pour quelqu'un d'autre. Pour une cagnotte, le total réuni est recalculé sans votre part, et le cadeau redevient disponible quand plus personne n'y participe.",
-    },
-    {
-        question: 'Y a-t-il un mode sombre ?',
-        answer: "Oui. Le bouton soleil et lune, en haut de chaque page, propose Clair, Sombre ou Système, qui suit le réglage de votre appareil. Votre choix est gardé dans un cookie de ce navigateur, avec ou sans compte : il ne sert qu'à afficher le thème, à aucun suivi.",
-    },
-    {
-        question: "Qu'est-ce que My Gift, exactement ?",
-        answer: "Un projet personnel développé avec Symfony, par une seule personne, et dont le code est public.",
-    },
-    {
-        question: "My Gift est-il gratuit ?",
-        answer: "Oui, entièrement : pas d'abonnement, pas de publicité, pas de revente de données. My Gift a pourtant un coût (hébergement, maintenance, nouveautés). Si l'application vous rend service, un petit soutien aide à la faire vivre ; il reste facultatif, et rien n'est jamais bloqué sans lui.",
-        support: true,
-    },
+    'page/faq/_account_needed.html.twig',
+    'page/faq/_cancel.html.twig',
+    'page/faq/_what_is_my_gift.html.twig',
+    'page/faq/_free.html.twig',
 ] %}
-<section class="bg-base-100 border-base-300 -mx-4 border-y px-4 py-24 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 lg:py-32">
+<section class="py-16 lg:py-24">
     <div class="mx-auto max-w-3xl">
         <h2 class="text-center text-4xl font-bold lg:text-5xl">Questions fréquentes</h2>
 
-        <div class="mt-16 space-y-5">
-            {% for item in faq %}
-                <div class="collapse collapse-arrow bg-base-200">
-                    <input type="radio" name="faq-landing" {{ loop.first ? 'checked' }} aria-label="{{ item.question }}" />
-                    <div class="collapse-title text-lg font-semibold">{{ item.question }}</div>
-                    <div class="collapse-content text-muted leading-relaxed">
-                        {{ item.answer }}
-                        {% if item.support|default(false) %}
-                            <div class="mt-4"><twig:Molecule:SupportButton /></div>
-                        {% endif %}
-                    </div>
-                </div>
+        <div class="mt-12 space-y-4 lg:mt-16">
+            {% for question in faq %}
+                {{ include(question, { group: 'faq-landing', open: loop.first }, with_context = false) }}
             {% endfor %}
         </div>
 
@@ -650,7 +307,7 @@
 </section>
 
 {# ========================================================= CONVERSION #}
-<section class="py-24 text-center lg:py-32">
+<section class="bg-base-100 border-base-300 -mx-4 border-y px-4 py-16 text-center sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 lg:py-24">
     <div class="mx-auto max-w-2xl">
         <h2 class="text-4xl font-bold text-balance lg:text-5xl">
             La prochaine occasion arrive plus vite que prévu
@@ -659,28 +316,22 @@
             Créez votre première section en une minute, ajoutez trois cadeaux, envoyez le lien.
         </p>
 
-        <div class="mt-14">
+        <div class="mt-10">
             <twig:Atomic:ButtonLink :to="path('app_register')" color="primary" style="" class="btn-lg">
                 <twig:block name="icon">
-                    <twig:ux:icon name="lucide:gift" class="size-5" />
+                    <twig:ux:icon name="lucide:user-round-plus" class="size-5" />
                 </twig:block>
-                <twig:block name="name">Créer mes cadeaux</twig:block>
+                <twig:block name="name">Créer un compte</twig:block>
             </twig:Atomic:ButtonLink>
         </div>
-
-        <ul class="mt-14 flex flex-wrap justify-center gap-3">
-            <li><span class="badge badge-lg badge-soft">Gratuit, sans publicité</span></li>
-            <li><span class="badge badge-lg badge-soft">Une adresse email suffit</span></li>
-            <li><span class="badge badge-lg badge-soft">Visible de vos ami·es seulement</span></li>
-        </ul>
     </div>
 </section>
 
 {# ========================================================== CONNEXION #}
-<section id="connexion" class="scroll-mt-20 pb-24 lg:pb-32">
+<section id="connexion" class="scroll-mt-20 py-16 lg:py-24">
     <div class="mx-auto flex max-w-md flex-col items-center">
         <div class="divider text-muted w-full text-sm">Vous avez déjà un compte&nbsp;?</div>
-        <h2 class="mt-12 text-2xl font-bold">Connectez-vous !</h2>
+        <h2 class="mt-8 text-2xl font-bold">Connectez-vous !</h2>
         <p class="py-6 text-center">Connectez-vous pour regarder qui vous a offert un joli cadeau 🎁</p>
         {{ include('security/_login_form.html.twig', { autofocus: false }) }}
     </div>

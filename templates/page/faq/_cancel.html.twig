@@ -1,0 +1,11 @@
+{# On the FAQ page and the landing page. group: the <details> name that keeps one answer open at a time; open: open on load. #}
+<twig:Molecule:FaqItem
+    question="Puis-je annuler une réservation ou une contribution ?"
+    :name="group|default(false)"
+    :open="open|default(false)">
+    <p>
+        Oui, depuis la page du cadeau. Une réservation annulée rend le cadeau disponible pour
+        quelqu'un d'autre. Pour une cagnotte, le total réuni est recalculé sans votre part, et
+        le cadeau redevient disponible quand plus personne n'y participe.
+    </p>
+</twig:Molecule:FaqItem>
