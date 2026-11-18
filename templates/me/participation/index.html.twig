@@ -53,7 +53,7 @@
                         :giftCount="entry.gifts|length">
                         <twig:block name="gifts">
                             {% for gift in entry.gifts %}
-                                <twig:CardGift :gift="gift" />
+                                <twig:CardGift :gift="gift" :headingLevel="3" />
                             {% else %}
                                 <p class="py-4 text-sm text-muted">{{ entry.period.emptyMessage }}</p>
                             {% endfor %}

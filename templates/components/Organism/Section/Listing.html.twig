@@ -1,4 +1,7 @@
 {% set unfoldedSection = unfoldFirst ? sections|first : unfolded %}
+{# RGAA 9.1: a gift's title sits one level below its section's. Named apart from `headingLevel`,
+   which a block would read as Molecule:Section's prop. #}
+{% set giftHeadingLevel = headingLevel + 1 %}
 {% for section in sections %}
     {% set gifts = section.visibleGifts(ownerView) %}
     <twig:Molecule:Section
@@ -10,7 +13,7 @@
         :headingLevel="headingLevel">
         <twig:block name="gifts">
             {% for gift in gifts %}
-                <twig:CardGift :gift="gift" />
+                <twig:CardGift :gift="gift" :headingLevel="giftHeadingLevel" />
             {% else %}
                 <p class="py-4 text-sm text-muted">
                     {{ ownerView
