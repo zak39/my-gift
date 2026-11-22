@@ -1,0 +1,42 @@
+<div {{ attributes.defaults({ class: 'card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl' }) }}>
+    <div class="card-body">
+        <div class="card-title">
+            <h1>Confirmez votre identité</h1>
+        </div>
+        <p>
+            Vous êtes connecté·e en tant que <strong>{{ user.pseudo }}</strong>.
+            Pour continuer, saisissez de nouveau votre mot de passe.
+        </p>
+        {# A flash sent with a redirect to the login page, as the login card shows it. #}
+        {% for flash_success in app.flashes('success') %}
+            <twig:Alert type="success" :message="flash_success" />
+        {% endfor %}
+
+        {# Not through Turbo: the page saved by the firewall may be a download (the data export),
+           which Turbo, waiting for HTML, would drop. The browser follows the redirect itself. #}
+        <form method="post" action="{{ path('app_login') }}" data-turbo="false">
+            <fieldset class="fieldset">
+            {# The account is the one logged in: its identifier travels unseen, the page names it
+               above. A hidden text field, not type="hidden": password managers read its
+               "username" token to tell which account the password belongs to. #}
+            <input type="text" name="_username" value="{{ user.userIdentifier }}" autocomplete="username" hidden />
+            <twig:Molecule:Auth:PasswordField autofocus />
+            <div><a class="link link-hover" href="{{ path('app_forgot_password_request') }}">Mot de passe oublié ?</a></div>
+            <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+
+            {# Checked: the user chose it when they logged in, or no cookie would remember them. A
+               login without it clears the cookie (RememberMeListener::onSuccessfulLogin()), and so
+               does a refused one: after a mistyped password, the user stays logged in only
+               until the session ends, unless they log in again. #}
+            <div class="flex items-center gap-1.5 my-4">
+                <input type="checkbox" class="checkbox checkbox-primary" name="_remember_me" id="_remember_me" checked>
+                <label for="_remember_me">Se souvenir de moi</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-4">Confirmer</button>
+            </fieldset>
+        </form>
+
+        <p>Ce n'est pas vous ? <a class="link" href="{{ logout_path() }}">Se déconnecter</a></p>
+    </div>
+</div>

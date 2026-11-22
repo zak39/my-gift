@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}My Gift | Se connecter{% endblock %}
+{# RGAA 8.6: the title says which of the two forms the page shows. #}
+{% block title %}My Gift | {{ app.user ? 'Confirmer votre identité' : 'Se connecter' }}{% endblock %}
 
 {# A shared link opened while logged out shows this page with the card of what it shows
    (SharedLinkPreviewListener): its description, as og:description. #}
@@ -25,11 +26,10 @@
             </div>
         {% endif %}
         <div class="hero-content w-full flex-col gap-12 py-16">
+            {# A user here is remembered by its cookie, not fully logged in: a fully logged-in
+               one is redirected (SecurityController::login()). #}
             {% if app.user %}
-                <div class="card mb-3">
-                    <p>Vous êtes déjà connecté en tant que {{ app.user.userIdentifier }}.</p>
-                    <a class="btn btn-outline my-4" href="{{ logout_path() }}">Se déconnecter</a>
-                </div>
+                <twig:Molecule:Auth:ReauthenticateCard :user="app.user" />
             {% else %}
                 {# One card in two halves: the login, and the way to an account. #}
                 {# invitation: none on a shared link's login page (SharedLinkPreviewListener). #}
