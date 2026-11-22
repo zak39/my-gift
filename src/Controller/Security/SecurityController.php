@@ -28,8 +28,7 @@ class SecurityController extends AbstractController
         Request $request,
         #[MapQueryParameter(options: ['regexp' => FriendBook::INVITATION_SLUG_REGEXP], flags: \FILTER_NULL_ON_FAILURE)] ?string $invitation = null,
     ): Response {
-        $user = $this->getUser();
-        if ($user) {
+        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return null !== $invitation
                 ? $this->redirectToRoute('app_invitation', ['slug' => $invitation])
                 : $this->redirectToRoute('app_dashboard')
