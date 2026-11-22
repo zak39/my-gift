@@ -26,8 +26,8 @@
                 :crews="crews" />
 
             {# Open the first block a friend has something to see in: a section with a published
-               gift, or else the gifts filed in none. #}
-            {% set openSection = sections|filter(section => section.visibleGifts(false)|length > 0)|first %}
+               gift, or else the gifts filed in none. `first` gives false on no match, ?Section needs null. #}
+            {% set openSection = sections|filter(section => section.visibleGifts(false)|length > 0)|first|default(null) %}
             <div class="flex min-w-0 flex-col gap-5">
                 <twig:Organism:Section:Listing :sections="sections" :unfoldFirst="false" :unfolded="openSection" />
 
