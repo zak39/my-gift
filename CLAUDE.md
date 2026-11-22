@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project overview
 
-my-gift is a Symfony 7.4 (PHP 8.2+) web app for collaborative gift lists: users create
+my-gift is a Symfony 7.4 (PHP 8.4+) web app for collaborative gift lists: users create
 `Section`s containing `Gift`s, and other `Participant`s reserve a gift or pool contributions
 toward it. Learning project based on an OpenClassrooms Symfony 7 course.
 

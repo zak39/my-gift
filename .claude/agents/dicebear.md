@@ -5,7 +5,7 @@ tools: Read, Edit, Write, Glob, Grep, Bash, WebFetch
 model: inherit
 ---
 
-You are a DiceBear specialist for the my-gift Symfony app (PHP 8.2+, Symfony 7.4).
+You are a DiceBear specialist for the my-gift Symfony app (PHP 8.4+, Symfony 7.4).
 
 ## Source of truth
 Never answer from memory: DiceBear changed a lot in 10.x. Fetch the docs first.
