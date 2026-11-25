@@ -26,10 +26,7 @@ services:
       SERVER_NAME: ":80"
       # The deployed tag, set by `castor deploy` (compose.prod.yaml says why not required).
       APP_VERSION: ${APP_VERSION:-dev}
-      # Both must trust the proxy, or the X-Forwarded-Proto it sends is ignored: PHP then
-      # believes the request is plain HTTP, and the login redirects to http://, which Turbo's
-      # fetch() refuses from an HTTPS page. The proxy reaches the container through Docker's
-      # bridge (a private address); the port is bound to 127.0.0.1, so nobody else does.
+      # Both must trust the proxy (compose.prod.yaml says why).
       CADDY_GLOBAL_OPTIONS: |
         servers {
           trusted_proxies static private_ranges
