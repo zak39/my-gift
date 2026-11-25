@@ -25,6 +25,14 @@ arguments to list all tasks.
   since the frontend build uses `symfonycasts/tailwind-bundle` + AssetMapper, not Node/webpack).
 - `castor sf:b:f` (`buildFront`) — build Tailwind and compile assets via `asset-map:compile`.
 - `castor c:i` / `castor c:c` — `composer install` / remove `vendor` + `composer.lock`.
+- `castor console <command>` — a Symfony command where the app runs: `symfony console` on a
+  dev machine, `docker compose -f compose.{env}.yaml exec php bin/console` on a server (whose
+  variables live in the containers only), told by its `.env.prod.local` or `.env.preprod.local`
+  (`server\serverEnv()`; both present is an error); `--` before the command forwards Castor's
+  global options (`-h`, `-V`, `-q`, `-v`…), which Castor keeps otherwise. On a server, only
+  `deploy`, `restart:messenger` and `console` are meant to run; the first two act on that
+  server's env by default and refuse another (`server\resolveServerEnv()`); the other tasks
+  are dev ones.
 - `castor d:u` / `castor d:d` / `castor d:status` — Docker Compose up/down/status.
 
 Direct Symfony/PHP commands (via `symfony console ...` or `php bin/console ...`):
