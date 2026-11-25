@@ -9,6 +9,7 @@ use function Castor\capture;
 use function Castor\context;
 use function Castor\io;
 use function Castor\run;
+use function server\resolveServerEnv;
 
 /**
  * Run on the server: a release is a git tag and nothing else (#101). The tag is checked out,
@@ -19,16 +20,13 @@ use function Castor\run;
  */
 #[AsTask(description: 'Deploy a tag on the server (env: prod or preprod)', aliases: ['deploy'])]
 function deploy(
-    #[AsArgument(description: 'prod or preprod')]
-    string $env = 'prod',
+    #[AsArgument(description: 'prod or preprod: this server\'s own by default')]
+    ?string $env = null,
     #[AsArgument(description: 'The tag to deploy, to roll back for instance; the latest one by default')]
     ?string $tag = null,
 ): int {
-    if (!\in_array($env, ['prod', 'preprod'], true)) {
-        io()->error("Unknown environment \"{$env}\": prod or preprod.");
-
-        return 1;
-    }
+    // Before anything touches the checkout.
+    $env = resolveServerEnv($env);
 
     run('git fetch --tags');
 

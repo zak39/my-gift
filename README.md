@@ -112,7 +112,11 @@ Le détail (cycle de vie d'un cadeau, routes rangées par point de vue, composan
 
 ## Déploiement
 
-Un déploiement est un tag, rien d'autre : la production accepte les versions finales (`1.0.0`), la préproduction aussi les release candidates (`1.1.0-rc1`). Sur le serveur : `castor deploy prod [tag]` ou `castor deploy preprod [tag]` ; sans tag, le plus récent est déployé. Les variables d'environnement à fournir sont décrites dans [.env.server.dist](.env.server.dist).
+Un déploiement est un tag, rien d'autre : la production accepte les versions finales (`1.0.0`), la préproduction aussi les release candidates (`1.1.0-rc1`). Sur le serveur : `castor deploy`, ou `castor deploy prod 1.0.0` pour un tag précis. Sans environnement, c'est celui du serveur ; un autre est refusé avant de toucher au code. Sans tag, le plus récent est déployé. Les variables d'environnement à fournir sont décrites dans [.env.server.dist](.env.server.dist).
+
+Sur le serveur, une commande Symfony se lance avec `castor console <commande>` (par exemple `castor console app:user:search zak`), qui l'exécute dans le conteneur php. Castor reconnaît un serveur à son `.env.prod.local` ou `.env.preprod.local`, et refuse de choisir si les deux sont présents ; sans aucun des deux, il lance `symfony console` comme sur un poste de développement. Un `symfony console` lancé directement sur le serveur ne trouve pas les variables d'environnement : seuls les conteneurs les reçoivent. Castor garde pour lui ses options globales (`-h`/`--help`, `-V`, `-q`, `-v`…) : pour les passer à la commande, ajoute `--` devant (`castor console -- doctrine:migrations:migrate --help`).
+
+Sur un serveur, seules `castor deploy`, `castor restart:messenger` et `castor console` sont prévues. Les autres tâches Castor (`db:*`, `c:*`, `start`…) sont faites pour le poste de développement : ne les lance pas sur un serveur.
 
 ## Licence
 
