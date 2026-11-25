@@ -40,7 +40,7 @@ L'accessibilité (RGAA) est suivie à chaque évolution.
 | Emails | Maizzle pour les gabarits, Mailgun en production, Mailpit en développement |
 | Fichiers | VichUploader, Imagick (conversion WebP), DiceBear (avatars) |
 | Outillage | Castor, Docker Compose, PHP-CS-Fixer |
-| Serveurs | FrankenPHP dans Docker, Caddy devant la préproduction |
+| Serveurs | FrankenPHP dans Docker, derrière le Caddy du serveur (production et préproduction) |
 
 L'application n'a pas de chaîne de build Node : JavaScript et CSS passent par AssetMapper.
 

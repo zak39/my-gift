@@ -1,6 +1,10 @@
-# Production: my-gift alone on the server, FrankenPHP takes ports 80 and 443 itself and Caddy
-# inside it gets the HTTPS certificate for SERVER_NAME (.env.prod.local, out of git: copy
-# .env.server.dist, which lists every variable the server must give).
+# Production: Caddy, installed on the server (its Caddyfile is kept out of this repository),
+# holds the HTTPS certificate and hands the requests to FrankenPHP over plain HTTP on
+# 127.0.0.1:9320: `reverse_proxy 127.0.0.1:9320` in the domain's site block. The preprod is
+# set up the same way (compose.preprod.yaml), on 127.0.0.1:9310, but never on the same server:
+# both are the compose project "mygift", so they would share containers and volumes.
+# .env.prod.local (out of git: copy .env.server.dist, which lists every variable the server
+# must give) sets APP_ENV=prod.
 #   `castor deploy prod`: it checks out the latest tag and starts the containers.
 name: mygift
 
@@ -19,17 +23,24 @@ services:
     logging: *logging
     env_file: .env.prod.local
     environment:
+      # HTTP only: the proxy holds the certificate.
+      SERVER_NAME: ":80"
       # The deployed tag, set by `castor deploy`. Not required (${APP_VERSION:?}): compose
       # would then refuse every command without it, logs and exec included.
       APP_VERSION: ${APP_VERSION:-dev}
+      # Both must trust the proxy, or the X-Forwarded-Proto it sends is ignored: PHP then
+      # believes the request is plain HTTP, and the login redirects to http://, which Turbo's
+      # fetch() refuses from an HTTPS page. The proxy reaches the container through Docker's
+      # bridge (a private address); the port is bound to 127.0.0.1, so nobody else does.
+      CADDY_GLOBAL_OPTIONS: |
+        servers {
+          trusted_proxies static private_ranges
+        }
+      SYMFONY_TRUSTED_PROXIES: private_ranges
     ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp" # HTTP/3
+      - "127.0.0.1:9320:80"
     volumes:
       - .:/app
-      - caddy_data:/data
-      - caddy_config:/config
     depends_on:
       database:
         condition: service_healthy
@@ -71,5 +82,3 @@ services:
 
 volumes:
   database_data:
-  caddy_data:
-  caddy_config:
