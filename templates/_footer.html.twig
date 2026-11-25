@@ -52,7 +52,10 @@
      this line (text, heart, link) on its own row. #}
   <div class="border-t border-neutral-content/10 p-4 text-center text-sm text-neutral-content/70">
     <p>
-      © {{ 'now'|date('Y') }} My Gift · version {{ site.version }} · Fait avec
+      © {{ 'now'|date('Y') }} My Gift · version {{ site.version }} ·
+      {# AGPL § 13: whoever uses the app online is offered its source, the licence one click away. #}
+      <twig:Molecule:Link newWindow :href="site.license_url" class="link link-hover">licence <span lang="en">{{ site.license }}</span></twig:Molecule:Link> ·
+      Fait avec
       <span role="img" aria-label="amour">❤</span> par
       <twig:Molecule:Link newWindow :href="site.linkedin_url" class="link link-hover">{{ site.author_name }}</twig:Molecule:Link>
     </p>

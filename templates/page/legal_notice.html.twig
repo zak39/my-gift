@@ -4,7 +4,7 @@
 
 {% block description %}Les mentions légales de My Gift : son éditeur, son hébergeur et la propriété de son contenu.{% endblock %}
 
-{% set updated_at = '27 octobre 2026' %}
+{% set updated_at = '22 novembre 2026' %}
 {% set toc = [
     {id: 'editeur', label: 'Éditeur'},
     {id: 'hebergement', label: 'Hébergement'},
@@ -38,8 +38,15 @@
     <h2 id="propriete">Propriété intellectuelle</h2>
     <p>
         Le <twig:Molecule:Link newWindow :href="site.repository_url" class="link">code
-        source de My Gift</twig:Molecule:Link> est consultable publiquement ; il reste, comme les textes et
-        les visuels du site, la propriété de son auteur, sauf mention contraire.
+        source de My Gift</twig:Molecule:Link> est un logiciel libre, publié sous la
+        <twig:Molecule:Link newWindow :href="site.license_url" class="link">licence GNU
+        AGPL</twig:Molecule:Link>, version 3 ou toute version ultérieure
+        (<span lang="en">{{ site.license }}</span>). Chacun peut le copier, le modifier et le redistribuer à ses
+        conditions ; une version modifiée mise en ligne doit, elle aussi, offrir son code source
+        à ceux qui l'utilisent.
+    </p>
+    <p>
+        Seule la photo de l'auteur n'est pas sous licence libre : elle reste sa propriété.
     </p>
     <p>
         Le site utilise la police Modak (SIL Open Font License), les icônes Lucide (licence

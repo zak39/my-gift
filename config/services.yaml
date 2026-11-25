@@ -27,6 +27,8 @@ parameters:
     app.author_name: 'zakode'
     app.linkedin_url: 'https://www.linkedin.com/in/baptiste-fotia'
     app.repository_url: 'https://github.com/zak39/my-gift'
+    app.license: 'AGPL-3.0-or-later'
+    app.license_url: '%app.repository_url%/blob/main/LICENSE'
     app.contact_email: 'zakode.dev@gmail.com'
     # The From of every email (config/packages/mailer.yaml), a mailbox that does not exist:
     # replies bounce, people write through the contact links. An address of the Mailgun

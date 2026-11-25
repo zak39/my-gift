@@ -9,6 +9,8 @@ twig:
             author_name: '%app.author_name%'
             linkedin_url: '%app.linkedin_url%'
             repository_url: '%app.repository_url%'
+            license: '%app.license%'
+            license_url: '%app.license_url%'
             contact_email: '%app.contact_email%'
             support_url: '%app.support_url%'
             description: '%app.description%'
