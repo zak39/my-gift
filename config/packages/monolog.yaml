@@ -48,12 +48,11 @@ when@prod:
             console:
                 type: console
                 process_psr_3_messages: false
-                channels: ["!event", "!doctrine"]
-            deprecation:
-                type: stream
-                channels: [deprecation]
-                path: php://stderr
-                formatter: monolog.formatter.json
+                channels: ["!event", "!doctrine", "!deprecation"]
+            # No deprecation handler, nor in the console one (-vv): deprecations are read in dev's
+            # log. On a server, stderr would carry them into the docker logs and the output of
+            # every console command. Accepted gap: those only a server meets (its when@prod /
+            # when@preprod settings, Mailgun…) are logged nowhere.
 
 when@preprod:
     monolog:
@@ -73,9 +72,8 @@ when@preprod:
             console:
                 type: console
                 process_psr_3_messages: false
-                channels: ["!event", "!doctrine"]
-            deprecation:
-                type: stream
-                channels: [deprecation]
-                path: php://stderr
-                formatter: monolog.formatter.json
+                channels: ["!event", "!doctrine", "!deprecation"]
+            # No deprecation handler, nor in the console one (-vv): deprecations are read in dev's
+            # log. On a server, stderr would carry them into the docker logs and the output of
+            # every console command. Accepted gap: those only a server meets (its when@prod /
+            # when@preprod settings, Mailgun…) are logged nowhere.
